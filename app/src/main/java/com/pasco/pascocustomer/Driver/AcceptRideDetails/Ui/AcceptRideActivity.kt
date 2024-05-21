@@ -96,6 +96,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!reqId.isNullOrBlank()) {
             getBidDetailsApi()
         }
+        // abc
         //call reqObsever
         getBidObserver()
         //callObserver
