@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,14 +14,19 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
+import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupBody
 import com.pasco.pascocustomer.databinding.ActivitySignUpBinding
+import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,12 +56,14 @@ class SignUpActivity : AppCompatActivity() {
     private var city: String? = null
     private var address: String? = null
 
+    private val otpModel: OtpCheckModelView by viewModels()
+    private val progressDialog by lazy { CustomProgressDialog(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
+        val deviceModel = Build.MODEL
         loginValue = intent.getStringExtra("loginValue").toString()
 
 
@@ -82,11 +90,11 @@ class SignUpActivity : AppCompatActivity() {
             address = binding.addressTxt.text.toString()
             if (loginValue == "driver")
             {
-                validationDriver()
+                validationDriver(deviceModel)
             }
             else
             {
-                validationUser()
+                validationUser(deviceModel)
             }
 
 
@@ -102,9 +110,9 @@ class SignUpActivity : AppCompatActivity() {
             requestLocationPermission()
         }
 
-
+        checkLoginObserver()
     }
-    private fun validationDriver() {
+    private fun validationDriver(deviceModel: String) {
         with(binding) {
             if (userName.text.isNullOrBlank())
             {
@@ -137,13 +145,14 @@ class SignUpActivity : AppCompatActivity() {
             }
             else
             {
-                strPhoneNo = binding.phoneNumber.text.toString()
-                sendVerificationCode("+91$strPhoneNo")
+
+                otpCheckApi(deviceModel)
+
             }
         }
     }
 
-    private fun validationUser() {
+    private fun validationUser(deviceModel: String) {
         with(binding) {
 
              if (userPhoneNumber.text.isNullOrBlank()) {
@@ -152,8 +161,8 @@ class SignUpActivity : AppCompatActivity() {
             }
             else
             {
-                strPhoneNo = binding.userPhoneNumber.text.toString()
-                sendVerificationCode("+91$strPhoneNo")
+                otpCheckApi(deviceModel)
+
             }
         }
     }
@@ -306,5 +315,40 @@ class SignUpActivity : AppCompatActivity() {
             binding.addressTxt.text = "$city"
         }
     }
+
+    private fun otpCheckApi(deviceModel: String) {
+        val loinBody = ClientSignupBody(
+            phone_number = strPhoneNo,
+            user_type = loginValue,
+            phone_verify = deviceModel
+        )
+        otpModel.otpCheck(loinBody, this, progressDialog)
+    }
+
+    private fun checkLoginObserver() {
+        otpModel.progressIndicator.observe(this) {
+        }
+        otpModel.mRejectResponse.observe(
+            this
+        ) {
+            if (loginValue =="driver")
+            {
+                strPhoneNo = binding.phoneNumber.text.toString()
+                sendVerificationCode("+91$strPhoneNo")
+            }
+            else
+            {
+                strPhoneNo = binding.userPhoneNumber.text.toString()
+                sendVerificationCode("+91$strPhoneNo")
+            }
+
+
+        }
+        otpModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@SignUpActivity, it)
+            // errorDialogs()
+        }
+    }
+
 
 }

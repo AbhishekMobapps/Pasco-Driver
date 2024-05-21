@@ -201,6 +201,10 @@ class OtpVerifyActivity : AppCompatActivity() {
         ) {
             val message = it.peekContent().msg
             Log.e("LogValueAA","loginValueUSER " +loginValue)
+
+            val token = it.peekContent().token
+            PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+            PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             val intent = Intent(this, UserDashboardActivity::class.java)
             startActivity(intent)
             Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
