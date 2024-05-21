@@ -15,9 +15,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher1"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:roundIcon="@mipmap/ic_launcher1_round"
         android:theme="@style/Theme.PascoCustomer"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">

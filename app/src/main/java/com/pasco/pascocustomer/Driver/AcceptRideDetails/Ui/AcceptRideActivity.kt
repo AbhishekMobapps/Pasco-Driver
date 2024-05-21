@@ -205,6 +205,13 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 currentLongitudePickup = allData?.pickupLongitude.toString()!!.toDouble()
                 currentLatitudeDrop = allData?.dropLatitude.toString()!!.toDouble()
                 currentLongitudeDrop = allData?.dropLongitude.toString()!!.toDouble()
+                val duration = allData?.duration.toString()
+                // Convert duration to hours and minutes
+                val durationInMinutes = duration.toIntOrNull() ?: 0
+                val hours = durationInMinutes / 60
+                val minutes = durationInMinutes % 60
+                val formattedDuration = String.format("%d hr %02d min", hours, minutes)
+                binding.routeTime.text = formattedDuration
 
                 PickUpLoc = LatLng(currentLatitudePickup, currentLongitudePickup)
                 DropLoc = LatLng(currentLatitudeDrop, currentLongitudeDrop)

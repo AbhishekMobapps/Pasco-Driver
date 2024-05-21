@@ -39,6 +39,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestViewModel
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.getdetailsmodel.GetVDetailsViewModel
 import java.io.*
 
 @AndroidEntryPoint
@@ -56,6 +57,11 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private var vehicleSize = ""
     private var vehicleLoadCapacity = ""
     private var vehicleCapability = ""
+    private var imageUrlVp: String? = null
+    private var imageUrlVd: String? = null
+    private var imageUrlVRc: String? = null
+    private var shipmentName: String? = null
+    private var vehicleName: String? = null
 
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
@@ -67,6 +73,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private val servicesViewModel: ServicesViewModel by viewModels()
     private val vehicleTypeViewModel: VehicleTypeViewModel by viewModels()
     private val approvalRequestViewModel: ApprovalRequestViewModel by viewModels()
+    private val getVDetailsViewModel: GetVDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +83,6 @@ class VehicleDetailsActivity : AppCompatActivity() {
         binding.submitBtnAddVeh.setOnClickListener {
             validation()
         }
-
         binding.selectVehicle.setOnClickListener {
             openCameraOrGallery("vehicleImg")
         }
@@ -88,6 +94,9 @@ class VehicleDetailsActivity : AppCompatActivity() {
         binding.selectVehicleRc.setOnClickListener {
             openCameraOrGallery("vehicleRc")
         }
+        getVehicleDetails()
+        //get vehicle details api
+        getVehicleDetailsObserver()
 
         binding.transporterSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -123,11 +132,71 @@ class VehicleDetailsActivity : AppCompatActivity() {
         //call servicesListApi
         servicesList()
         //call services Observer
-        servicesObserver()
+        shipmentName?.let { servicesObserver(it) }
         //call vehicleTypeObserver
-        vehicleTypeObserver()
+        vehicleName?.let { vehicleTypeObserver(it) }
+        //call api
         approvalRequestObserver()
 
+    }
+
+
+    private fun getVehicleDetails() {
+        getVDetailsViewModel.getVDetailsData(
+            progressDialog,
+            this
+        )
+    }
+
+
+    private fun getVehicleDetailsObserver() {
+        getVDetailsViewModel.progressIndicator.observe(this, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        getVDetailsViewModel.mGetVDetails.observe(this) { response ->
+            val data = response.peekContent().data
+            shipmentName = data!!.shipmentname.toString()
+            vehicleName = data!!.vehiclename.toString()
+
+            val baseUrl = "http://69.49.235.253:8090"
+            val imagePath = data?.vehiclePhoto.orEmpty()
+            val imagePathDoc = data?.document.orEmpty()
+            val imagePathRc = data?.drivingLicense.orEmpty()
+
+            imageUrlVp = "$baseUrl$imagePath"
+            imageUrlVd = "$baseUrl$imagePathDoc"
+            imageUrlVRc = "$baseUrl$imagePathRc"
+
+            if (imageUrlVp!!.isNotEmpty()) {
+                Glide.with(this)
+                    .load(imageUrlVp)
+                    .into(binding.cameraImgVI)
+
+                if (imageUrlVd!!.isNotEmpty()) {
+                    Glide.with(this)
+                        .load(imageUrlVd)
+                        .into(binding.cameraImgDoc)
+
+                    if (imageUrlVRc!!.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrlVRc)
+                            .into(binding.cameraImgRc)
+
+                    }
+
+                    binding.vehicleNoAdd.setText(data.vehiclenumber.toString())
+
+                    servicesObserver(shipmentName!!)
+                    vehicleTypeObserver(vehicleName!!)
+
+                    getVDetailsViewModel.errorResponse.observe(this) {
+                        // Handle general errors
+                        ErrorUtil.handlerGeneralError(this, it)
+                    }
+                }
+            }
+        }
     }
 
     private fun servicesList() {
@@ -136,7 +205,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
             this
         )
     }
-    private fun servicesObserver() {
+
+    private fun servicesObserver(shipmentName: String) {
         servicesViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -158,19 +228,27 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     R.layout.custom_service_type_spinner,
                     servicesTypeStatic
                 )
+            /* dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+             //dAdapter.addAll(strCatNameList)
+             dAdapter.add(getString(R.string.selectTransType))
+             binding.transporterSpinner.adapter = dAdapter
+             binding.transporterSpinner.setSelection(dAdapter.count)
+             binding.transporterSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))*/
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            //dAdapter.addAll(strCatNameList)
             dAdapter.add(getString(R.string.selectTransType))
             binding.transporterSpinner.adapter = dAdapter
             binding.transporterSpinner.setSelection(dAdapter.count)
-            binding.transporterSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))
+            val spinnerPosition = if (shipmentName.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectTransType))
+            } else {
+                dAdapter.getPosition(shipmentName)
+            }
+            binding.transporterSpinner.setSelection(spinnerPosition)
 
             if (response.peekContent().status.equals("False")) {
-                // Status is false, handle the failure scenario
-                // You might want to display an error message or take appropriate action
-                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG).show()
             } else {
-                //Toast.makeText(this@OwnerDetailsActivity, message, Toast.LENGTH_LONG).show()
+
             }
         }
 
@@ -181,7 +259,6 @@ class VehicleDetailsActivity : AppCompatActivity() {
     }
 
 
-
     private fun callVehicleType(sId: String) {
         vehicleTypeViewModel.getVehicleTypeData(
             progressDialog,
@@ -190,7 +267,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
         )
     }
 
-    private fun vehicleTypeObserver() {
+    private fun vehicleTypeObserver(vehicleName: String) {
         vehicleTypeViewModel.mVehicleTypeResponse.observe(this) { response ->
             val content = response.peekContent()
             val message = content.msg ?: return@observe
@@ -205,11 +282,20 @@ class VehicleDetailsActivity : AppCompatActivity() {
                 R.layout.custom_service_type_spinner,
                 vehicleTypeStatic
             )
+           /* dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            dAdapter.add(getString(R.string.selectVehicleType))
+            binding.vehicleTypeSpinner.adapter = dAdapter
+            binding.vehicleTypeSpinner.setSelection(dAdapter.count)*/
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dAdapter.add(getString(R.string.selectVehicleType))
             binding.vehicleTypeSpinner.adapter = dAdapter
             binding.vehicleTypeSpinner.setSelection(dAdapter.count)
-
+            val spinnerPosition = if (vehicleName!!.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectVehicleType))
+            } else {
+                dAdapter.getPosition(vehicleName)
+            }
+            binding.vehicleTypeSpinner.setSelection(spinnerPosition)
             binding.vehicleTypeSpinner.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
@@ -222,8 +308,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
                         if (item != getString(R.string.selectVehicleType)) {
                             spinnerVehicleTypeId = VehicleType!![i].id.toString()
                             vehicleSize = VehicleType!![i].vehiclesize.toString()
-                            vehicleLoadCapacity = VehicleType!![i].vehicleweight.toString()
-                            vehicleCapability = VehicleType!![i].capabilityname.toString()
+                            vehicleLoadCapacity =
+                                VehicleType!![i].vehicleweight.toString()
+                            vehicleCapability =
+                                VehicleType!![i].capabilityname.toString()
 
 
                         }
@@ -249,12 +337,17 @@ class VehicleDetailsActivity : AppCompatActivity() {
     }
 
     private fun reqApproval() {
-        val vehicleNo = RequestBody.create(MultipartBody.FORM, binding.vehicleNoAdd.text.toString())
+        val vehicleNo =
+            RequestBody.create(MultipartBody.FORM, binding.vehicleNoAdd.text.toString())
         val vehicleTy = RequestBody.create(MultipartBody.FORM, spinnerVehicleTypeId)
         val vehiclePhoto = selectedImageFile?.let {
             it.asRequestBody("image/*".toMediaTypeOrNull())
         }?.let {
-            MultipartBody.Part.createFormData("vehicle_photo", selectedImageFile!!.name, it)
+            MultipartBody.Part.createFormData(
+                "vehicle_photo",
+                selectedImageFile!!.name,
+                it
+            )
         }
 
         val document = selectedImageFileDoc?.let {
@@ -298,7 +391,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
             } else {
                 // The condition is true, perform actions here
 
-                Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG)
+                    .show()
                 openRegConfirmPop()
 
 
@@ -314,17 +408,29 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private fun validation() {
         if (binding.transporterSpinner.selectedItem.toString() == resources.getString(R.string.selectTransType)) {
             Toast.makeText(this, "Please Select Transporter", Toast.LENGTH_SHORT).show()
-        } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(R.string.selectVehicleType)) {
+        } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(
+                R.string.selectVehicleType
+            )
+        ) {
             Toast.makeText(this, "Please Select Vehicle", Toast.LENGTH_SHORT).show()
         } else if (binding.vehicleNoAdd.text.isNullOrBlank()) {
             Toast.makeText(this, "Please add vehicle no", Toast.LENGTH_SHORT).show()
         } else if (selectedImageFile == null) {
-            Toast.makeText(applicationContext, "please upload vehicle photo", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                applicationContext,
+                "please upload vehicle photo",
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else if (selectedImageFileDoc == null) {
-            Toast.makeText(applicationContext, "please upload Doc", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "please upload Doc", Toast.LENGTH_SHORT)
+                .show()
         } else if (selectedImageFileRc == null) {
-            Toast.makeText(applicationContext, "please upload vehicle reg no", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                applicationContext,
+                "please upload vehicle reg no",
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else {
             // Call the API for approval request
@@ -335,7 +441,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
     private fun openRegConfirmPop() {
         val builder =
-            AlertDialog.Builder(this@VehicleDetailsActivity, R.style.Style_Dialog_Rounded_Corner)
+            AlertDialog.Builder(
+                this@VehicleDetailsActivity,
+                R.style.Style_Dialog_Rounded_Corner
+            )
         val dialogView = layoutInflater.inflate(R.layout.register_confirmation, null)
         builder.setView(dialogView)
 
@@ -351,7 +460,11 @@ class VehicleDetailsActivity : AppCompatActivity() {
         }
     }
 
-    class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>) :
+    class SpinnerAdapter(
+        context: Context,
+        textViewResourceId: Int,
+        smonking: List<String>
+    ) :
         ArrayAdapter<String>(context, textViewResourceId, smonking) {
 
         override fun getCount(): Int {
@@ -362,7 +475,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
 
     private fun openCameraOrGallery(section: String) {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+        val options =
+            arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Select Image")
         builder.setItems(options) { dialog, item ->
@@ -402,13 +516,15 @@ class VehicleDetailsActivity : AppCompatActivity() {
     }
 
     private fun openGalleryRc() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val galleryIntent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryIntent.type = "image/*" // Allow all image types
         selectImageLauncherRc.launch(galleryIntent)
     }
 
     private fun openGalleryDoc() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val galleryIntent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryIntent.type = "image/*" // Allow all image types
         selectImageLauncherDoc.launch(galleryIntent)
     }
@@ -437,7 +553,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     val fileName = "image_${System.currentTimeMillis()}.jpg"
                     // Convert Bitmap to File
                     selectedImageFileRc = bitmapToFile(imageBitmap, fileName)
-                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFileRc)
+                    Log.e(
+                        "filePathBack",
+                        "selectedImageFile:Front " + selectedImageFileRc
+                    )
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     binding.cameraImgRc.setImageBitmap(imageBitmap)
                     //  setUploadedRc()
@@ -458,7 +577,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     val fileName = "image_${System.currentTimeMillis()}.jpg"
                     // Convert Bitmap to File
                     selectedImageFileDoc = bitmapToFile(imageBitmap, fileName)
-                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFileDoc)
+                    Log.e(
+                        "filePathBack",
+                        "selectedImageFile:Front " + selectedImageFileDoc
+                    )
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     binding.cameraImgDoc.setImageBitmap(imageBitmap)
 
@@ -471,7 +593,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
 
     private fun openGallery() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val galleryIntent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryIntent.type = "image/*" // Allow all image types
         selectImageLauncher.launch(galleryIntent)
     }
@@ -605,7 +728,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     val fileName = "image_${System.currentTimeMillis()}.jpg"
                     // Convert Bitmap to File
                     selectedImageFile = bitmapToFile(imageBitmap, fileName)
-                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFile)
+                    Log.e(
+                        "filePathBack",
+                        "selectedImageFile:Front " + selectedImageFile
+                    )
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     binding.cameraImgVI.setImageBitmap(imageBitmap)
 
