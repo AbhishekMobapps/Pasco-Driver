@@ -301,7 +301,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             reqId
         )
     }
-
+//comment
     @SuppressLint("MissingInflatedId")
     private fun addAvailabilityPopUp() {
         val builder =
