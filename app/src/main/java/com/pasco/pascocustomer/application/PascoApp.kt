@@ -7,6 +7,8 @@ import com.pasco.pascocustomer.utils.PreferenceManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
+//abhi comment
+
 class PascoApp : Application() {
 
     companion object {
