@@ -48,6 +48,7 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.getdetailsmodel.GetVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
 
@@ -103,6 +104,12 @@ interface ApiServices {
         @Part attachment1: MultipartBody.Part,
         @Part attachment2: MultipartBody.Part
     ): Observable<ApprovalRequestResponse>
+
+    //getApprovalRequest
+    @GET("updateapprovalstatus/")
+    fun getVehicleUpdate(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<GetVDetailsResponse>
 
     @Headers("Accept:application/json")
     @POST("ride-booking/")

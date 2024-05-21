@@ -20,6 +20,7 @@ class AcceptRideResponse:Serializable{
     var data: AcceptRideData? = null
 
     inner class AcceptRideData:Serializable{
+
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -35,6 +36,14 @@ class AcceptRideResponse:Serializable{
         @SerializedName("driver")
         @Expose
         var driver: String? = null
+
+        @SerializedName("user_image")
+        @Expose
+        var userImage: String? = null
+
+        @SerializedName("driver_image")
+        @Expose
+        var driverImage: String? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -72,6 +81,10 @@ class AcceptRideResponse:Serializable{
         @Expose
         var totalDistance: Float? = null
 
+        @SerializedName("duration")
+        @Expose
+        var duration: Int? = null
+
         @SerializedName("basicprice")
         @Expose
         var basicprice: Float? = null
@@ -79,6 +92,14 @@ class AcceptRideResponse:Serializable{
         @SerializedName("commision_price")
         @Expose
         var commisionPrice: Float? = null
+
+        @SerializedName("message")
+        @Expose
+        var message: String? = null
+
+        @SerializedName("payment_method")
+        @Expose
+        var paymentMethod: String? = null
 
         @SerializedName("customer_status")
         @Expose
@@ -96,13 +117,21 @@ class AcceptRideResponse:Serializable{
         @Expose
         var createdAt: String? = null
 
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
+
         @SerializedName("availability_datetime")
         @Expose
-        var availabilityDatetime: String? = null
+        var availabilityDatetime: Any? = null
 
         @SerializedName("bid_price")
         @Expose
-        var bidPrice: Float? = null
+        var bidPrice: Any? = null
 
     }
 }
