@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.customer.activity.notificaion.adapter.NotificationAdapter
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.DeleteNotificationViewModel
+import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationModelView
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationResponse
 import com.pasco.pascocustomer.databinding.ActivityNotificationBinding
@@ -78,7 +79,10 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     }
 
     private fun deleteNotificationApi(notiId: String) {
-        deleteNotificationViewModel.getDeleteNotifications(progressDialog, this, notiId)
+        val body = NotificationBody(
+            id = notiId
+        )
+        deleteNotificationViewModel.getDeleteNotifications(progressDialog, this, body)
 
     }
 
@@ -97,7 +101,6 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
 
 
 }

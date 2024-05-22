@@ -47,6 +47,7 @@ class OtpVerifyActivity : AppCompatActivity() {
     private val driverViewModel: DriverSignUpModel by viewModels()
     private val userViewModel: ClientModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,16 +72,16 @@ class OtpVerifyActivity : AppCompatActivity() {
 
         binding.phoneNumber.text = "+91$strPhoneNo"
 
-        Log.e("LogValueAA","loginValue " +loginValue)
+        Log.e("LogValueAA", "loginValue " + loginValue)
 
         binding.continueBtn.setOnClickListener {
-             val verificationCode =
-                 "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
-             val credential: PhoneAuthCredential =
-                 PhoneAuthProvider.getCredential(verificationId, verificationCode)
-             signInWithPhoneAuthCredential(credential,deviceModel)
-           /* val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)*/
+            val verificationCode =
+                "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
+            val credential: PhoneAuthCredential =
+                PhoneAuthProvider.getCredential(verificationId, verificationCode)
+            signInWithPhoneAuthCredential(credential, deviceModel)
+            /* val intent = Intent(this, DashboardActivity::class.java)
+             startActivity(intent)*/
         }
         editTextList.addAll(
             listOf(
@@ -135,7 +136,7 @@ class OtpVerifyActivity : AppCompatActivity() {
                         getDriverSignupApi(deviceModel)
                     } else {
                         getUserSignUp(deviceModel)
-                        Log.e("LogValueAA","loginValueUSER " +loginValue)
+                        Log.e("LogValueAA", "loginValueUSER " + loginValue)
                     }
                 } else {
                     // Sign in failed
@@ -200,14 +201,16 @@ class OtpVerifyActivity : AppCompatActivity() {
             this
         ) {
             val message = it.peekContent().msg
-            Log.e("LogValueAA","loginValueUSER " +loginValue)
+            Log.e("LogValueAA", "loginValueUSER " + loginValue)
 
             val token = it.peekContent().token
             PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             val intent = Intent(this, UserDashboardActivity::class.java)
+            intent.putExtra("profileUpdate","SigUp")
             startActivity(intent)
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             finish()
         }
         userViewModel.errorResponse.observe(this) {

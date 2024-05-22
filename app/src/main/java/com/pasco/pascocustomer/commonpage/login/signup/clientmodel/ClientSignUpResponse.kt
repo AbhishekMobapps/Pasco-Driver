@@ -7,6 +7,7 @@ import java.io.Serializable
 
 
 class ClientSignUpResponse {
+
     @SerializedName("token")
     @Expose
     var token: Token? = null
@@ -19,9 +20,30 @@ class ClientSignUpResponse {
     @Expose
     var status: String? = null
 
-    @SerializedName("data")
+    @SerializedName("user_id")
     @Expose
-    var data: Data? = null
+    var userId: Int? = null
+
+    @SerializedName("phone_number")
+    @Expose
+    var phoneNumber: String? = null
+
+    @SerializedName("user_type")
+    @Expose
+    var userType: String? = null
+
+    @SerializedName("email")
+    @Expose
+    var email: Any? = null
+
+    @SerializedName("full_name")
+    @Expose
+    var fullName: Any? = null
+
+    @SerializedName("profile")
+    @Expose
+    var profile: Int? = null
+
 
     inner class Data : Serializable {
         @SerializedName("user_type")
