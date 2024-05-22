@@ -39,7 +39,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestViewModel
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsViewModel
 import java.io.*
 
 @AndroidEntryPoint

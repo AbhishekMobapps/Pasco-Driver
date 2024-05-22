@@ -1,13 +1,10 @@
-package com.pasco.pascocustomer.userFragment.profile.updatemodel
+package com.pasco.pascocustomer.commonpage.login.signup.checknumber
 
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
 
-
-
-
-class UpdateProfileResponse {
+class CheckNumberResponse {
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -16,8 +13,7 @@ class UpdateProfileResponse {
     @Expose
     var msg: String? = null
 
-    @SerializedName("profile")
+    @SerializedName("exists")
     @Expose
-    var profile: Int? = null
-
+    var exists: Int? = null
 }

@@ -52,8 +52,8 @@
     <string name="total_amount">Total Amount</string>
     <string name="proceed">Proceed</string>
     <string name="cancel">Cancel</string>
-    <string name="all_bidds">All Bidds</string>
-    <string name="accept">Accept</string>
+    <string name="all_bidds">All Bids</string>
+    <string name="accept">Accepted</string>
     <string name="custer_name">Custer Name</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="pickup">Pickup</string>
@@ -234,4 +234,6 @@
     <string name="change_language">Change Language</string>
     <string name="contact_us">Contact Us</string>
     <string name="wallet">Wallet</string>
+    <string name="please_update_your_profile_first">Please update your profile first !</string>
+    <string name="language">Language</string>
 </resources>

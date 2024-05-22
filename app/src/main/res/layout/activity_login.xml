@@ -149,13 +149,14 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/grey_dark" />
 
-                <TextView
-                    android:id="@+id/code"
+                <EditText
+                    android:id="@+id/countryCode"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:hint="(+966)"
-                    android:paddingLeft="15dp"
+                    android:hint="+966"
+                    android:background="@null"
+                    android:paddingLeft="2dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@+id/personIcon"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -168,10 +169,10 @@
                     android:gravity="center_vertical"
                     android:hint="@string/phone"
                     android:inputType="number"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="2dp"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/code"
+                    app:layout_constraintStart_toEndOf="@+id/countryCode"
                     app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -25,9 +25,11 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import javax.inject.Inject
@@ -39,6 +41,10 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getOtpCheck(courseBody: ClientSignupBody): Observable<OtpCheckResponse> {
         return apiService.otpCheck(courseBody)
+    }
+
+    fun checkNumber(courseBody: CheckNumberBody): Observable<CheckNumberResponse> {
+        return apiService.checkNumber(courseBody)
     }
 
     fun getLogin(courseBody: LoginBody): Observable<LoginResponse> {
@@ -67,9 +73,6 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         )
     }
 
-    fun getUpdateVDetailRepo(): Observable<GetVDetailsResponse> {
-        return apiService.getVehicleUpdate(PascoApp.encryptedPrefs.bearerToken)
-    }
 
 
     fun putApprovalReqRepo(
@@ -139,8 +142,10 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.getNotification(PascoApp.encryptedPrefs.bearerToken)
     }
 
-    fun getDeleteNotification(Id: String): Observable<DeleteNotificationResponse> {
-        return apiService.deleteNotifications(PascoApp.encryptedPrefs.bearerToken, Id)
+
+
+    fun getDeleteNotification(courseBody: NotificationBody): Observable<DeleteNotificationResponse> {
+        return apiService.deleteNotifications(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
     fun getCountNotifications(): Observable<NotificationCountResponse> {

@@ -26,15 +26,10 @@ class NotificationCountViewModel @Inject constructor(
     val mNotiCountResponse= MutableLiveData<Event<NotificationCountResponse>>()
     var context: Context? = null
 
-    fun getCountNoti(
-
-    ) =
-        viewModelScope.launch {
+    fun getCountNoti() = viewModelScope.launch {
             getCount()
         }
-    suspend fun getCount(
-    )
-
+    suspend fun getCount()
     {
         notificationCountRepository.getCountNotifications()
             .subscribeOn(Schedulers.io())

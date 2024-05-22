@@ -26,6 +26,7 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentProfileBinding
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.userFragment.profile.updatemodel.UpdateProfileModelView
@@ -248,13 +249,33 @@ class ProfileFragment : Fragment() {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             val users = it.peekContent().data
-            binding.userName.text = Editable.Factory.getInstance().newEditable(users?.fullName)
-            binding.emailTxtA.text = Editable.Factory.getInstance().newEditable(users?.email)
-            binding.currentCityTxt.text =
-                Editable.Factory.getInstance().newEditable(users?.currentCity)
+            if (users?.fullName == null) {
 
-            val url = it.peekContent().data?.image
-            Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImg)
+            } else {
+                binding.userName.text = Editable.Factory.getInstance().newEditable(users?.fullName)
+            }
+
+            if (users?.email == null) {
+
+            } else {
+                binding.emailTxtA.text = Editable.Factory.getInstance().newEditable(users?.email)
+            }
+
+            if (users?.currentCity == null) {
+
+            } else {
+                binding.currentCityTxt.text =
+                    Editable.Factory.getInstance().newEditable(users?.currentCity)
+            }
+
+
+            if (users?.image == null) {
+
+            } else {
+                val url = it.peekContent().data?.image
+                Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImg)
+            }
+
 
         }
 
@@ -274,18 +295,15 @@ class ProfileFragment : Fragment() {
 
         var profileImage: MultipartBody.Part? = null
 
-        if (selectedImageFile==null)
-        {
-            profileImage = MultipartBody.Part.createFormData(
+        profileImage = if (selectedImageFile == null) {
+            MultipartBody.Part.createFormData(
                 "image",
                 "",
                 selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
             )
 
-        }
-        else
-        {
-            profileImage = MultipartBody.Part.createFormData(
+        } else {
+            MultipartBody.Part.createFormData(
                 "image",
                 selectedImageFile?.name,
                 selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
@@ -314,6 +332,7 @@ class ProfileFragment : Fragment() {
         ) {
 
             var message = it.peekContent().msg!!
+            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
             getProfileApi()
         }
