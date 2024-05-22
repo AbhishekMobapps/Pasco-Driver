@@ -41,13 +41,40 @@ class UserDashboardActivity : AppCompatActivity() {
     private val TAG_NEXT = "next"
     private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private var profileUpdate = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userHomeFragment = UserHomeFragment()
-        replaceFragment(userHomeFragment)
+        profileUpdate = intent.getStringExtra("profileUpdate").toString()
+
+        if (profileUpdate =="update")
+        {
+            navItemIndex = 1
+            CURRENT_TAG = TAG_NEXT
+            binding.homeIconUser.setImageResource(R.drawable.home_icon)
+            binding.orderIconUsers.setImageResource(R.drawable.order_icon)
+            binding.walletIconUsers.setImageResource(R.drawable.more_icon)
+            binding.hisIconUser.setImageResource(R.drawable.hostory_icon)
+            binding.profileIconUser.setImageResource(R.drawable.profile_1)
+
+            binding.orderTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.homeTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.walletTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.hisTextViewUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.accountTextUser.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.headerTxt.visibility = View.VISIBLE
+            binding.consUserDashBoard.visibility = View.GONE
+
+            replaceFragment(ProfileFragment())
+        }
+        else
+        {
+            val userHomeFragment = UserHomeFragment()
+            replaceFragment(userHomeFragment)
+        }
+
         binding.homeTextUser.setTextColor(ContextCompat.getColor(this, R.color.black))
 
         binding.notificationBtn.setOnClickListener {
@@ -137,6 +164,8 @@ class UserDashboardActivity : AppCompatActivity() {
         // Api and observer
         getProfileApi()
         getProfileObserver()
+        getNotificationCountApi()
+        notificationCountObserver()
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -207,6 +236,37 @@ class UserDashboardActivity : AppCompatActivity() {
         }
 
         getProfileModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+            //errorDialogs()
+        }
+    }
+
+    private fun getNotificationCountApi() {
+        notificationCountViewModel.getCountNoti()
+    }
+
+    private fun notificationCountObserver() {
+        notificationCountViewModel.mNotiCountResponse.observe(this) {
+        }
+        notificationCountViewModel.mNotiCountResponse.observe(this) {
+            val message = it.peekContent().msg
+            val success = it.peekContent().status
+            val countNotification = it.peekContent().count
+
+            if (countNotification == 0)
+            {
+                binding.countNotification.visibility = View.GONE
+            }
+            else
+            {
+                binding.countNotification.visibility = View.GONE
+                binding.countNotification.text = countNotification.toString()
+            }
+
+
+        }
+
+        notificationCountViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
             //errorDialogs()
         }

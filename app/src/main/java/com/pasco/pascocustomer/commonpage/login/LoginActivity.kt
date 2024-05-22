@@ -39,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
+    private var countryCode = ""
     private var userType = ""
     private var verificationId: String = ""
     private val otpModel: OtpCheckModelView by viewModels()
@@ -76,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.continueBtn.setOnClickListener {
             strPhoneNo = binding.phoneNumber.text.toString()
+            countryCode = binding.countryCode.text.toString()
 
             if (binding.phoneNumber.text.isEmpty()) {
                 Toast.makeText(this, "Please enter phone number", Toast.LENGTH_SHORT).show()
@@ -112,13 +114,13 @@ class LoginActivity : AppCompatActivity() {
             val otpStatus = it.peekContent().login
             if (loginValue == "driver") {
                 if (otpStatus == 0) {
-                    sendVerificationCode("+91$strPhoneNo")
+                    sendVerificationCode("$countryCode$strPhoneNo")
                 } else {
                     loginApi()
                 }
             } else {
                 if (otpStatus == 0) {
-                    sendVerificationCode("+91$strPhoneNo")
+                    sendVerificationCode("$countryCode$strPhoneNo")
                 } else {
                     loginApi()
                     Log.e("AAAAA", "aaa")
@@ -134,6 +136,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun loginApi() {
+        //   val codePhone = strPhoneNo
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue
@@ -157,9 +160,10 @@ class LoginActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             PascoApp.encryptedPrefs.userId = userId.toString()
             PascoApp.encryptedPrefs.userType = userType
+            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.isFirstTime = false
 
-            if ( message == "Approval Request not created ") {
+            if (message == "Approval Request not created ") {
                 Log.e("AAAAA", "aaaaaaa....")
                 val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
                 startActivity(intent)
@@ -215,6 +219,7 @@ class LoginActivity : AppCompatActivity() {
                     intent.putExtra("verificationId", verificationId)
                     intent.putExtra("phoneNumber", strPhoneNo)
                     intent.putExtra("loginValue", loginValue)
+                    intent.putExtra("countryCode", countryCode)
                     startActivity(intent)
 
                 }

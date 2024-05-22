@@ -38,9 +38,15 @@ class LoginResponse {
     @Expose
     var fullName: String? = null
 
+    @SerializedName("profile")
+    @Expose
+    var profile: Int? = null
+
     @SerializedName("approved")
     @Expose
     var approved: Int? = null
+
+
 
     inner class Token : java.io.Serializable {
         @SerializedName("refresh")

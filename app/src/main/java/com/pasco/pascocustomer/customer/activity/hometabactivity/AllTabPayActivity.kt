@@ -1,7 +1,9 @@
 package com.pasco.pascocustomer.customer.activity.hometabactivity
 
 import android.Manifest
+import android.app.ActionBar
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -17,6 +19,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
@@ -49,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
+import com.pasco.pascocustomer.application.PascoApp
 import java.io.IOException
 import java.util.*
 
@@ -87,6 +91,7 @@ class AllTabPayActivity : AppCompatActivity() {
     private var vehicleSize = ""
     private var vehicleLoadCapacity = ""
     private var vehicleCapability = ""
+    private var profile = ""
 
     private var formattedLatitudeDropSelect: String = ""
     var formattedLatitudeSelect: String = ""
@@ -117,6 +122,17 @@ class AllTabPayActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.backBtn.setOnClickListener { finish() }
+
+        profile = PascoApp.encryptedPrefs.profileUpdate
+
+        if (profile ==  "0")
+        {
+            showCalenderPopup()
+        }
+        else
+        {
+
+        }
 
         lightTrans = intent.getStringExtra("lightTrans").toString()
         vehicleId = intent.getIntExtra("vehicleId", 0)
@@ -712,5 +728,34 @@ class AllTabPayActivity : AppCompatActivity() {
         }
     }
 
+    private fun showCalenderPopup() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.update_profile_popup)
+
+        val yesBtn = dialog.findViewById<TextView>(R.id.yesBtn)
+        val cancel = dialog.findViewById<TextView>(R.id.cancelBtn)
+
+        cancel.setOnClickListener { finish() }
+        yesBtn.setOnClickListener {
+            val intent = Intent(this,UserDashboardActivity::class.java)
+            intent.putExtra("profileUpdate","update")
+            startActivity(intent)
+        }
+        val window = dialog.window
+        val lp = window?.attributes
+        if (lp != null) {
+            lp.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
+        if (lp != null) {
+            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
+        }
+        if (window != null) {
+            window.attributes = lp
+        }
+
+        dialog.show()
+    }
 
 }

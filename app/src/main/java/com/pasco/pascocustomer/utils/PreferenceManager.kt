@@ -119,11 +119,20 @@ class PreferenceManager(context: Context) {
             editor.putString(UserType, userType)
             editor.apply()
         }
+
+    var profileUpdate: String
+        get() = prefs.getString(Profile, "") ?: ""
+        set(profile) {
+            editor.putString(Profile, profile)
+            editor.apply()
+        }
+
     companion object {
         // region "Tags"
         private const val IS_FIRST_TIME = "isFirstTime"
 
         private const val RefreshToken = "RefreshToken"
+        private const val Profile = "Profile"
 
         private const val BEARER_USER_TOKEN = "BEARER_USER_TOKEN"
         private const val firstLogins = "firstLogin"

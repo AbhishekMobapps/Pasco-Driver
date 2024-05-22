@@ -46,9 +46,11 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
@@ -72,6 +74,12 @@ interface ApiServices {
     fun otpCheck(
         @Body body: ClientSignupBody
     ): Observable<OtpCheckResponse>
+
+    @Headers("Accept:application/json")
+    @POST("check-number/")
+    fun checkNumber(
+        @Body body: CheckNumberBody
+    ): Observable<CheckNumberResponse>
 
     @Headers("Accept:application/json")
     @POST("user-login/")
@@ -106,11 +114,7 @@ interface ApiServices {
         @Part attachment2: MultipartBody.Part
     ): Observable<ApprovalRequestResponse>
 
-    //getApprovalRequest
-    @GET("updateapprovalstatus/")
-    fun getVehicleUpdate(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<GetVDetailsResponse>
+
 
     //put approve Requests
     @Multipart
@@ -195,12 +199,11 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<NotificationResponse>
 
-    @GET("NotificationDelete/{user_id}")
+    @GET("NotificationDelete/}")
     fun deleteNotifications(
-        @Path("user_id") user_id: String,
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: NotificationBody
     ): Observable<DeleteNotificationResponse>
-
 
 
 

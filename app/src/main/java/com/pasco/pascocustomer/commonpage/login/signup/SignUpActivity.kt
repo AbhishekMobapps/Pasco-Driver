@@ -24,6 +24,8 @@ import com.google.firebase.auth.*
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
+import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberModelView
 import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupBody
 import com.pasco.pascocustomer.databinding.ActivitySignUpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -46,6 +48,8 @@ class SignUpActivity : AppCompatActivity() {
     private var loginValue = ""
     private var strUserName = ""
     private var strEmail = ""
+    private var countryCode = ""
+    private var driverCountryCode = ""
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -57,6 +61,7 @@ class SignUpActivity : AppCompatActivity() {
     private var address: String? = null
 
     private val otpModel: OtpCheckModelView by viewModels()
+    private val checkNumberModelView: CheckNumberModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,12 +73,10 @@ class SignUpActivity : AppCompatActivity() {
 
 
 
-        if (loginValue == "driver")
-        {
+        if (loginValue == "driver") {
             binding.asDriverSignup.visibility = View.VISIBLE
             binding.asCustomerSignup.visibility = View.GONE
-        }else
-        {
+        } else {
             binding.asCustomerSignup.visibility = View.VISIBLE
             binding.asDriverSignup.visibility = View.GONE
         }
@@ -88,13 +91,12 @@ class SignUpActivity : AppCompatActivity() {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
-            if (loginValue == "driver")
-            {
-                validationDriver(deviceModel)
-            }
-            else
-            {
-                validationUser(deviceModel)
+            countryCode = binding.countryCode.text.toString()
+            driverCountryCode = binding.driverCode.text.toString()
+            if (loginValue == "driver") {
+                validationDriver()
+            } else {
+                validationUser()
             }
 
 
@@ -110,62 +112,57 @@ class SignUpActivity : AppCompatActivity() {
             requestLocationPermission()
         }
 
-        checkLoginObserver()
+        checkNumberObserver()
     }
-    private fun validationDriver(deviceModel: String) {
+
+    private fun validationDriver() {
         with(binding) {
-            if (userName.text.isNullOrBlank())
-            {
+            if (userName.text.isNullOrBlank()) {
                 Toast.makeText(
                     applicationContext,
                     "Please enter name",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            else if (driverEmail.text.isNullOrBlank())
-            {
+            } else if (driverEmail.text.isNullOrBlank()) {
                 Toast.makeText(
                     applicationContext,
                     "Please enter email",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            else if (phoneNumber.text.isNullOrBlank()) {
+            } else if (phoneNumber.text.isNullOrBlank()) {
                 Toast.makeText(
                     applicationContext,
                     "Please enter phone number",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if(addressTxt.text.isNullOrBlank()) {
+            } else if (addressTxt.text.isNullOrBlank()) {
                 Toast.makeText(
                     applicationContext,
                     "Please enter address",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-            else
-            {
+            } else {
 
-                otpCheckApi(deviceModel)
+                checkNumberApi()
 
             }
         }
     }
 
-    private fun validationUser(deviceModel: String) {
+    private fun validationUser() {
         with(binding) {
 
-             if (userPhoneNumber.text.isNullOrBlank()) {
+            if (userPhoneNumber.text.isNullOrBlank()) {
                 Toast.makeText(
-                    applicationContext, "Please enter phone number", Toast.LENGTH_SHORT).show()
-            }
-            else
-            {
-                otpCheckApi(deviceModel)
+                    applicationContext, "Please enter phone number", Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                checkNumberApi()
 
             }
         }
     }
+
     private fun sendVerificationCode(phoneNumber: String) {
 
         // showLoader()
@@ -190,8 +187,7 @@ class SignUpActivity : AppCompatActivity() {
                 ) {
                     // Save the verification ID
                     this@SignUpActivity.verificationId = verificationId
-                    if (loginValue =="driver")
-                    {
+                    if (loginValue == "driver") {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
@@ -203,15 +199,13 @@ class SignUpActivity : AppCompatActivity() {
                         intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
                         intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
                         startActivity(intent)
-                    }else
-                    {
+                    } else {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
                         intent.putExtra("loginValue", loginValue)
                         startActivity(intent)
                     }
-
 
 
                 }
@@ -263,6 +257,7 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun checkLocationPermission(): Boolean {
         return (ContextCompat.checkSelfPermission(
             this,
@@ -288,7 +283,7 @@ class SignUpActivity : AppCompatActivity() {
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect= String.format("%.5f", pickUplatitude)
+        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
         formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
 
         GlobalScope.launch(Dispatchers.IO) {
@@ -316,35 +311,40 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun otpCheckApi(deviceModel: String) {
-        val loinBody = ClientSignupBody(
+    private fun checkNumberApi() {
+        val loinBody = CheckNumberBody(
             phone_number = strPhoneNo,
-            user_type = loginValue,
-            phone_verify = deviceModel
+            user_type = loginValue
         )
-        otpModel.otpCheck(loinBody, this, progressDialog)
+        checkNumberModelView.otpCheck(loinBody, this, progressDialog)
     }
 
-    private fun checkLoginObserver() {
-        otpModel.progressIndicator.observe(this) {
+    private fun checkNumberObserver() {
+        checkNumberModelView.progressIndicator.observe(this) {
         }
-        otpModel.mRejectResponse.observe(
+        checkNumberModelView.mRejectResponse.observe(
             this
         ) {
-            if (loginValue =="driver")
-            {
-                strPhoneNo = binding.phoneNumber.text.toString()
-                sendVerificationCode("+91$strPhoneNo")
-            }
-            else
-            {
-                strPhoneNo = binding.userPhoneNumber.text.toString()
-                sendVerificationCode("+91$strPhoneNo")
+
+            val existNumber = it.peekContent().exists
+            val message = it.peekContent().msg
+
+            if (existNumber == 1) {
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+            } else {
+                if (loginValue == "driver") {
+                    strPhoneNo = binding.phoneNumber.text.toString()
+                    sendVerificationCode("$driverCountryCode$strPhoneNo")
+                    Log.e("PhoneNumberaa" ,"msg+$driverCountryCode$strPhoneNo")
+                } else {
+                    strPhoneNo = binding.userPhoneNumber.text.toString()
+                    sendVerificationCode("$countryCode$strPhoneNo")
+                }
             }
 
 
         }
-        otpModel.errorResponse.observe(this) {
+        checkNumberModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@SignUpActivity, it)
             // errorDialogs()
         }

@@ -111,15 +111,20 @@ class OrderFragment : Fragment() {
             val success = it.peekContent().status
             if (success == "True") {
                 bookMarkList = it.peekContent().data!!
-                binding.oderRecycler.visibility = View.VISIBLE
-                binding.oderRecycler.isVerticalScrollBarEnabled = true
-                binding.oderRecycler.isVerticalFadingEdgeEnabled = true
-                binding.oderRecycler.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                customAdapter = OrderAdapter(requireContext(), bookMarkList)
-                binding.oderRecycler.adapter = customAdapter
-            } else {
-                binding.noDataFoundTxt.visibility = View.VISIBLE
+                if (bookMarkList.isEmpty()) {
+                    binding.oderRecycler.visibility = View.GONE
+                    binding.noDataFoundTxt.visibility = View.VISIBLE
+                    binding.noDataFoundTxt.text = "No Orders"
+                } else {
+                    binding.oderRecycler.visibility = View.VISIBLE
+                    binding.oderRecycler.isVerticalScrollBarEnabled = true
+                    binding.oderRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.oderRecycler.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    customAdapter = OrderAdapter(requireContext(), bookMarkList)
+                    binding.oderRecycler.adapter = customAdapter
+                }
+
             }
         }
 
@@ -142,15 +147,19 @@ class OrderFragment : Fragment() {
             val success = it.peekContent().status
             if (success == "True") {
                 allBiddsList = it.peekContent().data!!
-                binding.allBiddsRecycler.visibility = View.VISIBLE
-                binding.allBiddsRecycler.isVerticalScrollBarEnabled = true
-                binding.allBiddsRecycler.isVerticalFadingEdgeEnabled = true
-                binding.allBiddsRecycler.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                allBiddsAdapter = AllBiddsAdapter(requireContext(), allBiddsList)
-                binding.allBiddsRecycler.adapter = allBiddsAdapter
-            } else {
-                binding.noDataFoundTxt.visibility = View.VISIBLE
+                if (allBiddsList.isEmpty()) {
+                    binding.noDataFoundTxt.visibility = View.VISIBLE
+                    binding.noDataFoundTxt.text = "No bids"
+                } else {
+                    binding.allBiddsRecycler.visibility = View.VISIBLE
+                    binding.allBiddsRecycler.isVerticalScrollBarEnabled = true
+                    binding.allBiddsRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.allBiddsRecycler.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    allBiddsAdapter = AllBiddsAdapter(requireContext(), allBiddsList)
+                    binding.allBiddsRecycler.adapter = allBiddsAdapter
+                }
+
             }
         }
 
@@ -173,15 +182,19 @@ class OrderFragment : Fragment() {
             val success = it.peekContent().status
             if (success == "True") {
                 acceptedList = it.peekContent().data!!
-                binding.acceptRecycler.visibility = View.VISIBLE
-                binding.acceptRecycler.isVerticalScrollBarEnabled = true
-                binding.acceptRecycler.isVerticalFadingEdgeEnabled = true
-                binding.acceptRecycler.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                acceptedAdapter = AcceptedAdapter(requireContext(), acceptedList)
-                binding.acceptRecycler.adapter = acceptedAdapter
-            } else {
-                binding.noDataFoundTxt.visibility = View.VISIBLE
+                if (acceptedList.isEmpty()) {
+                    binding.noDataFoundTxt.visibility = View.VISIBLE
+                    binding.noDataFoundTxt.text = "No Accepted"
+                } else {
+                    binding.acceptRecycler.visibility = View.VISIBLE
+                    binding.acceptRecycler.isVerticalScrollBarEnabled = true
+                    binding.acceptRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.acceptRecycler.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    acceptedAdapter = AcceptedAdapter(requireContext(), acceptedList)
+                    binding.acceptRecycler.adapter = acceptedAdapter
+                }
+
             }
         }
 
