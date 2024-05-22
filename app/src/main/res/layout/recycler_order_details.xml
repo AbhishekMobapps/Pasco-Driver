@@ -387,7 +387,7 @@
             android:id="@+id/maxPriceStaticDORD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bidd Price:"
+            android:text="Bid Price:"
             app:layout_constraintWidth_percent=".2"
             android:textColor="@color/grey"
             android:gravity="right"

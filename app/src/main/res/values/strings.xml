@@ -81,7 +81,7 @@
     <string name="share_the_app">Share App</string>
     <string name="log_out">Log out</string>
     <string name="delete_account">Delete Account</string>
-    <string name="bidding_details">Bidding Details</string>
+    <string name="bidding_details">Biding Details</string>
     <string name="loyalty_program_list">Loyalty Program List</string>
 
 
@@ -217,7 +217,7 @@
     <string name="order">Order</string>
     <string name="submit_driver_profile">Submit</string>
     <string name="confirm">Confirm</string>
-    <string name="bidding_date_time"><![CDATA[Bidding Date&Time]]></string>
+    <string name="bidding_date_time"><![CDATA[Biding Date&Time]]></string>
     <string name="start_point">Start Point</string>
     <string name="end_point_req">End Point</string>
     <string name="thank_you_for_your_order">Thank you for your Order !</string>
@@ -234,4 +234,5 @@
     <string name="change_language">Change Language</string>
     <string name="contact_us">Contact Us</string>
     <string name="wallet">Wallet</string>
+    <string name="biding_status">Biding Status</string>
 </resources>
