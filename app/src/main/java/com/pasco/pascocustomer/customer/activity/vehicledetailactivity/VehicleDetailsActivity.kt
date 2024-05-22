@@ -39,7 +39,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestViewModel
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.getdetailsmodel.GetVDetailsViewModel
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsViewModel
 import java.io.*
 
 @AndroidEntryPoint
@@ -57,11 +57,6 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private var vehicleSize = ""
     private var vehicleLoadCapacity = ""
     private var vehicleCapability = ""
-    private var imageUrlVp: String? = null
-    private var imageUrlVd: String? = null
-    private var imageUrlVRc: String? = null
-    private var shipmentName: String? = null
-    private var vehicleName: String? = null
 
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
@@ -73,12 +68,15 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private val servicesViewModel: ServicesViewModel by viewModels()
     private val vehicleTypeViewModel: VehicleTypeViewModel by viewModels()
     private val approvalRequestViewModel: ApprovalRequestViewModel by viewModels()
-    private val getVDetailsViewModel: GetVDetailsViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVehicleDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Request camera and gallery permissions if not granted
+        requestPermission()
 
         binding.submitBtnAddVeh.setOnClickListener {
             validation()
@@ -94,9 +92,6 @@ class VehicleDetailsActivity : AppCompatActivity() {
         binding.selectVehicleRc.setOnClickListener {
             openCameraOrGallery("vehicleRc")
         }
-        getVehicleDetails()
-        //get vehicle details api
-        getVehicleDetailsObserver()
 
         binding.transporterSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -132,71 +127,12 @@ class VehicleDetailsActivity : AppCompatActivity() {
         //call servicesListApi
         servicesList()
         //call services Observer
-        shipmentName?.let { servicesObserver(it) }
+        servicesObserver()
         //call vehicleTypeObserver
-        vehicleName?.let { vehicleTypeObserver(it) }
+        vehicleTypeObserver()
         //call api
         approvalRequestObserver()
 
-    }
-
-
-    private fun getVehicleDetails() {
-        getVDetailsViewModel.getVDetailsData(
-            progressDialog,
-            this
-        )
-    }
-
-
-    private fun getVehicleDetailsObserver() {
-        getVDetailsViewModel.progressIndicator.observe(this, Observer {
-            // Handle progress indicator changes if needed
-        })
-
-        getVDetailsViewModel.mGetVDetails.observe(this) { response ->
-            val data = response.peekContent().data
-            shipmentName = data!!.shipmentname.toString()
-            vehicleName = data!!.vehiclename.toString()
-
-            val baseUrl = "http://69.49.235.253:8090"
-            val imagePath = data?.vehiclePhoto.orEmpty()
-            val imagePathDoc = data?.document.orEmpty()
-            val imagePathRc = data?.drivingLicense.orEmpty()
-
-            imageUrlVp = "$baseUrl$imagePath"
-            imageUrlVd = "$baseUrl$imagePathDoc"
-            imageUrlVRc = "$baseUrl$imagePathRc"
-
-            if (imageUrlVp!!.isNotEmpty()) {
-                Glide.with(this)
-                    .load(imageUrlVp)
-                    .into(binding.cameraImgVI)
-
-                if (imageUrlVd!!.isNotEmpty()) {
-                    Glide.with(this)
-                        .load(imageUrlVd)
-                        .into(binding.cameraImgDoc)
-
-                    if (imageUrlVRc!!.isNotEmpty()) {
-                        Glide.with(this)
-                            .load(imageUrlVRc)
-                            .into(binding.cameraImgRc)
-
-                    }
-
-                    binding.vehicleNoAdd.setText(data.vehiclenumber.toString())
-
-                    servicesObserver(shipmentName!!)
-                    vehicleTypeObserver(vehicleName!!)
-
-                    getVDetailsViewModel.errorResponse.observe(this) {
-                        // Handle general errors
-                        ErrorUtil.handlerGeneralError(this, it)
-                    }
-                }
-            }
-        }
     }
 
     private fun servicesList() {
@@ -206,7 +142,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
         )
     }
 
-    private fun servicesObserver(shipmentName: String) {
+    private fun servicesObserver() {
         servicesViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -228,22 +164,13 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     R.layout.custom_service_type_spinner,
                     servicesTypeStatic
                 )
-            /* dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-             //dAdapter.addAll(strCatNameList)
-             dAdapter.add(getString(R.string.selectTransType))
-             binding.transporterSpinner.adapter = dAdapter
-             binding.transporterSpinner.setSelection(dAdapter.count)
-             binding.transporterSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))*/
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            //dAdapter.addAll(strCatNameList)
             dAdapter.add(getString(R.string.selectTransType))
             binding.transporterSpinner.adapter = dAdapter
             binding.transporterSpinner.setSelection(dAdapter.count)
-            val spinnerPosition = if (shipmentName.isEmpty()) {
-                dAdapter.getPosition(getString(R.string.selectTransType))
-            } else {
-                dAdapter.getPosition(shipmentName)
-            }
-            binding.transporterSpinner.setSelection(spinnerPosition)
+            binding.transporterSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))
+
 
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG).show()
@@ -267,7 +194,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
         )
     }
 
-    private fun vehicleTypeObserver(vehicleName: String) {
+    private fun vehicleTypeObserver() {
         vehicleTypeViewModel.mVehicleTypeResponse.observe(this) { response ->
             val content = response.peekContent()
             val message = content.msg ?: return@observe
@@ -282,20 +209,10 @@ class VehicleDetailsActivity : AppCompatActivity() {
                 R.layout.custom_service_type_spinner,
                 vehicleTypeStatic
             )
-           /* dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            dAdapter.add(getString(R.string.selectVehicleType))
-            binding.vehicleTypeSpinner.adapter = dAdapter
-            binding.vehicleTypeSpinner.setSelection(dAdapter.count)*/
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dAdapter.add(getString(R.string.selectVehicleType))
             binding.vehicleTypeSpinner.adapter = dAdapter
             binding.vehicleTypeSpinner.setSelection(dAdapter.count)
-            val spinnerPosition = if (vehicleName!!.isEmpty()) {
-                dAdapter.getPosition(getString(R.string.selectVehicleType))
-            } else {
-                dAdapter.getPosition(vehicleName)
-            }
-            binding.vehicleTypeSpinner.setSelection(spinnerPosition)
             binding.vehicleTypeSpinner.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(

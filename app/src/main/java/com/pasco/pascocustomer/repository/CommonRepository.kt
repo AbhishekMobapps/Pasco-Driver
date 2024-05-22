@@ -27,7 +27,8 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.getdetailsmodel.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import javax.inject.Inject
 
@@ -68,6 +69,20 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getUpdateVDetailRepo(): Observable<GetVDetailsResponse> {
         return apiService.getVehicleUpdate(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+
+    fun putApprovalReqRepo(
+        vehiclenumber: RequestBody,
+        identify_document: MultipartBody.Part,
+        identify_document1: MultipartBody.Part,
+        identify_document2: MultipartBody.Part
+
+    ): Observable<PutVDetailsResponse> {
+        return apiService.putVehicleUpdate(
+            PascoApp.encryptedPrefs.bearerToken,
+            vehiclenumber, identify_document, identify_document1, identify_document2
+        )
     }
 
     fun bookingOrder(courseBody: BookingOrderBody): Observable<BookingRideResponse> {
