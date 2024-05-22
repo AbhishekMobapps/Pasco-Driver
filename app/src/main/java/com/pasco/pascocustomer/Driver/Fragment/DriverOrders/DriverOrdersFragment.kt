@@ -19,12 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.activity.Driver.adapter.DriverAllBiddsAdapter
 import com.pasco.pascocustomer.Driver.adapter.DriverHistoryAdapter
-import com.pasco.pascocustomer.databinding.FragmentDriverHistoryBinding
+import com.pasco.pascocustomer.databinding.FragmentDriverOrdersBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 
 @AndroidEntryPoint
-class DriverHistoryFragment : Fragment() {
-    private lateinit var binding:FragmentDriverHistoryBinding
+class DriverOrdersFragment : Fragment() {
+    private lateinit var binding:FragmentDriverOrdersBinding
     private lateinit var activity: Activity
     private var driverHistory:List<DAllOrderResponse.DAllOrderResponseData> = ArrayList()
     private val dAllOrdersViewModel: DAllOrdersViewModel by viewModels()
@@ -34,7 +34,7 @@ class DriverHistoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentDriverHistoryBinding.inflate(inflater, container, false)
+        binding = FragmentDriverOrdersBinding.inflate(inflater, container, false)
         activity = requireActivity()
         allOrdersApi()
         allBiddsObserver()

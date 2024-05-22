@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,52 +17,45 @@ import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PutVDetailsViewModel@Inject constructor(
+class GetVDetailsViewModel@Inject constructor(
     application: Application,
-    private val putApprovalReqRepsitory: CommonRepository
-) : AndroidViewModel(application) {
+    private val getUpdateRepository: CommonRepository
+) : AndroidViewModel(application)  {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mPutApprovalResponse = MutableLiveData<Event<PutVDetailsResponse>>()
+    val mGetVDetails = MutableLiveData<Event<GetVDetailsResponse>>()
     var context: Context? = null
 
-    fun putUpdateReqApprovaldata(
+    fun getVDetailsData(
         progressDialog: CustomProgressDialog,
-        activity: Activity,
-        vehiclenumber: RequestBody,
-        identify_document: MultipartBody.Part,
-        identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        activity: Activity
+
     ) =
         viewModelScope.launch {
-            putuserApproveReq(progressDialog,activity,vehiclenumber,identify_document,identify_document1,identify_document2)
+            getVDetailsDatas( progressDialog,
+                activity)
         }
-
-    suspend fun putuserApproveReq(
+    suspend fun getVDetailsDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity,
-        vehiclenumber: RequestBody,
-        identify_document: MultipartBody.Part,
-        identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
-    ) {
+        activity: Activity
+    )
+
+    {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        putApprovalReqRepsitory.putApprovalReqRepo(vehiclenumber,identify_document,identify_document1,identify_document2)
+        getUpdateRepository.getUpdateVDetailRepo()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<PutVDetailsResponse>() {
-                override fun onNext(value: PutVDetailsResponse) {
+            .subscribe(object : DisposableObserver<GetVDetailsResponse>() {
+                override fun onNext(value: GetVDetailsResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
-                    mPutApprovalResponse.value = Event(value)
+                    mGetVDetails.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {

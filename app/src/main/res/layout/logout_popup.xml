@@ -25,7 +25,7 @@
             android:foregroundGravity="center"
             android:gravity="center"
             android:text="@string/are_you_sure_you_want_to_log_out"
-            android:textColor="@color/earth_yellow"
+            android:textColor="@color/white"
             android:textSize="@dimen/normal_txt_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

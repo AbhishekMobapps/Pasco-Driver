@@ -105,10 +105,18 @@
             android:id="@+id/driverFrameLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/lime"
+            app:layout_constraintBottom_toTopOf="@+id/viewDriverDash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/firstConsLayouttt" />
+
+        <View
+            android:id="@+id/viewDriverDash"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_above="@+id/lime"
+            android:background="@color/grey"
+            app:layout_constraintBottom_toTopOf="@+id/lime" />
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -138,8 +146,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
-                    android:src="@drawable/home_icon"
-                    android:tint="@color/logo_color" />
+                    android:src="@drawable/home_1" />
 
                 <TextView
                     android:id="@+id/homeTextDri"
@@ -149,71 +156,70 @@
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
                     android:text="Home"
-                    android:textColor="@color/logo_color"
+                    android:textColor="@color/black"
                     android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/HistotyFragmentDri"
+                android:id="@+id/OrderFragmentDri"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/booking_iconDri"
+                    android:id="@+id/order_iconDri"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/pin"
-                    android:tint="@color/grey" />
+                    android:tint="@color/logo_color" />
 
                 <TextView
-                    android:id="@+id/bookingTextDri"
+                    android:id="@+id/orderTextDri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
                     android:text="@string/order"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LinearEarning"
+                android:id="@+id/LinearMoreIcon"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/earning_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:id="@+id/moreIcon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/wallet_t"
-                    android:tint="@color/grey" />
+                    android:src="@drawable/more"
+                    android:tint="@color/logo_color" />
 
                 <TextView
-                    android:id="@+id/earningTextDri"
+                    android:id="@+id/moreTextDri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
-                    android:text="Wallet"
-                    android:textColor="@color/grey"
+                    android:text="More"
+                    android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/NotificationFragmentDri"
+                android:id="@+id/tripHistoryFragmentDri"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
@@ -225,15 +231,15 @@
 
 
                     <ImageView
-                        android:id="@+id/notification_iconDri"
+                        android:id="@+id/tripHis_iconDri"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="2dp"
-                        android:src="@drawable/bell"
-                        app:tint="@color/grey" />
+                        android:src="@drawable/history_1"
+                        app:tint="@color/logo_color" />
 
-                    <ImageView
+                  <!--  <ImageView
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_alignParentRight="true"
@@ -257,17 +263,17 @@
                         android:textColor="@color/white"
                         android:textSize="10dp">
 
-                    </TextView>
+                    </TextView>-->
 
                     <TextView
-                        android:id="@+id/notiTextDri"
+                        android:id="@+id/tripHistoryTextDri"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/notification_iconDri"
+                        android:layout_below="@+id/tripHis_iconDri"
                         android:layout_marginBottom="3dp"
                         android:gravity="center"
-                        android:text="Notifications"
-                        android:textColor="@color/grey"
+                        android:text="Trip History"
+                        android:textColor="@color/logo_color"
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
@@ -276,30 +282,30 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/SeetingDfragment"
+                android:id="@+id/PrfileDfragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/Setting_iconDri"
+                    android:id="@+id/profile_iconDri"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
-                    android:src="@drawable/user"
-                    android:tint="@color/grey" />
+                    android:src="@drawable/profile"
+                    android:tint="@color/logo_color" />
 
                 <TextView
-                    android:id="@+id/Setting_textDri"
+                    android:id="@+id/profile_textDri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
                     android:text="Profile"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>

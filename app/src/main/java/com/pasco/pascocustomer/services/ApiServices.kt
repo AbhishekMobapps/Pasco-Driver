@@ -95,7 +95,7 @@ interface ApiServices {
 
     //approval request
     @Multipart
-    @Headers("Accept: application/json")
+    @Headers("Accept:application/json")
     @POST("approvalrequest/")
     fun getApprovalRequest(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
@@ -114,7 +114,7 @@ interface ApiServices {
 
     //put approve Requests
     @Multipart
-    @Headers("Accept: application/json")
+    @Headers("Accept:application/json")
     @PUT("updateapprovalstatus/")
     fun putVehicleUpdate(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
