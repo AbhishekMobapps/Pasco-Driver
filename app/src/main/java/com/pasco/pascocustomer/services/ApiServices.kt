@@ -48,7 +48,8 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.getdetailsmodel.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
 
@@ -110,6 +111,18 @@ interface ApiServices {
     fun getVehicleUpdate(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<GetVDetailsResponse>
+
+    //put approve Requests
+    @Multipart
+    @Headers("Accept: application/json")
+    @PUT("updateapprovalstatus/")
+    fun putVehicleUpdate(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Part("vehiclenumber") vehiclenumber: RequestBody,
+        @Part attachment: MultipartBody.Part,
+        @Part attachment1: MultipartBody.Part,
+        @Part attachment2: MultipartBody.Part
+    ):Observable<PutVDetailsResponse>
 
     @Headers("Accept:application/json")
     @POST("ride-booking/")
