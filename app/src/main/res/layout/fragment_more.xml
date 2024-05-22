@@ -7,7 +7,7 @@
     tools:context=".userFragment.MoreFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,24 +21,247 @@
             android:layout_marginTop="20dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/logOutBtn"
+                android:id="@+id/consBenefits"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginBottom="@dimen/text_size_20"
-                android:background="@color/white"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/more_tab"
                 android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent=".9">
+
+                <ImageView
+                    android:id="@+id/benefitsImgg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/reward_badges"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/trans" />
+
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="15dp"
-                    android:text="Logout"
-                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/pasco_rewards"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/benefitsImgg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+
+                <ImageView
+                    android:id="@+id/forwardArrowBenefits"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/walletBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/text_size_20"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="@dimen/text_size_20"
+                android:background="@drawable/more_tab"
+                android:elevation="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/consBenefits">
+
+                <ImageView
+                    android:id="@+id/walletImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/wallet_t"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/wallet"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/walletImg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/privacyBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/text_size_20"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="@dimen/text_size_20"
+                android:background="@drawable/more_tab"
+                android:elevation="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/walletBtn">
+
+                <ImageView
+                    android:id="@+id/privacyImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/privacy"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/trans" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/privacyImg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/termBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/text_size_20"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="@dimen/text_size_20"
+                android:background="@drawable/more_tab"
+                android:elevation="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/privacyBtn">
+
+                <ImageView
+                    android:id="@+id/termImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/terms"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/terms_and_conditions"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/termImg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/logOutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/text_size_20"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="@dimen/text_size_20"
+                android:background="@drawable/more_tab"
+                android:elevation="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/termBtn">
+
+                <ImageView
+                    android:id="@+id/logoutImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/logout"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/log_out"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/logoutImg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+                <ImageView
+                    android:id="@+id/logforwardArrowBenefits"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -46,58 +269,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/consBenefits"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/earth_yellow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent=".95">
-
-        <ImageView
-            android:id="@+id/benefitsImgg"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/circle_profile_background"
-            android:padding="12dp"
-            android:src="@drawable/reward_badges"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/earth_yellow" />
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_size_20"
-            android:gravity="center_vertical"
-            android:text="@string/pasco_rewards"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_16"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/benefitsImgg"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent=".7" />
-
-
-        <ImageView
-            android:id="@+id/forwardArrowBenefits"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/next"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

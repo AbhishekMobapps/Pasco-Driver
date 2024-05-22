@@ -96,6 +96,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!reqId.isNullOrBlank()) {
             getBidDetailsApi()
         }
+        // abc
         //call reqObsever
         getBidObserver()
         //callObserver
@@ -308,7 +309,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             reqId
         )
     }
-//comment
+//comment123
     @SuppressLint("MissingInflatedId")
     private fun addAvailabilityPopUp() {
         val builder =
