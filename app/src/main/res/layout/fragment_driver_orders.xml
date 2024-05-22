@@ -24,7 +24,7 @@
             android:id="@+id/allBiddsTextIdD"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Bidding Status"
+            android:text="@string/biding_status"
             app:layout_constraintWidth_percent=".5"
             android:gravity="center"
             android:textSize="@dimen/text_size_16"

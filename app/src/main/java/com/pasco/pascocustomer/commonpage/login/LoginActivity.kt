@@ -163,6 +163,8 @@ class LoginActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.isFirstTime = false
 
+
+            if (approved == 2 && userType == "driver") {
             if (message == "Approval Request not created ") {
                 Log.e("AAAAA", "aaaaaaa....")
                 val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
