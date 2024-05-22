@@ -34,10 +34,10 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
-import com.pasco.pascocustomer.databinding.FragmentSettingsBinding
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetialsActivity
+import com.pasco.pascocustomer.databinding.FragmentDriverProfileBinding
+import com.pasco.pascocustomer.databinding.FragmentProfileBinding
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
-import com.pasco.pascocustomer.userFragment.profile.updatemodel.UpdateProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -47,8 +47,8 @@ import java.io.InputStream
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment() {
-    private lateinit var binding: FragmentSettingsBinding
+class DriverProfileFragment : Fragment() {
+    private lateinit var binding: FragmentDriverProfileBinding
     @Inject
     lateinit var activity: Activity
     private val getProfileModelView: GetProfileModelView by viewModels()
@@ -66,13 +66,13 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        binding = FragmentDriverProfileBinding.inflate(inflater, container, false)
         userType = PascoApp.encryptedPrefs.userType
         // Request camera and gallery permissions if not granted
         requestPermission()
 
         binding.editButtonDriverProfile.setOnClickListener {
-            val intent = Intent(requireActivity(),VehicleDetailsActivity::class.java)
+            val intent = Intent(requireActivity(),UpdateVehicleDetialsActivity::class.java)
             startActivity(intent)
         }
 

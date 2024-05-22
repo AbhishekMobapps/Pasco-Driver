@@ -26,7 +26,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.transportapp.DriverApp.MarkDuty.MarkDutyViewModel
@@ -44,13 +43,12 @@ import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.Driver.ContactWithUsActivity
 import com.pasco.pascocustomer.Driver.DriverMessageActivity
-import com.pasco.pascocustomer.Driver.EmergencyResponse.Ui.EmergencyCallActivity
-import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverHistoryFragment
-import com.pasco.pascocustomer.Driver.Fragment.EarningFragment
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
+import com.pasco.pascocustomer.Driver.Fragment.DriverMoreFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
-import com.pasco.pascocustomer.Driver.Fragment.SettingsFragment
+import com.pasco.pascocustomer.Driver.Fragment.DriverProfileFragment
+import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
 import com.pasco.pascocustomer.activity.Driver.PrivacyPolicyActivity
-import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
@@ -120,12 +118,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             requestLocationPermission()
         }
         binding.firstConsLayouttt.visibility = View.VISIBLE
-        
 
-        //call get notiCount
-        getCountDri()
-        //getCountObserver
-        getCountObserverDri()
         getProfileApi()
         getUserProfileObserver()
 
@@ -147,14 +140,14 @@ class DriverDashboardActivity : AppCompatActivity() {
         CouponsConstraint = findViewById(R.id.CouponsConstraint)
         loyaltyProgramConstraint = findViewById(R.id.loyaltyProgramConstraint)
 
-        naview.itemIconTintList = null
+       /* naview.itemIconTintList = null
         binding.userIconDashBoard.setOnClickListener {
             binding.drawer.openDrawer(GravityCompat.START)
             //getProfileApi call
             getProfileApi()
             //call observer
             getUserProfileObserver()
-        }
+        }*/
         //call observer
         markOnObserver()
 
@@ -184,83 +177,84 @@ class DriverDashboardActivity : AppCompatActivity() {
             getProfileApi()
             getUserProfileObserver()
             navItemIndex = 1
-            binding.SettingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notificationIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notiTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningIcon.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.bookingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
-            binding.SettingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
-            binding.bookingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningTextDri.setTextColor(application.resources.getColor(R.color.grey))
+            binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.black))
+            binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.black))
         }
 
-        binding.HistotyFragmentDri.setOnClickListener {
+        binding.OrderFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
-            val driverHistoryFragment = DriverHistoryFragment()
-            replace_fragment(driverHistoryFragment)
+            val driverOrdersFragment = DriverOrdersFragment()
+            replace_fragment(driverOrdersFragment)
             navItemIndex = 2
-            binding.SettingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notificationIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notiTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningIcon.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.bookingIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
-            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.SettingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.bookingTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
-            binding.earningTextDri.setTextColor(application.resources.getColor(R.color.grey))
+            binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.black))
+            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.orderTextDri.setTextColor(application.resources.getColor(R.color.black))
         }
-        binding.LinearEarning.setOnClickListener {
+        binding.LinearMoreIcon.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
-            val earningFragment = EarningFragment()
-            replace_fragment(earningFragment)
+            val driverMoreFragment = DriverMoreFragment()
+            replace_fragment(driverMoreFragment)
             navItemIndex = 3
-            binding.SettingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notificationIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notiTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
-            binding.bookingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.SettingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.bookingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.moreIcon.setColorFilter(application.resources.getColor(R.color.black))
+            binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.moreTextDri.setTextColor(application.resources.getColor(R.color.black))
+            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+
         }
 
-        binding.NotificationFragmentDri.setOnClickListener {
+        binding.tripHistoryFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
-          //  val notificationFragment = NotificationFragment()
-            //replace_fragment(notificationFragment)
+          val tripHistoryFragment = TripHistoryFragment()
+            replace_fragment(tripHistoryFragment)
             navItemIndex = 4
-            binding.notificationIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
-            binding.notiTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
-            binding.SettingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.earningIcon.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.bookingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.SettingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.bookingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningTextDri.setTextColor(application.resources.getColor(R.color.grey))
+            binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.black))
+            binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.black))
+            binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
         }
 
-        binding.SeetingDfragment.setOnClickListener {
+        binding.PrfileDfragment.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.GONE
-            val settingsFragment = SettingsFragment()
-            replace_fragment(settingsFragment)
+            val driverProfileFragment = DriverProfileFragment()
+            replace_fragment(driverProfileFragment)
             navItemIndex = 5
-            binding.SettingIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
-            binding.notificationIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.notiTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningIcon.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.bookingIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.grey))
-            binding.SettingTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
-            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.bookingTextDri.setTextColor(application.resources.getColor(R.color.grey))
-            binding.earningTextDri.setTextColor(application.resources.getColor(R.color.grey))
+            binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.black))
+            binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+            binding.profileTextDri.setTextColor(application.resources.getColor(R.color.black))
+            binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.homeTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+            binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
         }
 
         // Set listeners using a function
@@ -350,7 +344,7 @@ class DriverDashboardActivity : AppCompatActivity() {
                     .show()
             } else if (response.peekContent().status == "True") {
                 countDri = response.peekContent().count.toString()
-                binding.countttDri.text = countDri
+               // binding.countttDri.text = countDri
 
             }
         }
@@ -601,22 +595,36 @@ class DriverDashboardActivity : AppCompatActivity() {
             when (navItemIndex) {
                 5 -> {
                     binding.firstConsLayouttt.visibility = View.GONE
+                    val homeFragment = HomeFragment()
+                    replace_fragment(homeFragment)
+                    binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                    binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                    binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+                    binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                    binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.black))
+                    binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                    binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                    binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                    binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                    binding.homeTextDri.setTextColor(application.resources.getColor(R.color.black))
                 }
 
                 4, 3, 2 -> {
                     navItemIndex = 1
                     with(application.resources) {
                         binding.firstConsLayouttt.visibility = View.VISIBLE
-                        binding.SettingIconDri.setColorFilter(getColor(R.color.grey))
-                        binding.notificationIconDri.setColorFilter(getColor(R.color.grey))
-                        binding.notiTextDri.setTextColor(getColor(R.color.grey))
-                        binding.earningIcon.setColorFilter(getColor(R.color.grey))
-                        binding.bookingIconDri.setColorFilter(getColor(R.color.grey))
-                        binding.homeIconDri.setColorFilter(getColor(R.color.logo_color))
-                        binding.SettingTextDri.setTextColor(getColor(R.color.grey))
-                        binding.homeTextDri.setTextColor(getColor(R.color.logo_color))
-                        binding.bookingTextDri.setTextColor(getColor(R.color.grey))
-                        binding.earningTextDri.setTextColor(getColor(R.color.grey))
+                        val homeFragment = HomeFragment()
+                        replace_fragment(homeFragment)
+                        binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                        binding.tripHisIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                        binding.moreIcon.setColorFilter(application.resources.getColor(R.color.logo_color))
+                        binding.orderIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
+                        binding.homeIconDri.setColorFilter(application.resources.getColor(R.color.black))
+                        binding.profileTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                        binding.tripHistoryTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                        binding.moreTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                        binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
+                        binding.homeTextDri.setTextColor(application.resources.getColor(R.color.black))
                     }
                 }
 

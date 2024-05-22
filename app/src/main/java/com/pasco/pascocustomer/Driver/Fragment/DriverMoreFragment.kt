@@ -1,7 +1,6 @@
 package com.pasco.pascocustomer.Driver.Fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -21,13 +20,13 @@ import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountV
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.databinding.FragmentEarningBinding
+import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 
 
 @AndroidEntryPoint
-class EarningFragment : Fragment() {
-    private lateinit var binding: FragmentEarningBinding
+class DriverMoreFragment : Fragment() {
+    private lateinit var binding: FragmentDriverMoreBinding
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
@@ -41,7 +40,7 @@ class EarningFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentEarningBinding.inflate(inflater, container, false)
+        binding = FragmentDriverMoreBinding.inflate(inflater, container, false)
 
         binding.recycerEarningList.isVerticalScrollBarEnabled = true
         binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
