@@ -48,14 +48,14 @@
 
 
     <TextView
-        android:id="@+id/addAvail"
+        android:id="@+id/approveStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="Add Availability"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_20"
+        android:text="Pending"
+        android:textColor="@color/red"
+        android:textSize="@dimen/text_size_16"
         android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"

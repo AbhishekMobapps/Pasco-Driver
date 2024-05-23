@@ -33,6 +33,7 @@ import com.pasco.pascocustomer.utils.ErrorUtil
 class DriverMoreFragment : Fragment() {
     private lateinit var binding: FragmentDriverMoreBinding
     private val logoutViewModel: LogOutModelView by viewModels()
+    private var dAdminApprovedId: String? = ""
     private val progressDialog by lazy { CustomProgressDialog(requireContext()) }
     private var refersh = ""
 
@@ -44,6 +45,14 @@ class DriverMoreFragment : Fragment() {
         binding = FragmentDriverMoreBinding.inflate(inflater, container, false)
 
         refersh = PascoApp.encryptedPrefs.token
+        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
+
+        if (dAdminApprovedId == "0") {
+            disableAllExceptTwo()
+            openPopUp()
+        } else if (dAdminApprovedId == "1") {
+            enableAll()
+        }
 
         binding.consUpdateVehDetails.setOnClickListener {
             val intent = Intent(requireActivity(), UpdateVehicleDetialsActivity::class.java)
@@ -79,6 +88,36 @@ class DriverMoreFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun enableAll() {
+        binding.consUpdateVehDetails.isEnabled = true
+        binding.consContactAndSupportInside.isEnabled = true
+        binding.consMyWalletVehDetails.isEnabled = true
+        binding.consTermsCondInside.isEnabled = true
+        binding.consPrivacyPolicyInside.isEnabled = true
+        binding.consNotesReminderDri.isEnabled = true
+    }
+
+    private fun openPopUp() {
+        val builder =
+            AlertDialog.Builder(requireContext(), R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.admin_approval_status, null)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val okButtonAdminA = dialogView.findViewById<TextView>(R.id.okButtonAdminA)
+        dialog.show()
+        okButtonAdminA.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    private fun disableAllExceptTwo() {
+        binding.consNotesReminderDri.isEnabled = false
+        binding.consMyWalletVehDetails.isEnabled = false
     }
 
     @SuppressLint("MissingInflatedId")

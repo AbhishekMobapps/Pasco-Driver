@@ -13,7 +13,7 @@
     <string name="login_error">Login error</string>
     <string name="OK">Ok</string>
     <string name="tips_annoucements_or_n_features_go_here_in_carousel">Tips, annoucements or \n features go here in carousel</string>
-    <string name="enter_4_digit_code_send_to">Enter 4-digit code send to</string>
+    <string name="enter_4_digit_code_send_to">Enter 6-digit code send to</string>
     <string name="glad_to_have_you_back_enter_your_credentials_n_to_log_in_to_your_account">Glad to have you back! Enter your credentials \n to log in to your account</string>
     <string name="as_client">As Client</string>
     <string name="as_driver">As Driver</string>
@@ -38,8 +38,8 @@
     <string name="submit">Submit</string>
     <string name="selectTransType">Select Transporter Type</string>
     <string name="selectVehicleType">Select vehicle type</string>
-    <string name="pick_start_point">Pick start point</string>
-    <string name="pick_destination_point">Pick destination point</string>
+    <string name="pick_start_point">Pickup Point</string>
+    <string name="pick_destination_point">Dropping Point</string>
     <string name="cargo_qty">Cargo Qty</string>
     <string name="payment_method">Payment Method</string>
     <string name="your_message">Your Message</string>
@@ -237,4 +237,6 @@
     <string name="please_update_your_profile_first">Please update your profile first !</string>
     <string name="language">Language</string>
     <string name="additional_service">Additional Service(Optional)</string>
+    <string name="your_information_is_under_review_you_are_not_approved_by_the_admin">Your information is under review. You are not approved by the admin</string>
+    <string name="currently_no_bids_are_available">Currently, no bids are available.</string>
 </resources>

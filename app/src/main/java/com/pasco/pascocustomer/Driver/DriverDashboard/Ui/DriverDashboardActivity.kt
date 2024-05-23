@@ -68,23 +68,9 @@ class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var naview: NavigationView
     private var city: String? = null
     private var address: String? = null
+    private var dAdminApprovedId: String? = ""
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val handler = Handler(Looper.getMainLooper())
-    lateinit var myDashConstraint: ConstraintLayout
-    lateinit var CheckApproveConstraint: ConstraintLayout
-    lateinit var couponsEarningsConstraint: ConstraintLayout
-    lateinit var CouponsConstraint: ConstraintLayout
-    lateinit var loyaltyProgramConstraint: ConstraintLayout
-    lateinit var myMessageConstraint: ConstraintLayout
-    lateinit var myTermsConditionConstraint: ConstraintLayout
-    lateinit var myPrivacyPolicyConstraint: ConstraintLayout
-    lateinit var contactWithusConstraint: ConstraintLayout
-    lateinit var whousConstraint: ConstraintLayout
-    lateinit var logOutConstraint: ConstraintLayout
-    lateinit var deleteConstraint: ConstraintLayout
-    lateinit var procircleImage: CircleImageView
-    lateinit var userProNameText: TextView
-    lateinit var userProEmailText: TextView
     private var lastBackPressTime = 0L
     private val backPressInterval = 2000
     private var shouldLoadHomeFragOnBackPress = true
@@ -109,7 +95,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
-        approvedID = PascoApp.encryptedPrefs.approvedId
+        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         refersh = PascoApp.encryptedPrefs.token
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
@@ -119,39 +105,19 @@ class DriverDashboardActivity : AppCompatActivity() {
             requestLocationPermission()
         }
         binding.firstConsLayouttt.visibility = View.VISIBLE
-
-        //Api and Observer
         getProfileApi()
         getUserProfileObserver()
+
+        if (dAdminApprovedId == "0") {
+            disableAllExceptMore()
+            openPopUp()
+        } else if (dAdminApprovedId == "1") {
+            enableAll()
+        }
+
+        //Api and Observer
         getNotificationCountDApi()
         notificationCountDObserver()
-
-
-        naview = findViewById(R.id.naview)
-        procircleImage = findViewById(R.id.procircleImage)
-        userProNameText = findViewById(R.id.userProNameText)
-        userProEmailText = findViewById(R.id.userProEmailText)
-        myDashConstraint = findViewById(R.id.myDashConstraint)
-        CheckApproveConstraint = findViewById(R.id.CheckApproveConstraint)
-        myMessageConstraint = findViewById(R.id.myMessageConstraint)
-        myTermsConditionConstraint = findViewById(R.id.myTermsConditionConstraint)
-        myPrivacyPolicyConstraint = findViewById(R.id.myPrivacyPolicyConstraint)
-        whousConstraint = findViewById(R.id.whousConstraint)
-        contactWithusConstraint = findViewById(R.id.contactWithusConstraint)
-        logOutConstraint = findViewById(R.id.logOutConstraint)
-        deleteConstraint = findViewById(R.id.deleteConstraint)
-        couponsEarningsConstraint = findViewById(R.id.couponsEarningsConstraint)
-        CouponsConstraint = findViewById(R.id.CouponsConstraint)
-        loyaltyProgramConstraint = findViewById(R.id.loyaltyProgramConstraint)
-
-       /* naview.itemIconTintList = null
-        binding.userIconDashBoard.setOnClickListener {
-            binding.drawer.openDrawer(GravityCompat.START)
-            //getProfileApi call
-            getProfileApi()
-            //call observer
-            getUserProfileObserver()
-        }*/
         binding.notificationBtnDriver.setOnClickListener {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
@@ -233,7 +199,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         binding.tripHistoryFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
-          val tripHistoryFragment = TripHistoryFragment()
+            val tripHistoryFragment = TripHistoryFragment()
             replace_fragment(tripHistoryFragment)
             navItemIndex = 4
             binding.profileIconDri.setColorFilter(application.resources.getColor(R.color.logo_color))
@@ -265,11 +231,45 @@ class DriverDashboardActivity : AppCompatActivity() {
             binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
         }
 
-        // Set listeners using a function
-        setClickListeners()
-
 
     }
+
+    private fun enableAll() {
+        binding.HomeFragmentDri.isEnabled = true
+        binding.OrderFragmentDri.isEnabled = true
+        binding.tripHistoryFragmentDri.isEnabled = true
+        binding.PrfileDfragment.isEnabled = true
+        binding.notificationBtnDriver.isEnabled = true
+        binding.switchbtn.isEnabled = true
+        binding.LinearMoreIcon.isEnabled = true
+    }
+
+    private fun disableAllExceptMore() {
+        binding.HomeFragmentDri.isEnabled = false
+        binding.OrderFragmentDri.isEnabled = false
+        binding.tripHistoryFragmentDri.isEnabled = false
+        binding.PrfileDfragment.isEnabled = false
+        binding.notificationBtnDriver.isEnabled = false
+        binding.switchbtn.isEnabled = false
+        binding.LinearMoreIcon.isEnabled = true
+    }
+
+    private fun openPopUp() {
+        val builder =
+            AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.admin_approval_status, null)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val okButtonAdminA = dialogView.findViewById<TextView>(R.id.okButtonAdminA)
+        dialog.show()
+        okButtonAdminA.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
     private fun requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this@DriverDashboardActivity,
@@ -356,21 +356,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         })
         getProfileModelView.mRejectResponse.observe(this) { response ->
             val data = response.peekContent().data
-            val fullname = data?.fullName.toString()
-            val email = data?.email.toString()
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
 
             val imageUrl = "$baseUrl$imagePath"
-
-            if (imageUrl.isNotEmpty()) {
-                Glide.with(this)
-                    .load(imageUrl)
-                    .into(procircleImage)
-            } else {
-                procircleImage.setImageResource(R.drawable.ic_launcher_background)
-            }
-
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(imageUrl)
@@ -380,9 +369,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             }
 
             Log.e("getDetails", "ObservergetUserProfile: ")
-
-            userProNameText.text = fullname
-            userProEmailText.text = email
             val helloName = data?.fullName.toString()
             var hName = "Hello $helloName"
             binding.driverNameDash.text = hName
@@ -422,105 +408,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         )
     }
 
-    private fun setClickListeners() {
-        myDashConstraint.setOnClickListener {
-            resetAllViews()
-            myDashConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent =
-                Intent(this@DriverDashboardActivity, DriverDashboardActivity::class.java)
-            startActivity(intent)
-        }
-
-        myMessageConstraint.setOnClickListener {
-            resetAllViews()
-            myMessageConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent = Intent(this@DriverDashboardActivity, DriverMessageActivity::class.java)
-            startActivity(intent)
-        }
-        couponsEarningsConstraint.setOnClickListener {
-            resetAllViews()
-            if (isCouponsVisible) {
-                CouponsConstraint.visibility = View.GONE
-                loyaltyProgramConstraint.visibility = View.GONE
-                couponsEarningsConstraint.setBackgroundResource(0)
-            } else {
-                CouponsConstraint.visibility = View.VISIBLE
-                loyaltyProgramConstraint.visibility = View.VISIBLE
-                couponsEarningsConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-                CouponsConstraint.setOnClickListener {
-                    resetAllViews()
-                    CouponsConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-                    val intent = Intent(
-                        this@DriverDashboardActivity,
-                        CouponsAndEarningActivity::class.java
-                    )
-                    startActivity(intent)
-                }
-             /*   loyaltyProgramConstraint.setOnClickListener {
-                    resetAllViews()
-                    loyaltyProgramConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-                    val intent =
-                        Intent(this@DriverDashboardActivity, LoyaltyBonusActivity::class.java)
-                    startActivity(intent)
-                }*/
-            }
-            isCouponsVisible = !isCouponsVisible // Toggle the flag
-        }
-        CheckApproveConstraint.setOnClickListener {
-            resetAllViews()
-            CheckApproveConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent =
-                Intent(this@DriverDashboardActivity, ApprovalStatusActivity::class.java)
-            startActivity(intent)
-        }
-
-        myTermsConditionConstraint.setOnClickListener {
-            resetAllViews()
-            myTermsConditionConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent =
-                Intent(this@DriverDashboardActivity, TermsAndConditionsActivity::class.java)
-            startActivity(intent)
-        }
-
-        myPrivacyPolicyConstraint.setOnClickListener {
-            resetAllViews()
-            myPrivacyPolicyConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent = Intent(this@DriverDashboardActivity, PrivacyPolicyActivity::class.java)
-            startActivity(intent)
-        }
-        contactWithusConstraint.setOnClickListener {
-            resetAllViews()
-            contactWithusConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            val intent = Intent(this@DriverDashboardActivity, ContactWithUsActivity::class.java)
-            startActivity(intent)
-        }
-
-        logOutConstraint.setOnClickListener {
-            resetAllViews()
-            logOutConstraint.setBackgroundResource(R.drawable.nav_txt_background)
-            openLogoutPop()
-            //logout observer
-            logOutObserver()
-        }
-    }
-
-
-    private fun resetAllViews() {
-        val constraints = arrayOf(
-            myDashConstraint,
-            CheckApproveConstraint,
-            couponsEarningsConstraint,
-            CouponsConstraint,
-            myMessageConstraint,
-            myTermsConditionConstraint,
-            myPrivacyPolicyConstraint,
-            whousConstraint,
-            loyaltyProgramConstraint,
-            contactWithusConstraint
-        )
-        constraints.forEach { it.setBackgroundResource(0) }
-    }
-
     @SuppressLint("MissingInflatedId")
     private fun openLogoutPop() {
         val builder = AlertDialog.Builder(
@@ -556,8 +443,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = response.peekContent().msg
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
-            if (response.peekContent().status == "True")
-            {
+            if (response.peekContent().status == "True") {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
@@ -565,7 +451,6 @@ class DriverDashboardActivity : AppCompatActivity() {
                 activity.startActivity(intent)
                 activity.finish()
             }
-
 
 
         }
@@ -587,15 +472,8 @@ class DriverDashboardActivity : AppCompatActivity() {
             val success = it.peekContent().status
             val countNotification = it.peekContent().count
 
-            if (countNotification == 0)
-            {
-                binding.countNotificationDri.visibility = View.GONE
-            }
-            else
-            {
-                binding.countNotificationDri.visibility = View.GONE
-                binding.countNotificationDri.text = countNotification.toString()
-            }
+
+            binding.countNotificationDri.text = countNotification.toString()
 
 
         }
@@ -697,7 +575,8 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
     private fun openWarningPopUp() {
-        val builder = AlertDialog.Builder(this@DriverDashboardActivity, R.style.Style_Dialog_Rounded_Corner)
+        val builder =
+            AlertDialog.Builder(this@DriverDashboardActivity, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.custom_permission_popup, null)
         builder.setView(dialogView)
 

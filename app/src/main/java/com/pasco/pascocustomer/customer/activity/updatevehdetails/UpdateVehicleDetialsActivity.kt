@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -23,6 +24,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetialsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +37,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+
 @AndroidEntryPoint
 class UpdateVehicleDetialsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUpdateVehicleDetialsBinding
@@ -44,6 +47,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
     private var imageUrlVRc: String? = null
     private var shipmentName: String? = null
     private var vehicleName: String? = null
+    private var dAdminApprovedId: String? = ""
     private var selectedImageFile: File? = null
     private var selectedImageFileDoc: File? = null
     private var selectedImageFileRc: File? = null
@@ -56,16 +60,27 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateVehicleDetialsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
+
+
+        if (dAdminApprovedId.equals("0")) {
+          binding.approveStatus.visibility = View.VISIBLE
+        }
+        else if(dAdminApprovedId.equals("1"))
+        {
+            binding.approveStatus.visibility = View.GONE
+        }
         binding.backImageUpdateVeh.setOnClickListener {
             finish()
         }
+
         requestPermission()
         getVehicleDetails()
         //get vehicle details api
         getVehicleDetailsObserver()
         binding.submitBtnAddVehUpdate.setOnClickListener {
             //call api
-            Log.e("dasdas"+ "onCreate: ","Hellp" )
+            Log.e("dasdas" + "onCreate: ", "Hellp")
             putUpdateDetails()
         }
 
@@ -210,6 +225,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         galleryIntent.type = "image/*" // Allow all image types
         selectImageLauncher.launch(galleryIntent)
     }
+
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (cameraIntent.resolveActivity(this.packageManager) != null) {
@@ -490,12 +506,14 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun getVehicleDetails() {
         getVDetailsViewModel.getVDetailsData(
             progressDialog,
             this
         )
     }
+
     private fun getVehicleDetailsObserver() {
         getVDetailsViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed

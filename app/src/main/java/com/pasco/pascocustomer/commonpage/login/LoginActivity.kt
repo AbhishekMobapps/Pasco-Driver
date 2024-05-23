@@ -156,23 +156,21 @@ class LoginActivity : AppCompatActivity() {
             val userId = it.peekContent().userId
             userType = it.peekContent().userType.toString()
             val approved = it.peekContent().approved
+            PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
             PascoApp.encryptedPrefs.token = token?.refresh ?: ""
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             PascoApp.encryptedPrefs.userId = userId.toString()
             PascoApp.encryptedPrefs.userType = userType
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.isFirstTime = false
-          
+
             if (approved == 2 && userType == "driver") {
                 Log.e("AAAAA", "aaaaaaa....")
                 val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
                 startActivity(intent)
-            } else if (loginValue == "driver" && approved == 0 && userType == "driver") {
-                openPopUp()
-            } else if (loginValue == "driver" && approved == 1 && userType == "driver") {
+            } else if (loginValue == "driver" && userType == "driver") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@LoginActivity, DriverDashboardActivity::class.java)
-                intent.putExtra("Dri", "Driver")
                 startActivity(intent)
 
             } else if (loginValue == "user" && userType == "user") {
@@ -181,101 +179,69 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-                if (approved == 2 && userType == "driver") {
-                    Log.e("AAAAA", "aaaaaaa....")
-                    val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
-                    startActivity(intent)
-                } else if (loginValue == "driver" && approved == 0 && userType == "driver") {
-                    openPopUp()
-                } else if (loginValue == "driver" && approved == 1 && userType == "driver") {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@LoginActivity, DriverDashboardActivity::class.java)
-                    intent.putExtra("Dri", "Driver")
-                    startActivity(intent)
-
-                } else if (loginValue == "user" && userType == "user") {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@LoginActivity, UserDashboardActivity::class.java)
-                    startActivity(intent)
-                }
-
-            }
-            loginModel.errorResponse.observe(this) {
-                ErrorUtil.handlerGeneralError(this@LoginActivity, it)
-                // errorDialogs()
-            }
         }
-
-
-        private fun sendVerificationCode(phoneNumber: String) {
-
-            // showLoader()
-            val options = PhoneAuthOptions.newBuilder(auth)
-                .setPhoneNumber(phoneNumber)
-                .setTimeout(60L, TimeUnit.SECONDS)
-                .setActivity(this)
-                .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                    override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                        // Automatically sign in the user when verification is done
-                        signInWithPhoneAuthCredential(credential)
-                    }
-
-                    override fun onVerificationFailed(e: FirebaseException) {
-                        // Handle error
-                        Log.e("UserMessage", "Verification failed: ${e.message}")
-                    }
-
-                    override fun onCodeSent(
-                        verificationId: String,
-                        token: PhoneAuthProvider.ForceResendingToken
-                    ) {
-                        // Save the verification ID
-                        this@LoginActivity.verificationId = verificationId
-
-                        val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
-                        intent.putExtra("verificationId", verificationId)
-                        intent.putExtra("phoneNumber", strPhoneNo)
-                        intent.putExtra("loginValue", loginValue)
-                        intent.putExtra("countryCode", countryCode)
-                        startActivity(intent)
-
-                    }
-                })
-                .build()
-
-            PhoneAuthProvider.verifyPhoneNumber(options)
-        }
-
-
-        private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-            auth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in successful, go to the next activity or perform desired actions
-                        Log.e("UserMessage", "onCreate: Successfully")
-
-                    } else {
-                        // Sign in failed
-                        if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                            // The verification code entered was invalid
-                        }
-                    }
-                }
-        }
-
-        private fun openPopUp() {
-            val builder =
-                AlertDialog.Builder(this@LoginActivity, R.style.Style_Dialog_Rounded_Corner)
-            val dialogView = layoutInflater.inflate(R.layout.register_confirmation, null)
-            builder.setView(dialogView)
-
-            val dialog = builder.create()
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            val okButtonAR = dialogView.findViewById<TextView>(R.id.okButtonAR)
-            dialog.show()
-            okButtonAR.setOnClickListener {
-                dialog.dismiss()
-            }
+        loginModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@LoginActivity, it)
+            // errorDialogs()
         }
     }
+
+
+    private fun sendVerificationCode(phoneNumber: String) {
+
+        // showLoader()
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(this)
+            .setCallbacks(object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                    // Automatically sign in the user when verification is done
+                    signInWithPhoneAuthCredential(credential)
+                }
+
+                override fun onVerificationFailed(e: FirebaseException) {
+                    // Handle error
+                    Log.e("UserMessage", "Verification failed: ${e.message}")
+                }
+
+                override fun onCodeSent(
+                    verificationId: String,
+                    token: PhoneAuthProvider.ForceResendingToken
+                ) {
+                    // Save the verification ID
+                    this@LoginActivity.verificationId = verificationId
+
+                    val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
+                    intent.putExtra("verificationId", verificationId)
+                    intent.putExtra("phoneNumber", strPhoneNo)
+                    intent.putExtra("loginValue", loginValue)
+                    intent.putExtra("countryCode", countryCode)
+                    startActivity(intent)
+
+                }
+            })
+            .build()
+
+        PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in successful, go to the next activity or perform desired actions
+                    Log.e("UserMessage", "onCreate: Successfully")
+
+                } else {
+                    // Sign in failed
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                    }
+                }
+            }
+    }
+
+
+}

@@ -148,11 +148,10 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/lime"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_alignParentBottom="true"
             android:elevation="10dp"
             android:orientation="horizontal"
-            android:padding="8dp"
             android:paddingTop="4dp"
             android:weightSum="10"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -163,6 +162,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -170,7 +171,6 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="2dp"
                     android:src="@drawable/home_1" />
 
                 <TextView
@@ -190,6 +190,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -197,10 +199,8 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="2dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/pin"
-                    android:tint="@color/logo_color" />
+                    android:src="@drawable/order"/>
 
                 <TextView
                     android:id="@+id/orderTextDri"
@@ -227,8 +227,7 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/more"
-                    android:tint="@color/logo_color" />
+                    android:src="@drawable/more"/>
 
                 <TextView
                     android:id="@+id/moreTextDri"
@@ -248,11 +247,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+
 
 
                     <ImageView
@@ -260,7 +259,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="2dp"
+                        android:layout_gravity="center"
                         android:src="@drawable/history_1"
                         app:tint="@color/logo_color" />
 
@@ -294,7 +293,6 @@
                         android:id="@+id/tripHistoryTextDri"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/tripHis_iconDri"
                         android:layout_marginBottom="3dp"
                         android:gravity="center"
                         android:text="Trip History"
@@ -302,8 +300,6 @@
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
-
-                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -311,6 +307,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -318,9 +316,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/profile"
-                    android:tint="@color/logo_color" />
+                    android:src="@drawable/profile"/>
 
                 <TextView
                     android:id="@+id/profile_textDri"

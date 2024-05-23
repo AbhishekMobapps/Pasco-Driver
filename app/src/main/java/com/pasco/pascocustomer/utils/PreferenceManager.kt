@@ -83,6 +83,13 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
+    var driverApprovedId: String
+        get() = prefs.getString(DRIVERAPPROVEDID, "") ?: ""
+        set(driverApprovedId) {
+            editor.putString(DRIVERAPPROVEDID, driverApprovedId)
+            editor.apply()
+        }
+
     var userId: String
         get() = prefs.getString(USER_ID, "") ?: ""
         set(userId) {
@@ -140,6 +147,7 @@ class PreferenceManager(context: Context) {
         private const val myPlaceSyn = "myPlaceSyn"
         private const val bookingSyn = "bookingSyn"
         private const val UserType = "UserType"
+        private const val DRIVERAPPROVEDID = "DRIVERAPPROVEDID"
 
 
         private const val USER_ID = "USER_ID"
