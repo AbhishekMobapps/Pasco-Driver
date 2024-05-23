@@ -52,6 +52,7 @@ import com.pasco.pascocustomer.activity.Driver.PrivacyPolicyActivity
 import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
@@ -119,8 +120,11 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         binding.firstConsLayouttt.visibility = View.VISIBLE
 
+        //Api and Observer
         getProfileApi()
         getUserProfileObserver()
+        getNotificationCountDApi()
+        notificationCountDObserver()
 
 
         naview = findViewById(R.id.naview)
@@ -148,6 +152,10 @@ class DriverDashboardActivity : AppCompatActivity() {
             //call observer
             getUserProfileObserver()
         }*/
+        binding.notificationBtnDriver.setOnClickListener {
+            val intent = Intent(this, NotificationActivity::class.java)
+            startActivity(intent)
+        }
         //call observer
         markOnObserver()
 
@@ -333,28 +341,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         handler.post {
             binding.driverGreeting.text = "$city"
         }
-    }
-
-    private fun getCountObserverDri() {
-        notificationCountViewModel.mNotiCountResponse.observe(this@DriverDashboardActivity) { response ->
-            val message = response.peekContent().msg!!
-
-            if (response.peekContent().status == "False") {
-                Toast.makeText(this@DriverDashboardActivity, "failed: $message", Toast.LENGTH_LONG)
-                    .show()
-            } else if (response.peekContent().status == "True") {
-                countDri = response.peekContent().count.toString()
-               // binding.countttDri.text = countDri
-
-            }
-        }
-        notificationCountViewModel.errorResponse.observe(this@DriverDashboardActivity) {
-            ErrorUtil.handlerGeneralError(this@DriverDashboardActivity, it)
-        }
-    }
-
-    private fun getCountDri() {
-        notificationCountViewModel.getCountNoti()
     }
 
     private fun getProfileApi() {
@@ -586,6 +572,37 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         logoutViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    private fun getNotificationCountDApi() {
+        notificationCountViewModel.getCountNoti()
+    }
+
+    private fun notificationCountDObserver() {
+        notificationCountViewModel.mNotiCountResponse.observe(this) {
+        }
+        notificationCountViewModel.mNotiCountResponse.observe(this) {
+            val message = it.peekContent().msg
+            val success = it.peekContent().status
+            val countNotification = it.peekContent().count
+
+            if (countNotification == 0)
+            {
+                binding.countNotificationDri.visibility = View.GONE
+            }
+            else
+            {
+                binding.countNotificationDri.visibility = View.GONE
+                binding.countNotificationDri.text = countNotification.toString()
+            }
+
+
+        }
+
+        notificationCountViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+            //errorDialogs()
         }
     }
 
