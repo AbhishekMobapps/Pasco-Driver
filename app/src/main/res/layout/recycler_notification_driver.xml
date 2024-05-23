@@ -81,7 +81,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notificationTitle"
                 android:src="@drawable/baseline_delete_24"
-                app:tint="@color/red_btn_bg_color" />
+                app:tint="@color/red" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
