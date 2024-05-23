@@ -46,7 +46,7 @@
                 <TextView
                     android:id="@+id/cancelBtn"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="25dp"
                     android:background="@drawable/button_background"
                     android:gravity="center"
                     android:text="@string/cancel"
@@ -56,12 +56,12 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.3" />
+                    app:layout_constraintWidth_percent="0.2" />
 
                 <TextView
                     android:id="@+id/yesBtn"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="25dp"
                     android:background="@drawable/button_background"
                     android:gravity="center"
                     android:text="@string/yes"
@@ -71,7 +71,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent="0.3" />
+                    app:layout_constraintWidth_percent="0.2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

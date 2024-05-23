@@ -205,7 +205,8 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<NotificationResponse>
 
-    @GET("NotificationDelete/}")
+    @Headers("Accept:application/json")
+    @POST("NotificationDelete/")
     fun deleteNotifications(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: NotificationBody
