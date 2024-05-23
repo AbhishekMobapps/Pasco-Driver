@@ -235,4 +235,6 @@
     <string name="wallet">Wallet</string>
     <string name="biding_status">Biding Status</string>
     <string name="please_update_your_profile_first">Please update your profile first !</string>
+    <string name="language">Language</string>
+    <string name="additional_service">Additional Service(Optional)</string>
 </resources>
