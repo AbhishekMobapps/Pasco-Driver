@@ -1,21 +1,16 @@
 package com.pasco.pascocustomer.customer.activity.hometabactivity
 
-import android.Manifest
 import android.app.ActionBar
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,11 +20,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -47,12 +38,12 @@ import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityAllTabPayBinding
 import com.pasco.pascocustomer.location.LocationsActivity
 import com.pasco.pascocustomer.utils.ErrorUtil
+import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceModelView
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import java.io.IOException
 import java.util.*
 
@@ -76,7 +67,7 @@ class AllTabPayActivity : AppCompatActivity() {
     private var el1: Double = 0.0
     private var el2: Double = 0.0
 
-    var pickupLatitude = ""
+    private var pickupLatitude = ""
     private var dropupLongitude: String = ""
     private var cityNamePickUp: String? = null
     private var cityNameDrop: String? = null
@@ -92,11 +83,14 @@ class AllTabPayActivity : AppCompatActivity() {
     private var vehicleLoadCapacity = ""
     private var vehicleCapability = ""
     private var profile = ""
-
+    private var cargoQty: Int? = null
+    private var commonCount = 0
+    private val minValue = 0
+    private var spinnerTransportId = ""
     private var formattedLatitudeDropSelect: String = ""
-    var formattedLatitudeSelect: String = ""
-    var formattedLongitudeSelect: String = ""
-    var formattedLongitudeDropSelect: String = ""
+    private var formattedLatitudeSelect: String = ""
+    private var formattedLongitudeSelect: String = ""
+    private var formattedLongitudeDropSelect: String = ""
 
     private var VehicleType: List<VehicleTypeResponse.VehicleTypeData>? = null
     private val vehicleTypeStatic: MutableList<String> = mutableListOf()
@@ -105,7 +99,10 @@ class AllTabPayActivity : AppCompatActivity() {
     private val checkChargeViewModel: CheckChargeModelView by viewModels()
     private val cargoViewModel: CargoAvailableModelView by viewModels()
     private val vehicleTypeViewModel: VehicleTypeViewModel by viewModels()
+    private val additionalServiceViewModel: AdditionalServiceModelView by viewModels()
 
+    private var additionalServiceList: List<AdditionalServiceResponse.Datum>? = null
+    private val servicesTypeStatic: MutableList<String> = mutableListOf()
     private var carImg: ImageView? = null
     private var carName: TextView? = null
     private var hourTxt: TextView? = null
@@ -125,12 +122,9 @@ class AllTabPayActivity : AppCompatActivity() {
 
         profile = PascoApp.encryptedPrefs.profileUpdate
 
-        if (profile ==  "0")
-        {
+        if (profile == "0") {
             showCalenderPopup()
-        }
-        else
-        {
+        } else {
 
         }
 
@@ -152,15 +146,24 @@ class AllTabPayActivity : AppCompatActivity() {
 
 
 
-
         binding.addBtn.setOnClickListener {
-            count++
-            binding.cargoQtyTxt.text = count.toString()
+            commonCount++
+            if (cargoQty!! <commonCount)
+            {
+                commonCount--
+            }
+            else
+            {
+                count++
+                binding.cargoQtyTxt.text = count.toString()
+            }
+
         }
 
         binding.subtractBtn.setOnClickListener {
-            if (count > 0) { // Check if count is greater than 0 before subtracting
+            if (count > minValue) { // Check if count is greater than 0 before subtracting
                 count--
+                commonCount--
                 binding.cargoQtyTxt.text = count.toString()
             }
         }
@@ -227,6 +230,35 @@ class AllTabPayActivity : AppCompatActivity() {
             validation()
         }
 
+        binding.additionalSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    i: Int,
+                    l: Long
+                ) {
+                    // Toast.makeText(activity, "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
+
+                    val item = binding.additionalSpinner.selectedItem.toString()
+                    if (item == getString(R.string.selectTransType)) {
+
+                    } else {
+                        spinnerTransportId = additionalServiceList?.get(i)?.id.toString()
+                        Log.e("onItemSelected", spinnerTransportId)
+
+                        //call vehicleType
+                        if (!spinnerTransportId.isNullOrBlank()) {
+
+                        }
+                    }
+                }
+
+                override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                    // Do nothing
+                }
+            }
+
         binding.vehicleTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -259,6 +291,8 @@ class AllTabPayActivity : AppCompatActivity() {
         bookingObserver()
         checkChargeObserver()
         cargoObserver()
+        additionalServiceList()
+        additionalServiceObserver()
     }
 
 
@@ -490,11 +524,7 @@ class AllTabPayActivity : AppCompatActivity() {
         } else {
             try {
                 // May throw an IOException
-                val addresses = coder.getFromLocationName(strAddress, 5)
-                if (addresses == null) {
-                    return null
-                }
-
+                val addresses = coder.getFromLocationName(strAddress, 5) ?: return null
                 val location: Address = addresses[0]
                 p1 = LatLng(location.latitude, location.longitude)
                 lat2 = location.latitude.toString()
@@ -624,7 +654,7 @@ class AllTabPayActivity : AppCompatActivity() {
             pickup_datetime = dateTime,
             message = binding.yourMsg.text.toString(),
             payment_method = selectedOption,
-            additional_service = "aa"
+            additional_service = spinnerTransportId
 
         )
         bookingRideViewModel.otpCheck(bookingBody, this, progressDialog)
@@ -645,7 +675,7 @@ class AllTabPayActivity : AppCompatActivity() {
             selectedDate = ""
             selectedTime = ""
             binding.yourMsg.setText("")
-            val intent = Intent(this,UserDashboardActivity::class.java)
+            val intent = Intent(this, UserDashboardActivity::class.java)
             startActivity(intent)
         }
 
@@ -715,8 +745,9 @@ class AllTabPayActivity : AppCompatActivity() {
     private fun cargoObserver() {
         cargoViewModel.mRejectResponse.observe(this@AllTabPayActivity) { response ->
 
+            cargoQty = response.peekContent().availableDriver
 
-            if (response.peekContent().availableDriver == 0) {
+            if (cargoQty == 0) {
                 binding.numberOfVehicleTxt.text = "Cargo is not available"
             } else {
                 binding.numberOfVehicleTxt.text = response.peekContent().availableDriver.toString()
@@ -740,8 +771,8 @@ class AllTabPayActivity : AppCompatActivity() {
 
         cancel.setOnClickListener { finish() }
         yesBtn.setOnClickListener {
-            val intent = Intent(this,UserDashboardActivity::class.java)
-            intent.putExtra("profileUpdate","update")
+            val intent = Intent(this, UserDashboardActivity::class.java)
+            intent.putExtra("profileUpdate", "update")
             startActivity(intent)
         }
         val window = dialog.window
@@ -759,4 +790,52 @@ class AllTabPayActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun additionalServiceList() {
+        additionalServiceViewModel.getServicesData(
+            progressDialog,
+            this
+        )
+    }
+
+    private fun additionalServiceObserver() {
+        additionalServiceViewModel.progressIndicator.observe(this, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        additionalServiceViewModel.mGetServices.observe(this) { response ->
+            val content = response.peekContent()
+            val message = content.msg ?: return@observe
+            additionalServiceList = content.data
+
+            // Clear the list before adding new items
+            servicesTypeStatic.clear()
+
+            for (element in additionalServiceList!!) {
+                element.additionalType?.let { it1 -> servicesTypeStatic.add(it1) }
+            }
+            val dAdapter =
+                VehicleDetailsActivity.SpinnerAdapter(
+                    this@AllTabPayActivity,
+                    R.layout.custom_service_type_spinner,
+                    servicesTypeStatic
+                )
+            dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            //dAdapter.addAll(strCatNameList)
+            dAdapter.add(getString(R.string.additional_service))
+            binding.additionalSpinner.adapter = dAdapter
+            binding.additionalSpinner.setSelection(dAdapter.count)
+            binding.additionalSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))
+
+            if (response.peekContent().status.equals("False")) {
+                Toast.makeText(this@AllTabPayActivity, message, Toast.LENGTH_LONG).show()
+            } else {
+
+            }
+        }
+
+        additionalServiceViewModel.errorResponse.observe(this) {
+            // Handle general errors
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
 }
