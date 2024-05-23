@@ -32,7 +32,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,7 +72,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/savedImgg"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -126,7 +126,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/myWalletImgg"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -154,7 +154,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/consMyWalletVehDetails"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -194,7 +194,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/benefitsImgg"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -223,7 +223,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/consBenefits"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consSupportLegal"
@@ -271,7 +271,7 @@
                         app:layout_constraintStart_toEndOf="@+id/contactImgg"
                         app:layout_constraintTop_toTopOf="@+id/contactImgg"
                         app:layout_constraintBottom_toBottomOf="@+id/contactImgg"
-                        app:layout_constraintWidth_percent=".7"></TextView>
+                        app:layout_constraintWidth_percent=".7"/>
 
 
                     <ImageView
@@ -321,7 +321,7 @@
                         app:layout_constraintTop_toTopOf="@+id/termsConditionsImgg"
                         app:layout_constraintBottom_toBottomOf="@+id/termsConditionsImgg"
                         app:layout_constraintStart_toEndOf="@+id/termsConditionsImgg"
-                        app:layout_constraintWidth_percent=".7"></TextView>
+                        app:layout_constraintWidth_percent=".7"/>
 
 
                     <ImageView
@@ -371,7 +371,7 @@
                         app:layout_constraintTop_toTopOf="@+id/contactWithUsImgg"
                         app:layout_constraintBottom_toBottomOf="@+id/contactWithUsImgg"
                         app:layout_constraintStart_toEndOf="@+id/contactWithUsImgg"
-                        app:layout_constraintWidth_percent=".7"></TextView>
+                        app:layout_constraintWidth_percent=".7"/>
 
 
                     <ImageView
@@ -401,7 +401,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/consSupportLegal"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -441,7 +441,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/notesRimg"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -470,7 +470,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/consNotesReminderDri"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consShareApp"
@@ -523,7 +523,7 @@
                     app:layout_constraintTop_toTopOf="@+id/shareAppImgg"
                     app:layout_constraintBottom_toBottomOf="@+id/shareAppImgg"
                     app:layout_constraintStart_toEndOf="@+id/shareAppImgg"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -602,7 +602,7 @@
                     app:layout_constraintTop_toTopOf="@+id/updateLanImgg"
                     app:layout_constraintBottom_toBottomOf="@+id/updateLanImgg"
                     app:layout_constraintStart_toEndOf="@+id/updateLanImgg"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
 
                 <ImageView
@@ -630,7 +630,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/consUpdateLanguage"
-                app:layout_constraintWidth_percent=".95"></TextView>
+                app:layout_constraintWidth_percent=".95"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -671,7 +671,7 @@
                     app:layout_constraintStart_toEndOf="@+id/logoutCImgg"
                     app:layout_constraintTop_toTopOf="@+id/logoutCImgg"
                     app:layout_constraintBottom_toBottomOf="@+id/logoutCImgg"
-                    app:layout_constraintWidth_percent=".7"></TextView>
+                    app:layout_constraintWidth_percent=".7"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
