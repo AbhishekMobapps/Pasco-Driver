@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.Fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,32 +10,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
-import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
+import com.pasco.pascocustomer.Driver.ContactWithUsActivity
+import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
+import com.pasco.pascocustomer.Driver.NotesRemainders.Ui.NotesRemainderActivity
+import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetialsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
+import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
+import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 
 
 @AndroidEntryPoint
 class DriverMoreFragment : Fragment() {
     private lateinit var binding: FragmentDriverMoreBinding
-    private lateinit var dialog: AlertDialog
-    private val addAmountViewModel: AddAmountViewModel by viewModels()
-    private val getAmountViewModel: GetAmountViewModel by viewModels()
-    private val progressDialog by lazy { CustomProgressDialog(requireActivity()) }
+    private val logoutViewModel: LogOutModelView by viewModels()
+    private val progressDialog by lazy { CustomProgressDialog(requireContext()) }
+    private var refersh = ""
 
-    private var amountP = ""
-    //private var onEarningList: List<EarningResponse> = ArrayList()
-  //  private var onCreditList: List<CheckStatusResponse> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,110 +43,95 @@ class DriverMoreFragment : Fragment() {
     ): View? {
         binding = FragmentDriverMoreBinding.inflate(inflater, container, false)
 
-        binding.recycerEarningList.isVerticalScrollBarEnabled = true
-        binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
-        binding.recycerEarningList.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-      //  binding.recycerEarningList.adapter = EarningAdapter(requireContext(), onEarningList)
+        refersh = PascoApp.encryptedPrefs.token
 
-       /* binding.crediText.setOnClickListener {
-            binding.crediText.background =
-                requireActivity().resources.getDrawable(R.drawable.debit_background)
-            binding.historyText.background =
-                requireActivity().resources.getDrawable(R.drawable.creditback)
-            binding.crediText.setTextColor(Color.parseColor("#FFFFFF"))
-            binding.historyText.setTextColor(Color.parseColor("#383F45"))
-            binding.recycerEarningList.isVerticalScrollBarEnabled = true
-            binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
-            binding.recycerEarningList.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding.recycerEarningList.adapter = CreditAmountAdapter(requireContext(), onCreditList)
+        binding.consUpdateVehDetails.setOnClickListener {
+            val intent = Intent(requireActivity(), UpdateVehicleDetialsActivity::class.java)
+            startActivity(intent)
+        }
+        binding.consContactAndSupportInside.setOnClickListener {
+            val intent = Intent(requireContext(), ContactWithUsActivity::class.java)
+            startActivity(intent)
+        }
+        binding.consMyWalletVehDetails.setOnClickListener {
+            val intent = Intent(requireContext(), DriverWalletActivity::class.java)
+            startActivity(intent)
+        }
+        binding.consTermsCondInside.setOnClickListener {
+            val intent = Intent(requireContext(), TermsAndConditionsActivity::class.java)
+            startActivity(intent)
         }
 
-        binding.historyText.setOnClickListener {
-            binding.crediText.background =
-                requireActivity().resources.getDrawable(R.drawable.creditback)
-            binding.historyText.background =
-                requireActivity().resources.getDrawable(R.drawable.debit_background)
-            binding.historyText.setTextColor(Color.parseColor("#FFFFFF"))
-            binding.crediText.setTextColor(Color.parseColor("#383F45"))
-            binding.recycerEarningList.isVerticalScrollBarEnabled = true
-            binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
-            binding.recycerEarningList.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding.recycerEarningList.adapter = EarningAdapter(requireContext(), onEarningList)
-        }*/
-
-        binding.withDrawBtn.setOnClickListener {
-            openWithDrawPopUp()
+        binding.consPrivacyPolicyInside.setOnClickListener {
+            val intent = Intent(requireContext(), TermsAndConditionsActivity::class.java)
+            startActivity(intent)
         }
-        getTotalAmount()
-        getTotalAmountObserver()
+        binding.consNotesReminderDri.setOnClickListener {
+            val intent = Intent(requireContext(), NotesRemainderActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        binding.consLogout.setOnClickListener {
+            openLogoutPop()
+            //logout observer
+            logOutObserver()
+        }
+
         return binding.root
     }
 
-    private fun getTotalAmountObserver() {
-        getAmountViewModel.mGetAmounttt.observe(viewLifecycleOwner) { response ->
-            val message = response.peekContent().msg!!
-            val data = response.peekContent().data
-            amountP = data?.walletAmount.toString()
-            binding.accountBalanceDri.text = "$amountP USD"
-
-            if (response.peekContent().status == "False") {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            } else {
-                // Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            }
-        }
-        addAmountViewModel.errorResponse.observe(viewLifecycleOwner) {
-            ErrorUtil.handlerGeneralError(requireActivity(), it)
-        }
-    }
-
     @SuppressLint("MissingInflatedId")
-    private fun openWithDrawPopUp() {
-        val builder = AlertDialog.Builder(requireContext(), R.style.Style_Dialog_Rounded_Corner)
-        val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
+    private fun openLogoutPop() {
+        val builder = AlertDialog.Builder(
+            requireContext(),
+            R.style.Style_Dialog_Rounded_Corner
+        )
+        val dialogView = layoutInflater.inflate(R.layout.logout_popup, null)
         builder.setView(dialogView)
 
-        dialog = builder.create()
+        val dialog = builder.create()
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val waCrossImage = dialogView.findViewById<ImageView>(R.id.waCrossImage)
-        val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
-        val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
+        val cancelLogBtn = dialogView.findViewById<TextView>(R.id.cancelLogBtn)
+        val yesLogoutBtn = dialogView.findViewById<TextView>(R.id.yesLogoutBtn)
         dialog.show()
-        waCrossImage.setOnClickListener { dialog.dismiss() }
-        submit_WithDrawBtn.setOnClickListener {
-            //call api()
-            addAmountViewModel.getAddAmountData(
-                progressDialog,
-                requireActivity(),
-                amountWithdrawEditD.text.toString()
-            )
-            //observer
-            addMoneyObserver()
+        cancelLogBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+        yesLogoutBtn.setOnClickListener {
+            logOutApi()
         }
     }
 
-    private fun addMoneyObserver() {
-        addAmountViewModel.mAddAmountResponse.observe(viewLifecycleOwner) { response ->
-            val message = response.peekContent().msg!!
-            if (response.peekContent().status == "False") {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-                getTotalAmount()
+    private fun logOutApi() {
+        val bookingBody = LogoutBody(
+            refresh = refersh
+        )
+        logoutViewModel.otpCheck(bookingBody,requireActivity())
+    }
 
+    private fun logOutObserver() {
+        logoutViewModel.mRejectResponse.observe(requireActivity()) { response ->
+            val message = response.peekContent().msg
+            Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+
+            if (response.peekContent().status == "True")
+            {
+                PascoApp.encryptedPrefs.bearerToken = ""
+                PascoApp.encryptedPrefs.userId = ""
+                PascoApp.encryptedPrefs.isFirstTime = true
+                val intent = Intent(requireActivity(), LoginActivity::class.java)
+                startActivity(intent)
             }
+
+
+
         }
-        addAmountViewModel.errorResponse.observe(viewLifecycleOwner) {
-            ErrorUtil.handlerGeneralError(requireActivity(), it)
+
+        logoutViewModel.errorResponse.observe(requireActivity()) {
+            ErrorUtil.handlerGeneralError(requireContext(), it)
         }
     }
 
-    private fun getTotalAmount() {
-        getAmountViewModel.getAmountData(progressDialog, requireActivity())
-    }
 }

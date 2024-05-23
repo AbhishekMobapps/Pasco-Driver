@@ -29,6 +29,7 @@ import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBo
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
@@ -72,6 +73,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
             cargo, vehiclenumber, identify_document, identify_document1, identify_document2
         )
     }
+
+    fun getUpdateVDetailRepo(): Observable<GetVDetailsResponse> {
+        return apiService.getUpdateVehDetails(PascoApp.encryptedPrefs.bearerToken)
+    }
+
 
 
 
