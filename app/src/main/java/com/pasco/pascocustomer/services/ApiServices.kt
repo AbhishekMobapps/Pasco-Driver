@@ -50,6 +50,7 @@ import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBo
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
@@ -114,7 +115,11 @@ interface ApiServices {
         @Part attachment2: MultipartBody.Part
     ): Observable<ApprovalRequestResponse>
 
-
+    //get Approve requests
+    @GET("updateapprovalstatus/")
+    fun getUpdateVehDetails(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ): Observable<GetVDetailsResponse>
 
     //put approve Requests
     @Multipart

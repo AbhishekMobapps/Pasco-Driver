@@ -162,6 +162,24 @@ class LoginActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.userType = userType
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.isFirstTime = false
+          
+            if (approved == 2 && userType == "driver") {
+                Log.e("AAAAA", "aaaaaaa....")
+                val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
+                startActivity(intent)
+            } else if (loginValue == "driver" && approved == 0 && userType == "driver") {
+                openPopUp()
+            } else if (loginValue == "driver" && approved == 1 && userType == "driver") {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@LoginActivity, DriverDashboardActivity::class.java)
+                intent.putExtra("Dri", "Driver")
+                startActivity(intent)
+
+            } else if (loginValue == "user" && userType == "user") {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@LoginActivity, UserDashboardActivity::class.java)
+                startActivity(intent)
+            }
 
                 if (approved == 2 && userType == "driver") {
                     Log.e("AAAAA", "aaaaaaa....")
@@ -180,7 +198,6 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(this@LoginActivity, UserDashboardActivity::class.java)
                     startActivity(intent)
                 }
-
 
             }
             loginModel.errorResponse.observe(this) {
