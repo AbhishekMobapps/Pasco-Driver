@@ -70,8 +70,11 @@ class HomeFragment : Fragment() {
             rideRequestList = response.peekContent().data ?: emptyList()
 
             if (rideRequestList.isEmpty()) {
-                Toast.makeText(requireContext(), "No Data Found", Toast.LENGTH_SHORT).show()
+                binding.orderBidsHomeFragTextView.visibility = View.VISIBLE
+                binding.recycerRideRequest.visibility = View.GONE
             } else {
+                binding.orderBidsHomeFragTextView.visibility = View.GONE
+                binding.recycerRideRequest.visibility = View.VISIBLE
                 setupRecyclerView()
             }
 

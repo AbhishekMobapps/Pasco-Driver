@@ -112,6 +112,7 @@
                         android:id="@+id/editButtonDriverProfile"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:visibility="gone"
                         android:layout_alignParentRight="true"
                         android:layout_centerInParent="true"
                         android:layout_marginTop="20dp"

@@ -71,10 +71,10 @@ class DriverProfileFragment : Fragment() {
         // Request camera and gallery permissions if not granted
         requestPermission()
 
-        binding.editButtonDriverProfile.setOnClickListener {
+   /*     binding.editButtonDriverProfile.setOnClickListener {
             val intent = Intent(requireActivity(),UpdateVehicleDetialsActivity::class.java)
             startActivity(intent)
-        }
+        }*/
 
         binding.addImgDProfile.setOnClickListener {
             selectImage()
