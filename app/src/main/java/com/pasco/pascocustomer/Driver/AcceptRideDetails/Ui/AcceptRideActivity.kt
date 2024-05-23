@@ -88,8 +88,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.imageBackReqRide.setOnClickListener {
             finish()
         }
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         //call getBidDetailsApi

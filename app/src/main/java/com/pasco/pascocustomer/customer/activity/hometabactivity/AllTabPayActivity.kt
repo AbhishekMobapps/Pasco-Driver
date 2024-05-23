@@ -77,6 +77,7 @@ class AllTabPayActivity : AppCompatActivity() {
     private var destinationLongitude = 0.0
     private var selectedDate = ""
     private var selectedTime = ""
+    private var shipmentName = ""
 
     private var spinnerVehicleTypeId = ""
     private var vehicleSize = ""
@@ -129,34 +130,35 @@ class AllTabPayActivity : AppCompatActivity() {
         }
 
         lightTrans = intent.getStringExtra("lightTrans").toString()
+        shipmentName = intent.getStringExtra("shipmentName").toString()
         vehicleId = intent.getIntExtra("vehicleId", 0)
         Log.e("currentLatLng", "vehicleId...   $vehicleId")
 
-        when (lightTrans) {
-            "lightTrans" -> {
-                binding.headerTxt.text = "Light Transport"
-            }
-            "heavyTrans" -> {
-                binding.headerTxt.text = "Heavy Transport"
-            }
-            else -> {
-                binding.headerTxt.text = "Cheese Burger"
-            }
-        }
+        binding.headerTxt.text = shipmentName
+
 
 
 
         binding.addBtn.setOnClickListener {
-            commonCount++
-            if (cargoQty!! <commonCount)
+
+            if (spinnerVehicleTypeId.isEmpty())
             {
-                commonCount--
+
             }
             else
             {
-                count++
-                binding.cargoQtyTxt.text = count.toString()
+                commonCount++
+                if (cargoQty!! <commonCount)
+                {
+                    commonCount--
+                }
+                else
+                {
+                    count++
+                    binding.cargoQtyTxt.text = count.toString()
+                }
             }
+
 
         }
 
@@ -230,6 +232,7 @@ class AllTabPayActivity : AppCompatActivity() {
             validation()
         }
 
+
         binding.additionalSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -238,19 +241,10 @@ class AllTabPayActivity : AppCompatActivity() {
                     i: Int,
                     l: Long
                 ) {
-                    // Toast.makeText(activity, "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
-
                     val item = binding.additionalSpinner.selectedItem.toString()
-                    if (item == getString(R.string.selectTransType)) {
+                    if (item != getString(R.string.additional_service)) {
+                        spinnerTransportId = additionalServiceList!![i].id.toString()
 
-                    } else {
-                        spinnerTransportId = additionalServiceList?.get(i)?.id.toString()
-                        Log.e("onItemSelected", spinnerTransportId)
-
-                        //call vehicleType
-                        if (!spinnerTransportId.isNullOrBlank()) {
-
-                        }
                     }
                 }
 
@@ -807,24 +801,19 @@ class AllTabPayActivity : AppCompatActivity() {
             val message = content.msg ?: return@observe
             additionalServiceList = content.data
 
-            // Clear the list before adding new items
-            servicesTypeStatic.clear()
 
             for (element in additionalServiceList!!) {
                 element.additionalType?.let { it1 -> servicesTypeStatic.add(it1) }
             }
-            val dAdapter =
-                VehicleDetailsActivity.SpinnerAdapter(
-                    this@AllTabPayActivity,
-                    R.layout.custom_service_type_spinner,
-                    servicesTypeStatic
-                )
+            val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
+                this@AllTabPayActivity,
+                R.layout.custom_service_type_spinner,
+                servicesTypeStatic
+            )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            //dAdapter.addAll(strCatNameList)
             dAdapter.add(getString(R.string.additional_service))
             binding.additionalSpinner.adapter = dAdapter
             binding.additionalSpinner.setSelection(dAdapter.count)
-            binding.additionalSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectTransType)))
 
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this@AllTabPayActivity, message, Toast.LENGTH_LONG).show()

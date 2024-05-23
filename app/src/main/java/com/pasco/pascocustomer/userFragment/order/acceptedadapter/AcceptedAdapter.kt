@@ -3,13 +3,16 @@ package com.pasco.pascocustomer.userFragment.order.acceptedadapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
+import com.pasco.pascocustomer.customer.activity.track.TrackActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +29,7 @@ class AcceptedAdapter(
         val dateTime: TextView = itemView.findViewById(R.id.dateTime)
         val totalPriceTxt: TextView = itemView.findViewById(R.id.totalPriceTxt)
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
+        val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -65,7 +69,10 @@ class AcceptedAdapter(
             e.printStackTrace()
         }
 
-
+        holder.showDetailsBtn.setOnClickListener {
+            val intent = Intent(required,TrackActivity::class.java)
+            required.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {

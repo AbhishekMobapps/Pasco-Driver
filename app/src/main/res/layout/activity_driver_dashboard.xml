@@ -93,7 +93,6 @@
                 android:layout_marginEnd="15dp"
                 android:src="@drawable/bell"
                 android:tint="@color/black_dark"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

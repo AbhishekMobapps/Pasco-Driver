@@ -42,6 +42,7 @@ class UserDashboardActivity : AppCompatActivity() {
     private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var profileUpdate = ""
+    private var notificaion = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDashboardBinding.inflate(layoutInflater)
@@ -49,8 +50,7 @@ class UserDashboardActivity : AppCompatActivity() {
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
 
-        if (profileUpdate =="update")
-        {
+        if (profileUpdate == "update") {
             navItemIndex = 1
             CURRENT_TAG = TAG_NEXT
             binding.homeIconUser.setImageResource(R.drawable.home_icon)
@@ -68,9 +68,7 @@ class UserDashboardActivity : AppCompatActivity() {
             binding.consUserDashBoard.visibility = View.GONE
 
             replaceFragment(ProfileFragment())
-        }
-        else
-        {
+        } else {
             val userHomeFragment = UserHomeFragment()
             replaceFragment(userHomeFragment)
         }
@@ -78,6 +76,7 @@ class UserDashboardActivity : AppCompatActivity() {
         binding.homeTextUser.setTextColor(ContextCompat.getColor(this, R.color.black))
 
         binding.notificationBtn.setOnClickListener {
+            notificaion = "1"
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
@@ -253,13 +252,10 @@ class UserDashboardActivity : AppCompatActivity() {
             val success = it.peekContent().status
             val countNotification = it.peekContent().count
 
-            if (countNotification == 0)
-            {
+            if (countNotification == 0) {
                 binding.countNotification.visibility = View.GONE
-            }
-            else
-            {
-                binding.countNotification.visibility = View.GONE
+            } else {
+                binding.countNotification.visibility = View.VISIBLE
                 binding.countNotification.text = countNotification.toString()
             }
 
@@ -271,4 +267,12 @@ class UserDashboardActivity : AppCompatActivity() {
             //errorDialogs()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (notificaion == "1") {
+            getNotificationCountApi()
+        }
+    }
+
 }
