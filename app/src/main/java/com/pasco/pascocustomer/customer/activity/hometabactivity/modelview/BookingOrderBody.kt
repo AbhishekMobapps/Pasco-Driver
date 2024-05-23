@@ -15,5 +15,6 @@ class BookingOrderBody(
     @SerializedName("drop_longitude") var drop_longitude: String,
     @SerializedName("pickup_datetime") var pickup_datetime: String,
     @SerializedName("message") var message: String,
-    @SerializedName("payment_method") var payment_method: String
+    @SerializedName("payment_method") var payment_method: String,
+    @SerializedName("additional_service") var additional_service: String
 )
