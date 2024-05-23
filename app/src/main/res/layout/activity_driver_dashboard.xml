@@ -81,10 +81,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/driverNameDash"
-                app:layout_constraintEnd_toStartOf="@+id/notificationIcon"
+                app:layout_constraintEnd_toStartOf="@+id/consNotificationDriver"
                 android:thumb="@drawable/ic_thumb"
                 android:track="@drawable/bg_track" />
-
 
             <ImageView
                 android:id="@+id/notificationIcon"
@@ -92,12 +91,40 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="15dp"
                 android:src="@drawable/bell"
-                android:tint="@color/black_dark"
+                android:tint="@color/black_dark"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/consNotificationDriver"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".25"
-                tools:ignore="UseAppTint" />
+                android:layout_marginRight="10dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <ImageView
+                    android:id="@+id/notificationBtnDriver"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/bell"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/countNotificationDri"
+                    android:layout_width="@dimen/text_size_20"
+                    android:layout_height="@dimen/text_size_20"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/button_background"
+                    android:gravity="center"
+                    android:text="11"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout

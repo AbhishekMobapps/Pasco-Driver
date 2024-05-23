@@ -75,8 +75,7 @@ class NotificationAdapter(
     @SuppressLint("MissingInflatedId")
     private fun openDeleteDialog(position: Int, id: Int) {
         val builder = AlertDialog.Builder(context, R.style.Style_Dialog_Rounded_Corner)
-        val dialogView =
-            LayoutInflater.from(context).inflate(R.layout.delete_notification_popup, null)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.delete_notification_popup, null)
         builder.setView(dialogView)
 
         val dialog = builder.create()

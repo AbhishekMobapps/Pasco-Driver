@@ -85,7 +85,6 @@ dependencies {
 
 
     //map
-    implementation 'com.google.android.gms:play-services-maps:18.2.0'
     //implementation 'com.google.android.libraries.places:places:3.3.0'
     implementation "com.google.android.libraries.places:places:3.4.0"
     implementation 'com.google.maps:google-maps-services:0.15.0'
@@ -154,10 +153,6 @@ dependencies {
 
     implementation 'androidx.work:work-runtime-ktx:2.9.0'
 
-// Map Locations
-    implementation 'com.google.android.gms:play-services-maps:18.2.0'
-    implementation 'com.google.android.gms:play-services-location:21.2.0'
-
     //Viewpager Implementation
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
@@ -172,10 +167,6 @@ dependencies {
 
     //CircleIndicator
     implementation 'me.relex:circleindicator:2.1.6'
-
-    implementation 'com.google.android.gms:play-services-maps:18.2.0'
-    implementation 'com.google.android.gms:play-services-location:21.2.0'
-
 
     // spinner
     implementation "com.github.skydoves:powerspinner:1.2.4"
