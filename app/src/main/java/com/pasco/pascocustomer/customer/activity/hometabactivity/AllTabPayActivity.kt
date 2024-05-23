@@ -623,7 +623,8 @@ class AllTabPayActivity : AppCompatActivity() {
             drop_longitude = formattedLongitudeDropSelect,
             pickup_datetime = dateTime,
             message = binding.yourMsg.text.toString(),
-            payment_method = selectedOption
+            payment_method = selectedOption,
+            additional_service = "aa"
 
         )
         bookingRideViewModel.otpCheck(bookingBody, this, progressDialog)

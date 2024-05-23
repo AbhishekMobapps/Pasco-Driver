@@ -296,9 +296,7 @@ class ProfileFragment : Fragment() {
         var profileImage: MultipartBody.Part? = null
 
         profileImage = if (selectedImageFile == null) {
-            MultipartBody.Part.createFormData(
-                "image",
-                "",
+            MultipartBody.Part.createFormData("image", "",
                 selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
             )
 
