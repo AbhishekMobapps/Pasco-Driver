@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.repository
 
 import VehicleTypeResponse
+import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AcceptRideResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginResponse
@@ -27,6 +28,8 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
@@ -82,8 +85,6 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
 
-
-
     fun putApprovalReqRepo(
         vehiclenumber: RequestBody,
         attachmentP: MultipartBody.Part,
@@ -93,7 +94,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     ): Observable<PutVDetailsResponse> {
         return apiService.putVehicleUpdate(
             PascoApp.encryptedPrefs.bearerToken,
-            vehiclenumber,attachmentP,attachmentD,attachmentDl
+            vehiclenumber, attachmentP, attachmentD, attachmentDl
         )
     }
 
@@ -130,7 +131,6 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
 
-
     fun updateProfile(
         full_name: RequestBody,
         email: RequestBody,
@@ -152,7 +152,6 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
 
-
     fun getDeleteNotification(courseBody: NotificationBody): Observable<DeleteNotificationResponse> {
         return apiService.deleteNotifications(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
@@ -166,11 +165,16 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun getProfile(): Observable<GetProfileResponse> {
         return apiService.getUserProfile(PascoApp.encryptedPrefs.bearerToken)
     }
+
     fun getAdditionalService(): Observable<AdditionalServiceResponse> {
         return apiService.additionalService(PascoApp.encryptedPrefs.bearerToken)
     }
 
     fun driverDetails(Id: String): Observable<DriverDetailsResponse> {
         return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id)
+    }
+
+    fun acceptReject(courseBody: AcceptOrRejectBidBody,id:String): Observable<AcceptOrRejectResponse> {
+        return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken,id,courseBody)
     }
 }
