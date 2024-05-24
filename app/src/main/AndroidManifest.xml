@@ -23,6 +23,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".customer.activity.driverdetails.DriverDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Driver.NotesRemainders.Ui.NotesRemainderActivity"
+            android:exported="false" />
+        <activity
             android:name=".customer.activity.track.TrackActivity"
             android:exported="false" />
         <activity
@@ -125,6 +131,8 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30" />
+
+
     </application>
 
 </manifest>
