@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/NewConstraintDetailsss"
         android:layout_width="0dp"
@@ -155,7 +154,7 @@
                 <TextView
                     android:id="@+id/fromStatic"
                     android:layout_width="0dp"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="Pickup"
                     android:drawableEnd="@drawable/small_loc_icon"
@@ -181,8 +180,8 @@
                     app:layout_constraintStart_toEndOf="@+id/fromStatic"
                     tools:ignore="MissingConstraints" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintDropORD"
             android:layout_width="0dp"
@@ -237,7 +236,7 @@
                     app:layout_constraintStart_toEndOf="@+id/fromStaticDrop"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/consDiatnceORD"
             android:layout_width="0dp"
@@ -291,26 +290,166 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consBpCPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:padding="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/consDiatnceORD"
+            app:layout_constraintWidth_percent=".93"
+            app:layout_constraintEnd_toEndOf="parent">
+
+
+
+            <!-- First TextView -->
+            <TextView
+                android:id="@+id/totalPricestatic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintWidth_percent=".2"
+                android:text="Basic Price:"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="@dimen/normal_txt_size"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints" />
+
+
+            <TextView
+                android:id="@+id/totalPricestaticDORD"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="$200"
+                app:layout_constraintWidth_percent=".3"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:textSize="@dimen/normal_txt_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/totalPricestatic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/maxPriceStaticDORD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bid Price:"
+                app:layout_constraintWidth_percent=".2"
+                android:textColor="@color/black"
+                android:gravity="right"
+                android:padding="4dp"
+                android:textSize="@dimen/normal_txt_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/maxPriceDORD"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/maxPriceDORD"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="$500"
+                app:layout_constraintWidth_percent=".2"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:textSize="@dimen/normal_txt_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="MissingConstraints" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consCommPriceDriver"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:padding="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/consBpCPrice"
+            app:layout_constraintWidth_percent=".93"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/commStaticTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Commission Price:"
+                app:layout_constraintWidth_percent=".2"
+                android:textColor="@color/black"
+                android:gravity="right"
+                android:textSize="@dimen/normal_txt_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/cPriceDORD"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="$500"
+                app:layout_constraintWidth_percent=".2"
+                android:textColor="@color/green"
+                android:gravity="center_vertical"
+                android:padding="4dp"
+                android:textSize="@dimen/normal_txt_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/commStaticTextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="MissingConstraints" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/consAccepORD"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
+            android:visibility="visible"
             android:layout_marginEnd="10dp"
-            app:layout_constraintTop_toBottomOf="@+id/consDiatnceORD"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/consCommPriceDriver"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent=".93">
+
+            <RelativeLayout
+                android:id="@+id/OnWaySRD"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent=".63"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Spinner
+                    android:id="@+id/routeSpinnerSpinnerSRD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:layout_marginRight="-5dp" />
+
+            </RelativeLayout>
+
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consacceptRej"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".6"
+                app:layout_constraintWidth_percent=".3"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent">
 
 
@@ -320,7 +459,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Start Ride"
-                    app:layout_constraintWidth_percent=".4"
+                    app:layout_constraintWidth_percent="1"
                     android:layout_marginStart="10dp"
                     android:textColor="@color/white"
                     android:gravity="center"
@@ -334,85 +473,6 @@
                     tools:ignore="MissingConstraints" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        android:padding="2dp"
-        android:background="@drawable/order_details_background"
-        app:layout_constraintTop_toBottomOf="@+id/NewConstraintDetailsss"
-        app:layout_constraintWidth_percent=".93"
-        app:layout_constraintEnd_toEndOf="parent">
-
-
-
-        <!-- First TextView -->
-        <TextView
-            android:id="@+id/totalPricestatic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintWidth_percent=".2"
-            android:text="Basic Price:"
-            android:textColor="@color/grey"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textSize="@dimen/normal_txt_size"
-            android:padding="4dp"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints" />
-
-
-        <TextView
-            android:id="@+id/totalPricestaticDORD"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="$200"
-            app:layout_constraintWidth_percent=".2"
-            android:textColor="@color/black"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:textSize="@dimen/normal_txt_size"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/totalPricestatic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="MissingConstraints" />
-
-        <TextView
-            android:id="@+id/maxPriceStaticDORD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bid Price:"
-            app:layout_constraintWidth_percent=".2"
-            android:textColor="@color/grey"
-            android:gravity="right"
-            android:padding="4dp"
-            android:textSize="@dimen/normal_txt_size"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/maxPriceDORD"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="MissingConstraints" />
-
-        <TextView
-            android:id="@+id/maxPriceDORD"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="$500"
-            app:layout_constraintWidth_percent=".2"
-            android:textColor="@color/black"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:textSize="@dimen/normal_txt_size"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="MissingConstraints" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

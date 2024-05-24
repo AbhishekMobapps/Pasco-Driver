@@ -30,6 +30,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.DirectionsApi
+import com.google.maps.GeoApiContext
+import com.google.maps.model.DirectionsResult
+import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
@@ -37,15 +41,19 @@ import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AcceptRideView
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBiddingBody
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBidingViewModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
+import com.pasco.pascocustomer.customer.activity.track.TrackActivity
 import com.pasco.pascocustomer.databinding.ActivityAcceptRideBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
-    private lateinit var gooMap: GoogleMap
     private lateinit var binding: ActivityAcceptRideBinding
     private lateinit var activity: Activity
     private val acceptRideViewModel: AcceptRideViewModel by viewModels()
@@ -62,42 +70,50 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     private var totalDistanceLoc = ""
     private var totalTimeLoc = ""
     private var totalPriceLoc = ""
+    private var commissionP = ""
     private var bookingID = ""
-    private var PickUpLoc: LatLng = LatLng(0.0, 0.0)
-    private var DropLoc: LatLng = LatLng(0.0, 0.0)
+    private lateinit var pickupLocation: LatLng // Define your pickup location
+    private lateinit var dropLocation: LatLng
+    private lateinit var mMap: GoogleMap
     private var currentLatitudePickup: Double = 0.0
     private var currentLongitudePickup: Double = 0.0
     private var currentLatitudeDrop: Double = 0.0
     private var currentLongitudeDrop: Double = 0.0
     private lateinit var addBiddingBody: AddBiddingBody
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var isDestinationReached = false
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAcceptRideBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        // Request location updates
-        requestLocationUpdates()
         activity = this
         reqId = intent.getStringExtra("rideReqId").toString()
         bookingNumber = intent.getStringExtra("bookingNumb").toString()
-        binding.imageBackReqRide.setOnClickListener {
-            finish()
-        }
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
 
         //call getBidDetailsApi
         if (!reqId.isNullOrBlank()) {
             getBidDetailsApi()
         }
-        // abc
         //call reqObsever
         getBidObserver()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        // Request location updates
+        requestLocationUpdates()
+        binding.imageBackReqRide.setOnClickListener {
+            finish()
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapAcceptRide) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        pickupLocation = LatLng(28.6076, 77.3683) // New York City
+        dropLocation = LatLng(28.5851, 77.3116) // Los Angeles Los Angeles
+
         //callObserver
         addBidingObserver()
         binding.showPriceEditTextdasdas.setOnClickListener {
@@ -135,12 +151,14 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
     private fun requestLocationUpdates() {
         // Check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             // Request location permission if not granted
             ActivityCompat.requestPermissions(
                 this,
@@ -163,7 +181,11 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     // Handle permission request result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             // Check if permissions were granted
@@ -193,29 +215,37 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 val formattedTotalDistance = "%.1f".format(allData?.totalDistance ?: 0.0)
                 binding.totalDistanceBidd.text = "$formattedTotalDistance km"
                 binding.WholePrice.text = "$" + allData?.basicprice.toString()
-              //  binding.orderIdStaticTextView.text = "$" + allData?.price.toString()
+                //  binding.orderIdStaticTextView.text = "$" + allData?.price.toString()
                 val id = allData?.id
                 Log.e("id", "getBidObserver: $id")
                 binding.cashDynamic.text = allData?.paymentStatus.toString()
                 bookingID = allData?.id.toString()
                 totalTimeLoc = allData?.pickupDatetime.toString()
                 totalPriceLoc = "$" + allData?.basicprice.toString()
+                commissionP = "$" + allData?.commisionPrice.toString()
                 currentLatitudePickup = allData?.pickupLatitude.toString()!!.toDouble()
                 currentLongitudePickup = allData?.pickupLongitude.toString()!!.toDouble()
                 currentLatitudeDrop = allData?.dropLatitude.toString()!!.toDouble()
                 currentLongitudeDrop = allData?.dropLongitude.toString()!!.toDouble()
+                binding.orderIdStaticTextView.text = commissionP
                 val duration = allData?.duration.toString()
-                // Convert duration to hours and minutes
-                val durationInMinutes = duration.toIntOrNull() ?: 0
-                val hours = durationInMinutes / 60
-                val minutes = durationInMinutes % 60
-                val formattedDuration = String.format("%d hr %02d min", hours, minutes)
+                val durationInSeconds = duration.toIntOrNull() ?: 0
+                val formattedDuration = if (durationInSeconds < 60) {
+                    "$durationInSeconds sec"
+                } else {
+                    val hours = durationInSeconds / 3600
+                    val minutes = (durationInSeconds % 3600) / 60
+                    val seconds = durationInSeconds % 60
+                    if (hours > 0) {
+                        String.format("%d hr %02d min %02d sec", hours, minutes, seconds)
+                    } else {
+                        String.format("%d min %02d sec", minutes, seconds)
+                    }
+                }
                 binding.routeTime.text = formattedDuration
 
-                PickUpLoc = LatLng(currentLatitudePickup, currentLongitudePickup)
-                DropLoc = LatLng(currentLatitudeDrop, currentLongitudeDrop)
-
-                drawRoute(PickUpLoc, DropLoc)
+               /* pickupLocation = LatLng(currentLatitudePickup, currentLongitudePickup)
+                dropLocation = LatLng(currentLatitudeDrop, currentLongitudeDrop)*/
 
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
@@ -308,7 +338,8 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             reqId
         )
     }
-//comment123
+
+    //comment123
     @SuppressLint("MissingInflatedId")
     private fun addAvailabilityPopUp() {
         val builder =
@@ -380,8 +411,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (!dateTimes.isNullOrBlank()) {
                     binding.showPriceEditTextdasdas.text = dateTimes
                 }
-                Toast.makeText(this@AcceptRideActivity, "Added Successfully", Toast.LENGTH_SHORT)
-                    .show()
+               // Toast.makeText(this@AcceptRideActivity, "Added Successfully", Toast.LENGTH_SHORT).show()
                 Log.d("DateTime", dateTime)
                 dialog.dismiss() // Dismiss the dialog explicitly
             } else {
@@ -396,30 +426,155 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        gooMap = googleMap
-        gooMap.addMarker(MarkerOptions().position(PickUpLoc).title("PickUp Location"))
-        gooMap.addMarker(MarkerOptions().position(DropLoc).title("Drop Location"))
-        val centerLat = (PickUpLoc.latitude + DropLoc.latitude) / 2
-        val centerLng = (PickUpLoc.longitude + DropLoc.longitude) / 2
-        val centerPoint = LatLng(centerLat, centerLng)
-        gooMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPoint, 13f))
+        mMap = googleMap
+
+        // Add markers for pickup and drop locations
+        mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pickup Location"))
+        mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
+
+        // Move camera to the initial pickup location
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 12f))
+
+        // Enable my location button and request location permission
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        mMap.isMyLocationEnabled = true
+
+        // Get and draw route when map is ready
+        getLastLocationAndDrawRoute()
+
+        mMap.setOnMyLocationChangeListener { location ->
+            val userLocation = LatLng(location.latitude, location.longitude)
+            checkDestinationReached(userLocation, dropLocation)
+        }
     }
 
 
-    private fun drawRoute(PickUpLoc: LatLng, DropLoc: LatLng) {
-     /*   gooMap.addPolyline(
-            PolylineOptions()
-                .add(origin, destination)
-                .width(4f)
-                .color(android.graphics.Color.RED)
-        )*/
-        val polylineOptions = PolylineOptions()
-            .add(PickUpLoc)
-            .add(DropLoc)
-            .color(Color.RED)
-            .width(5f)
-        gooMap.addPolyline(polylineOptions)
+    private fun getLastLocationAndDrawRoute() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    drawRoute(LatLng(location.latitude, location.longitude))
+                    Log.e(
+                        "location",
+                        "location.." + location.latitude + "longitude " + location.longitude
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    this,
+                    "Failed to get location: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
+    private fun checkDestinationReached(userLocation: LatLng, destinationLocation: LatLng) {
+        val distanceToDestination = calculateDistance(userLocation, destinationLocation)
+        val thresholdDistance = 100 // Define your threshold distance in meters
 
+        if (distanceToDestination <= thresholdDistance && !isDestinationReached) {
+            // Destination reached
+            isDestinationReached = true
+            Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
+            // Perform any action you want when the destination is reached
+        }
+    }
+
+    // Calculate distance between two LatLng points using Haversine formula
+    private fun calculateDistance(startLatLng: LatLng, endLatLng: LatLng): Float {
+        val earthRadius = 6371000 // Radius of the Earth in meters
+        val dLat = Math.toRadians((endLatLng.latitude - startLatLng.latitude).toDouble())
+        val dLng = Math.toRadians((endLatLng.longitude - startLatLng.longitude).toDouble())
+        val a = (sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(startLatLng.latitude)) * cos(Math.toRadians(endLatLng.latitude)) *
+                sin(dLng / 2) * sin(dLng / 2))
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return (earthRadius * c).toFloat()
+    }
+
+    private fun drawRoute(latLng: LatLng) {
+        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val context = GeoApiContext.Builder()
+            .apiKey(apiKey)
+            .build()
+
+        Log.e("location", "location.." + latLng.latitude + "longitude " + latLng.longitude)
+        val result: DirectionsResult = DirectionsApi.newRequest(context)
+            .mode(TravelMode.DRIVING)
+            .origin("${latLng.latitude},${latLng.longitude}")
+            .destination("${dropLocation.latitude},${dropLocation.longitude}")
+            .await()
+
+        // Decode polyline and draw on map
+        val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
+
+        // Add polyline to map
+        mMap.addPolyline(PolylineOptions().addAll(points).color(Color.BLUE))
+
+        // mMap.clear() // Clear previous route
+
+    }
+
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
+    }
 }

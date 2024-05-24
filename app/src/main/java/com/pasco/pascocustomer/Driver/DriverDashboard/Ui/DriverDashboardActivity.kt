@@ -140,7 +140,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         if (switcCheck == "0") {
             binding.switchbtn.isChecked = false
         }
-
+        else if (dAdminApprovedId=="0"&&switcCheck == "0")
+        {
+            binding.switchbtn.isChecked = false
+        }
         val homeFragment = HomeFragment()
         replace_fragment(homeFragment)
 

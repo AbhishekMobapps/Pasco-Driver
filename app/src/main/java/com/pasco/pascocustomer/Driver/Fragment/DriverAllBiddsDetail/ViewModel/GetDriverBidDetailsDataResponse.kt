@@ -110,11 +110,11 @@ class GetDriverBidDetailsDataResponse:Serializable {
 
         @SerializedName("message")
         @Expose
-        var message: Any? = null
+        var message: String? = null
 
         @SerializedName("payment_method")
         @Expose
-        var paymentMethod: Any? = null
+        var paymentMethod: String? = null
 
         @SerializedName("upfront_payment")
         @Expose
@@ -128,8 +128,20 @@ class GetDriverBidDetailsDataResponse:Serializable {
         @Expose
         var bidPrice: Float? = null
 
+        @SerializedName("commission_price")
+        @Expose
+        var commissionPrice: Float? = null
+
         @SerializedName("availabledrop_datetime")
         @Expose
         var availabledropDatetime: String? = null
+
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
     }
 }
