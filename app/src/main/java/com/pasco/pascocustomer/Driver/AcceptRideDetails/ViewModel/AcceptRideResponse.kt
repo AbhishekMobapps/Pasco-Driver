@@ -132,6 +132,5 @@ class AcceptRideResponse:Serializable{
         @SerializedName("bid_price")
         @Expose
         var bidPrice: Any? = null
-
     }
 }

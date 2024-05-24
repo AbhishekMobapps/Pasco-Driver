@@ -78,12 +78,6 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         getVehicleDetails()
         //get vehicle details api
         getVehicleDetailsObserver()
-        binding.submitBtnAddVehUpdate.setOnClickListener {
-            //call api
-            Log.e("dasdas" + "onCreate: ", "Hellp")
-            putUpdateDetails()
-        }
-
         binding.selectVehicleUPV.setOnClickListener {
             openCameraOrGallery("vehicleImg")
         }
@@ -95,9 +89,57 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         binding.selectVehicleRcUPV.setOnClickListener {
             openCameraOrGallery("vehicleRc")
         }
-
+        binding.submitBtnAddVehUpdate.setOnClickListener {
+            //call api
+            Log.e("dasdas" + "onCreate: ", "Hellp")
+            updateVehDetailsApi()
+        }
         putUpdateDetailsObserver()
 
+    }
+    private fun updateVehDetailsApi() {
+        val vehicleNo =
+            RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
+        val vehiclePhoto = selectedImageFile?.let {
+            it.asRequestBody("image/*".toMediaTypeOrNull())
+        }?.let {
+            MultipartBody.Part.createFormData(
+                "vehicle_photo",
+                selectedImageFile!!.name,
+                it
+            )
+        }
+
+        val document = selectedImageFileDoc?.let {
+            MultipartBody.Part.createFormData(
+                "document",
+                selectedImageFileDoc!!.name,
+                it.asRequestBody("application/*".toMediaTypeOrNull())
+            )
+        }
+
+        val drivingLicense = selectedImageFileRc?.let {
+            MultipartBody.Part.createFormData(
+                "driving_license",
+                selectedImageFileRc!!.name,
+                it.asRequestBody("application/*".toMediaTypeOrNull())
+            )
+        }
+
+        vehiclePhoto?.let {
+            document?.let { it1 ->
+                drivingLicense?.let { it2 ->
+                    putVDetailsViewModel.putUpdateReqApprovaldata(
+                        progressDialog,
+                        this,
+                        vehicleNo,
+                        it,
+                        it1,
+                        it2
+                    )
+                }
+            }
+        }
     }
 
 
@@ -458,51 +500,6 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                 getVehicleDetails()
 
 
-            }
-        }
-    }
-
-    private fun putUpdateDetails() {
-        val vehicleNo =
-            RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
-        val vehiclePhoto = selectedImageFile?.let {
-            it.asRequestBody("image/*".toMediaTypeOrNull())
-        }?.let {
-            MultipartBody.Part.createFormData(
-                "vehicle_photo",
-                selectedImageFile!!.name,
-                it
-            )
-        }
-
-        val document = selectedImageFileDoc?.let {
-            MultipartBody.Part.createFormData(
-                "document",
-                selectedImageFileDoc!!.name,
-                it.asRequestBody("application/*".toMediaTypeOrNull())
-            )
-        }
-
-        val drivingLicense = selectedImageFileRc?.let {
-            MultipartBody.Part.createFormData(
-                "driving_license",
-                selectedImageFileRc!!.name,
-                it.asRequestBody("application/*".toMediaTypeOrNull())
-            )
-        }
-
-        vehiclePhoto?.let {
-            document?.let { it1 ->
-                drivingLicense?.let { it2 ->
-                    putVDetailsViewModel.putUpdateReqApprovaldata(
-                        progressDialog,
-                        this,
-                        vehicleNo,
-                        it,
-                        it1,
-                        it2
-                    )
-                }
             }
         }
     }

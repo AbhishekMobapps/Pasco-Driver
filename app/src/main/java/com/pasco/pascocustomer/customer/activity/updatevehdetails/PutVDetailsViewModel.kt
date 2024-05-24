@@ -36,25 +36,25 @@ class PutVDetailsViewModel@Inject constructor(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         vehiclenumber: RequestBody,
-        identify_document: MultipartBody.Part,
-        identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        attachmentP: MultipartBody.Part,
+        attachmentD: MultipartBody.Part,
+        attachmentDl: MultipartBody.Part
     ) =
         viewModelScope.launch {
-            putuserApproveReq(progressDialog,activity,vehiclenumber,identify_document,identify_document1,identify_document2)
+            putuserApproveReq(progressDialog,activity,vehiclenumber,attachmentP,attachmentD,attachmentDl)
         }
 
     suspend fun putuserApproveReq(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         vehiclenumber: RequestBody,
-        identify_document: MultipartBody.Part,
-        identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        attachmentP: MultipartBody.Part,
+        attachmentD: MultipartBody.Part,
+        attachmentDl: MultipartBody.Part
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        putApprovalReqRepsitory.putApprovalReqRepo(vehiclenumber,identify_document,identify_document1,identify_document2)
+        putApprovalReqRepsitory.putApprovalReqRepo(vehiclenumber,attachmentP,attachmentD,attachmentDl)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<PutVDetailsResponse>() {

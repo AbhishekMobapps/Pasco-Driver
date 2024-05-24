@@ -15,15 +15,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--<fragment
-            android:id="@+id/map"
+        <fragment
+            android:id="@+id/mapAcceptRide"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -253,7 +253,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:text="Delivery price range"
+                            android:text="@string/commission_price"
                             android:textColor="@color/black"
                             android:textSize="@dimen/normal_txt_size"
                             app:layout_constraintWidth_percent="0.5"
@@ -265,8 +265,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="right"
-                            android:text="From 50 to 100 $"
-                            android:textColor="@color/grey"
+                            android:text="100$"
+                            android:textColor="@color/green"
                             android:textSize="@dimen/normal_txt_size13"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/priceStaticTextView"

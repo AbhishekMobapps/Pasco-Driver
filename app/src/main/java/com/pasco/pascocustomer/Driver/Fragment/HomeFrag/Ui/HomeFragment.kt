@@ -18,6 +18,7 @@ import com.pasco.pascocustomer.Driver.EmergencyResponse.Ui.EmergencyCallActivity
 import com.pasco.pascocustomer.Driver.NotesRemainders.Ui.NotesRemainderActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 
 import java.util.ArrayList
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeDriverBinding
+    private var dAdminApprovedId: String? = ""
     private var rideRequestList: List<ShowBookingReqResponse.ShowBookingReqData> = ArrayList()
     @Inject lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
@@ -35,6 +37,14 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
+        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
+        if (dAdminApprovedId == "0") {
+            disableAll()
+        } else if (dAdminApprovedId == "1") {
+            enableAll()
+            showRideRequestApi()
+            setupObservers()
+        }
         binding.NotesDriHome.setOnClickListener {
             val intent = Intent(requireContext(), NotesRemainderActivity::class.java)
             startActivity(intent)
@@ -52,10 +62,21 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)
         }
-        //call api
-        showRideRequestApi()
-        setupObservers()
         return binding.root
+    }
+
+    private fun enableAll() {
+        binding.NotesDriHome.isEnabled = true
+        binding.supportsLinearDri.isEnabled = true
+        binding.LinearWallHomeF.isEnabled = true
+        binding.linearDriHEmergency.isEnabled = true
+    }
+
+    private fun disableAll() {
+        binding.NotesDriHome.isEnabled = false
+        binding.supportsLinearDri.isEnabled = false
+        binding.LinearWallHomeF.isEnabled = false
+        binding.linearDriHEmergency.isEnabled = false
     }
 
     private fun showRideRequestApi() {

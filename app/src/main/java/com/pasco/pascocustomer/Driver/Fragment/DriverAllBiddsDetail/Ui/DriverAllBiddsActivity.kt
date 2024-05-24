@@ -5,24 +5,29 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.activity.Driver.adapter.DriverAllBiddDetailAdapter
 import com.pasco.pascocustomer.databinding.ActivityDriverAllBiddsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
-
 @AndroidEntryPoint
 class DriverAllBiddsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDriverAllBiddsBinding
-    private var getDriverData:List<GetDriverBidDetailsDataResponse.DriverAllBidData> = ArrayList()
+    private var getDriverData: List<GetDriverBidDetailsDataResponse.DriverAllBidData> = ArrayList()
     private val getDriverBidDetailsDataViewModel: GetDriverBidDetailsDataViewModel by viewModels()
+    private val getRouteUpdateViewModel: GetRouteUpdateViewModel by viewModels()
+    private val startTripViewModel: StartTripViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this@DriverAllBiddsActivity) }
     private lateinit var activity: Activity
     private var BookingID = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverAllBiddsBinding.inflate(layoutInflater)
@@ -36,7 +41,6 @@ class DriverAllBiddsActivity : AppCompatActivity() {
         getDriverDataApi()
         getDriverDataObserver()
     }
-
     private fun getDriverDataApi() {
         getDriverBidDetailsDataViewModel.getDriverBidingData(
             progressDialog,
@@ -44,33 +48,30 @@ class DriverAllBiddsActivity : AppCompatActivity() {
             BookingID
         )
     }
-
     private fun getDriverDataObserver() {
-        getDriverBidDetailsDataViewModel.progressIndicator.observe(this@DriverAllBiddsActivity, Observer {
+        getDriverBidDetailsDataViewModel.progressIndicator.observe(this@DriverAllBiddsActivity) {
             // Handle progress indicator changes if needed
-        })
+        }
 
         getDriverBidDetailsDataViewModel.mgetDBiddDataResponse.observe(this@DriverAllBiddsActivity) { response ->
             val message = response.peekContent().msg!!
             getDriverData = response.peekContent().data ?: emptyList()
 
-            if (response.peekContent().status == "False") {
+            binding.recyclerBiddingDetailsORD.apply {
+                isVerticalScrollBarEnabled = true
+                isVerticalFadingEdgeEnabled = true
+                layoutManager = LinearLayoutManager(this@DriverAllBiddsActivity, LinearLayoutManager.VERTICAL, false)
+                adapter = DriverAllBiddDetailAdapter(
+                    this@DriverAllBiddsActivity,
+                    getDriverData,
+                    activity as FragmentActivity,
+                    getRouteUpdateViewModel,
+                    startTripViewModel
+                )
+            }
 
-                binding.recyclerBiddingDetailsORD.isVerticalScrollBarEnabled = true
-                binding.recyclerBiddingDetailsORD.isVerticalFadingEdgeEnabled = true
-                binding.recyclerBiddingDetailsORD.layoutManager =
-                    LinearLayoutManager(this@DriverAllBiddsActivity, LinearLayoutManager.VERTICAL, false)
-                binding.recyclerBiddingDetailsORD.adapter =
-                    DriverAllBiddDetailAdapter(this@DriverAllBiddsActivity,getDriverData)
+            if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            } else {
-                binding.recyclerBiddingDetailsORD.isVerticalScrollBarEnabled = true
-                binding.recyclerBiddingDetailsORD.isVerticalFadingEdgeEnabled = true
-                binding.recyclerBiddingDetailsORD.layoutManager =
-                    LinearLayoutManager(this@DriverAllBiddsActivity, LinearLayoutManager.VERTICAL, false)
-                binding.recyclerBiddingDetailsORD.adapter =
-                    DriverAllBiddDetailAdapter(this@DriverAllBiddsActivity, getDriverData)
-                //Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -78,10 +79,9 @@ class DriverAllBiddsActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
     override fun onResume() {
         super.onResume()
-        //call api
+        // Call API to refresh data
         getDriverDataApi()
     }
 }

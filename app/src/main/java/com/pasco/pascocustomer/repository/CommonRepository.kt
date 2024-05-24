@@ -35,6 +35,7 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsRes
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class CommonRepository @Inject constructor(private val apiService: ApiServices) {
@@ -85,14 +86,14 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun putApprovalReqRepo(
         vehiclenumber: RequestBody,
-        identify_document: MultipartBody.Part,
-        identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        attachmentP: MultipartBody.Part,
+        attachmentD: MultipartBody.Part,
+        attachmentDl: MultipartBody.Part
 
     ): Observable<PutVDetailsResponse> {
         return apiService.putVehicleUpdate(
             PascoApp.encryptedPrefs.bearerToken,
-            vehiclenumber, identify_document, identify_document1, identify_document2
+            vehiclenumber,attachmentP,attachmentD,attachmentDl
         )
     }
 

@@ -57,6 +57,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         strPhoneNo = intent.getStringExtra("phoneNumber").toString()
         loginValue = intent.getStringExtra("loginValue").toString()
         countryCode = intent.getStringExtra("countryCode").toString()
+        binding.phoneNumber.text = strPhoneNo
 
 
         binding.continueBtn.setOnClickListener {
@@ -141,20 +142,17 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             PascoApp.encryptedPrefs.userId = userId.toString()
             PascoApp.encryptedPrefs.userType = userType
+            PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.isFirstTime = false
 
-            if (message == "Approval Request not created ") {
+            if (approved == 2 && userType == "driver") {
                 Log.e("AAAAA", "aaaaaaa....")
                 val intent = Intent(this@LoginOtpVerifyActivity, VehicleDetailsActivity::class.java)
                 startActivity(intent)
-            } else if (loginValue == "driver" && approved == 0 && userType == "driver") {
-                openPopUp()
-            } else if (loginValue == "driver" && approved == 1 && userType == "driver") {
+            } else if (loginValue == "driver" && userType == "driver") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent =
-                    Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
-                intent.putExtra("Dri", "Driver")
+                val intent = Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
 
             } else if (loginValue == "user" && userType == "user") {
