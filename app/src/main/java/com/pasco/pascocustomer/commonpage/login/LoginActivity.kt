@@ -155,7 +155,7 @@ class LoginActivity : AppCompatActivity() {
             val userId = it.peekContent().userId
             userType = it.peekContent().userType.toString()
             val approved = it.peekContent().approved
-        //    PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
+            PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
             PascoApp.encryptedPrefs.token = token?.refresh ?: ""
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             PascoApp.encryptedPrefs.userId = userId.toString()

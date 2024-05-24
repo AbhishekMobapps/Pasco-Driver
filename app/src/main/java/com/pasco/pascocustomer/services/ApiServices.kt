@@ -20,6 +20,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.UpDriverStatusResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
+import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.Profile.PutViewModel.ProfileResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
@@ -423,4 +424,10 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String
     ): Observable<DriverDetailsResponse>
+
+    @GET("ClientbookedDetail/{id}")
+    fun customerDetails(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String
+    ): Observable<CustomerDetailsResponse>
 }
