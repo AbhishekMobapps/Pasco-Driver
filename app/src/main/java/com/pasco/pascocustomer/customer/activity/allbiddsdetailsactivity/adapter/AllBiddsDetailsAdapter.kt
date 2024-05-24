@@ -9,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.DriverDetailsActivity
+import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,7 +24,8 @@ import java.util.*
 
 class AllBiddsDetailsAdapter(
     private val required: Context,
-    private var orderList: List<AllBiddsDetailResponse.Datum>
+    private var orderList: List<AllBiddsDetailResponse.Datum>,
+    private val onItemClick: NotificationClickListener,
 ) :
     RecyclerView.Adapter<AllBiddsDetailsAdapter.ViewHolder>() {
 
@@ -37,6 +40,7 @@ class AllBiddsDetailsAdapter(
         val bidPriceTx: TextView = itemView.findViewById(R.id.bidPriceTx)
         val upFrontTxt: TextView = itemView.findViewById(R.id.upFrontTxt)
         val driverProfile: ImageView = itemView.findViewById(R.id.driverProfile)
+        val acceptBtn: ConstraintLayout = itemView.findViewById(R.id.acceptBtn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -96,6 +100,10 @@ class AllBiddsDetailsAdapter(
             val intent = Intent(required, DriverDetailsActivity::class.java)
             intent.putExtra("id", id.toString())
             required.startActivity(intent)
+        }
+        holder.acceptBtn.setOnClickListener {
+            val id = orderList[position].id
+            onItemClick.deleteNotification(position, id!!)
         }
     }
 

@@ -5,28 +5,31 @@ import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectModelView
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.BiddsDtailsModelView
+import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.databinding.ActivityAllBiddsDetailsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.String.format
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class AllBiddsDetailsActivity : AppCompatActivity() {
+class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     private lateinit var binding: ActivityAllBiddsDetailsBinding
     private val progressDialog by lazy { CustomProgressDialog(this@AllBiddsDetailsActivity) }
     private var biddsDetailsList: List<AllBiddsDetailResponse.Datum> = ArrayList()
     private val detailsModel: BiddsDtailsModelView by viewModels()
+    private val paymentAccept: AcceptOrRejectModelView by viewModels()
     private var userName = ""
     private var orderId = ""
     private var dateTime = ""
@@ -76,15 +79,15 @@ class AllBiddsDetailsActivity : AppCompatActivity() {
 
         val distanceValue = distance.toDoubleOrNull() ?: 0.0 // Convert distance to Double
         val formattedDistance = String.format("%.2f", distanceValue)
-       binding.distanceTxt.text = "$formattedDistance Km"
+        binding.distanceTxt.text = "$formattedDistance Km"
 
-        binding.totalPriceTxt.text ="$ $totalPrice"
+        binding.totalPriceTxt.text = "$ $totalPrice"
 
         binding.backBtn.setOnClickListener { finish() }
 
         getBiddsDetailsList()
         biddsDetailsObserver()
-
+        acceptOrRejectObserver()
     }
 
 
@@ -115,7 +118,7 @@ class AllBiddsDetailsActivity : AppCompatActivity() {
                         false
                     )
                 biddsDetailsAdapter =
-                    AllBiddsDetailsAdapter(this@AllBiddsDetailsActivity, biddsDetailsList)
+                    AllBiddsDetailsAdapter(this@AllBiddsDetailsActivity, biddsDetailsList,this)
                 binding.detailsRecycler.adapter = biddsDetailsAdapter
 
 
@@ -146,4 +149,32 @@ class AllBiddsDetailsActivity : AppCompatActivity() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+    override fun deleteNotification(position: Int, id: Int) {
+        Log.e("ASDFF","id" +id)
+        acceptOrRejectApi(id)
+    }
+    private fun acceptOrRejectApi(id: Int) {
+        //   val codePhone = strPhoneNo
+        val loinBody = AcceptOrRejectBidBody(
+            payment_amount = "50.00",
+            payment_type = "wallet"
+        )
+        paymentAccept.otpCheck(id.toString(), loinBody, this, progressDialog)
+    }
+
+    private fun acceptOrRejectObserver() {
+        paymentAccept.progressIndicator.observe(this) {}
+        paymentAccept.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+        }
+        paymentAccept.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)
+            // errorDialogs()
+        }
+    }
+
+
 }

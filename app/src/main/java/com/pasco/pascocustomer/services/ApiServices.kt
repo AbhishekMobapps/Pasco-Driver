@@ -49,6 +49,8 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
@@ -424,6 +426,14 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String
     ): Observable<DriverDetailsResponse>
+
+    @Headers("Accept:application/json")
+    @POST("assign_Booking/{id}/")
+    fun acceptOrReject(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String,
+        @Body body: AcceptOrRejectBidBody
+    ): Observable<AcceptOrRejectResponse>
 
     @GET("ClientbookedDetail/{id}")
     fun customerDetails(
