@@ -43,29 +43,32 @@
 
         <TextView
             android:id="@+id/welcome"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
             android:layout_marginTop="20dp"
             android:text="@string/verify_your_account"
             android:textColor="@color/black"
             android:textSize="20dp"
+            app:layout_constraintWidth_percent=".95"
             android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/phoneConst"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent=".95"
             app:layout_constraintTop_toBottomOf="@+id/welcome">
 
             <TextView
                 android:id="@+id/credentialTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/enter_4_digit_code_send_to"
                 android:textSize="14sp"

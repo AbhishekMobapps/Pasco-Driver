@@ -129,9 +129,9 @@ interface ApiServices {
     fun putVehicleUpdate(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Part("vehiclenumber") vehiclenumber: RequestBody,
-        @Part attachment: MultipartBody.Part,
-        @Part attachment1: MultipartBody.Part,
-        @Part attachment2: MultipartBody.Part
+        @Part attachmentP: MultipartBody.Part,
+        @Part attachmentD: MultipartBody.Part,
+        @Part attachmentDl: MultipartBody.Part
     ):Observable<PutVDetailsResponse>
 
     @Headers("Accept:application/json")
