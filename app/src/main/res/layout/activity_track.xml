@@ -23,7 +23,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/HeadlineReqRideCons"
             android:layout_width="0dp"
@@ -65,7 +64,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consUserImgg"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="@drawable/req_order_background"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -182,7 +181,7 @@
                             android:textColor="@color/grey"
                             android:textSize="@dimen/normal_txt_size_12"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintWidth_percent="0.3"
+                            app:layout_constraintWidth_percent="0.45"
                             tools:ignore="MissingConstraints" />
 
 
@@ -204,7 +203,7 @@
                             android:textColor="@color/grey"
                             android:textSize="@dimen/normal_txt_size_12"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintWidth_percent="0.3"
+                            app:layout_constraintWidth_percent="0.46"
                             tools:ignore="MissingConstraints" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -312,6 +311,17 @@
                             app:layout_constraintStart_toEndOf="@+id/distanceTextView"
                             app:layout_constraintWidth_percent="0.5"
                             tools:ignore="MissingConstraints" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/normal_txt_size"
+                            app:layout_constraintTop_toBottomOf="@+id/totalDistanceBidd"
+                            app:layout_constraintWidth_percent="0.5"
+                            tools:ignore="MissingConstraints" />
+
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -48,6 +48,7 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
@@ -417,5 +418,9 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<AdditionalServiceResponse>
 
-
+    @GET("DriverbookedDetail/{id}")
+    fun driverDetails(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String
+    ): Observable<DriverDetailsResponse>
 }

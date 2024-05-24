@@ -65,7 +65,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        mMap.isTrafficEnabled = true
         // Add markers for pickup and drop locations
         mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pickup Location"))
         mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))

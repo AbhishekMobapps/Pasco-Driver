@@ -240,4 +240,7 @@
     <string name="your_information_is_under_review_you_are_not_approved_by_the_admin">Your information is under review. You are not approved by the admin</string>
     <string name="currently_no_bids_are_available">Currently, no bids are available.</string>
     <string name="commission_price">Commission Price</string>
+    <string name="share_subject">Check out this app!</string>
+    <string name="share_message">Check out this amazing app: %1$s</string>
+    <string name="share_via">Share via</string>
 </resources>

@@ -66,6 +66,7 @@ class MoreFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.consShareApp.setOnClickListener { shareApp() }
         refresh = PascoApp.encryptedPrefs.token
         logOutObserver()
         return view
@@ -120,5 +121,15 @@ class MoreFragment : Fragment() {
         logoutViewModel.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireContext(), it)
         }
+    }
+
+    private fun shareApp() {
+        val appPackageName = "com.pasco.pascocustomer" // Hardcoded package name
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out this app!")
+            putExtra(Intent.EXTRA_TEXT, "Check out this amazing app: https://play.google.com/store/apps/details?id=$appPackageName")
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 }
