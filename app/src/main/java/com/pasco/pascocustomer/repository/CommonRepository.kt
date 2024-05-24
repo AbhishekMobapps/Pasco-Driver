@@ -27,6 +27,7 @@ import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
+import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
@@ -166,5 +167,9 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
     fun getAdditionalService(): Observable<AdditionalServiceResponse> {
         return apiService.additionalService(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun driverDetails(Id: String): Observable<DriverDetailsResponse> {
+        return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id)
     }
 }

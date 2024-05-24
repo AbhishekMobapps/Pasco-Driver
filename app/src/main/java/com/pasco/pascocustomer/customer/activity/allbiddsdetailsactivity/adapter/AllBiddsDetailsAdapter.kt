@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapte
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
+import com.pasco.pascocustomer.customer.activity.driverdetails.DriverDetailsActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -89,6 +91,12 @@ class AllBiddsDetailsAdapter(
         }
 
 
+        holder.driverProfile.setOnClickListener {
+            val id = orderList[position].id
+            val intent = Intent(required, DriverDetailsActivity::class.java)
+            intent.putExtra("id", id.toString())
+            required.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {

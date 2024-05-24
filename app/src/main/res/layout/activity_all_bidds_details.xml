@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="Order ID     :"
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -148,15 +148,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/pickup"
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/locationImg"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="3dp"
                 android:src="@drawable/pin"
                 android:tint="@color/earth_yellow"
@@ -197,16 +197,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/drop"
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/dropImg"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="15dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="17dp"
                 android:src="@drawable/pin"
                 android:tint="@color/earth_yellow"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -218,7 +218,7 @@
                 android:id="@+id/dropLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
+                android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:text=" Noida Sector 59"
                 android:textColor="@color/black"
@@ -246,7 +246,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dist.         :"
                 android:textColor="@color/black"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -291,7 +291,7 @@
                     android:layout_height="wrap_content"
                     android:text="Total Price :"
                     android:textColor="@color/grey_dark"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
