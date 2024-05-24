@@ -28,7 +28,7 @@ class NotesRemainderActivity : AppCompatActivity() {
     private var day: Int = 0
     private var formattedDate=""
     private var formattedTime=""
-
+//
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNotesRemainderBinding.inflate(layoutInflater)
