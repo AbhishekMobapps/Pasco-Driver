@@ -19,11 +19,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.StartRiding.Ui.DriverStartRidingActivity
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
+import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import de.hdodenhof.circleimageview.CircleImageView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -47,7 +49,7 @@ class DriverAllBiddDetailAdapter(
     private val progressDialog by lazy { CustomProgressDialog(activity) }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val driverProfile: CircleImageView = itemView.findViewById(R.id.driverProfile)
+        val driverSeeUserProfile: CircleImageView = itemView.findViewById(R.id.driverSeeUserProfile)
         val pickUpDetailsORD: TextView = itemView.findViewById(R.id.pickUpDetailsORD)
         val DropDetailsORD: TextView = itemView.findViewById(R.id.DropDetailsORD)
         val distanceDORD: TextView = itemView.findViewById(R.id.distanceDORD)
@@ -91,7 +93,8 @@ class DriverAllBiddDetailAdapter(
         val imageUrl = "$baseUrl$imagePath"
         Glide.with(context)
             .load(imageUrl)
-            .into(holder.driverProfile)
+            .into(holder.driverSeeUserProfile)
+
 
         try {
             val parsedDate = inputDateFormat.parse(dateTime)
@@ -120,6 +123,13 @@ class DriverAllBiddDetailAdapter(
             cPriceDORD.text = commissionPrice
             clientNameOrdR.text = bookingReq.user
             orderIdDynamicDORD.text = truncateBookingNumber(bookingReq.bookingNumber.toString())
+            driverSeeUserProfile.setOnClickListener {
+                val id = bookingReq.id.toString()
+                val intent = Intent(context, CustomerDetailsActivity::class.java)
+                intent.putExtra("customerId",id)
+                context.startActivity(intent)
+                // openDialogBox(id, bookingId)
+            }
 
             orderIdDynamicDORD.setOnClickListener {
                 showFullAddressDialog(bookingReq.bookingNumber.toString())

@@ -28,7 +28,7 @@
             app:layout_constraintWidth_percent="0.93">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/driverProfile"
+                android:id="@+id/driverSeeUserProfile"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/ic_launcher_background"
@@ -47,13 +47,13 @@
                 android:textSize="@dimen/text_size_16"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/driverProfile"
+                app:layout_constraintStart_toEndOf="@+id/driverSeeUserProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@+id/driverProfile"
+                app:layout_constraintStart_toEndOf="@+id/driverSeeUserProfile"
                 app:layout_constraintTop_toBottomOf="@+id/clientNameOrdR"
                 app:layout_constraintStart_toStartOf="@+id/clientNameOrdR"
                 app:layout_constraintWidth_percent="0.5">
