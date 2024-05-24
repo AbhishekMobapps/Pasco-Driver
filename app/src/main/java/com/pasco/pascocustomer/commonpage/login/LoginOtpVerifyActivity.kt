@@ -60,30 +60,23 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
 
 
         binding.continueBtn.setOnClickListener {
-             val verificationCode = "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
-             val credential: PhoneAuthCredential =
-                 PhoneAuthProvider.getCredential(verificationId, verificationCode)
-             signInWithPhoneAuthCredential(credential,deviceModel)
+            val verificationCode =
+                "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
+            val credential: PhoneAuthCredential =
+                PhoneAuthProvider.getCredential(verificationId, verificationCode)
+            signInWithPhoneAuthCredential(credential, deviceModel)
 
         }
         editTextList.addAll(
             listOf(
-                binding.box5,
-                binding.box1,
-                binding.box2,
-                binding.box3,
-                binding.box4,
-                binding.box6
+                binding.box5, binding.box1, binding.box2, binding.box3, binding.box4, binding.box6
             )
         )
 
         for (i in 0 until editTextList.size - 1) {
             editTextList[i].addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
+                    s: CharSequence?, start: Int, count: Int, after: Int
                 ) {
                 }
 
@@ -100,16 +93,15 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         binding.box3.setOnEditorActionListener { _, actionId, _ ->
             actionId == EditorInfo.IME_ACTION_DONE
         }
+
+        loginObserver()
     }
 
 
-
     private fun signInWithPhoneAuthCredential(
-        credential: PhoneAuthCredential,
-        deviceModel: String
+        credential: PhoneAuthCredential, deviceModel: String
     ) {
-        mAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in successful, go to the next activity or perform desired actions
                     if (loginValue == "driver") {
@@ -129,15 +121,13 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     private fun loginApi() {
         //   val codePhone = strPhoneNo
         val loinBody = LoginBody(
-            phone_number = strPhoneNo,
-            user_type = loginValue
+            phone_number = strPhoneNo, user_type = loginValue
         )
         loginModel.otpCheck(loinBody, this, progressDialog)
     }
 
     private fun loginObserver() {
-        loginModel.progressIndicator.observe(this) {
-        }
+        loginModel.progressIndicator.observe(this) {}
         loginModel.mRejectResponse.observe(
             this
         ) {
@@ -162,7 +152,8 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
                 openPopUp()
             } else if (loginValue == "driver" && approved == 1 && userType == "driver") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
+                val intent =
+                    Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
                 intent.putExtra("Dri", "Driver")
                 startActivity(intent)
 
@@ -181,8 +172,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     }
 
     private fun openPopUp() {
-        val builder =
-            AlertDialog.Builder(this@LoginOtpVerifyActivity, R.style.Style_Dialog_Rounded_Corner)
+        val builder = AlertDialog.Builder(this@LoginOtpVerifyActivity, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.register_confirmation, null)
         builder.setView(dialogView)
 

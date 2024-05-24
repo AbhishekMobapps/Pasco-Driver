@@ -46,8 +46,10 @@ class VehicleTypeAdapter(
 
         holder.itemView.setOnClickListener {
             val vehicleId = emirateList[position].id
+            val shipmentName = emirateList[position].shipmentname
             val intent = Intent(context, AllTabPayActivity::class.java)
             intent.putExtra("vehicleId",vehicleId!!)
+            intent.putExtra("shipmentName",shipmentName)
             context.startActivity(intent)
         }
 
