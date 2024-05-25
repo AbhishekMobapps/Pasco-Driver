@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".userFragment.UserHomeFragment">
+    tools:context=".userFragment.home.UserHomeFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/indicatorA"
         android:layout_width="0dp"
