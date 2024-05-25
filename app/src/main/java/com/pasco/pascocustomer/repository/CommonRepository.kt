@@ -175,7 +175,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id)
     }
     fun acceptReject(courseBody: AcceptOrRejectBidBody,id:String): Observable<AcceptOrRejectResponse> {
-        return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken,id,courseBody)
+        return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
+    }
 
     fun customerDetails(Id: String): Observable<CustomerDetailsResponse> {
         return apiService.customerDetails(PascoApp.encryptedPrefs.bearerToken, Id)
