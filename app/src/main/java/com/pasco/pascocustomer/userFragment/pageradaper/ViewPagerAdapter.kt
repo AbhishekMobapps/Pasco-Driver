@@ -8,18 +8,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
+import com.bumptech.glide.Glide
+import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
+import java.util.ArrayList
 
 class ViewPagerAdapter(
     private val context: Context,
-    private val images: List<Int>,
-    private val titles: List<String>,
-   private val titles1: List<String>
+   private var sliderList: ArrayList<SliderHomeResponse.Datum>
 ) :
     PagerAdapter() {
 
     override fun getCount(): Int {
-        return images.size
+        return sliderList.size
     }
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -33,9 +35,9 @@ class ViewPagerAdapter(
         val imageView = view.findViewById<ImageView>(R.id.viewPagerImg)
         val textView = view.findViewById<TextView>(R.id.headingTxt)
         val subHeading = view.findViewById<TextView>(R.id.subHeading)
-        imageView.setImageResource(images[position])
-        textView.text = titles[position]
-        subHeading.text = titles1[position]
+         val url = sliderList?.get(position)?.slideimage
+        Glide.with(context).load(BuildConfig.IMAGE_KEY+url).into(imageView)
+
         container.addView(view)
         return view
     }

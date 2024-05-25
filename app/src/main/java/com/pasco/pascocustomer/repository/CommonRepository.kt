@@ -38,6 +38,8 @@ import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.N
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.Part
 import javax.inject.Inject
@@ -77,7 +79,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     ): Observable<ApprovalRequestResponse> {
         return apiService.getApprovalRequest(
             PascoApp.encryptedPrefs.bearerToken,
-            cargo, vehiclenumber, identify_document, identify_document1, identify_document2
+            cargo,
+            vehiclenumber,
+            identify_document,
+            identify_document1,
+            identify_document2
         )
     }
 
@@ -95,7 +101,10 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     ): Observable<PutVDetailsResponse> {
         return apiService.putVehicleUpdate(
             PascoApp.encryptedPrefs.bearerToken,
-            vehiclenumber, attachmentP, attachmentD, attachmentDl
+            vehiclenumber,
+            attachmentP,
+            attachmentD,
+            attachmentDl
         )
     }
 
@@ -137,14 +146,9 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         email: RequestBody,
         current_city: RequestBody,
         image: MultipartBody.Part
-    )
-            : Observable<UpdateProfileResponse> {
+    ): Observable<UpdateProfileResponse> {
         return apiService.updateProfile(
-            PascoApp.encryptedPrefs.bearerToken,
-            full_name,
-            email,
-            current_city,
-            image
+            PascoApp.encryptedPrefs.bearerToken, full_name, email, current_city, image
         )
     }
 
@@ -174,11 +178,19 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun driverDetails(Id: String): Observable<DriverDetailsResponse> {
         return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id)
     }
+
+    fun acceptReject(
+        courseBody: AcceptOrRejectBidBody, id: String
+    ): Observable<AcceptOrRejectResponse> {
     fun acceptReject(courseBody: AcceptOrRejectBidBody,id:String): Observable<AcceptOrRejectResponse> {
         return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
 
     fun customerDetails(Id: String): Observable<CustomerDetailsResponse> {
         return apiService.customerDetails(PascoApp.encryptedPrefs.bearerToken, Id)
+    }
+
+    fun sliderHome(body: SliderHomeBody): Observable<SliderHomeResponse> {
+        return apiService.sliderHome(PascoApp.encryptedPrefs.bearerToken, body)
     }
 }

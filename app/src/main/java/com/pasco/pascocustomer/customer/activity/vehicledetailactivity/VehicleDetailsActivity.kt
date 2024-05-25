@@ -725,6 +725,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
             ) {
                 ActivityCompat.requestPermissions(
                     this,
+
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     galleryPermissionCode
                 )

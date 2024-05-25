@@ -1,21 +1,26 @@
-package com.pasco.pascocustomer.userFragment
+package com.pasco.pascocustomer.userFragment.home
 
 import android.app.Activity
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesViewModel
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.databinding.FragmentUserHomeBinding
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.pageradaper.VehicleTypeAdapter
 import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -32,9 +37,13 @@ class UserHomeFragment : Fragment() {
     private lateinit var activity: Activity
     private var vehicleTypeAdapter: VehicleTypeAdapter? = null
     private val servicesViewModel: ServicesViewModel by viewModels()
+    private val sliderViewModel: SliderHomeModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
 
     private var vehicleList: ArrayList<ServicesResponse.ServicesResponseData>? = null
+    private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
+
+    private var userType = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,29 +52,9 @@ class UserHomeFragment : Fragment() {
         _binding = FragmentUserHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
         activity = requireActivity()
-        val images = listOf(
-            R.drawable.home_bg,
-            R.drawable.home_bg,
-            R.drawable.home_bg
-        )
+        userType = PascoApp.encryptedPrefs.userType
 
-        val titles = listOf(
-            "Let's Discover \n New Adventure!",
-            "Let's Discover \n New Adventure!",
-            "Let's Discover \n New Adventure!"
-        )
-        val titles1 = listOf(
-            "Let's Discover \n New Adventure!",
-            "Let's Discover \n New Adventure!",
-            "Let's Discover \n New Adventure!"
-        )
-
-
-        val adapter = ViewPagerAdapter(requireContext(), images, titles, titles1)
-        binding.viewPager.adapter = adapter
-        binding.indicator.setViewPager(binding.viewPager)
 
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -103,6 +92,8 @@ class UserHomeFragment : Fragment() {
 
         servicesList()
         servicesObserver()
+        sliderPageApi()
+        sliderPageObserver()
         return view
     }
 
@@ -138,6 +129,36 @@ class UserHomeFragment : Fragment() {
 
         servicesViewModel.errorResponse.observe(this) {
             // Handle general errors
+            ErrorUtil.handlerGeneralError(requireContext(), it)
+        }
+    }
+
+    private fun sliderPageApi() {
+
+        val bookingBody = SliderHomeBody(
+            user_type = userType
+        )
+        sliderViewModel.otpCheck(bookingBody, requireActivity())
+    }
+
+    private fun sliderPageObserver() {
+
+        sliderViewModel.mRejectResponse.observe(requireActivity()) { response ->
+            sliderList = response.peekContent().data
+                binding.viewPager.adapter = ViewPagerAdapter(requireContext(), sliderList!!)
+            binding.indicator.setViewPager(binding.viewPager)
+
+            binding.indicator.setOnPageChangeListener(object : OnPageChangeListener {
+                override fun onPageSelected(position: Int) {
+                    currentPage = position
+                }
+
+                override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
+                override fun onPageScrollStateChanged(pos: Int) {}
+            })
+        }
+
+        sliderViewModel.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireContext(), it)
         }
     }

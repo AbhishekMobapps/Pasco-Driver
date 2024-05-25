@@ -5,14 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
@@ -21,7 +19,7 @@ import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivit
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
 import com.pasco.pascocustomer.userFragment.MoreFragment
-import com.pasco.pascocustomer.userFragment.UserHomeFragment
+import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
 import com.pasco.pascocustomer.userFragment.order.OrderFragment
 import com.pasco.pascocustomer.userFragment.profile.ProfileFragment
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView

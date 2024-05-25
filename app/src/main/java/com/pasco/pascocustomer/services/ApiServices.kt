@@ -58,6 +58,8 @@ import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.N
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
 
@@ -440,4 +442,13 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String
     ): Observable<CustomerDetailsResponse>
+
+
+
+    @Headers("Accept: application/json")
+    @POST("slideshow-detail/")
+    fun sliderHome(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: SliderHomeBody,
+    ): Observable<SliderHomeResponse>
 }
