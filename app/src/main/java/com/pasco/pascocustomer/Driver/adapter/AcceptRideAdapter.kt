@@ -84,8 +84,11 @@ class AcceptRideAdapter(
                 val intent = Intent(context, AcceptRideActivity::class.java)
                 intent.putExtra("rideReqId", id)
                 intent.putExtra("bookingNumb", bookingId)
+                intent.putExtra("pickuplatitudea", bookingReq.pickupLatitude.toString())
+                intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
+                intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
+                intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
                 context.startActivity(intent)
-               // openDialogBox(id, bookingId)
             }
             orderIdDynamicReq.setOnClickListener {
                 showFullAddressDialog(bookingReq.bookingNumber.toString())
@@ -113,7 +116,6 @@ class AcceptRideAdapter(
     }
 
     fun extractCityName(location: String): String {
-        // Assuming the location format is "City, Country" or similar
         return location.split(",")[0].trim() // Extracting the city part before comma
     }
 
