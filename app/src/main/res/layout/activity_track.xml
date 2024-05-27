@@ -73,9 +73,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent=".98">
 
+                <ImageView
+                    android:id="@+id/chatBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/chat"
+                    android:tint="@color/earth_yellow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.652"
+                    app:layout_constraintStart_toEndOf="@+id/profileImgUserBid"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="UseAppTint" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profileImgUserBidd"
+                    android:id="@+id/profileImgUserBid"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:src="@drawable/ic_launcher_background"
@@ -96,7 +108,7 @@
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profileImgUserBidd"
+                    app:layout_constraintTop_toBottomOf="@+id/profileImgUserBid"
                     app:layout_constraintWidth_percent=".93">
 
 
