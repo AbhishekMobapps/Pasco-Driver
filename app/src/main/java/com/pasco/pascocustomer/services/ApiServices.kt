@@ -63,7 +63,7 @@ import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
 
-
+//comment
 interface ApiServices {
     @Headers("Accept:application/json")
     @POST("user-registration/")
