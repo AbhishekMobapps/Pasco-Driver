@@ -6,8 +6,13 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,8 +26,13 @@ import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
+import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
+import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
+import com.pasco.pascocustomer.userFragment.order.acceptedmodel.AcceptedModelView
+import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -38,6 +48,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
+    private val acceptedModelView: AcceptedModelView by viewModels()
+    private val progressDialog by lazy { CustomProgressDialog(this) }
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -45,6 +57,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var isDestinationReached = false
 
+    private var pickupLatitude = ""
+    private var pickupLongitude = ""
+    private var dropLatitude = ""
+    private var dropLongitude = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -56,11 +72,18 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapsa) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
+        pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
+        dropLatitude = intent.getStringExtra("dropLatitude").toString()
+        dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
-        pickupLocation = LatLng(28.6076, 77.3683) // New York City
-        dropLocation = LatLng(28.5851, 77.3116) // Los Angeles
 
+        pickupLocation =
+            LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
+        dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
 
+        getAcceptedApi()
+        acceptedObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -215,4 +238,42 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         return poly
     }
+
+
+    private fun getAcceptedApi() {
+        acceptedModelView.acceptedBids(this, progressDialog)
+    }
+
+    private fun acceptedObserver() {
+        acceptedModelView.progressIndicator.observe(this) {
+        }
+        acceptedModelView.mRejectResponse.observe(this) {
+            val message = it.peekContent().msg
+            val success = it.peekContent().status
+            val list = it.peekContent().data
+
+            if (list != null) {
+                for (i in list) {
+                    val url = i.driverImage
+                    Glide.with(this).load(BuildConfig.IMAGE_KEY + url)
+                        .into(binding.profileImgUserBid)
+
+                    val pickLocation = i.pickupLocation
+                    binding.pickUpLocBidd.text = pickLocation
+
+                    val dropLocation = i.dropLocation
+                    binding.dropLocBidd.text = dropLocation
+                    val price = i.bidPrice
+
+                    binding.orderIdStaticTextView.text = "$ $price"
+                }
+            }
+        }
+
+        acceptedModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+            //errorDialogs()
+        }
+    }
+
 }
