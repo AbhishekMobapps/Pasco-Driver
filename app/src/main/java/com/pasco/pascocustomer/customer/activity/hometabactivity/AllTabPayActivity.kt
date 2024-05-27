@@ -15,10 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
-import android.widget.AdapterView
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.model.LatLng
@@ -279,6 +276,20 @@ class AllTabPayActivity : AppCompatActivity() {
             }
 
 
+        binding.cashRadioButton.setOnClickListener { view ->
+            onCashConsClicked(view)
+        }
+
+
+        binding.walletRadioButton.setOnClickListener { view ->
+            onWalletConsClicked(view)
+        }
+
+
+        binding.visaRadioButton.setOnClickListener { view ->
+            onVisaConsClicked(view)
+        }
+
         // Vehicle Api and observer
         callVehicleType()
         vehicleTypeObserver()
@@ -341,6 +352,8 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.visaRadioButton.isChecked = false
         selectedOption = "Cash"
 
+        Log.e("onCashConsClicked","onCashConsClicked...." +selectedOption)
+
     }
 
     fun onWalletConsClicked(view: View) {
@@ -349,7 +362,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.cashRadioButton.isChecked = false
         binding.visaRadioButton.isChecked = false
         selectedOption = "Wallet"
-
+        Log.e("onCashConsClicked","Wallet...." +selectedOption)
     }
 
     fun onVisaConsClicked(view: View) {
@@ -358,7 +371,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.cashRadioButton.isChecked = false
         binding.walletRadioButton.isChecked = false
         selectedOption = "Visa"
-
+        Log.e("onCashConsClicked","Visa...." +selectedOption)
 
     }
 
@@ -805,8 +818,7 @@ class AllTabPayActivity : AppCompatActivity() {
             for (element in additionalServiceList!!) {
                 element.additionalType?.let { it1 -> servicesTypeStatic.add(it1) }
             }
-            val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
-                this@AllTabPayActivity,
+            val dAdapter = SpinnerAdapter(this@AllTabPayActivity,
                 R.layout.custom_service_type_spinner,
                 servicesTypeStatic
             )
@@ -825,6 +837,16 @@ class AllTabPayActivity : AppCompatActivity() {
         additionalServiceViewModel.errorResponse.observe(this) {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>
+    ) :
+        ArrayAdapter<String>(context, textViewResourceId, smonking) {
+
+        override fun getCount(): Int {
+            val count = super.getCount()
+            return if (count > 0) count - 1 else count
         }
     }
 }
