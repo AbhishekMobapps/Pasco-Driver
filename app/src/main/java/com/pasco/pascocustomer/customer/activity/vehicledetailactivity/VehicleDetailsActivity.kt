@@ -375,10 +375,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
         }
     }
 
-    class SpinnerAdapter(
-        context: Context,
-        textViewResourceId: Int,
-        smonking: List<String>
+    class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>
     ) :
         ArrayAdapter<String>(context, textViewResourceId, smonking) {
 
