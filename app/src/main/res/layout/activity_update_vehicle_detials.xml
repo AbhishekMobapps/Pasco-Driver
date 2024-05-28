@@ -131,8 +131,8 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/all_circle_border">
 
-                  <TextView
-                      android:id="@+id/shipmentTextview"
+                  <Spinner
+                      android:id="@+id/shipmentSpinnerUVD"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:layout_alignParentRight="true"
@@ -151,8 +151,8 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/all_circle_border">
 
-                  <TextView
-                      android:id="@+id/vehicleTypeTextview"
+                  <Spinner
+                      android:id="@+id/vehicleTypeSpinnerUVD"
                       android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:layout_alignParentRight="true"
