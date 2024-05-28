@@ -60,15 +60,7 @@ class CompletedTripHistoryAdapter(private val context: Context, private val driv
 
             pickUpDetailsDriHis.text = driverTripHis.pickupLocation.toString()
             DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
-            bookingstatus.text = dBookingStatus
-            if (dBookingStatus=="cancelled")
-            {
-                bookingstatus.setTextColor(Color.parseColor("#BC2A0A"))
-            }
-            else
-            {
-                bookingstatus.setTextColor(Color.parseColor("#0ABC3C"))
-            }
+            bookingstatus.text = "Completed"
         }
 
     }

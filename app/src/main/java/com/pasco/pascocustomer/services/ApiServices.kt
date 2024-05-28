@@ -137,6 +137,7 @@ interface ApiServices {
     @PUT("updateapprovalstatus/")
     fun putVehicleUpdate(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Part("cargo") cargo: RequestBody,
         @Part("vehiclenumber") vehiclenumber: RequestBody,
         @Part attachmentP: MultipartBody.Part,
         @Part attachmentD: MultipartBody.Part,

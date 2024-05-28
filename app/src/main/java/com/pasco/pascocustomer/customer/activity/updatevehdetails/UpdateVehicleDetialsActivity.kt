@@ -52,8 +52,8 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
     private var imageUrlVp: String? = null
     private var imageUrlVd: String? = null
     private var imageUrlVRc: String? = null
-    private var shipmentName: String? = null
-    private var vehicleName: String? = null
+    private var shipmentName = ""
+    private var vehicleName = ""
     private var dAdminApprovedId: String? = ""
     private var selectedImageFile: File? = null
     private var selectedImageFileDoc: File? = null
@@ -84,12 +84,58 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         binding.backImageUpdateVeh.setOnClickListener {
             finish()
         }
-        servicesList()
-       /* servicesObserver(shipmentName)
-        vehicleTypeObserver(vehicleName)*/
-        requestPermission()
         getVehicleDetails()
-     //   getVehicleDetailsObserver()
+        getVehicleDetailsObserver()
+        servicesList()
+        servicesObserver(shipmentName!!)
+        vehicleTypeObserver(vehicleName!!)
+        requestPermission()
+
+        binding.shipmentSpinnerUVD.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    i: Int,
+                    l: Long
+                ) {
+                    // Toast.makeText(activity, "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
+
+                    val item = binding.shipmentSpinnerUVD.selectedItem.toString()
+                    if (item == getString(R.string.selectTransType)) {
+
+                    } else {
+                        spinnerTransportId = servicesType?.get(i)?.id.toString()
+                        Log.e("onItemSelected", spinnerTransportId)
+                        vehicleTypeApi(spinnerTransportId)
+
+                    }
+                }
+
+                override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                    // Do nothing
+                }
+            }
+
+        binding.vehicleTypeSpinnerUVD.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    i: Int,
+                    l: Long
+                ) {
+                    val item = binding.vehicleTypeSpinnerUVD.selectedItem.toString()
+                    if (item != getString(R.string.selectVehicleType)) {
+                        spinnerVehicleTypeId = VehicleType!![i].id.toString()
+
+                    }
+                }
+
+                override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                    // Do nothing
+                }
+            }
 
         binding.selectVehicleUPV.setOnClickListener {
             openCameraOrGallery("vehicleImg")
@@ -109,6 +155,14 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         }
         putUpdateDetailsObserver()
 
+    }
+
+    private fun vehicleTypeApi(spinnerVehicleTypeId: String) {
+        vehicleTypeViewModel.getVehicleTypeData(
+            progressDialog,
+            this,
+            spinnerVehicleTypeId
+        )
     }
 
     private fun servicesList() {
@@ -168,15 +222,6 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun callVehicleType(sId: String) {
-        vehicleTypeViewModel.getVehicleTypeData(
-            progressDialog,
-            this,
-            sId
-        )
-    }
-/*
     private fun vehicleTypeObserver(vehicleName:String) {
         vehicleTypeViewModel.mVehicleTypeResponse.observe(this) { response ->
             val content = response.peekContent()
@@ -188,39 +233,22 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                 element.vehiclename?.let { it1 -> vehicleTypeStatic.add(it1) }
             }
             val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
-                this@VehicleDetailsActivity,
+                this@UpdateVehicleDetialsActivity,
                 R.layout.custom_service_type_spinner,
                 vehicleTypeStatic
             )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            //dAdapter.addAll(strCatNameList)
             dAdapter.add(getString(R.string.selectVehicleType))
-            binding.vehicleTypeSpinner.adapter = dAdapter
-            binding.vehicleTypeSpinner.setSelection(dAdapter.count)
-            binding.vehicleTypeSpinner.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapterView: AdapterView<*>?,
-                        view: View?,
-                        i: Int,
-                        l: Long
-                    ) {
-                        val item = binding.vehicleTypeSpinner.selectedItem.toString()
-                        if (item != getString(R.string.selectVehicleType)) {
-                            spinnerVehicleTypeId = VehicleType!![i].id.toString()
-                            vehicleSize = VehicleType!![i].vehiclesize.toString()
-                            vehicleLoadCapacity =
-                                VehicleType!![i].vehicleweight.toString()
-                            vehicleCapability =
-                                VehicleType!![i].capabilityname.toString()
+            binding.vehicleTypeSpinnerUVD.adapter = dAdapter
+            binding.vehicleTypeSpinnerUVD.setSelection(dAdapter.count)
 
-
-                        }
-                    }
-
-                    override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                        // Do nothing
-                    }
-                }
+            val spinnerPosition = if (vehicleName.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectVehicleType))
+            } else {
+                dAdapter.getPosition(vehicleName)
+            }
+            binding.vehicleTypeSpinnerUVD.setSelection(spinnerPosition)
 
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
@@ -234,10 +262,10 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
         }
-    }*/
+    }
     private fun updateVehDetailsApi() {
-        val vehicleNo =
-            RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
+        val vehicleNo = RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
+        val spinnerVehType = RequestBody.create(MultipartBody.FORM, spinnerVehicleTypeId)
         val vehiclePhoto = selectedImageFile?.let {
             it.asRequestBody("image/*".toMediaTypeOrNull())
         }?.let {
@@ -270,6 +298,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                     putVDetailsViewModel.putUpdateReqApprovaldata(
                         progressDialog,
                         this,
+                        spinnerVehType,
                         vehicleNo,
                         it,
                         it1,
@@ -649,7 +678,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         )
     }
 
-/*    private fun getVehicleDetailsObserver() {
+    private fun getVehicleDetailsObserver() {
         getVDetailsViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -658,6 +687,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
             val data = response.peekContent().data
             shipmentName = data!!.shipmentname.toString()
             vehicleName = data!!.vehiclename.toString()
+            spinnerVehicleTypeId = data!!.id.toString()
 
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.vehiclePhoto.orEmpty()
@@ -685,8 +715,8 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
 
                     }
                     binding.vehicleNoAddUpdate.setText(data.vehiclenumber.toString())
-                    servicesObserver(shipmentName)
-                    vehicleTypeObserver(vehicleName)
+                    servicesObserver(shipmentName!!)
+                    vehicleTypeObserver(vehicleName!!)
                     getVDetailsViewModel.errorResponse.observe(this) {
                         // Handle general errors
                         ErrorUtil.handlerGeneralError(this, it)
@@ -694,5 +724,5 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                 }
             }
         }
-    }*/
+    }
 }

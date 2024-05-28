@@ -35,18 +35,20 @@ class PutVDetailsViewModel@Inject constructor(
     fun putUpdateReqApprovaldata(
         progressDialog: CustomProgressDialog,
         activity: Activity,
+        cargo: RequestBody,
         vehiclenumber: RequestBody,
         attachmentP: MultipartBody.Part,
         attachmentD: MultipartBody.Part,
         attachmentDl: MultipartBody.Part
     ) =
         viewModelScope.launch {
-            putuserApproveReq(progressDialog,activity,vehiclenumber,attachmentP,attachmentD,attachmentDl)
+            putuserApproveReq(progressDialog,activity,cargo,vehiclenumber,attachmentP,attachmentD,attachmentDl)
         }
 
     suspend fun putuserApproveReq(
         progressDialog: CustomProgressDialog,
         activity: Activity,
+        cargo: RequestBody,
         vehiclenumber: RequestBody,
         attachmentP: MultipartBody.Part,
         attachmentD: MultipartBody.Part,
@@ -54,7 +56,7 @@ class PutVDetailsViewModel@Inject constructor(
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        putApprovalReqRepsitory.putApprovalReqRepo(vehiclenumber,attachmentP,attachmentD,attachmentDl)
+        putApprovalReqRepsitory.putApprovalReqRepo(cargo,vehiclenumber,attachmentP,attachmentD,attachmentDl)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<PutVDetailsResponse>() {
