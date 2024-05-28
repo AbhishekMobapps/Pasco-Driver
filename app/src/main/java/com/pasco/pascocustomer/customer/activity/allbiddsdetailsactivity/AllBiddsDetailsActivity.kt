@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.BiddsDtailsModelView
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
+import com.pasco.pascocustomer.customer.activity.track.TrackActivity
 import com.pasco.pascocustomer.databinding.ActivityAllBiddsDetailsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -118,7 +120,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
                         false
                     )
                 biddsDetailsAdapter =
-                    AllBiddsDetailsAdapter(this@AllBiddsDetailsActivity, biddsDetailsList,this)
+                    AllBiddsDetailsAdapter(this@AllBiddsDetailsActivity, biddsDetailsList, this)
                 binding.detailsRecycler.adapter = biddsDetailsAdapter
 
 
@@ -149,10 +151,12 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
+
     override fun deleteNotification(position: Int, id: Int) {
-        Log.e("ASDFF","id" +id)
+        Log.e("ASDFF", "id" + id)
         acceptOrRejectApi(id)
     }
+
     private fun acceptOrRejectApi(id: Int) {
         //   val codePhone = strPhoneNo
         val loinBody = AcceptOrRejectBidBody(
@@ -169,6 +173,9 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         ) {
             val msg = it.peekContent().msg
             Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, TrackActivity::class.java)
+            startActivity(intent)
         }
         paymentAccept.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)

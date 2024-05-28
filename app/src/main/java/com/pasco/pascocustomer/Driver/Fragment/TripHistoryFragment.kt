@@ -57,6 +57,14 @@ class TripHistoryFragment : Fragment() {
         return binding.root
     }
 
+
+
+    private fun cancelledApi() {
+        cancelledTripViewModel.driverTripCancelData(
+            progressDialog,
+            requireActivity()
+        )
+    }
     private fun cancelledObserver() {
         cancelledTripViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
@@ -87,14 +95,12 @@ class TripHistoryFragment : Fragment() {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
         }
     }
-
-    private fun cancelledApi() {
-        cancelledTripViewModel.driverTripCancelData(
+    private fun completedApi() {
+        completedTripHistoryViewModel.driverTripHisData(
             progressDialog,
             requireActivity()
         )
     }
-
     private fun completedObserver() {
         completedTripHistoryViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
@@ -125,12 +131,7 @@ class TripHistoryFragment : Fragment() {
         }
     }
 
-    private fun completedApi() {
-        completedTripHistoryViewModel.driverTripHisData(
-            progressDialog,
-            requireActivity()
-        )
-    }
+
 
     override fun onResume() {
         super.onResume()

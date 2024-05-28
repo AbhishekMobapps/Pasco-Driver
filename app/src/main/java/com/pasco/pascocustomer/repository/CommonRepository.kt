@@ -208,4 +208,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
+    fun getCustomerCancelledHistory(): Observable<CompletedTripHistoryResponse> {
+        return apiService.customerCanceldHistory(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun getCustomerCompletedHistory(): Observable<CompletedTripHistoryResponse> {
+        return apiService.customerCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
+    }
 }

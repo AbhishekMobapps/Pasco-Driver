@@ -65,8 +65,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var pickupLatitude = ""
     private var pickupLongitude = ""
-    private var dropLatitude = 0.0
-    private var dropLongitude = 0.0
+    private var dropLatitude = ""
+    private var dropLongitude = ""
     private var bookingId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,19 +82,19 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
-        //dropLatitude = intent.getStringExtra("dropLatitude").toString()
-        //dropLongitude = intent.getStringExtra("dropLongitude").toString()
+        dropLatitude = intent.getStringExtra("dropLatitude").toString()
+        dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
 
         pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
-        dropLocation = LatLng(dropLatitude, dropLongitude) // Los Angeles
+        dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
 
 
 
         getAcceptedApi()
         acceptedObserver()
-        locationApi()
-        locationObserver()
+      //  locationApi()
+     //   locationObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -300,8 +300,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         trackModelView.mRejectResponse.observe(this) { response ->
 
             val dataGet = response.peekContent().data
-            dropLatitude = response.peekContent().data?.currentLatitude!!
-            dropLongitude = response.peekContent().data?.currentLongitude!!
+           // dropLatitude = response.peekContent().data?.currentLatitude!!
+           // dropLongitude = response.peekContent().data?.currentLongitude!!
             Log.e("CheckData","dropLatitude   "  +dropLatitude +"dropLongitude... " +dropLongitude)
 
 
