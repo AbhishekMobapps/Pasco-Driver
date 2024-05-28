@@ -29,7 +29,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.maps.DirectionsApi
+import com.google.maps.GeoApiContext
+import com.google.maps.model.DirectionsResult
+import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
@@ -37,6 +42,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -53,9 +62,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private var Dlan: Double = 0.0
     private var Dlon: Double = 0.0
     private lateinit var mMap: GoogleMap
-    private lateinit var noidaSector26: LatLng
-    private lateinit var delhi: LatLng
+    private lateinit var pickupLocation: LatLng
+    private lateinit var dropLocation: LatLng
     private var spinnerDriverSId = ""
+    private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
     private val routeTypeStatic: MutableList<String> = mutableListOf()
     private var Bid = ""
@@ -68,8 +78,27 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverStartRidingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val pickupLoc = intent.getStringExtra("pickupLoc").toString()
+        val dropLoc = intent.getStringExtra("dropLoc").toString()
+
+        Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
+        Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
+        Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
+        Dlon = intent.getStringExtra("longitudeDrop")?.toDoubleOrNull() ?: 0.0
+        val deliveryTime = intent.getStringExtra("deltime")
+        val image = intent.getStringExtra("image").toString()
+        Log.e("image", "onCreate: " + image)
+        Bid = intent.getStringExtra("BookId").toString()
+
         activity = this
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.mapStart) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        pickupLocation = LatLng(Plat, Plon)
+        dropLocation = LatLng(Dlan, Dlon)
         // Request location updates
         requestLocationUpdates()
         driverStatusList()
@@ -104,28 +133,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-        val pickupLoc = intent.getStringExtra("pickupLoc").toString()
-        val dropLoc = intent.getStringExtra("dropLoc").toString()
-        Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
-        Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
-        Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
-        Dlon = intent.getStringExtra("longitudeDrop")?.toDoubleOrNull() ?: 0.0
-        val deliveryTime = intent.getStringExtra("deltime")
-        val image = intent.getStringExtra("image").toString()
-        Log.e("image", "onCreate: "+image )
-        Bid = intent.getStringExtra("BookId").toString()
-
         binding.pickUpLocDynamic.text = pickupLoc
         binding.dropLocDynamic.text = dropLoc
         binding.delTimeDynamic.text = deliveryTime
         Glide.with(this)
             .load(image)
             .into(binding.cricleImgUserSR)
-
-
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.mapStart) as SupportMapFragment
-        mapFragment.getMapAsync(this)
 
         binding.imageBackReqRide.setOnClickListener {
             finish()
@@ -143,18 +156,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         //call observer
         startTripObserver()
-        // Initialize coordinates
-        noidaSector26 = LatLng(Plat, Plon)
-        delhi = LatLng(Dlan, Dlon)
 
 
         binding.cancelDriverOrder.setOnClickListener {
             openCancelPopUp()
-        }
-
-        binding.showRouteImg.setOnClickListener {
-            // Draw route between Noida Sector 26 and Delhi
-            drawRoute(noidaSector26, delhi)
         }
 
     }
@@ -229,7 +234,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun startTrip(sId: String) {
         val Iddd = sId
-        startTripViewModel.getStartTripData(progressDialog, activity,Bid,Iddd)
+        startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd)
     }
 
     private fun requestLocationUpdates() {
@@ -308,24 +313,160 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.isTrafficEnabled = true
+        // Add markers for pickup and drop locations
+        mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pickup Location"))
+        mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
 
-        // Add markers for Noida Sector 26 and Delhi
-        mMap.addMarker(MarkerOptions().position(noidaSector26).title("PickUp Point"))
-        mMap.addMarker(MarkerOptions().position(delhi).title("Dropping Point"))
+        // Move camera to the initial pickup location
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 17f))
 
-        // Move camera to Noida Sector 26
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(noidaSector26, 12f))
+        // Enable my location button and request location permission
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        mMap.isMyLocationEnabled = true
+
+        // Get and draw route when map is ready
+        getLastLocationAndDrawRoute()
+
+        mMap.setOnMyLocationChangeListener { location ->
+            val userLocation = LatLng(location.latitude, location.longitude)
+            checkDestinationReached(userLocation, dropLocation)
+        }
     }
 
-    private fun drawRoute(origin: LatLng, destination: LatLng) {
-        // Draw polyline between origin and destination
-        mMap.addPolyline(
-            PolylineOptions()
-                .add(origin, destination)
-                .width(5f)
-                .color(android.graphics.Color.RED)
-        )
+
+    private fun getLastLocationAndDrawRoute() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    drawRoute(LatLng(location.latitude, location.longitude))
+                    Log.e(
+                        "location",
+                        "location.." + location.latitude + "longitude " + location.longitude
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    this,
+                    "Failed to get location: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
+
+    private fun checkDestinationReached(userLocation: LatLng, destinationLocation: LatLng) {
+        val distanceToDestination = calculateDistance(userLocation, destinationLocation)
+        val thresholdDistance = 100 // Define your threshold distance in meters
+
+        if (distanceToDestination <= thresholdDistance && !isDestinationReached) {
+            // Destination reached
+            isDestinationReached = true
+            Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
+            // Perform any action you want when the destination is reached
+        }
+    }
+
+    // Calculate distance between two LatLng points using Haversine formula
+    private fun calculateDistance(startLatLng: LatLng, endLatLng: LatLng): Float {
+        val earthRadius = 6371000 // Radius of the Earth in meters
+        val dLat = Math.toRadians((endLatLng.latitude - startLatLng.latitude).toDouble())
+        val dLng = Math.toRadians((endLatLng.longitude - startLatLng.longitude).toDouble())
+        val a = (sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(startLatLng.latitude)) * cos(Math.toRadians(endLatLng.latitude)) *
+                sin(dLng / 2) * sin(dLng / 2))
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return (earthRadius * c).toFloat()
+    }
+
+    private fun drawRoute(latLng: LatLng) {
+        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val context = GeoApiContext.Builder()
+            .apiKey(apiKey)
+            .build()
+
+        Log.e("location", "location.." + latLng.latitude + "longitude " + latLng.longitude)
+        val result: DirectionsResult = DirectionsApi.newRequest(context)
+            .mode(TravelMode.DRIVING)
+            .origin("${latLng.latitude},${latLng.longitude}")
+            .destination("${dropLocation.latitude},${dropLocation.longitude}")
+            .await()
+
+        // Decode polyline and draw on map
+        if (result.routes.isNotEmpty()) {
+            val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
+            mMap.addPolyline(PolylineOptions().addAll(points).color(android.graphics.Color.BLUE))
+        } else {
+            Log.e("drawRoute", "No routes found")
+            Toast.makeText(this, "No routes found", Toast.LENGTH_SHORT).show()
+        }
+        // mMap.clear() // Clear previous route
+
+    }
+
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
+    }
+
+
     class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>) :
         ArrayAdapter<String>(context, textViewResourceId, smonking) {
 

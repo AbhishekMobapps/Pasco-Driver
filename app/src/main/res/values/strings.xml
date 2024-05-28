@@ -243,4 +243,7 @@
     <string name="share_subject">Check out this app!</string>
     <string name="share_message">Check out this amazing app: %1$s</string>
     <string name="share_via">Share via</string>
+    <string name="completed">Completed</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="final_cost">Final cost</string>
 </resources>
