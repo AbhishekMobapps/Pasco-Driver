@@ -27,6 +27,7 @@ import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class UserHomeFragment : Fragment() {
     private var currentPage = 0
