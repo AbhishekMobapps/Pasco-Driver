@@ -15,6 +15,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -23,8 +24,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesViewModel
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetialsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +46,8 @@ import java.io.InputStream
 @AndroidEntryPoint
 class UpdateVehicleDetialsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUpdateVehicleDetialsBinding
+    private var spinnerTransportId = ""
+    private var spinnerVehicleTypeId = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var imageUrlVp: String? = null
     private var imageUrlVd: String? = null
@@ -55,14 +62,18 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
     private val galleryPermissionCode = 102
     private val getVDetailsViewModel: GetVDetailsViewModel by viewModels()
     private val putVDetailsViewModel: PutVDetailsViewModel by viewModels()
+    private val servicesViewModel: ServicesViewModel by viewModels()
+    private val vehicleTypeViewModel: VehicleTypeViewModel by viewModels()
+    private var servicesType: List<ServicesResponse.ServicesResponseData>? = null
+    private val servicesTypeStatic: MutableList<String> = mutableListOf()
+    private var VehicleType: List<VehicleTypeResponse.VehicleTypeData>? = null
+    private val vehicleTypeStatic: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateVehicleDetialsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
-
-
         if (dAdminApprovedId.equals("0")) {
           binding.approveStatus.visibility = View.VISIBLE
         }
@@ -73,11 +84,13 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         binding.backImageUpdateVeh.setOnClickListener {
             finish()
         }
-
+        servicesList()
+       /* servicesObserver(shipmentName)
+        vehicleTypeObserver(vehicleName)*/
         requestPermission()
         getVehicleDetails()
-        //get vehicle details api
-        getVehicleDetailsObserver()
+     //   getVehicleDetailsObserver()
+
         binding.selectVehicleUPV.setOnClickListener {
             openCameraOrGallery("vehicleImg")
         }
@@ -97,6 +110,131 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         putUpdateDetailsObserver()
 
     }
+
+    private fun servicesList() {
+        servicesViewModel.getServicesData(
+            progressDialog,
+            this
+        )
+    }
+
+    private fun servicesObserver(shipmentName: String) {
+        servicesViewModel.progressIndicator.observe(this, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        servicesViewModel.mGetServices.observe(this) { response ->
+            val content = response.peekContent()
+            val message = content.msg ?: return@observe
+            servicesType = content.data
+
+            // Clear the list before adding new items
+            servicesTypeStatic.clear()
+
+            for (element in servicesType!!) {
+                element.shipmentname?.let { it1 -> servicesTypeStatic.add(it1) }
+            }
+            val dAdapter =
+                VehicleDetailsActivity.SpinnerAdapter(
+                    this@UpdateVehicleDetialsActivity,
+                    R.layout.custom_service_type_spinner,
+                    servicesTypeStatic
+                )
+            dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            //dAdapter.addAll(strCatNameList)
+            dAdapter.add(getString(R.string.selectTransType))
+            binding.shipmentSpinnerUVD.adapter = dAdapter
+            binding.shipmentSpinnerUVD.setSelection(dAdapter.count)
+
+            val spinnerPosition = if (shipmentName.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectTransType))
+            } else {
+                dAdapter.getPosition(shipmentName)
+            }
+            binding.shipmentSpinnerUVD.setSelection(spinnerPosition)
+
+
+
+            if (response.peekContent().status.equals("False")) {
+                Toast.makeText(this@UpdateVehicleDetialsActivity, message, Toast.LENGTH_LONG).show()
+            } else {
+
+            }
+        }
+
+        servicesViewModel.errorResponse.observe(this) {
+            // Handle general errors
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+
+    private fun callVehicleType(sId: String) {
+        vehicleTypeViewModel.getVehicleTypeData(
+            progressDialog,
+            this,
+            sId
+        )
+    }
+/*
+    private fun vehicleTypeObserver(vehicleName:String) {
+        vehicleTypeViewModel.mVehicleTypeResponse.observe(this) { response ->
+            val content = response.peekContent()
+            val message = content.msg ?: return@observe
+            VehicleType = content.data
+            vehicleTypeStatic.clear()
+
+            for (element in VehicleType!!) {
+                element.vehiclename?.let { it1 -> vehicleTypeStatic.add(it1) }
+            }
+            val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
+                this@VehicleDetailsActivity,
+                R.layout.custom_service_type_spinner,
+                vehicleTypeStatic
+            )
+            dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            dAdapter.add(getString(R.string.selectVehicleType))
+            binding.vehicleTypeSpinner.adapter = dAdapter
+            binding.vehicleTypeSpinner.setSelection(dAdapter.count)
+            binding.vehicleTypeSpinner.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapterView: AdapterView<*>?,
+                        view: View?,
+                        i: Int,
+                        l: Long
+                    ) {
+                        val item = binding.vehicleTypeSpinner.selectedItem.toString()
+                        if (item != getString(R.string.selectVehicleType)) {
+                            spinnerVehicleTypeId = VehicleType!![i].id.toString()
+                            vehicleSize = VehicleType!![i].vehiclesize.toString()
+                            vehicleLoadCapacity =
+                                VehicleType!![i].vehicleweight.toString()
+                            vehicleCapability =
+                                VehicleType!![i].capabilityname.toString()
+
+
+                        }
+                    }
+
+                    override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                        // Do nothing
+                    }
+                }
+
+            if (response.peekContent().status.equals("False")) {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                //   binding.linearVehDetails.visibility = View.GONE
+            } else if (response.peekContent().status.equals("True")) {
+
+            }
+        }
+
+        vehicleTypeViewModel.errorResponse.observe(this) {
+            // Handle general errors
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }*/
     private fun updateVehDetailsApi() {
         val vehicleNo =
             RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
@@ -511,7 +649,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
         )
     }
 
-    private fun getVehicleDetailsObserver() {
+/*    private fun getVehicleDetailsObserver() {
         getVDetailsViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -546,10 +684,9 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                             .into(binding.cameraImgRcUpdate)
 
                     }
-
                     binding.vehicleNoAddUpdate.setText(data.vehiclenumber.toString())
-                    binding.shipmentTextview.text = data.shipmentname.toString()
-                    binding.vehicleTypeTextview.text = data.vehiclename.toString()
+                    servicesObserver(shipmentName)
+                    vehicleTypeObserver(vehicleName)
                     getVDetailsViewModel.errorResponse.observe(this) {
                         // Handle general errors
                         ErrorUtil.handlerGeneralError(this, it)
@@ -557,5 +694,5 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 }
