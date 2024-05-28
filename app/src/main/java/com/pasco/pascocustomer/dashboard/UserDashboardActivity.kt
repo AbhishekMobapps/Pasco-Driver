@@ -18,6 +18,7 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
+import com.pasco.pascocustomer.userFragment.HistoryFragment
 import com.pasco.pascocustomer.userFragment.MoreFragment
 import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
 import com.pasco.pascocustomer.userFragment.order.OrderFragment
@@ -157,6 +158,24 @@ class UserDashboardActivity : AppCompatActivity() {
             replaceFragment(MoreFragment())
         }
 
+        binding.rideHistoryUserL.setOnClickListener {
+            navItemIndex = 1
+            CURRENT_TAG = TAG_NEXT
+            binding.homeIconUser.setImageResource(R.drawable.home_icon)
+            binding.orderIconUsers.setImageResource(R.drawable.order_icon)
+            binding.walletIconUsers.setImageResource(R.drawable.more_icon)
+            binding.hisIconUser.setImageResource(R.drawable.history_1)
+            binding.profileIconUser.setImageResource(R.drawable.profile_icon)
+
+            binding.orderTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.homeTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.walletTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.hisTextViewUser.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.accountTextUser.setTextColor(ContextCompat.getColor(this, R.color.grey))
+            binding.headerTxt.visibility = View.GONE
+            binding.consUserDashBoard.visibility = View.VISIBLE
+            replaceFragment(HistoryFragment())
+        }
 
         // Api and observer
         getProfileApi()

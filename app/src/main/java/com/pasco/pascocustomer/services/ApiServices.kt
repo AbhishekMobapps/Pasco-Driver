@@ -56,6 +56,8 @@ import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverD
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
@@ -204,7 +206,7 @@ interface ApiServices {
         @Part("full_name") full_name: RequestBody,
         @Part("email") email: RequestBody,
         @Part("current_city") current_city: RequestBody,
-        @Part image: MultipartBody.Part,
+        @Part image: MultipartBody.Part
         ): Observable<UpdateProfileResponse>
 
     @GET("ShowNotification/")
@@ -236,7 +238,7 @@ interface ApiServices {
     //showBooking request data
     @GET("showbookingriderequests/")
     fun getBookingReq(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<ShowBookingReqResponse>
 
     //get update BID details
@@ -264,7 +266,7 @@ interface ApiServices {
     @GET("bookingdriverdata/{bookingId}/")
     fun bookingDriverData(
         @Path("bookingId") bookingId: String,
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<GetDriverBidDetailsDataResponse>
 
 
@@ -348,7 +350,7 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Field("title") title: String,
         @Field("description") description: String,
-        @Field("reminderdate") reminderdate: String,
+        @Field("reminderdate") reminderdate: String
     ): Observable<NotesRResponse>
 
     //update driver location
@@ -356,7 +358,7 @@ interface ApiServices {
     @POST("location-update/")
     fun updateGeolocation(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-        @Body body: UpdationLocationBody,
+        @Body body: UpdationLocationBody
     ): Observable<UpdateLocationResponse>
 
     //user Api
@@ -397,7 +399,7 @@ interface ApiServices {
         @Field("pickup_longitude") pickup_longitude: String,
         @Field("drop_latitude") drop_latitude: String,
         @Field("drop_longitude") drop_longitude: String,
-        @Field("pickup_datetime") pickup_datetime: String,
+        @Field("pickup_datetime") pickup_datetime: String
     ): Observable<BookingRideResponse>
 
 
@@ -450,8 +452,16 @@ interface ApiServices {
     @POST("slideshow-detail/")
     fun sliderHome(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-        @Body body: SliderHomeBody,
+        @Body body: SliderHomeBody
     ): Observable<SliderHomeResponse>
+
+
+    @Headers("Accept: application/json")
+    @POST("show-location/")
+    fun trackLocation(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: TrackLocationBody
+    ): Observable<TrackLocationResponse>
 
 
     //driver completedHistory
@@ -464,4 +474,5 @@ interface ApiServices {
     fun driverCancelledHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CompletedTripHistoryResponse>
+
 }

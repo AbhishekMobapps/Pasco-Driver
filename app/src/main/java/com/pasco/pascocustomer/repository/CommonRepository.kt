@@ -35,6 +35,8 @@ import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverD
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
@@ -192,6 +194,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun sliderHome(body: SliderHomeBody): Observable<SliderHomeResponse> {
         return apiService.sliderHome(PascoApp.encryptedPrefs.bearerToken, body)
+    }
+
+
+    fun trackLocation(body: TrackLocationBody): Observable<TrackLocationResponse> {
+        return apiService.trackLocation(PascoApp.encryptedPrefs.bearerToken, body)
     }
     fun getDriverCHistory(): Observable<CompletedTripHistoryResponse> {
         return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)

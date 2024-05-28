@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,9 +30,13 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationModelView
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
 import com.pasco.pascocustomer.userFragment.order.acceptedmodel.AcceptedModelView
+import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.atan2
@@ -49,6 +54,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
     private val acceptedModelView: AcceptedModelView by viewModels()
+    private val trackModelView: TrackLocationModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
     companion object {
@@ -59,8 +65,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var pickupLatitude = ""
     private var pickupLongitude = ""
-    private var dropLatitude = ""
-    private var dropLongitude = ""
+    private var dropLatitude = 0.0
+    private var dropLongitude = 0.0
+    private var bookingId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -74,16 +81,20 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
-        dropLatitude = intent.getStringExtra("dropLatitude").toString()
-        dropLongitude = intent.getStringExtra("dropLongitude").toString()
+        bookingId = intent.getStringExtra("bookingId").toString()
+        //dropLatitude = intent.getStringExtra("dropLatitude").toString()
+        //dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
 
-        pickupLocation =
-            LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
-        dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
+        pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
+        dropLocation = LatLng(dropLatitude, dropLongitude) // Los Angeles
+
+
 
         getAcceptedApi()
         acceptedObserver()
+        locationApi()
+        locationObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -273,6 +284,31 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         acceptedModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
             //errorDialogs()
+        }
+    }
+
+    private fun locationApi() {
+
+        val bookingBody = TrackLocationBody(
+            driverbookedid = bookingId
+        )
+        trackModelView.trackLocation(bookingBody, this)
+    }
+
+    private fun locationObserver() {
+
+        trackModelView.mRejectResponse.observe(this) { response ->
+
+            val dataGet = response.peekContent().data
+            dropLatitude = response.peekContent().data?.currentLatitude!!
+            dropLongitude = response.peekContent().data?.currentLongitude!!
+            Log.e("CheckData","dropLatitude   "  +dropLatitude +"dropLongitude... " +dropLongitude)
+
+
+        }
+
+        trackModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
         }
     }
 
