@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
+import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,14 +23,28 @@ import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
+import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
+import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
+import com.pasco.pascocustomer.utils.ErrorUtil
 
 import java.util.ArrayList
+import java.util.Timer
+import java.util.TimerTask
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeDriverBinding
     private var dAdminApprovedId: String? = ""
+    private var userType = ""
+    private var currentPage = 0
+    private var isLastPage = false
+    private val NUM_PAGES = 3
+    private val sliderViewModel: SliderHomeModelView by viewModels()
+    private val progressDialog by lazy { CustomProgressDialog(activity) }
+    private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
     private var rideRequestList: List<ShowBookingReqResponse.ShowBookingReqData> = ArrayList()
     @Inject lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
@@ -37,6 +54,39 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
+        userType = PascoApp.encryptedPrefs.userType
+
+        binding.viewPagerDriver.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                currentPage = position
+
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+        })
+
+        val handler = Handler()
+        val update: Runnable = Runnable {
+            if (currentPage == NUM_PAGES) {
+                currentPage = 0
+            }
+            binding.viewPagerDriver.setCurrentItem(currentPage++, true)
+        }
+
+        val swipeTimer = Timer()
+        swipeTimer.schedule(object : TimerTask() {
+            override fun run() {
+                handler.post(update)
+            }
+        }, 2000, 2000)
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         if (dAdminApprovedId == "0") {
             disableAll()
@@ -62,7 +112,40 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)
         }
+        sliderPageApi()
+        sliderPageObserver()
         return binding.root
+    }
+
+
+    private fun sliderPageApi() {
+
+        val bookingBody = SliderHomeBody(
+            user_type = userType
+        )
+        sliderViewModel.otpCheck(bookingBody, requireActivity())
+    }
+
+    private fun sliderPageObserver() {
+
+        sliderViewModel.mRejectResponse.observe(requireActivity()) { response ->
+            sliderList = response.peekContent().data
+            binding.viewPagerDriver.adapter = ViewPagerAdapter(requireContext(), sliderList!!)
+            binding.indicator.setViewPager(binding.viewPagerDriver)
+
+            binding.indicator.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageSelected(position: Int) {
+                    currentPage = position
+                }
+
+                override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
+                override fun onPageScrollStateChanged(pos: Int) {}
+            })
+        }
+
+        sliderViewModel.errorResponse.observe(requireActivity()) {
+            ErrorUtil.handlerGeneralError(requireContext(), it)
+        }
     }
 
     private fun enableAll() {

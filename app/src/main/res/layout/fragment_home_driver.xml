@@ -16,28 +16,38 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <LinearLayout
-            android:id="@+id/linearImgDHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/indicatorDriver"
+            android:layout_width="0dp"
+            android:background="@color/white"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent=".25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.95">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="16dp">
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPagerDriver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/driver_background1" />
+            </androidx.viewpager.widget.ViewPager>
 
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
+            <me.relex.circleindicator.CircleIndicator
+                android:id="@+id/indicator"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:padding="20dp"
+                app:ci_drawable="@drawable/custom_indicator"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.3" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -48,7 +58,7 @@
             android:orientation="horizontal"
             android:layout_marginTop="15dp"
             android:weightSum="10"
-            app:layout_constraintTop_toBottomOf="@+id/linearImgDHome">
+            app:layout_constraintTop_toBottomOf="@+id/indicatorDriver">
 
             <LinearLayout
                 android:id="@+id/NotesDriHome"
