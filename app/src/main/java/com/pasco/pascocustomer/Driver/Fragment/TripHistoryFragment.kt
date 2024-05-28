@@ -10,9 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripViewModel
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryViewModel
+import com.pasco.pascocustomer.Driver.adapter.CancelledTripHistoryAdapter
 import com.pasco.pascocustomer.Driver.adapter.CompletedTripHistoryAdapter
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
@@ -24,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class TripHistoryFragment : Fragment() {
     private lateinit var binding:FragmentTripHistoryBinding
     private var driverTripHistory:List<CompletedTripHistoryResponse.DriverTripHistoryData> = ArrayList()
+    private var cancelTripHistory:List<CancelledTripResponse.CancelledData> = ArrayList()
     private var refersh = ""
     private val completedTripHistoryViewModel: CompletedTripHistoryViewModel by viewModels()
     private val cancelledTripViewModel: CancelledTripViewModel by viewModels()
@@ -77,7 +80,7 @@ class TripHistoryFragment : Fragment() {
                 binding.recycerHistoryDriverList.isVerticalScrollBarEnabled = true
                 binding.recycerHistoryDriverList.isVerticalFadingEdgeEnabled = true
                 binding.recycerHistoryDriverList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryDriverList.adapter = CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
+                binding.recycerHistoryDriverList.adapter = CancelledTripHistoryAdapter(requireContext(), cancelTripHistory)
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
             }

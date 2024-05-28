@@ -7,6 +7,7 @@ import java.io.Serializable
 
 
 class GetVDetailsResponse:Serializable{
+
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -59,7 +60,6 @@ class GetVDetailsResponse:Serializable{
         @SerializedName("comment")
         @Expose
         var comment: String? = null
-
 
     }
 

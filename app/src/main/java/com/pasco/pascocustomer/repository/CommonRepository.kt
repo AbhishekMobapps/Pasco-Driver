@@ -92,6 +92,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
 
     fun putApprovalReqRepo(
+        cargo: RequestBody,
         vehiclenumber: RequestBody,
         attachmentP: MultipartBody.Part,
         attachmentD: MultipartBody.Part,
@@ -100,6 +101,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     ): Observable<PutVDetailsResponse> {
         return apiService.putVehicleUpdate(
             PascoApp.encryptedPrefs.bearerToken,
+            cargo,
             vehiclenumber,
             attachmentP,
             attachmentD,
