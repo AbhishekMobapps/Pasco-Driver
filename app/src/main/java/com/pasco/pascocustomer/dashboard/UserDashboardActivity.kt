@@ -18,7 +18,7 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
-import com.pasco.pascocustomer.userFragment.HistoryFragment
+import com.pasco.pascocustomer.userFragment.history.HistoryFragment
 import com.pasco.pascocustomer.userFragment.MoreFragment
 import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
 import com.pasco.pascocustomer.userFragment.order.OrderFragment

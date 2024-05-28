@@ -475,4 +475,14 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CompletedTripHistoryResponse>
 
+    @GET("bookclient-cancelled/")
+    fun customerCanceldHistory(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<CompletedTripHistoryResponse>
+
+    @GET("bookclient-completed/")
+    fun customerCompletedHistory(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<CompletedTripHistoryResponse>
+
 }
