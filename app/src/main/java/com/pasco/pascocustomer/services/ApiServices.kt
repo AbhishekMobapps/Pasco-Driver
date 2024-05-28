@@ -13,6 +13,7 @@ import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedRe
 import com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
@@ -65,7 +66,7 @@ import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
 import retrofit2.http.*
 
-
+//comment
 interface ApiServices {
     @Headers("Accept:application/json")
     @POST("user-registration/")
@@ -454,10 +455,24 @@ interface ApiServices {
         @Body body: SliderHomeBody
     ): Observable<SliderHomeResponse>
 
+
     @Headers("Accept: application/json")
     @POST("show-location/")
     fun trackLocation(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: TrackLocationBody
     ): Observable<TrackLocationResponse>
+
+
+    //driver completedHistory
+    @GET("bookdriver-completed/")
+    fun driverCompletedHistory(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<CompletedTripHistoryResponse>
+
+    @GET("bookdriver-cancelled/")
+    fun driverCancelledHistory(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<CompletedTripHistoryResponse>
+
 }

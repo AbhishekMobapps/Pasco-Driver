@@ -82,6 +82,16 @@
 
                 </RelativeLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintWidth_percent=".93"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/OnWay">
+
+
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/cricleImgUserSR"
                     android:layout_width="55dp"
@@ -92,11 +102,21 @@
                     app:civ_border_width="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_percent=".3"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/OnWay"
-                    app:layout_constraintWidth_percent=".3"></de.hdodenhof.circleimageview.CircleImageView>
+                    app:layout_constraintWidth_percent=".3"/>
 
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/chat"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="20dp"
+                        app:tint="@color/logo_color" />
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

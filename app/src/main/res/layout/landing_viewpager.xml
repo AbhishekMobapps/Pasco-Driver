@@ -9,12 +9,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.95">
+        app:layout_constraintWidth_percent="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

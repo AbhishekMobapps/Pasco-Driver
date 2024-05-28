@@ -1,7 +1,7 @@
 package com.pasco.pascocustomer.repository
 
 import VehicleTypeResponse
-import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AcceptRideResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
@@ -43,7 +43,6 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsRes
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
-import retrofit2.http.Part
 import javax.inject.Inject
 
 class CommonRepository @Inject constructor(private val apiService: ApiServices) {
@@ -197,7 +196,16 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.sliderHome(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
+
     fun trackLocation(body: TrackLocationBody): Observable<TrackLocationResponse> {
         return apiService.trackLocation(PascoApp.encryptedPrefs.bearerToken, body)
     }
+    fun getDriverCHistory(): Observable<CompletedTripHistoryResponse> {
+        return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun getDriverCancelledHistory(): Observable<CompletedTripHistoryResponse> {
+        return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken)
+    }
+
 }
