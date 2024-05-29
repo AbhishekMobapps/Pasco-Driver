@@ -44,7 +44,7 @@ import java.io.*
 @AndroidEntryPoint
 class VehicleDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVehicleDetailsBinding
-
+//private
     private var selectedImageFile: File? = null
     private var selectedImageFileDoc: File? = null
     private var selectedImageFileRc: File? = null
