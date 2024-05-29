@@ -56,6 +56,7 @@ import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverD
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
@@ -486,4 +487,11 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CompletedTripHistoryResponse>
 
+    @Headers("Accept:application/json")
+    @POST("DriverCancelledBooking/{id}/")
+    fun cancelBooking(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String,
+        @Body body: CancelBookingBody
+    ): Observable<AcceptOrRejectResponse>
 }

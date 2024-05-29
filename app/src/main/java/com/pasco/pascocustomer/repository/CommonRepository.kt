@@ -35,6 +35,7 @@ import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverD
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
+import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
@@ -216,5 +217,12 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getCustomerCompletedHistory(): Observable<CompletedTripHistoryResponse> {
         return apiService.customerCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun cancelBooking(
+        courseBody: CancelBookingBody,
+        id: String
+    ): Observable<AcceptOrRejectResponse> {
+        return apiService.cancelBooking(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
 }
