@@ -21,7 +21,7 @@ import java.util.TimeZone
 
 class CancelledTripHistoryAdapter (private val context: Context, private val cancelTripHistory:List<CancelledTripResponse.CancelledData>)  :
     RecyclerView.Adapter<CancelledTripHistoryAdapter.ViewHolder>() {
-//hello
+//h
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
