@@ -51,6 +51,12 @@ class DriverAllBiddsAdapter(private val context: Context, private val driverHist
             holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
             holder.biddingStatusTextView.text = biddingStatus
         }
+        else if (biddingStatus.equals("completed"))
+        {
+            holder.biddingStatusTextView.background = ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
+            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
+            holder.biddingStatusTextView.text = biddingStatus
+        }
         else{
             holder.biddingStatusTextView.background = ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
             holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))

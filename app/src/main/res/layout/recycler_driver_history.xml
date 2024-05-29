@@ -54,6 +54,7 @@
 
 
                     <TextView
+                        android:id="@+id/ordersStatusCurrent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
@@ -64,7 +65,7 @@
                         android:background="@drawable/cancel_button_color"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:padding="3dp"
+                        android:padding="5dp"
                         android:text="Running"
                         android:textColor="@color/white"
                         android:textSize="@dimen/normal_txt_size9" />

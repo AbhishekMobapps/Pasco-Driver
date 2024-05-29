@@ -697,6 +697,8 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
             imageUrlVp = "$baseUrl$imagePath"
             imageUrlVd = "$baseUrl$imagePathDoc"
             imageUrlVRc = "$baseUrl$imagePathRc"
+            val approved = data.approvalStatus
+            PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
 
             if (imageUrlVp!!.isNotEmpty()) {
                 Glide.with(this)

@@ -48,7 +48,7 @@ class DriverMoreFragment : Fragment() {
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
 
         if (dAdminApprovedId == "0") {
-            disableAllExceptTwo()
+            disableAllExceptFour()
             openPopUp()
         } else if (dAdminApprovedId == "1") {
             enableAll()
@@ -91,12 +91,10 @@ class DriverMoreFragment : Fragment() {
     }
 
     private fun enableAll() {
-        binding.consUpdateVehDetails.isEnabled = true
         binding.consContactAndSupportInside.isEnabled = true
         binding.consMyWalletVehDetails.isEnabled = true
         binding.consTermsCondInside.isEnabled = true
         binding.consPrivacyPolicyInside.isEnabled = true
-        binding.consNotesReminderDri.isEnabled = true
     }
 
     private fun openPopUp() {
@@ -115,9 +113,11 @@ class DriverMoreFragment : Fragment() {
         }
     }
 
-    private fun disableAllExceptTwo() {
+    private fun disableAllExceptFour() {
         binding.consNotesReminderDri.isEnabled = false
         binding.consMyWalletVehDetails.isEnabled = false
+        binding.consNotesReminderDri.isEnabled = false
+        binding.consUpdateVehDetails.isEnabled = false
     }
 
     @SuppressLint("MissingInflatedId")

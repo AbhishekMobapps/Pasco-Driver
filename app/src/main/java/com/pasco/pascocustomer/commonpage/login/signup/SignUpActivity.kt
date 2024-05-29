@@ -21,6 +21,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
@@ -33,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -40,8 +42,6 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpBinding
-
-
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
     private var verificationId: String = ""
@@ -49,8 +49,6 @@ class SignUpActivity : AppCompatActivity() {
     private var strUserName = ""
     private var strEmail = ""
     private var countryCode = ""
-    private var driverCountryCode = ""
-    private val handler = Handler(Looper.getMainLooper())
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var pickUplatitude = 0.0
@@ -91,8 +89,8 @@ class SignUpActivity : AppCompatActivity() {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
-            countryCode = binding.countryCode.text.toString()
-            driverCountryCode = binding.driverCode.text.toString()
+            countryCode = binding.clientCountryCode.text.toString()
+            countryCode = binding.driverCode.text.toString()
             if (loginValue == "driver") {
                 validationDriver()
             } else {
@@ -104,65 +102,97 @@ class SignUpActivity : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+    requestLocationUpdates()
+
+    if (checkLocationPermission()) {
         requestLocationUpdates()
-
-        if (checkLocationPermission()) {
-            requestLocationUpdates()
-        } else {
-            requestLocationPermission()
-        }
-
-        checkNumberObserver()
+    } else {
+        requestLocationPermission()
     }
+
+    checkNumberObserver()
+}
 
     private fun validationDriver() {
         with(binding) {
-            if (userName.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext,
-                    "Please enter name",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (driverEmail.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext,
-                    "Please enter email",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (phoneNumber.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext,
-                    "Please enter phone number",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (addressTxt.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext,
-                    "Please enter address",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
+            when {
+                userName.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter name",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-                checkNumberApi()
+                driverEmail.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
+                binding.driverCode.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter country code",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                !binding.driverCode.text.startsWith("+") -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Country code should start with +",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                phoneNumber.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter phone number",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                else -> {
+                    checkNumberApi()
+                }
             }
         }
     }
 
     private fun validationUser() {
         with(binding) {
-
-            if (userPhoneNumber.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext, "Please enter phone number", Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                checkNumberApi()
-
+            when {
+                userPhoneNumber.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter phone number",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                clientCountryCode.text.isNullOrBlank() -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Please enter country code",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                !clientCountryCode.text.startsWith("+") -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Phone number should include country code prefixed with +",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else -> {
+                    checkNumberApi()
+                }
             }
         }
     }
-
     private fun sendVerificationCode(phoneNumber: String) {
 
         // showLoader()
@@ -191,6 +221,7 @@ class SignUpActivity : AppCompatActivity() {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("phoneCountryCode", countryCode)
                         intent.putExtra("city", city)
                         intent.putExtra("email", strEmail)
                         intent.putExtra("address", address)
@@ -203,6 +234,7 @@ class SignUpActivity : AppCompatActivity() {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("phoneCountryCode", countryCode)
                         intent.putExtra("loginValue", loginValue)
                         startActivity(intent)
                     }
@@ -277,6 +309,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+
     private fun showAddress(location: Location) {
         val latitude = location.latitude
         val longitude = location.longitude
@@ -290,13 +323,38 @@ class SignUpActivity : AppCompatActivity() {
             val geocoder = Geocoder(this@SignUpActivity, Locale.getDefault())
             try {
                 val addresses: List<Address> = geocoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
+                    latitude,
+                    longitude,
                     1
                 )!!
                 if (addresses.isNotEmpty()) {
-                    address = addresses[0].getAddressLine(0)
-                    city = addresses[0].locality
+                    val addressObj = addresses[0]
+                    address = addressObj.getAddressLine(0)
+                    city = addressObj.locality
+                    val countryCode = addressObj.countryCode
+                    val countryName = addressObj.countryName
+
+                    // Get the phone country code using libphonenumber
+                    val phoneUtil = PhoneNumberUtil.getInstance()
+                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
+
+                    // Log the country code and country name
+                    Log.e("Country Code", countryCode ?: "No country code found")
+                    Log.e("Country Name", countryName ?: "No country name found")
+                    Log.e("Phone Country Code", "+$phoneCountryCode")
+
+                    val formattedCountryCode = "+$phoneCountryCode"
+                    if (formattedCountryCode.isNotEmpty()) {
+                        // Update the EditTexts with the country code
+                        withContext(Dispatchers.Main) {
+                            binding.driverCode.setText(formattedCountryCode)
+                            binding.clientCountryCode.setText(formattedCountryCode)
+                        }
+                    }
+
+                    Log.e("Full Phone Number", formattedCountryCode)
+
+                    // Update the UI with the city name
                     city?.let { updateUI(it) }
                 }
             } catch (e: IOException) {
@@ -306,8 +364,9 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun updateUI(city: String) {
-        handler.post {
-            binding.addressTxt.text = "$city"
+        // Update the UI on the main thread
+        runOnUiThread {
+            binding.addressTxt.text = city
         }
     }
 
@@ -334,8 +393,8 @@ class SignUpActivity : AppCompatActivity() {
             } else {
                 if (loginValue == "driver") {
                     strPhoneNo = binding.phoneNumber.text.toString()
-                    sendVerificationCode("$driverCountryCode$strPhoneNo")
-                    Log.e("PhoneNumberaa" ,"msg+$driverCountryCode$strPhoneNo")
+                    sendVerificationCode("$countryCode$strPhoneNo")
+                    Log.e("PhoneNumberaa", "$countryCode$strPhoneNo")
                 } else {
                     strPhoneNo = binding.userPhoneNumber.text.toString()
                     sendVerificationCode("$countryCode$strPhoneNo")
