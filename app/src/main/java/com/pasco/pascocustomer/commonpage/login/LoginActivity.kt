@@ -1,20 +1,31 @@
 package com.pasco.pascocustomer.commonpage.login
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.R
@@ -29,16 +40,24 @@ import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityLoginBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private var countryCode = ""
+    private var cCodeSignIn = ""
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var loginValue = ""
 
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
-    private var countryCode = ""
     private var userType = ""
     private var verificationId: String = ""
     private val otpModel: OtpCheckModelView by viewModels()
@@ -48,11 +67,11 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val deviceModel = Build.MODEL
 
         loginValue = "user"
         auth = FirebaseAuth.getInstance()
 
-        val deviceModel = Build.MODEL
         binding.asDriverConst.setOnClickListener {
             binding.asDriverConst.setBackgroundResource(R.drawable.as_client_white_background)
             binding.driverTxt.setTextColor(ContextCompat.getColor(this, R.color.grey_dark))
@@ -73,14 +92,40 @@ class LoginActivity : AppCompatActivity() {
             intent.putExtra("loginValue", loginValue)
             startActivity(intent)
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        requestLocationUpdates()
+
+        if (checkLocationPermission()) {
+            requestLocationUpdates()
+        } else {
+            requestLocationPermission()
+        }
+
 
         binding.continueBtn.setOnClickListener {
             strPhoneNo = binding.phoneNumber.text.toString()
-            countryCode = binding.countryCode.text.toString()
+            cCodeSignIn = binding.signInCountryCode.text.toString()
 
             if (binding.phoneNumber.text.isEmpty()) {
                 Toast.makeText(this, "Please enter phone number", Toast.LENGTH_SHORT).show()
-            } else {
+            }
+            else if (binding.signInCountryCode.text.isNullOrBlank())
+            {
+                Toast.makeText(
+                    applicationContext,
+                    "Please enter country code",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else if (!binding.signInCountryCode.text.startsWith("+"))
+            {
+                Toast.makeText(
+                    applicationContext,
+                    "Phone number should include country code prefixed with +",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else {
                 if (loginValue == "driver") {
                     otpCheckApi(deviceModel)
                 } else {
@@ -94,6 +139,88 @@ class LoginActivity : AppCompatActivity() {
         loginObserver()
     }
 
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this@LoginActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this@LoginActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@LoginActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    this@LoginActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            }
+        }
+    }
+
+    private fun checkLocationPermission(): Boolean {
+        return (ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED)
+    }
+
+    private fun requestLocationUpdates() {
+        try {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    showAddress(it)
+                }
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+    private fun showAddress(location: Location) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val geocoder = Geocoder(this@LoginActivity, Locale.getDefault())
+            try {
+                val addresses: List<Address> = geocoder.getFromLocation(
+                    location.latitude,
+                    location.longitude,
+                    1
+                )!!
+                if (addresses.isNotEmpty()) {
+                    val addressObj = addresses[0]
+                    val countryCode = addressObj.countryCode
+                    val countryName = addressObj.countryName
+
+                    // Get the phone country code using libphonenumber
+                    val phoneUtil = PhoneNumberUtil.getInstance()
+                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
+
+                    // Log the country code and country name
+                    Log.e("Country Code", countryCode ?: "No country code found")
+                    Log.e("Country Name", countryName ?: "No country name found")
+                    Log.e("Phone Country Code", "+$phoneCountryCode")
+
+                    // Switch to the main thread before updating UI
+                    withContext(Dispatchers.Main) {
+                        val formattedCountryCode = "+$phoneCountryCode"
+                        if (formattedCountryCode.isNotEmpty()) {
+                            binding.signInCountryCode.setText(formattedCountryCode)
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
     private fun otpCheckApi(deviceModel: String) {
         val loinBody = ClientSignupBody(
             phone_number = strPhoneNo,
@@ -105,35 +232,66 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkLoginObserver(loginValue: String) {
         otpModel.progressIndicator.observe(this) {
+            // Implement progress indicator handling if needed
         }
-        otpModel.mRejectResponse.observe(
-            this
-        ) {
-
+        otpModel.mRejectResponse.observe(this) {
             val otpStatus = it.peekContent().login
             if (loginValue == "driver") {
                 if (otpStatus == 0) {
-                    sendVerificationCode("$countryCode$strPhoneNo")
+                    sendVerificationCode("$cCodeSignIn$strPhoneNo")
                 } else {
-                    loginApi()
+                    when {
+                        binding.signInCountryCode.text.isNullOrBlank() -> {
+                            Toast.makeText(
+                                applicationContext,
+                                "Please enter country code",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        !binding.signInCountryCode.text.startsWith("+") -> {
+                            Toast.makeText(
+                                applicationContext,
+                                "Phone number should include country code prefixed with +",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else -> {
+                            loginApi()
+                        }
+                    }
                 }
             } else {
                 if (otpStatus == 0) {
-                    sendVerificationCode("$countryCode$strPhoneNo")
+                    sendVerificationCode("$cCodeSignIn$strPhoneNo")
                 } else {
-                    loginApi()
-                    Log.e("AAAAA", "aaa")
+                    when {
+                        binding.signInCountryCode.text.isNullOrBlank() -> {
+                            Toast.makeText(
+                                applicationContext,
+                                "Please enter country code",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        !binding.signInCountryCode.text.startsWith("+") -> {
+                            Toast.makeText(
+                                applicationContext,
+                                "Phone number should include country code prefixed with +",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else -> {
+                            loginApi()
+                            Log.e("AAAAA", "aaa")
+                        }
+                    }
                 }
             }
-
         }
         otpModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@LoginActivity, it)
             // errorDialogs()
         }
     }
-
-
     private fun loginApi() {
         //   val codePhone = strPhoneNo
         val loinBody = LoginBody(
@@ -215,7 +373,7 @@ class LoginActivity : AppCompatActivity() {
                     intent.putExtra("verificationId", verificationId)
                     intent.putExtra("phoneNumber", strPhoneNo)
                     intent.putExtra("loginValue", loginValue)
-                    intent.putExtra("countryCode", countryCode)
+                    intent.putExtra("countryCode", binding.signInCountryCode.text.toString())
                     startActivity(intent)
 
                 }

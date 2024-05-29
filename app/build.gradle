@@ -85,7 +85,8 @@ dependencies {
 
 
     //map
-    //implementation 'com.google.android.libraries.places:places:3.3.0'
+    //for country code
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.41'
     implementation "com.google.android.libraries.places:places:3.4.0"
     implementation 'com.google.maps:google-maps-services:0.15.0'
     implementation 'com.google.android.gms:play-services-location:21.2.0'

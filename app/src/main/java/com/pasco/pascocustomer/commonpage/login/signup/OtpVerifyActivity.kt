@@ -40,6 +40,7 @@ class OtpVerifyActivity : AppCompatActivity() {
     private var address = ""
     private var userName = ""
     private var loginValue = ""
+    private var strPhoneCCode = ""
     var verificationId = ""
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
@@ -61,6 +62,7 @@ class OtpVerifyActivity : AppCompatActivity() {
 
         verificationId = intent.getStringExtra("verificationId").toString()
         strPhoneNo = intent.getStringExtra("phoneNumber").toString()
+        strPhoneCCode = intent.getStringExtra("phoneCountryCode").toString()
 
         city = intent.getStringExtra("city").toString()
         email = intent.getStringExtra("email").toString()
@@ -70,7 +72,8 @@ class OtpVerifyActivity : AppCompatActivity() {
         formattedLatitudeSelect = intent.getStringExtra("formattedLatitudeSelect").toString()
         formattedLongitudeSelect = intent.getStringExtra("formattedLongitudeSelect").toString()
 
-        binding.phoneNumber.text = "+91$strPhoneNo"
+        binding.phoneNumber.text = "$strPhoneCCode $strPhoneNo"
+
 
         Log.e("LogValueAA", "loginValue " + loginValue)
 

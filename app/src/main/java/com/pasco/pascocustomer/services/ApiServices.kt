@@ -263,6 +263,11 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
     ): Observable<DAllOrderResponse>
 
+    @GET("bookdriver-ongoing/")
+    fun bookingDriverOnGoing(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+    ): Observable<DAllOrderResponse>
+
     //all bids details
     @GET("bookingdriverdata/{bookingId}/")
     fun bookingDriverData(
