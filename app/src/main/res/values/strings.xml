@@ -246,4 +246,6 @@
     <string name="completed">Completed</string>
     <string name="cancelled">Cancelled</string>
     <string name="final_cost">Final cost</string>
+    <string name="booking_cancel">Booking Cancel</string>
+    <string name="are_you_sure_you_want_to_cancel_booking">Are you sure you want to cancel booking?</string>
 </resources>

@@ -1,18 +1,21 @@
 package com.pasco.pascocustomer.customer.activity.track
 
 import android.Manifest
+import android.app.ActionBar
+import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.view.Window
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,13 +33,12 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
+import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationModelView
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
-import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
-import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
-import com.pasco.pascocustomer.userFragment.order.acceptedmodel.AcceptedModelView
-import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.atan2
@@ -53,7 +55,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
-    private val acceptedModelView: AcceptedModelView by viewModels()
+    private val cancelBookingModelView: CancelBookingModelView by viewModels()
     private val trackModelView: TrackLocationModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
@@ -90,11 +92,15 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
 
 
+        Log.e("TrackData","bookingId..." +bookingId)
 
-        getAcceptedApi()
-        acceptedObserver()
-      //  locationApi()
-     //   locationObserver()
+
+        binding.cancelBookingBtn.setOnClickListener {
+            showCalenderPopup()
+        }
+
+       locationApi()
+       locationObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -251,42 +257,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun getAcceptedApi() {
-        acceptedModelView.acceptedBids(this, progressDialog)
-    }
-
-    private fun acceptedObserver() {
-        acceptedModelView.progressIndicator.observe(this) {
-        }
-        acceptedModelView.mRejectResponse.observe(this) {
-            val message = it.peekContent().msg
-            val success = it.peekContent().status
-            val list = it.peekContent().data
-
-            if (list != null) {
-                for (i in list) {
-                    val url = i.driverImage
-                    Glide.with(this).load(BuildConfig.IMAGE_KEY + url)
-                        .into(binding.profileImgUserBid)
-
-                    val pickLocation = i.pickupLocation
-                    binding.pickUpLocBidd.text = pickLocation
-
-                    val dropLocation = i.dropLocation
-                    binding.dropLocBidd.text = dropLocation
-                    val price = i.bidPrice
-
-                    binding.orderIdStaticTextView.text = "$ $price"
-                }
-            }
-        }
-
-        acceptedModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this, it)
-            //errorDialogs()
-        }
-    }
-
     private fun locationApi() {
 
         val bookingBody = TrackLocationBody(
@@ -300,10 +270,18 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         trackModelView.mRejectResponse.observe(this) { response ->
 
             val dataGet = response.peekContent().data
-           // dropLatitude = response.peekContent().data?.currentLatitude!!
-           // dropLongitude = response.peekContent().data?.currentLongitude!!
+
+            binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
+            binding.dropLocBidd.text = response.peekContent().data?.dropLocation
+            binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
+
+            val kilometers = response.peekContent().data?.totalDistance
+            val meters = convertKilometersToMeters(kilometers!!)
+            binding.totalDistanceBidd.text =  "Kilometers: $kilometers\nMeters: $meters"
             Log.e("CheckData","dropLatitude   "  +dropLatitude +"dropLongitude... " +dropLongitude)
 
+            val url = response.peekContent().data!!.image
+            Glide.with(this).load(BuildConfig.IMAGE_KEY+url).into(binding.profileImgUserBid)
 
         }
 
@@ -311,5 +289,76 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+    private fun convertKilometersToMeters(kilometers: Double): Double {
+        return kilometers * 1000
+    }
 
+    private fun convertMetersToKilometers(meters: Double): Double {
+        return meters / 1000
+    }
+
+    private fun showCalenderPopup() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.cancel_booking)
+
+        val bookingCancelBtn = dialog.findViewById<TextView>(R.id.bookingCancelBtn)
+        val cancelReasonTxt = dialog.findViewById<EditText>(R.id.cancelReasonTxt)
+        val cancelBtn = dialog.findViewById<ImageView>(R.id.cancelBtn)
+
+
+        cancelBtn.setOnClickListener { finish() }
+        bookingCancelBtn.setOnClickListener {
+         val cancelReasonTxt = cancelReasonTxt.text.toString()
+            if (cancelReasonTxt.isEmpty())
+            {
+                Toast.makeText(applicationContext,"Please enter valid reason",Toast.LENGTH_SHORT).show()
+            }
+            else
+            {
+                acceptOrRejectApi(cancelReasonTxt)
+            }
+
+        }
+        val window = dialog.window
+        val lp = window?.attributes
+        if (lp != null) {
+            lp.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
+        if (lp != null) {
+            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
+        }
+        if (window != null) {
+            window.attributes = lp
+        }
+        acceptOrRejectObserver()
+
+        dialog.show()
+    }
+
+    private fun acceptOrRejectApi(cancelReasonTxt: String) {
+        //   val codePhone = strPhoneNo
+        val loinBody = CancelBookingBody(
+            cancelreason = cancelReasonTxt
+        )
+        cancelBookingModelView.cancelBooking(bookingId, loinBody, this, progressDialog)
+    }
+
+    private fun acceptOrRejectObserver() {
+        cancelBookingModelView.progressIndicator.observe(this) {}
+        cancelBookingModelView.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, UserDashboardActivity::class.java)
+            startActivity(intent)
+        }
+        cancelBookingModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@TrackActivity, it)
+            // errorDialogs()
+        }
+    }
 }

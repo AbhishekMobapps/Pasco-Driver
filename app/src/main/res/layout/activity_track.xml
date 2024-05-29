@@ -14,15 +14,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <fragment
-            android:id="@+id/mapsa"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+          <fragment
+              android:id="@+id/mapsa"
+              android:name="com.google.android.gms.maps.SupportMapFragment"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent" />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/HeadlineReqRideCons"
             android:layout_width="0dp"
@@ -51,6 +51,7 @@
                 app:layout_constraintWidth_percent=".1"
                 app:tint="@color/black" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -69,34 +70,61 @@
                 android:background="@drawable/req_order_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.48"
+                app:layout_constraintHeight_percent="0.55"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent=".98">
+
+                <TextView
+                    android:id="@+id/onTheWayTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="on the way"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/chatBtn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     android:src="@drawable/chat"
                     android:tint="@color/earth_yellow"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.652"
-                    app:layout_constraintStart_toEndOf="@+id/profileImgUserBid"
+                    app:layout_constraintHorizontal_bias="0.31"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="@dimen/text_size_20"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="UseAppTint" />
+
+                <TextView
+                    android:id="@+id/cancelBookingBtn"
+                    android:layout_width="120dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_background"
+                    android:gravity="center"
+                    android:text="Cancel Booking"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/onTheWayTxt"
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileImgUserBid"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_marginTop="30dp"
                     android:src="@drawable/ic_launcher_background"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="2dp"
-                    android:layout_marginTop="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/onTheWayTxt" />
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -164,8 +192,8 @@
                         android:text="4 hours 3 minutes"
                         android:textColor="@color/grey"
                         android:textSize="10sp"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/constraintOrderPrice"
                         tools:ignore="MissingConstraints" />
 
@@ -201,9 +229,9 @@
                             android:layout_width="15dp"
                             android:layout_height="15dp"
                             android:src="@drawable/home_bg"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <!-- Second TextView -->
                         <TextView
@@ -283,6 +311,7 @@
                             tools:ignore="MissingConstraints" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/consTotalDistance"
                         android:layout_width="0dp"

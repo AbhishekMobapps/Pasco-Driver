@@ -75,7 +75,7 @@ class AcceptedAdapter(
             val pickupLongitude = orderList[position].pickupLongitude
             val dropLatitude = orderList[position].dropLatitude
             val dropLongitude = orderList[position].dropLongitude
-            val bookingId = orderList[position].bookingNumber
+            val bookingId = orderList[position].id
             intent.putExtra("pickupLatitude",pickupLatitude.toString())
             intent.putExtra("pickupLongitude",pickupLongitude.toString())
             intent.putExtra("dropLatitude",dropLatitude.toString())
