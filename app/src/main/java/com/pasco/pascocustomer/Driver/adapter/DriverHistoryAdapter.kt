@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 
-class DriverHistoryAdapter (private val context: Context, private val driverHistory:List<DAllOrderResponse.DAllOrderResponseData>)  :
+class DriverHistoryAdapter (private val context: Context, private val driverCurrentStatus:List<DAllOrderResponse.DAllOrderResponseData>)  :
     RecyclerView.Adapter<DriverHistoryAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverHistoryAdapter.ViewHolder {
@@ -27,7 +27,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverHist
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: DriverHistoryAdapter.ViewHolder, position: Int) {
-        val driverOrderHis = driverHistory[position]
+        val driverOrderHis = driverCurrentStatus[position]
         val price = "$${driverOrderHis.bidPrice}"
         val dateTime = driverOrderHis.pickupDatetime.toString()
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
@@ -42,10 +42,12 @@ class DriverHistoryAdapter (private val context: Context, private val driverHist
         } catch (e: ParseException) {
             e.printStackTrace()
         }
+        val biddingStatus = driverOrderHis.bookingStatus.toString()
         with(holder) {
             userNameDriO.text = driverOrderHis.user.toString()
             orderIDDriOrd.text = truncateBookingNumber(driverOrderHis.bookingNumber.toString())
             orderPriceTDriO.text = price
+            ordersStatusCurrent.text = biddingStatus
         }
         holder.orderIDDriOrd.setOnClickListener {
             showFullAddressDialog(driverOrderHis.bookingNumber.toString())
@@ -72,7 +74,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverHist
     }
 
     override fun getItemCount(): Int {
-        return driverHistory.size
+        return driverCurrentStatus.size
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -80,6 +82,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverHist
         val orderIDDriOrd = itemView.findViewById<TextView>(R.id.orderIDDriOrd)
         val orderPriceTDriO = itemView.findViewById<TextView>(R.id.orderPriceTDriO)
         val orderDateTimedO = itemView.findViewById<TextView>(R.id.orderDateTimedO)
+        val ordersStatusCurrent = itemView.findViewById<TextView>(R.id.ordersStatusCurrent)
 
 
     }

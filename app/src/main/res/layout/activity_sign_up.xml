@@ -114,13 +114,13 @@
                             app:tint="@color/grey_dark" />
 
                         <EditText
-                            android:id="@+id/countryCode"
+                            android:id="@+id/clientCountryCode"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
-                            android:hint="(+966)"
+                            android:hint="+91"
                             android:background="@null"
-                            android:paddingLeft="15dp"
+                            android:paddingLeft="5dp"
                             android:textSize="16sp"
                             app:layout_constraintStart_toEndOf="@+id/personIcon"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -136,7 +136,7 @@
                             android:paddingLeft="10dp"
                             android:textSize="16sp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/countryCode"
+                            app:layout_constraintStart_toEndOf="@+id/clientCountryCode"
                             app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -374,9 +374,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center_vertical"
-                                android:hint="(+966)"
+                                android:hint="+91"
                                 android:background="@null"
-                                android:paddingLeft="15dp"
+                                android:paddingLeft="5dp"
                                 android:textSize="16sp"
                                 app:layout_constraintStart_toEndOf="@+id/driverIcon"
                                 app:layout_constraintTop_toTopOf="parent" />

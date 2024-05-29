@@ -57,7 +57,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         strPhoneNo = intent.getStringExtra("phoneNumber").toString()
         loginValue = intent.getStringExtra("loginValue").toString()
         countryCode = intent.getStringExtra("countryCode").toString()
-        binding.phoneNumber.text = strPhoneNo
+        binding.phoneNumber.text =  "$countryCode $strPhoneNo"
 
 
         binding.continueBtn.setOnClickListener {

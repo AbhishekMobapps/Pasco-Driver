@@ -38,7 +38,7 @@
             android:id="@+id/currentOrderTextIdD"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Current Orders"
+            android:text="Ongoing Orders"
             app:layout_constraintWidth_percent=".5"
             android:gravity="center"
             android:textSize="@dimen/text_size_16"

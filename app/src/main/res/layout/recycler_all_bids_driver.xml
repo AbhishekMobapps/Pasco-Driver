@@ -63,7 +63,7 @@
                         android:layout_marginRight="15dp"
                         android:background="@drawable/cancel_button_color"
                         android:gravity="center"
-                        android:padding="3dp"
+                        android:padding="5dp"
                         android:text="Running"
                         android:textColor="@color/white"
                         android:textSize="@dimen/normal_txt_size9" />
