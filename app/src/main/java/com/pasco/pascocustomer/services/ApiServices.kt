@@ -13,6 +13,7 @@ import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedRe
 import com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRResponse
@@ -480,7 +481,7 @@ interface ApiServices {
     @GET("bookdriver-cancelled/")
     fun driverCancelledHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompletedTripHistoryResponse>
+    ):Observable<CancelledTripResponse>
 
     @GET("bookclient-cancelled/")
     fun customerCanceldHistory(

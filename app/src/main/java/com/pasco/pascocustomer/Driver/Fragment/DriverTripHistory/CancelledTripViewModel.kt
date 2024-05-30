@@ -27,7 +27,7 @@ class CancelledTripViewModel @Inject constructor(
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mCancelledHis = MutableLiveData<Event<CompletedTripHistoryResponse>>()
+    val mCancelledHis = MutableLiveData<Event<CancelledTripResponse>>()
     var context: Context? = null
 
     fun driverTripCancelData(
@@ -51,8 +51,8 @@ class CancelledTripViewModel @Inject constructor(
         driverCancelledHistory.getDriverCancelledHistory()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<CompletedTripHistoryResponse>() {
-                override fun onNext(value: CompletedTripHistoryResponse) {
+            .subscribe(object : DisposableObserver<CancelledTripResponse>() {
+                override fun onNext(value: CancelledTripResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
                     mCancelledHis.value = Event(value)
