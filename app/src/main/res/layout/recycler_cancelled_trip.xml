@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -18,13 +18,14 @@
         app:layout_constraintWidth_percent=".93">
 
         <TextView
-            android:id="@+id/bookingstatus"
+            android:id="@+id/bookingstatusCan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="Completed"
+            android:text="Cancelled"
             android:textColor="@color/red"
-            android:textSize="@dimen/normal_txt_size_12"
+            android:textSize="@dimen/normal_txt_size"
+            android:textStyle="bold"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +33,7 @@
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@+id/dateTimeDriHis"
+            android:id="@+id/dateTimeDriHisCan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -55,14 +56,14 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateTimeDriHis"
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeDriHisCan"
             app:layout_constraintWidth_percent=".93">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/codddasdas"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +80,7 @@
 
 
                 <TextView
-                    android:id="@+id/pickUpDetailsDriHis"
+                    android:id="@+id/pickUpDetailsDriHisCan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -136,7 +137,7 @@
 
 
                 <TextView
-                    android:id="@+id/DropDetailsDriHis"
+                    android:id="@+id/DropDetailsDriHisCan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -187,7 +188,7 @@
 
 
                 <ImageView
-                    android:id="@+id/driverProfileCth"
+                    android:id="@+id/driverProfileCthCan"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"
@@ -197,7 +198,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/clientNameDriHis"
+                android:id="@+id/clientNameDriHisCan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -219,12 +220,12 @@
                 android:textColor="@color/grey"
                 android:textSize="@dimen/normal_txt_size_12"
                 android:layout_marginStart="10dp"
-                app:layout_constraintStart_toEndOf="@+id/clientNameDriHis"
+                app:layout_constraintStart_toEndOf="@+id/clientNameDriHisCan"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent=".2"
                 tools:ignore="MissingConstraints" />
             <TextView
-                android:id="@+id/totalCostDriverHis"
+                android:id="@+id/totalCostDriverHisCan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -234,7 +235,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/normal_txt_size13"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/clientNameDriHis"
+                app:layout_constraintStart_toEndOf="@+id/clientNameDriHisCan"
                 app:layout_constraintTop_toBottomOf="@+id/finalCostStatic"
                 app:layout_constraintWidth_percent=".2"
                 tools:ignore="MissingConstraints" />
@@ -254,7 +255,7 @@
                 tools:ignore="MissingConstraints" />
 
             <TextView
-                android:id="@+id/arrivalTimeDriverHis"
+                android:id="@+id/arrivalTimeDriverHisCan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -296,10 +297,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text=""
+                android:textStyle="bold"
                 android:gravity="center_vertical"
                 android:textColor="@color/red"
-                android:textSize="@dimen/normal_txt_size_12"
-                app:layout_constraintWidth_percent=".43"
+                android:textSize="@dimen/normal_txt_size"
+                app:layout_constraintWidth_percent=".47"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

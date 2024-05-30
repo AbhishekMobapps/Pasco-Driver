@@ -131,14 +131,15 @@ class CancelledTripResponse:Serializable {
 
         @SerializedName("availability_datetime")
         @Expose
-        var availabilityDatetime: Any? = null
+        var availabilityDatetime: String? = null
 
         @SerializedName("bid_price")
         @Expose
-        var bidPrice: Any? = null
+        var bidPrice: Float? = null
 
         @SerializedName("cancelreason")
         @Expose
-        var cancelreason: Any? = null
+        var cancelreason: String? = null
+
     }
 }

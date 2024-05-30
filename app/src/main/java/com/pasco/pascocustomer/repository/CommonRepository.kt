@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.repository
 
 import VehicleTypeResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.application.PascoApp
@@ -207,7 +208,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
-    fun getDriverCancelledHistory(): Observable<CompletedTripHistoryResponse> {
+    fun getDriverCancelledHistory(): Observable<CancelledTripResponse> {
         return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
