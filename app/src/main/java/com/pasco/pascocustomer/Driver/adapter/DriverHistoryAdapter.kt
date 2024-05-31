@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.adapter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
+import com.pasco.pascocustomer.Driver.StartRiding.Ui.DriverStartRidingActivity
 import com.pasco.pascocustomer.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -52,8 +54,19 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
         holder.orderIDDriOrd.setOnClickListener {
             showFullAddressDialog(driverOrderHis.bookingNumber.toString())
         }
+        holder.orderPriceTDriO.setOnClickListener {
+            val intent = Intent(context, DriverStartRidingActivity::class.java).apply {
+                putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
+                putExtra("dropLoc", driverOrderHis.dropLocation.toString())
+                putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())
+                putExtra("longitudePickUp", driverOrderHis.pickupLongitude.toString())
+                putExtra("latitudeDrop", driverOrderHis.dropLatitude.toString())
+                putExtra("longitudeDrop", driverOrderHis.dropLongitude.toString())
+                putExtra("BookId", driverOrderHis.id.toString())
+            }
+            context.startActivity(intent)
+        }
     }
-
     fun truncateBookingNumber(bookingNumber: String, maxLength: Int = 8): String {
         return if (bookingNumber.length > maxLength) {
             "${bookingNumber.substring(0, maxLength)}..."

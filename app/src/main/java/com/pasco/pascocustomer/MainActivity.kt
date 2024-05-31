@@ -20,7 +20,6 @@ import com.google.android.gms.location.*
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
-import com.pasco.pascocustomer.dashboard.DashboardActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -163,6 +163,8 @@
                             android:layout_marginTop="2dp"
                             android:layout_weight="6"
                             android:gravity="left"
+                            android:drawableRight="@drawable/next"
+                            android:drawableTint="@color/logo_color"
                             android:text="$780.00"
                             android:textColor="@color/black"
                             android:textSize="@dimen/normal_txt_size"
