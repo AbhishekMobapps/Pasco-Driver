@@ -91,7 +91,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         auth = FirebaseAuth.getInstance()
 
         loginValue = intent.getStringExtra("loginValue").toString()
-//hello
+//hello bbb
         if (loginValue == "driver") {
             binding.asDriverSignup.visibility = View.VISIBLE
             binding.asCustomerSignup.visibility = View.GONE
