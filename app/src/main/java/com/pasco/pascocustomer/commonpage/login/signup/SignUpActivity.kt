@@ -114,13 +114,14 @@ class SignUpActivity : AppCompatActivity() {
 
         checkNumberObserver()
 
-        getCityList()
-        getCityListObserver()
-        //call city list api
+
         binding.addressTxt.setOnClickListener {
 
             showSearchableDialog()
         }
+        getCityList()
+        getCityListObserver()
+        //call city list api
 
 
         binding.signUpBtn.setOnClickListener {
@@ -140,7 +141,7 @@ class SignUpActivity : AppCompatActivity() {
 
 
     }
-
+//open popup
     private fun showSearchableDialog() {
 
         val alertDialog = Dialog(this@SignUpActivity)
@@ -174,9 +175,6 @@ class SignUpActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
-
-
         alertDialog.show()
     }
 
@@ -217,11 +215,9 @@ class SignUpActivity : AppCompatActivity() {
         val conCode = formattedCountryCode
         Log.e("conCode", "getCityList: $conCode")
 
-        val cityBody = UpdateCityBody(conCode
-        )
+        val cityBody = UpdateCityBody(conCode)
         updateCityViewModel.cityListData(cityBody, this, progressDialog)
     }
-
     private fun validationDriver() {
         with(binding) {
             when {
@@ -466,7 +462,6 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
                     Log.e("Full Phone Number", formattedCountryCode)
-
                     // Update the UI with the city name
                     city?.let { updateUI(it) }
                 }
