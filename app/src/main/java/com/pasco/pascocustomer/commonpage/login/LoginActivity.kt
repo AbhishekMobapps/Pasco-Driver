@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private var countryCode = ""
+    private var formattedCountryCode = ""
     private var cCodeSignIn = ""
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var loginValue = ""
@@ -208,7 +208,7 @@ class LoginActivity : AppCompatActivity() {
 
                     // Switch to the main thread before updating UI
                     withContext(Dispatchers.Main) {
-                        val formattedCountryCode = "+$phoneCountryCode"
+                        formattedCountryCode = "+$phoneCountryCode"
                         if (formattedCountryCode.isNotEmpty()) {
                             binding.signInCountryCode.setText(formattedCountryCode)
                         }
