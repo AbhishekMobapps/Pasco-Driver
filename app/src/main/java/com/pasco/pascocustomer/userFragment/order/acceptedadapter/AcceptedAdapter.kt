@@ -70,17 +70,17 @@ class AcceptedAdapter(
         }
 
         holder.showDetailsBtn.setOnClickListener {
-            val intent = Intent(required,TrackActivity::class.java)
+            val intent = Intent(required, TrackActivity::class.java)
             val pickupLatitude = orderList[position].pickupLatitude
             val pickupLongitude = orderList[position].pickupLongitude
             val dropLatitude = orderList[position].dropLatitude
             val dropLongitude = orderList[position].dropLongitude
             val bookingId = orderList[position].id
-            intent.putExtra("pickupLatitude",pickupLatitude.toString())
-            intent.putExtra("pickupLongitude",pickupLongitude.toString())
-            intent.putExtra("dropLatitude",dropLatitude.toString())
-            intent.putExtra("dropLongitude",dropLongitude.toString())
-            intent.putExtra("bookingId",bookingId.toString())
+            intent.putExtra("pickupLatitude", pickupLatitude.toString())
+            intent.putExtra("pickupLongitude", pickupLongitude.toString())
+            intent.putExtra("dropLatitude", dropLatitude.toString())
+            intent.putExtra("dropLongitude", dropLongitude.toString())
+            intent.putExtra("bookingId", bookingId.toString())
             required.startActivity(intent)
         }
     }

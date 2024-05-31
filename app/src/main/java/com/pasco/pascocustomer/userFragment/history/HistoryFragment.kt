@@ -16,12 +16,15 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHi
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryViewModel
 import com.pasco.pascocustomer.Driver.adapter.CompletedTripHistoryAdapter
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.databinding.FragmentHistoryBinding
 import com.pasco.pascocustomer.databinding.FragmentMoreBinding
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteModelView
 import com.pasco.pascocustomer.userFragment.history.complete.CompletedHistoryAdapter
 import com.pasco.pascocustomer.userFragment.history.model.CustBookingCancelViewModel
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
+import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
+import com.pasco.pascocustomer.userFragment.order.acceptedmodel.AcceptedModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,10 +38,12 @@ class HistoryFragment : Fragment() {
     private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
         ArrayList()
     private var refersh = ""
-    private val completedTripHistoryViewModel: CompletedTripHistoryViewModel by viewModels()
+    private val acceptedModelView: AcceptedModelView by viewModels()
     private val cancelledTripViewModel: CustBookingCancelViewModel by viewModels()
     private val completedTripViewModel: CompleteModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
+    private var acceptedList: List<AllBiddsDetailResponse.Datum> = ArrayList()
+    private var acceptedAdapter: AcceptedAdapter? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,17 +53,18 @@ class HistoryFragment : Fragment() {
         val view = binding.root
 
         activity = requireActivity()
+
+
         binding.ordersConst.setOnClickListener {
             binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            binding.oderRecycler.visibility = View.VISIBLE
             binding.allBiddsRecycler.visibility = View.GONE
             binding.acceptRecycler.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
             binding.allBiddsConst.setBackgroundResource(0)
-
+            getAcceptedApi()
 
         }
 
@@ -68,7 +74,6 @@ class HistoryFragment : Fragment() {
             binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             binding.oderRecycler.visibility = View.GONE
-            binding.allBiddsRecycler.visibility = View.VISIBLE
             binding.acceptRecycler.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
             binding.ordersConst.setBackgroundResource(0)
@@ -83,13 +88,13 @@ class HistoryFragment : Fragment() {
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.oderRecycler.visibility = View.GONE
             binding.allBiddsRecycler.visibility = View.GONE
-            binding.acceptRecycler.visibility = View.VISIBLE
             binding.allBiddsConst.setBackgroundResource(0)
             binding.ordersConst.setBackgroundResource(0)
 
             cancelledApi()
         }
-
+        getAcceptedApi()
+        acceptedObserver()
         completedObserver()
         cancelledObserver()
         return view
@@ -171,6 +176,40 @@ class HistoryFragment : Fragment() {
 
         completedTripViewModel.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
+        }
+    }
+
+    private fun getAcceptedApi() {
+        acceptedModelView.acceptedBids(activity, progressDialog)
+    }
+
+    private fun acceptedObserver() {
+        acceptedModelView.progressIndicator.observe(this) {
+        }
+        acceptedModelView.mRejectResponse.observe(this) {
+            val message = it.peekContent().msg
+            val success = it.peekContent().status
+            if (success == "True") {
+                acceptedList = it.peekContent().data!!
+                if (acceptedList.isEmpty()) {
+                    binding.noDataFoundTxt.visibility = View.VISIBLE
+                    binding.noDataFoundTxt.text = "No Accepted"
+                } else {
+                    binding.acceptRecycler.visibility = View.VISIBLE
+                    binding.acceptRecycler.isVerticalScrollBarEnabled = true
+                    binding.acceptRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.acceptRecycler.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    acceptedAdapter = AcceptedAdapter(requireContext(), acceptedList)
+                    binding.acceptRecycler.adapter = acceptedAdapter
+                }
+
+            }
+        }
+
+        acceptedModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(requireActivity(), it)
+            //errorDialogs()
         }
     }
 }
