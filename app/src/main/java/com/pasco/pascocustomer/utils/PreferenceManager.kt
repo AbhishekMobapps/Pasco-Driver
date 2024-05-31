@@ -133,7 +133,12 @@ class PreferenceManager(context: Context) {
             editor.putString(Profile, profile)
             editor.apply()
         }
-
+    var countryCode: String
+        get() = prefs.getString(Code, "") ?: ""
+        set(code) {
+            editor.putString(Code, code)
+            editor.apply()
+        }
     companion object {
         // region "Tags"
         private const val IS_FIRST_TIME = "isFirstTime"
@@ -152,6 +157,7 @@ class PreferenceManager(context: Context) {
 
         private const val USER_ID = "USER_ID"
         private const val hostTypes = "hostType"
+        private const val Code = "Code"
         private const val hostTypeIds = "hostTypeIds"
         private const val status = "status"
         private const val country = "country"

@@ -34,7 +34,7 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.commonpage.login.ChatActivity
+import com.pasco.pascocustomer.chat.ChatActivity
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
@@ -48,6 +48,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
