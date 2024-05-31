@@ -105,6 +105,7 @@ class DriverAllBiddDetailAdapter(
             e.printStackTrace()
         }
         val status = bookingReq.customerStatus.toString()
+        Log.e("status", "onBindViewHolder: "+status )
         if (status == "confirmed") {
             holder.consAccepORD.visibility = View.VISIBLE
         } else {

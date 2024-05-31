@@ -17,6 +17,7 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripRe
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRResponse
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.UpDriverStatusResponse
@@ -479,7 +480,6 @@ interface ApiServices {
         @Body body: TrackLocationBody
     ): Observable<TrackLocationResponse>
 
-
     //driver completedHistory
     @GET("bookdriver-completed/")
     fun driverCompletedHistory(
@@ -490,6 +490,13 @@ interface ApiServices {
     fun driverCancelledHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CancelledTripResponse>
+
+    @GET("afterstarttrip/{bookingId}/")
+    fun afterStartTrip(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("bookingId") bookingId: String
+    ):Observable<AfterStartTripResponse>
+
 
     @GET("bookclient-cancelled/")
     fun customerCanceldHistory(
@@ -508,4 +515,6 @@ interface ApiServices {
         @Path("id") Id: String,
         @Body body: CancelBookingBody
     ): Observable<AcceptOrRejectResponse>
+
+
 }

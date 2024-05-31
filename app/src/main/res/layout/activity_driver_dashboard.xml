@@ -254,7 +254,7 @@
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
-                        android:src="@drawable/history_1"
+                        android:src="@drawable/hostory_icon"
                         app:tint="@color/logo_color" />
 
                   <!--  <ImageView
