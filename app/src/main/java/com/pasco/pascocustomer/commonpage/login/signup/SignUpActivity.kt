@@ -156,16 +156,6 @@ class SignUpActivity : AppCompatActivity() {
         dialogRecyclerView =
             alertDialog.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
 
-        /*     // Initialize array adapter
-             val adapter = UpdateAddressAdapter(this@SignUpActivity,updateCityList) { selectedItem ->
-                 binding.addressTxt.text = selectedItem
-                 alertDialog.dismiss()
-             }
-
-             // Set adapter
-             dialogRecyclerView.layoutManager = LinearLayoutManager(this@SignUpActivity)
-             dialogRecyclerView.adapter = adapter*/
-
         editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 

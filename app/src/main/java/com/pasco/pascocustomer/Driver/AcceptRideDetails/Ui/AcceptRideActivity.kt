@@ -92,10 +92,8 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         activity = this
 
-
         reqId = intent.getStringExtra("rideReqId").orEmpty()
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
-
         currentLatitudePickup = intent.getStringExtra("pickuplatitudea")?.toDoubleOrNull() ?: 0.0
         currentLongitudePickup = intent.getStringExtra("pickuplongitudea")?.toDoubleOrNull() ?: 0.0
         currentLatitudeDrop = intent.getStringExtra("droplatitudea")?.toDoubleOrNull() ?: 0.0

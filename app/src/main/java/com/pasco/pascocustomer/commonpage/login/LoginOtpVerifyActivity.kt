@@ -27,7 +27,6 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginModelView
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
-import com.pasco.pascocustomer.dashboard.DashboardActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityLoginOtpVerifyBinding
 import com.pasco.pascocustomer.utils.ErrorUtil

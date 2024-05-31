@@ -27,6 +27,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesViewModel
+import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.databinding.ActivityVehicleDetailsBinding
@@ -308,7 +309,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
                 Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG)
                     .show()
-                openRegConfirmPop()
+                val intent = Intent(this@VehicleDetailsActivity, DriverDashboardActivity::class.java)
+                startActivity(intent)
 
 
             }
@@ -350,28 +352,6 @@ class VehicleDetailsActivity : AppCompatActivity() {
         } else {
             // Call the API for approval request
             reqApproval()
-        }
-    }
-
-
-    private fun openRegConfirmPop() {
-        val builder =
-            AlertDialog.Builder(
-                this@VehicleDetailsActivity,
-                R.style.Style_Dialog_Rounded_Corner
-            )
-        val dialogView = layoutInflater.inflate(R.layout.register_confirmation, null)
-        builder.setView(dialogView)
-
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val okButtonAR = dialogView.findViewById<TextView>(R.id.okButtonAR)
-        dialog.show()
-        okButtonAR.setOnClickListener {
-            dialog.dismiss()
-            val intent = Intent(this@VehicleDetailsActivity, LoginActivity::class.java)
-            startActivity(intent)
         }
     }
 

@@ -21,6 +21,7 @@ class GetVDetailsResponse:Serializable{
     var data: GetVData? = null
 
     inner class GetVData:Serializable{
+
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -33,9 +34,17 @@ class GetVDetailsResponse:Serializable{
         @Expose
         var shipmentname: String? = null
 
+        @SerializedName("shipmentid")
+        @Expose
+        var shipmentid: Int? = null
+
         @SerializedName("vehiclename")
         @Expose
         var vehiclename: String? = null
+
+        @SerializedName("cargo")
+        @Expose
+        var cargo: Int? = null
 
         @SerializedName("vehiclenumber")
         @Expose

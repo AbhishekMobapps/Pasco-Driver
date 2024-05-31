@@ -92,6 +92,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
 
+
         pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
         dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
 
