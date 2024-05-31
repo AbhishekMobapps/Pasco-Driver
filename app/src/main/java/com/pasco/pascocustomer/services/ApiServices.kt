@@ -49,6 +49,8 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
@@ -81,6 +83,12 @@ interface ApiServices {
     fun userRegister(
         @Body body: ClientSignupBody
     ): Observable<ClientSignUpResponse>
+
+    @Headers("Accept:application/json")
+    @POST("addcity/")
+    fun getCityList(
+        @Body body: UpdateCityBody
+    ):Observable<UpdateCityResponse>
 
     @Headers("Accept:application/json")
     @POST("check-login/")

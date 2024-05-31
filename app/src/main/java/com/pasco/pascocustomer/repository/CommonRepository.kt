@@ -28,6 +28,8 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberResponse
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
@@ -50,6 +52,10 @@ import javax.inject.Inject
 class CommonRepository @Inject constructor(private val apiService: ApiServices) {
     fun getClientSign(courseBody: ClientSignupBody): Observable<ClientSignUpResponse> {
         return apiService.userRegister(courseBody)
+    }
+
+    fun getCityList(cityBody: UpdateCityBody): Observable<UpdateCityResponse> {
+        return apiService.getCityList(cityBody)
     }
 
     fun getOtpCheck(courseBody: ClientSignupBody): Observable<OtpCheckResponse> {
