@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.commonpage.login.signup
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -18,10 +19,9 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.EditText
-import android.widget.TextView
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -34,6 +34,7 @@ import com.google.firebase.auth.*
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.UpdateAddressAdapter
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
@@ -41,6 +42,8 @@ import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResp
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityViewModel
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberModelView
+import com.pasco.pascocustomer.customer.activity.SignUpCityName
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
 import com.pasco.pascocustomer.databinding.ActivitySignUpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,7 +57,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity(), SignUpCityName {
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
@@ -72,20 +75,21 @@ class SignUpActivity : AppCompatActivity() {
     private var formattedLongitudeSelect: String = ""
     private var city: String? = null
     private var address: String? = null
-    private var adapter: UpdateAddressAdapter? = null
 
-    private val otpModel: OtpCheckModelView by viewModels()
     private val checkNumberModelView: CheckNumberModelView by viewModels()
     private val updateCityViewModel: UpdateCityViewModel by viewModels()
     private var updateCityList: List<UpdateCityResponse.updateCityList> = ArrayList()
+    private var updateAddressAdapter: UpdateAddressAdapter? = null
     private val progressDialog by lazy { CustomProgressDialog(this) }
-    private lateinit var dialogRecyclerView: RecyclerView
+    private var dialogRecyclerView: RecyclerView? = null
+    private var alertDialog: Dialog? = null
+    private var selectCityName = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        val deviceModel = Build.MODEL
+
         loginValue = intent.getStringExtra("loginValue").toString()
 
         if (loginValue == "driver") {
@@ -97,6 +101,7 @@ class SignUpActivity : AppCompatActivity() {
         }
 
 
+        Log.e("CountryCodeAA", "code..." + formattedCountryCode)
         binding.signInBtn.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -114,13 +119,24 @@ class SignUpActivity : AppCompatActivity() {
 
         checkNumberObserver()
 
+        binding.driverCode?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+               // getCityList()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         binding.addressTxt.setOnClickListener {
-
+            formattedCountryCode = binding.driverCode.text.toString()
             showSearchableDialog()
+
         }
-        getCityList()
-        getCityListObserver()
+
+
         //call city list api
 
 
@@ -128,6 +144,7 @@ class SignUpActivity : AppCompatActivity() {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
+            strPhoneNo = binding.phoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
             if (loginValue == "driver") {
@@ -141,16 +158,78 @@ class SignUpActivity : AppCompatActivity() {
 
 
     }
-//open popup
+
+    //open popup
+
+
+
+    private fun showAddress(location: Location) {
+        val latitude = location.latitude
+        val longitude = location.longitude
+
+        pickUplatitude = latitude
+        pickUplongitude = longitude
+        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
+        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val geocoder = Geocoder(this@SignUpActivity, Locale.getDefault())
+            try {
+                val addresses: List<Address> = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    1
+                )!!
+                if (addresses.isNotEmpty()) {
+                    val addressObj = addresses[0]
+                    address = addressObj.getAddressLine(0)
+                    city = addressObj.locality
+                    val countryCode = addressObj.countryCode
+                    val countryName = addressObj.countryName
+
+                    // Get the phone country code using libphonenumber
+                    val phoneUtil = PhoneNumberUtil.getInstance()
+                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
+
+                    // Log the country code and country name
+                    Log.e("Country Code", countryCode ?: "No country code found")
+                    Log.e("Country Name", countryName ?: "No country name found")
+                    Log.e("Phone Country Code", "+$phoneCountryCode")
+
+                    formattedCountryCode = "+$phoneCountryCode"
+
+                    PascoApp.encryptedPrefs.countryCode = formattedCountryCode
+                    Log.e("Full Phone Number", formattedCountryCode)
+                    if (formattedCountryCode.isNotEmpty()) {
+                        // Update the EditTexts with the country code
+                        withContext(Dispatchers.Main) {
+                            binding.driverCode.setText(formattedCountryCode)
+                            binding.clientCountryCode.setText(formattedCountryCode)
+                        }
+                    }
+
+
+                    // Update the UI with the city name
+                    city?.let { updateUI(it) }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     private fun showSearchableDialog() {
 
-        val alertDialog = Dialog(this@SignUpActivity)
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        alertDialog.setCancelable(true)
-        alertDialog.setContentView(com.pasco.pascocustomer.R.layout.dialog_searchable_spinner)
-        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        alertDialog.getWindow()!!.setLayout(750, 1200);
+        alertDialog = Dialog(this@SignUpActivity)
+        alertDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        alertDialog?.setCancelable(true)
+        alertDialog?.setContentView(com.pasco.pascocustomer.R.layout.dialog_searchable_spinner)
+        alertDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog?.getWindow()!!.setLayout(750, 1200);
         // Show dialog
+
+        val searchCountryName = alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(com.pasco.pascocustomer.R.id.searchCountryName)
+        dialogRecyclerView = alertDialog?.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
 
         val editText = alertDialog.findViewById<EditText>(com.pasco.pascocustomer.R.id.edit_text)
         dialogRecyclerView =
@@ -159,16 +238,33 @@ class SignUpActivity : AppCompatActivity() {
         editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter?.filter?.filter(s)
+        searchCountryName?.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
         })
-        alertDialog.show()
+
+
+
+        getCityList()
+        getCityListObserver(dialogRecyclerView!!)
+        alertDialog?.show()
+    }
+    private fun getCityList() {
+        Log.e("formattedCountryCode","formattedCountryCode..AA" +formattedCountryCode)
+
+        val cityBody = UpdateCityBody(countrycode = formattedCountryCode
+        )
+        updateCityViewModel.cityListData(cityBody, this, progressDialog)
     }
 
-    private fun getCityListObserver() {
+    private fun getCityListObserver(dialogRecyclerView: RecyclerView) {
         updateCityViewModel.progressIndicator.observe(this@SignUpActivity, Observer {
             // Handle progress indicator changes if needed
         })
@@ -180,19 +276,17 @@ class SignUpActivity : AppCompatActivity() {
             if (response.peekContent().status == "False") {
                 //Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-                dialogRecyclerView.apply {
-                    isVerticalScrollBarEnabled = true
-                    isVerticalFadingEdgeEnabled = true
-                    layoutManager = LinearLayoutManager(
+                dialogRecyclerView.isVerticalScrollBarEnabled = true
+                dialogRecyclerView.isVerticalFadingEdgeEnabled = true
+                dialogRecyclerView.layoutManager =
+                    LinearLayoutManager(
                         this@SignUpActivity,
                         LinearLayoutManager.VERTICAL,
                         false
                     )
-                    adapter =
-                        UpdateAddressAdapter(this@SignUpActivity, updateCityList) { selectedItem ->
-                            binding.addressTxt.text = selectedItem
-                        }
-                }
+                updateAddressAdapter =
+                    UpdateAddressAdapter(this@SignUpActivity, updateCityList, this)
+                dialogRecyclerView.adapter = updateAddressAdapter
 
                 updateCityViewModel.errorResponse.observe(this) {
                     ErrorUtil.handlerGeneralError(this, it)
@@ -201,13 +295,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCityList() {
-        val conCode = formattedCountryCode
-        Log.e("conCode", "getCityList: $conCode")
 
-        val cityBody = UpdateCityBody(conCode)
-        updateCityViewModel.cityListData(cityBody, this, progressDialog)
-    }
     private fun validationDriver() {
         with(binding) {
             when {
@@ -289,6 +377,98 @@ class SignUpActivity : AppCompatActivity() {
                     checkNumberApi()
                 }
             }
+        }
+    }
+
+
+
+
+
+    private fun updateUI(city: String) {
+        // Update the UI on the main thread
+        runOnUiThread {
+            binding.addressTxt.text = city
+        }
+    }
+
+    private fun checkNumberApi() {
+        val loinBody = CheckNumberBody(
+            phone_number = strPhoneNo,
+            user_type = loginValue
+        )
+        checkNumberModelView.otpCheck(loinBody, this, progressDialog)
+    }
+
+    private fun checkNumberObserver() {
+        checkNumberModelView.progressIndicator.observe(this) {
+        }
+        checkNumberModelView.mRejectResponse.observe(
+            this
+        ) {
+
+            val existNumber = it.peekContent().exists
+            val message = it.peekContent().msg
+
+            if (existNumber == 1) {
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+            } else {
+                if (loginValue == "driver") {
+
+                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                    Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
+                } else {
+                    strPhoneNo = binding.userPhoneNumber.text.toString()
+                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                }
+            }
+
+
+        }
+        checkNumberModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@SignUpActivity, it)
+            // errorDialogs()
+        }
+    }
+
+    override fun itemCity(id: Int, cityName: String) {
+        selectCityName = cityName
+        binding.addressTxt.text = selectCityName
+        alertDialog?.dismiss()
+
+        getLatLngFromCityName(selectCityName,applicationContext)
+    }
+
+    private fun filterList(query: String?) {
+        if (query != null) {
+            val filterList = ArrayList<UpdateCityResponse.updateCityList>()
+            for (i in updateCityList) {
+                if (i.cityname?.lowercase(Locale.ROOT)?.contains(query) == true) {
+                    filterList.add(i)
+                }
+            }
+            if (filterList.isEmpty()) {
+                Toast.makeText(this, "No Data found ", Toast.LENGTH_LONG).show()
+            } else {
+                updateAddressAdapter?.setFilteredList(filterList)
+            }
+        }
+    }
+
+    private fun getLatLngFromCityName(cityName: String, context: Context) {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        try {
+            val addresses: List<Address> = geocoder.getFromLocationName(cityName, 1) as List<Address>
+            if (addresses.isNotEmpty()) {
+                formattedLatitudeSelect = addresses[0].latitude.toString()
+                formattedLongitudeSelect = addresses[0].longitude.toString()
+                Log.d("LocationAAAA", "Latitude: $formattedLatitudeSelect, Longitude: $formattedLongitudeSelect")
+
+            } else {
+                Toast.makeText(context, "No location found for the city", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, "Geocoding failed: IOException", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -407,105 +587,5 @@ class SignUpActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-
-
-    private fun showAddress(location: Location) {
-        val latitude = location.latitude
-        val longitude = location.longitude
-
-        pickUplatitude = latitude
-        pickUplongitude = longitude
-        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
-        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val geocoder = Geocoder(this@SignUpActivity, Locale.getDefault())
-            try {
-                val addresses: List<Address> = geocoder.getFromLocation(
-                    latitude,
-                    longitude,
-                    1
-                )!!
-                if (addresses.isNotEmpty()) {
-                    val addressObj = addresses[0]
-                    address = addressObj.getAddressLine(0)
-                    city = addressObj.locality
-                    val countryCode = addressObj.countryCode
-                    val countryName = addressObj.countryName
-
-                    // Get the phone country code using libphonenumber
-                    val phoneUtil = PhoneNumberUtil.getInstance()
-                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
-
-                    // Log the country code and country name
-                    Log.e("Country Code", countryCode ?: "No country code found")
-                    Log.e("Country Name", countryName ?: "No country name found")
-                    Log.e("Phone Country Code", "+$phoneCountryCode")
-
-                   formattedCountryCode = "+$phoneCountryCode"
-                    if (formattedCountryCode.isNotEmpty()) {
-                        // Update the EditTexts with the country code
-                        withContext(Dispatchers.Main) {
-                            binding.driverCode.setText(formattedCountryCode)
-                            binding.clientCountryCode.setText(formattedCountryCode)
-                        }
-                    }
-
-                    Log.e("Full Phone Number", formattedCountryCode)
-                    // Update the UI with the city name
-                    city?.let { updateUI(it) }
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun updateUI(city: String) {
-        // Update the UI on the main thread
-        runOnUiThread {
-            binding.addressTxt.text = city
-        }
-    }
-
-    private fun checkNumberApi() {
-        val loinBody = CheckNumberBody(
-            phone_number = strPhoneNo,
-            user_type = loginValue
-        )
-        checkNumberModelView.otpCheck(loinBody, this, progressDialog)
-    }
-
-    private fun checkNumberObserver() {
-        checkNumberModelView.progressIndicator.observe(this) {
-        }
-        checkNumberModelView.mRejectResponse.observe(
-            this
-        ) {
-
-            val existNumber = it.peekContent().exists
-            val message = it.peekContent().msg
-
-            if (existNumber == 1) {
-                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-            } else {
-                if (loginValue == "driver") {
-                    strPhoneNo = binding.phoneNumber.text.toString()
-                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
-                    Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
-                } else {
-                    strPhoneNo = binding.userPhoneNumber.text.toString()
-                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
-                }
-            }
-
-
-        }
-        checkNumberModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this@SignUpActivity, it)
-            // errorDialogs()
-        }
-    }
-
 
 }
