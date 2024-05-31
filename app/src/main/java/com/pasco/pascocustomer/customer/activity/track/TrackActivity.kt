@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.customer.activity.track
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ActionBar
 import android.app.Dialog
 import android.content.Intent
@@ -33,6 +34,7 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.commonpage.login.ChatActivity
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
@@ -70,6 +72,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private var dropLatitude = ""
     private var dropLongitude = ""
     private var bookingId = ""
+    private var lat = ""
+    private var long = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -92,15 +96,21 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
 
 
-        Log.e("TrackData","bookingId..." +bookingId)
+        Log.e("TrackData", "bookingId..." + bookingId)
 
 
         binding.cancelBookingBtn.setOnClickListener {
             showCalenderPopup()
         }
 
-       locationApi()
-       locationObserver()
+        binding.chatBtn.setOnClickListener {
+            val intent = Intent(this@TrackActivity, ChatActivity::class.java)
+            startActivity(intent)
+        }
+        locationLatApi()
+        locationApi()
+        locationObserver()
+        locationLatObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -277,11 +287,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val kilometers = response.peekContent().data?.totalDistance
             val meters = convertKilometersToMeters(kilometers!!)
-            binding.totalDistanceBidd.text =  "Kilometers: $kilometers\nMeters: $meters"
-            Log.e("CheckData","dropLatitude   "  +dropLatitude +"dropLongitude... " +dropLongitude)
+            binding.totalDistanceBidd.text = "Kilometers: $kilometers\nMeters: $meters"
 
             val url = response.peekContent().data!!.image
-            Glide.with(this).load(BuildConfig.IMAGE_KEY+url).into(binding.profileImgUserBid)
+            Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
 
         }
 
@@ -289,6 +298,30 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
+    private fun locationLatApi() {
+
+        val bookingBody = TrackLocationBody(
+            driverbookedid = bookingId
+        )
+        trackModelView.trackLocation(bookingBody, this)
+    }
+
+    private fun locationLatObserver() {
+
+        trackModelView.mRejectResponse.observe(this) { response ->
+
+            lat = response.peekContent().data?.currentLatitude.toString()
+            long = response.peekContent().data?.currentLongitude.toString()
+
+            Log.e("LocationUpdateaa","lat..." +lat + "long  " +long)
+        }
+
+        trackModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
     private fun convertKilometersToMeters(kilometers: Double): Double {
         return kilometers * 1000
     }
@@ -297,6 +330,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         return meters / 1000
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun showCalenderPopup() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -310,13 +344,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         cancelBtn.setOnClickListener { finish() }
         bookingCancelBtn.setOnClickListener {
-         val cancelReasonTxt = cancelReasonTxt.text.toString()
-            if (cancelReasonTxt.isEmpty())
-            {
-                Toast.makeText(applicationContext,"Please enter valid reason",Toast.LENGTH_SHORT).show()
-            }
-            else
-            {
+            val cancelReasonTxt = cancelReasonTxt.text.toString()
+            if (cancelReasonTxt.isEmpty()) {
+                Toast.makeText(applicationContext, "Please enter valid reason", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
                 acceptOrRejectApi(cancelReasonTxt)
             }
 

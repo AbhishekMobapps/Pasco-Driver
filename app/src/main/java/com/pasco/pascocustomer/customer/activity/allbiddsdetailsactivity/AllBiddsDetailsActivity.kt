@@ -160,7 +160,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     private fun acceptOrRejectApi(id: Int) {
         //   val codePhone = strPhoneNo
         val loinBody = AcceptOrRejectBidBody(
-            payment_amount = "50.00",
+            payment_amount = "15.0",
             payment_type = "wallet"
         )
         paymentAccept.otpCheck(id.toString(), loinBody, this, progressDialog)
