@@ -113,8 +113,8 @@ class MoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)
+                requireActivity().finish()
             }
-
 
         }
 

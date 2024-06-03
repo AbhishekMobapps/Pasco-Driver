@@ -162,7 +162,6 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     //open popup
 
 
-
     private fun showAddress(location: Location) {
         val latitude = location.latitude
         val longitude = location.longitude
@@ -228,8 +227,10 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         alertDialog?.getWindow()!!.setLayout(750, 1200);
         // Show dialog
 
-        val searchCountryName = alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(com.pasco.pascocustomer.R.id.searchCountryName)
-        dialogRecyclerView = alertDialog?.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
+        val searchCountryName =
+            alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(com.pasco.pascocustomer.R.id.searchCountryName)
+        dialogRecyclerView =
+            alertDialog?.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
 
 
 
@@ -251,10 +252,12 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         getCityListObserver(dialogRecyclerView!!)
         alertDialog?.show()
     }
-    private fun getCityList() {
-        Log.e("formattedCountryCode","formattedCountryCode..AA" +formattedCountryCode)
 
-        val cityBody = UpdateCityBody(countrycode = formattedCountryCode
+    private fun getCityList() {
+        Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
+
+        val cityBody = UpdateCityBody(
+            countrycode = formattedCountryCode
         )
         updateCityViewModel.cityListData(cityBody, this, progressDialog)
     }
@@ -333,6 +336,14 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                phoneNumber.text.length < 10 -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Phone number must be at least 10 digits",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
 
                 else -> {
                     checkNumberApi()
@@ -348,6 +359,14 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     Toast.makeText(
                         applicationContext,
                         "Please enter phone number",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                userPhoneNumber.text.length < 8 -> {
+                    Toast.makeText(
+                        applicationContext,
+                        "Phone number must be at least 8 digits",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -374,9 +393,6 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             }
         }
     }
-
-
-
 
 
     private fun updateUI(city: String) {
@@ -410,6 +426,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 if (loginValue == "driver") {
 
                     sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                    progressDialog.start("Loading....")
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
                 } else {
                     strPhoneNo = binding.userPhoneNumber.text.toString()
@@ -430,33 +447,40 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         binding.addressTxt.text = selectCityName
         alertDialog?.dismiss()
 
-        getLatLngFromCityName(selectCityName,applicationContext)
+        getLatLngFromCityName(selectCityName, applicationContext)
     }
 
     private fun filterList(query: String?) {
         if (query != null) {
+            val lowercaseQuery = query.lowercase(Locale.ROOT)
+            val uppercaseQuery = query.uppercase(Locale.ROOT)
             val filterList = ArrayList<UpdateCityResponse.updateCityList>()
             for (i in updateCityList) {
-                if (i.cityname?.lowercase(Locale.ROOT)?.contains(query) == true) {
+                if (i.cityname?.lowercase(Locale.ROOT)?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)?.contains(uppercaseQuery) == true) {
                     filterList.add(i)
                 }
             }
             if (filterList.isEmpty()) {
-                Toast.makeText(this, "No Data found ", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "No Data found", Toast.LENGTH_LONG).show()
             } else {
                 updateAddressAdapter?.setFilteredList(filterList)
             }
         }
     }
 
+
     private fun getLatLngFromCityName(cityName: String, context: Context) {
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
-            val addresses: List<Address> = geocoder.getFromLocationName(cityName, 1) as List<Address>
+            val addresses: List<Address> =
+                geocoder.getFromLocationName(cityName, 1) as List<Address>
             if (addresses.isNotEmpty()) {
                 formattedLatitudeSelect = addresses[0].latitude.toString()
                 formattedLongitudeSelect = addresses[0].longitude.toString()
-                Log.d("LocationAAAA", "Latitude: $formattedLatitudeSelect, Longitude: $formattedLongitudeSelect")
+                Log.d(
+                    "LocationAAAA",
+                    "Latitude: $formattedLatitudeSelect, Longitude: $formattedLongitudeSelect"
+                )
 
             } else {
                 Toast.makeText(context, "No location found for the city", Toast.LENGTH_SHORT).show()
@@ -491,6 +515,8 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 ) {
                     // Save the verification ID
                     this@SignUpActivity.verificationId = verificationId
+                    progressDialog.stop()
+
                     if (loginValue == "driver") {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)

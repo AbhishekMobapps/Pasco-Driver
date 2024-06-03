@@ -59,6 +59,7 @@ class OrderFragment : Fragment() {
             binding.oderRecycler.visibility = View.VISIBLE
             binding.allBiddsRecycler.visibility = View.GONE
             binding.acceptRecycler.visibility = View.GONE
+            binding.noDataFoundTxt.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
             binding.allBiddsConst.setBackgroundResource(0)
             getOrderApi()

@@ -9,7 +9,10 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.view.Window
 import android.widget.EditText
 import android.widget.ImageView
@@ -54,7 +57,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var pickupLocation: LatLng // Define your pickup location
-    private lateinit var dropLocation: LatLng // Define your drop location
+    private var dropLocation: LatLng? = null// Define your drop location
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
@@ -75,6 +78,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private var bookingId = ""
     private var lat = ""
     private var long = ""
+    private var isClick = true
+
+    private var handler: Handler? = null
+    private lateinit var runnable: Runnable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -90,16 +97,23 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
         //dropLatitude = intent.getStringExtra("dropLatitude").toString()
-      //  dropLongitude = intent.getStringExtra("dropLongitude").toString()
+        //  dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
+        binding.textViewSeeDetails.setOnClickListener {
 
+            if (isClick) {
+                binding.textViewSeeDetails.text = "Hide Details"
+                binding.NewConstraintDetails.visibility = View.VISIBLE
+                isClick =false
+            }
+            else
+            {   binding.NewConstraintDetails.visibility = View.GONE
+                binding.textViewSeeDetails.text = "Show Details"
+                isClick =true
+            }
+        }
 
-        pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
-        dropLocation = LatLng(28.78924, 77.25365) // Los Angeles
-
-
-
-
+        // Los Angeles
         binding.cancelBookingBtn.setOnClickListener {
             showCalenderPopup()
         }
@@ -108,23 +122,30 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this@TrackActivity, ChatActivity::class.java)
             startActivity(intent)
         }
-        locationLatApi()
-        locationApi()
-        locationObserver()
-        locationLatObserver()
-        Log.e("LocationUpdateaa","outlat..." +dropLatitude + "outlong  " +dropLongitude)
+        handler = Handler(Looper.getMainLooper())
 
+
+        runnable = object : Runnable {
+            override fun run() {
+                locationApi()
+                locationObserver()
+                handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
+            }
+        }
+
+        // Start the periodic task
+        handler?.post(runnable)
+
+
+
+        locationLatApi()
+        locationLatObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.isTrafficEnabled = true
         // Add markers for pickup and drop locations
-        mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pickup Location"))
-        mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
-
-        // Move camera to the initial pickup location
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 12f))
 
         // Enable my location button and request location permission
         if (ActivityCompat.checkSelfPermission(
@@ -142,15 +163,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             return
         }
+
+
         mMap.isMyLocationEnabled = true
 
-        // Get and draw route when map is ready
-        getLastLocationAndDrawRoute()
-
-        mMap.setOnMyLocationChangeListener { location ->
-            val userLocation = LatLng(location.latitude, location.longitude)
-            checkDestinationReached(userLocation, dropLocation)
-        }
     }
 
 
@@ -219,20 +235,24 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             .apiKey(apiKey)
             .build()
 
-        Log.e("location", "location.." + latLng.latitude + "longitude " + latLng.longitude)
+
         val result: DirectionsResult = DirectionsApi.newRequest(context)
             .mode(TravelMode.DRIVING)
             .origin("${latLng.latitude},${latLng.longitude}")
-            .destination("${dropLocation.latitude},${dropLocation.longitude}")
+            .destination("${dropLocation?.latitude},${dropLocation?.longitude}")
             .await()
 
+        Log.e(
+            "location",
+            "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
+        )
         // Decode polyline and draw on map
         val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
 
         // Add polyline to map
         mMap.addPolyline(PolylineOptions().addAll(points).color(Color.BLUE))
 
-        // mMap.clear() // Clear previous route
+        //mMap.clear() // Clear previous route
 
     }
 
@@ -287,6 +307,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
+   /*         val distance = response.peekContent().data?.totalDistance ?: 0.0
+            binding.routeTime.text = String.format("%1f", distance)*/
 
             val kilometers = response.peekContent().data?.totalDistance
             val meters = convertKilometersToMeters(kilometers!!)
@@ -294,6 +316,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val url = response.peekContent().data!!.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
+            Log.e("AAAAAA", "0001")
 
         }
 
@@ -315,9 +338,23 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         trackModelView.mRejectResponse.observe(this) { response ->
 
             dropLatitude = response.peekContent().data?.currentLatitude.toString()
-            dropLongitude= response.peekContent().data?.currentLongitude.toString()
+            dropLongitude = response.peekContent().data?.currentLongitude.toString()
+            pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble())
+            dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble())
 
-            Log.e("LocationUpdateaa","lat..." +dropLatitude + "long  " +dropLongitude)
+            mMap.addMarker(MarkerOptions().position(pickupLocation!!).title("Pickup Location"))
+            mMap.addMarker(MarkerOptions().position(dropLocation!!).title("Drop Location"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 12f))
+
+            if (response.peekContent().data?.driverStatus == null) {
+
+            } else {
+                binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
+            }
+
+            // New York City
+            getLastLocationAndDrawRoute()
+
         }
 
         trackModelView.errorResponse.observe(this) {
@@ -395,5 +432,12 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this@TrackActivity, it)
             // errorDialogs()
         }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Remove callbacks to prevent memory leaks
+        handler?.removeCallbacks(runnable)
     }
 }

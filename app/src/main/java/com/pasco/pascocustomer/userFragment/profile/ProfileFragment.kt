@@ -293,7 +293,7 @@ class ProfileFragment : Fragment() {
         val currentCity = binding.currentCityTxt.text.toString().toRequestBody(MultipartBody.FORM)
 
 
-        var profileImage: MultipartBody.Part? = null
+        var profileImage: MultipartBody.Part?
 
         profileImage = if (selectedImageFile == null) {
             MultipartBody.Part.createFormData("image", "",
