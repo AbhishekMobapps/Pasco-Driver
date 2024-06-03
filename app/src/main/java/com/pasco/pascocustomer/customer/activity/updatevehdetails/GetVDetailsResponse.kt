@@ -22,6 +22,7 @@ class GetVDetailsResponse:Serializable{
 
     inner class GetVData:Serializable{
 
+
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -68,8 +69,7 @@ class GetVDetailsResponse:Serializable{
 
         @SerializedName("comment")
         @Expose
-        var comment: String? = null
-
+        var comment: Any? = null
     }
 
 }

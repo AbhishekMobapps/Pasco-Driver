@@ -274,6 +274,7 @@
                     android:background="@drawable/button_background_color"
                     android:gravity="center"
                     android:text="Go for a pickup"
+                    android:visibility="gone"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"

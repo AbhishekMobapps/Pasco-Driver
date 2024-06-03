@@ -30,7 +30,7 @@ import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTyp
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetialsBinding
+import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetailsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -44,8 +44,8 @@ import java.io.IOException
 import java.io.InputStream
 
 @AndroidEntryPoint
-class UpdateVehicleDetialsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityUpdateVehicleDetialsBinding
+class UpdateVehicleDetailsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityUpdateVehicleDetailsBinding
     private var spinnerTransportId = ""
     private var spinnerVehicleTypeId = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -71,7 +71,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUpdateVehicleDetialsBinding.inflate(layoutInflater)
+        binding = ActivityUpdateVehicleDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         if (dAdminApprovedId.equals("0")) {
@@ -190,7 +190,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
             }
             val dAdapter =
                 VehicleDetailsActivity.SpinnerAdapter(
-                    this@UpdateVehicleDetialsActivity,
+                    this@UpdateVehicleDetailsActivity,
                     R.layout.custom_service_type_spinner,
                     servicesTypeStatic
                 )
@@ -210,7 +210,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
 
 
             if (response.peekContent().status.equals("False")) {
-                Toast.makeText(this@UpdateVehicleDetialsActivity, message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this@UpdateVehicleDetailsActivity, message, Toast.LENGTH_LONG).show()
             } else {
 
             }
@@ -233,7 +233,7 @@ class UpdateVehicleDetialsActivity : AppCompatActivity() {
                 element.vehiclename?.let { it1 -> vehicleTypeStatic.add(it1) }
             }
             val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
-                this@UpdateVehicleDetialsActivity,
+                this@UpdateVehicleDetailsActivity,
                 R.layout.custom_service_type_spinner,
                 vehicleTypeStatic
             )

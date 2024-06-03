@@ -18,6 +18,7 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHi
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.UpDriverStatusResponse
@@ -315,6 +316,12 @@ interface ApiServices {
     fun getUserProfile(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
     ): Observable<GetProfileResponse>
+
+    @POST("DriverCompleteBooking/{id}/")
+    fun getCompletedRide(
+        @Path("id") id: String,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+    ):Observable<CompleteRideResponse>
 
     //put profile
     @Multipart

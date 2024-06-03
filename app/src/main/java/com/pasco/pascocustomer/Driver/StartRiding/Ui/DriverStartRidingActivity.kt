@@ -161,14 +161,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.imageBackReqRide.setOnClickListener {
             finish()
         }
-        binding.reachedIdPickup.setOnClickListener {
+   /*     binding.reachedIdPickup.setOnClickListener {
             if (!hasReachedLocation) {
                 binding.reachedIdPickup.text = "Reached the location"
                 hasReachedLocation = true
             } else {
                 binding.reachedIdPickup.text = "Reached destination"
             }
-        }
+        }*/
         //get Api
         afterDetailsApi()
         afterDetailsObserver()
