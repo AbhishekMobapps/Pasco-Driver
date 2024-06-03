@@ -66,21 +66,20 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consUserImgg"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/req_order_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent=".98">
+                app:layout_constraintWidth_percent="0.98"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
                     android:id="@+id/onTheWayTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="on the way"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -116,29 +115,56 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileImgUserBid"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="20dp"
                     android:src="@drawable/ic_launcher_background"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="2dp"
+                    app:layout_constraintBottom_toTopOf="@+id/textViewSeeDetails"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/onTheWayTxt" />
+
+                <TextView
+                    android:id="@+id/textViewSeeDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="See Details"
+                    app:layout_constraintTop_toBottomOf="@+id/profileImgUserBid"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toTopOf="@+id/NewConstraintDetails"
+                    android:layout_marginTop="10dp"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintWidth_percent=".93"/>
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/NewConstraintDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/request_vehicle_radius"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profileImgUserBid"
                     app:layout_constraintWidth_percent=".93">
 
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintOrderPrice"
@@ -366,7 +392,7 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

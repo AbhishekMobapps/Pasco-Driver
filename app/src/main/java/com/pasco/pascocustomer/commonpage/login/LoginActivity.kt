@@ -120,6 +120,18 @@ class LoginActivity : AppCompatActivity() {
                     "Phone number should include country code prefixed with +",
                     Toast.LENGTH_SHORT
                 ).show()
+            } else if (binding.phoneNumber.text.isNullOrBlank()) {
+                Toast.makeText(
+                    applicationContext,
+                    "Please enter phone number",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (binding.phoneNumber.text.length < 8) {
+                Toast.makeText(
+                    applicationContext,
+                    "Phone number must be at least 8 digits",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 if (loginValue == "driver") {
                     otpCheckApi(deviceModel)
@@ -241,50 +253,13 @@ class LoginActivity : AppCompatActivity() {
                     if (otpStatus == 0) {
                         sendVerificationCode("$cCodeSignIn$strPhoneNo")
                     } else {
-                        when {
-                            binding.signInCountryCode.text.isNullOrBlank() -> {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Please enter country code",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            !binding.signInCountryCode.text.startsWith("+") -> {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Phone number should include country code prefixed with +",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            else -> {
-                                loginApi()
-                            }
-                        }
+                        loginApi()
                     }
                 } else {
                     if (otpStatus == 0) {
                         sendVerificationCode("$cCodeSignIn$strPhoneNo")
                     } else {
-                        when {
-                            binding.signInCountryCode.text.isNullOrBlank() -> {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Please enter country code",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            !binding.signInCountryCode.text.startsWith("+") -> {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Phone number should include country code prefixed with +",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            else -> {
-                                loginApi()
-                                Log.e("AAAAA", "aaa")
-                            }
-                        }
+                        loginApi()
                     }
                 }
             } else {

@@ -211,7 +211,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
             val intent = Intent(this, UserDashboardActivity::class.java)
-            intent.putExtra("profileUpdate","SigUp")
+            intent.putExtra("profileUpdate", "SigUp")
             startActivity(intent)
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             finish()
