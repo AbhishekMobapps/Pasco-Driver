@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName
 
 
 class MarkDutyResponse {
+
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -15,4 +16,8 @@ class MarkDutyResponse {
     @SerializedName("msg")
     @Expose
     var msg: String? = null
+
+    @SerializedName("Duty")
+    @Expose
+    var duty: Int? = null
 }

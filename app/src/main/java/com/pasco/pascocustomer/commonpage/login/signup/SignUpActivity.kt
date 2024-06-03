@@ -91,7 +91,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         auth = FirebaseAuth.getInstance()
 
         loginValue = intent.getStringExtra("loginValue").toString()
-
+//hello bbb
         if (loginValue == "driver") {
             binding.asDriverSignup.visibility = View.VISIBLE
             binding.asCustomerSignup.visibility = View.GONE
@@ -124,7 +124,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-               // getCityList()
+                // getCityList()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -231,12 +231,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         val searchCountryName = alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(com.pasco.pascocustomer.R.id.searchCountryName)
         dialogRecyclerView = alertDialog?.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
 
-        val editText = alertDialog.findViewById<EditText>(com.pasco.pascocustomer.R.id.edit_text)
-        dialogRecyclerView =
-            alertDialog.findViewById(com.pasco.pascocustomer.R.id.searchableSpinnerRecycleView)!!
 
-        editText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         searchCountryName?.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {

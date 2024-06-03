@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.Fragment
+package com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -160,7 +160,7 @@ class DriverMoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.driverApprovedId = ""
-                PascoApp.encryptedPrefs.CheckedType=="0"
+                PascoApp.encryptedPrefs.CheckedType="0"
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)

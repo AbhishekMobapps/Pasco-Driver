@@ -106,7 +106,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
                     if (item == getString(R.string.selectTransType)) {
 
                     } else {
-                        spinnerTransportId = servicesType?.get(i)?.id.toString()
+                        spinnerTransportId = servicesType?.get(i)?.shipmentid.toString()
                         Log.e("onItemSelected", spinnerTransportId)
 
                         //call vehicleType

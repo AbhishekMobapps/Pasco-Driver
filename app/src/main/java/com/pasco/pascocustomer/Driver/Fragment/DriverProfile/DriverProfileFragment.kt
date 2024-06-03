@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.Fragment
+package com.pasco.pascocustomer.Driver.Fragment.DriverProfile
 
 import android.Manifest
 import android.app.Activity
@@ -34,9 +34,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetialsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverProfileBinding
-import com.pasco.pascocustomer.databinding.FragmentProfileBinding
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.io.ByteArrayOutputStream

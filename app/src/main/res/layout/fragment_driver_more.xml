@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/old_lace"
-    tools:context=".Driver.Fragment.DriverMoreFragment">
+    tools:context=".Driver.Fragment.MoreFragDriver.DriverMoreFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
