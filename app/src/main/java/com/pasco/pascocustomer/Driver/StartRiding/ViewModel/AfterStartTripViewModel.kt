@@ -28,26 +28,26 @@ class AfterStartTripViewModel@Inject constructor(
     var context: Context? = null
 
 
-    fun getAfterTripsData(bookingId: String, activity: Activity, progressDialog: CustomProgressDialog) {
-        progressDialog.start(activity.getString(R.string.please_wait))
+    fun getAfterTripsData(bookingId: String, activity: Activity) {
+        //progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
         repository.afterTripDetails(bookingId).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AfterStartTripResponse>() {
                 override fun onNext(value: AfterStartTripResponse) {
                     progressIndicator.value = false
-                    progressDialog.stop()
+                   // progressDialog.stop()
                     mAfterTripResponse.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {
                     progressIndicator.value = false
-                    progressDialog.stop()
+                    //progressDialog.stop()
                     errorResponse.value = e
                 }
 
                 override fun onComplete() {
-                    progressDialog.stop()
+                    //progressDialog.stop()
                     progressIndicator.value = false
                 }
             })

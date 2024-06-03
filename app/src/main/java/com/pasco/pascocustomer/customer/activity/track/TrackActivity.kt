@@ -89,16 +89,15 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
-        dropLatitude = intent.getStringExtra("dropLatitude").toString()
-        dropLongitude = intent.getStringExtra("dropLongitude").toString()
+        //dropLatitude = intent.getStringExtra("dropLatitude").toString()
+      //  dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
 
 
         pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble()) // New York City
-        dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble()) // Los Angeles
+        dropLocation = LatLng(28.78924, 77.25365) // Los Angeles
 
 
-        Log.e("TrackData", "bookingId..." + bookingId)
 
 
         binding.cancelBookingBtn.setOnClickListener {
@@ -113,6 +112,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         locationApi()
         locationObserver()
         locationLatObserver()
+        Log.e("LocationUpdateaa","outlat..." +dropLatitude + "outlong  " +dropLongitude)
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -313,10 +314,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         trackModelView.mRejectResponse.observe(this) { response ->
 
-            lat = response.peekContent().data?.currentLatitude.toString()
-            long = response.peekContent().data?.currentLongitude.toString()
+            dropLatitude = response.peekContent().data?.currentLatitude.toString()
+            dropLongitude= response.peekContent().data?.currentLongitude.toString()
 
-            Log.e("LocationUpdateaa","lat..." +lat + "long  " +long)
+            Log.e("LocationUpdateaa","lat..." +dropLatitude + "long  " +dropLongitude)
         }
 
         trackModelView.errorResponse.observe(this) {

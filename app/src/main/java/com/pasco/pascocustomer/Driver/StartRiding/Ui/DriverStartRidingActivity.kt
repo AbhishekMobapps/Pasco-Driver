@@ -9,6 +9,8 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -81,7 +83,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private var city: String? = null
     private var address: String? = null
     private var hasReachedLocation = false
-
+    private var handler: Handler? = null
+    private lateinit var runnable: Runnable
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
@@ -121,6 +124,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         driverStatusObserver()
         //call observer
         updateLocationObserver()
+        handler = Handler(Looper.getMainLooper())
 
         binding.routeSpinnerSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -174,24 +178,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun updateLocationObserver() {
 
-        updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
-            val message = response.peekContent().msg!!
-            if (response.peekContent().status.equals("False")) {
-                Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
-            } else {
-                afterDetailsApi()
-            }
-        }
-        updateLocationViewModel.errorResponse.observe(this@DriverStartRidingActivity) {
-            ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
-            // errorDialogs()
-        }
-    }
 
     private fun afterDetailsApi() {
-        afterStartTripViewModel.getAfterTripsData(Bid, this, progressDialog)
+        afterStartTripViewModel.getAfterTripsData(Bid, this)
     }
 
     private fun afterDetailsObserver() {
@@ -222,6 +212,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
     private fun requestLocationUpdates() {
         // Check for location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -244,8 +235,18 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
-                    showAddress(it)
+
+                    runnable = object : Runnable {
+                        override fun run() {
+                            showAddress(it)
+                            handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
+                        }
+                    }
+
+                    // Start the periodic task
+                    handler?.post(runnable)
                 }
+
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
@@ -261,10 +262,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         formattedLatitudeSelect = String.format("%.4f", Plat)
         formattedLongitudeSelect = String.format("%.4f", Plon)
 
-      /*  Log.e(
-            "LocationDetails", "Formatted Latitude: $formattedLatitudeSelect," +
-                    " Formatted Longitude: $formattedLongitudeSelect"
-        )*/
+        /*  Log.e(
+              "LocationDetails", "Formatted Latitude: $formattedLatitudeSelect," +
+                      " Formatted Longitude: $formattedLongitudeSelect"
+          )*/
 
         GlobalScope.launch(Dispatchers.IO) {
             val geocoder = Geocoder(this@DriverStartRidingActivity, Locale.getDefault())
@@ -302,7 +303,21 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
     }
+    private fun updateLocationObserver() {
 
+        updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            if (response.peekContent().status.equals("False")) {
+                Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
+            } else {
+                afterDetailsApi()
+            }
+        }
+        updateLocationViewModel.errorResponse.observe(this@DriverStartRidingActivity) {
+            ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
+            // errorDialogs()
+        }
+    }
     private fun driverStatusObserver() {
         getRouteUpdateViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
@@ -375,7 +390,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         val Iddd = sId
         startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd)
     }
-
 
 
     private fun updateUI(city: String) {
@@ -568,5 +582,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             return if (count > 0) count - 1 else count
         }
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        // Remove callbacks to prevent memory leaks
+        handler?.removeCallbacks(runnable)
+    }
 }

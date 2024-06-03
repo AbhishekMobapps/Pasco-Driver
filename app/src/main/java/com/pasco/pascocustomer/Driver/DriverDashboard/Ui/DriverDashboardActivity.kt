@@ -74,19 +74,14 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var lastBackPressTime = 0L
     private val backPressInterval = 2000
     private var shouldLoadHomeFragOnBackPress = true
-    val markDutyViewModel: MarkDutyViewModel by viewModels()
+    private val markDutyViewModel: MarkDutyViewModel by viewModels()
     private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private lateinit var activity: Activity
     private var driverId = ""
-    private var approvedID = ""
     private var navItemIndex = 1
     private var refersh = ""
-    var isCouponsVisible = false
-    private var switchChecked = false
-    private val logoutViewModel: LogOutModelView by viewModels()
-    val notificationCountViewModel: NotificationCountViewModel by viewModels()
-    private var countDri = ""
+    private val notificationCountViewModel: NotificationCountViewModel by viewModels()
     private var switcCheck = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -391,6 +386,12 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun markOnDuty() {
+        markDutyViewModel.putMarkOn(
+            activity
+        )
+    }
+
     private fun markOnObserver() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -410,63 +411,10 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
 
-    private fun markOnDuty() {
-        markDutyViewModel.putMarkOn(
-            activity
-        )
-    }
-
-    @SuppressLint("MissingInflatedId")
-    private fun openLogoutPop() {
-        val builder = AlertDialog.Builder(
-            this@DriverDashboardActivity,
-            R.style.Style_Dialog_Rounded_Corner
-        )
-        val dialogView = layoutInflater.inflate(R.layout.logout_popup, null)
-        builder.setView(dialogView)
-
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val cancelLogBtn = dialogView.findViewById<TextView>(R.id.cancelLogBtn)
-        val yesLogoutBtn = dialogView.findViewById<TextView>(R.id.yesLogoutBtn)
-        dialog.show()
-        cancelLogBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-        yesLogoutBtn.setOnClickListener {
-            logOutApi()
-        }
-    }
-
-    private fun logOutApi() {
-        val bookingBody = LogoutBody(
-            refresh = refersh
-        )
-        logoutViewModel.otpCheck(bookingBody, activity)
-    }
-
-    private fun logOutObserver() {
-        logoutViewModel.mRejectResponse.observe(this) { response ->
-            val message = response.peekContent().msg
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
-            if (response.peekContent().status == "True") {
-                PascoApp.encryptedPrefs.bearerToken = ""
-                PascoApp.encryptedPrefs.userId = ""
-                PascoApp.encryptedPrefs.isFirstTime = true
-                val intent = Intent(activity, LoginActivity::class.java)
-                activity.startActivity(intent)
-                activity.finish()
-            }
 
 
-        }
 
-        logoutViewModel.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this, it)
-        }
-    }
+
 
     private fun getNotificationCountDApi() {
         notificationCountViewModel.getCountNoti()
