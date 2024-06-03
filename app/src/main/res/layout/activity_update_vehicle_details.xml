@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/earth_yellow"
-    tools:context=".customer.activity.updatevehdetails.UpdateVehicleDetialsActivity">
+    tools:context=".customer.activity.updatevehdetails.UpdateVehicleDetailsActivity">
 
 
   <androidx.constraintlayout.widget.ConstraintLayout

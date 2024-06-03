@@ -42,7 +42,7 @@
             android:name=".Driver.DriverWallet.DriverWalletActivity"
             android:exported="false" />
         <activity
-            android:name=".customer.activity.updatevehdetails.UpdateVehicleDetialsActivity"
+            android:name=".customer.activity.updatevehdetails.UpdateVehicleDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".Driver.adapter.TermsAndConditionsActivity"

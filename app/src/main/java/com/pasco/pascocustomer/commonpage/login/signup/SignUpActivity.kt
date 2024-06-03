@@ -408,7 +408,6 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
             } else {
                 if (loginValue == "driver") {
-
                     sendVerificationCode("$formattedCountryCode$strPhoneNo")
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
                 } else {

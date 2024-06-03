@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetialsActivity
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
@@ -55,7 +55,7 @@ class DriverMoreFragment : Fragment() {
         }
 
         binding.consUpdateVehDetails.setOnClickListener {
-            val intent = Intent(requireActivity(), UpdateVehicleDetialsActivity::class.java)
+            val intent = Intent(requireActivity(), UpdateVehicleDetailsActivity::class.java)
             startActivity(intent)
         }
         binding.consContactAndSupportInside.setOnClickListener {
@@ -160,7 +160,7 @@ class DriverMoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.driverApprovedId = ""
-                PascoApp.encryptedPrefs.CheckedType="0"
+                PascoApp.encryptedPrefs.CheckedType=""
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)

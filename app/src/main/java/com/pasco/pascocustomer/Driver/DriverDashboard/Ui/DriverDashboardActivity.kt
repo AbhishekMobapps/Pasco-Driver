@@ -78,6 +78,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.switchbtn.isChecked = false
 
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
@@ -108,25 +109,19 @@ class DriverDashboardActivity : AppCompatActivity() {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
-        //call observer
-        markOnObserver()
-        markOnDuty()
-        if (switcCheck == "0") {
-            binding.switchbtn.isChecked = false
-        }
 
-        // Retrieve the value from storage
         binding.switchbtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked && switcCheck.equals("1")) {
+            if (isChecked) {
+                switcCheck = "1"
+                binding.switchbtn.isChecked = true
                 markOnDuty()
             } else {
+                switcCheck = "0"
+                binding.switchbtn.isChecked = false
                 markOnDuty()
             }
         }
-        if (dAdminApprovedId=="0"&&switcCheck == "0")
-        {
-            binding.switchbtn.isChecked = false
-        }
+        markOnObserver()
         val homeFragment = HomeFragment()
         replace_fragment(homeFragment)
 
