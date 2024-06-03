@@ -21,10 +21,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -33,23 +31,16 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustomer.Driver.ApprovalStatus.Ui.ApprovalStatusActivity
-import com.pasco.pascocustomer.Driver.CouponDetails.Ui.CouponsAndEarningActivity
 import dagger.hilt.android.AndroidEntryPoint
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.Driver.ContactWithUsActivity
-import com.pasco.pascocustomer.Driver.DriverMessageActivity
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
-import com.pasco.pascocustomer.Driver.Fragment.DriverMoreFragment
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.DriverMoreFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
-import com.pasco.pascocustomer.Driver.Fragment.DriverProfileFragment
+import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
 import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
-import com.pasco.pascocustomer.activity.Driver.PrivacyPolicyActivity
-import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
@@ -124,23 +115,20 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         //call observer
         markOnObserver()
+        markOnDuty()
+        if (switcCheck == "0") {
+            binding.switchbtn.isChecked = false
+        }
 
         // Retrieve the value from storage
-        switcCheck = PascoApp.encryptedPrefs.CheckedType
-        binding.switchbtn.isChecked = switcCheck == "1"
         binding.switchbtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            val value = if (isChecked) "1" else "0"
-            PascoApp.encryptedPrefs.CheckedType = value
-            if (isChecked) {
+            if (isChecked && switcCheck.equals("1")) {
                 markOnDuty()
             } else {
                 markOnDuty()
             }
         }
-        if (switcCheck == "0") {
-            binding.switchbtn.isChecked = false
-        }
-        else if (dAdminApprovedId=="0"&&switcCheck == "0")
+        if (dAdminApprovedId=="0"&&switcCheck == "0")
         {
             binding.switchbtn.isChecked = false
         }
@@ -396,6 +384,8 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                switcCheck = response.peekContent().duty.toString()
+                PascoApp.encryptedPrefs.CheckedType = switcCheck
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 

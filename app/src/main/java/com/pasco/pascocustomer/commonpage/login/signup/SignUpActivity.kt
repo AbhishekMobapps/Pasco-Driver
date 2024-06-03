@@ -124,7 +124,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-               // getCityList()
+                // getCityList()
             }
 
             override fun afterTextChanged(s: Editable?) {}

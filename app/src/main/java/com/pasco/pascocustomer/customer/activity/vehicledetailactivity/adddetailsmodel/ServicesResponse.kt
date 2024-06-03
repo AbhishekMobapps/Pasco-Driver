@@ -21,9 +21,10 @@ class ServicesResponse:Serializable{
     var data: ArrayList<ServicesResponseData>? = null
 
     inner class ServicesResponseData:Serializable{
-        @SerializedName("id")
+
+        @SerializedName("shipmentid")
         @Expose
-        var id: Int? = null
+        var shipmentid: Int? = null
 
         @SerializedName("shipmentname")
         @Expose

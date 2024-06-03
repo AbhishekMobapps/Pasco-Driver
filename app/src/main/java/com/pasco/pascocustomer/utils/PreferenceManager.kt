@@ -17,24 +17,24 @@ class PreferenceManager(context: Context) {
 
 
     private val prefs = EncryptedSharedPreferences.create(
-        context, "YourEncryptedPreferencesFileName",
+        context, "myPrefs",
         masterKey,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-   /* private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
+    /* private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+         .build()
 
-    private var prefs = EncryptedSharedPreferences.create(
-        context,
-        "PromotrEncryptedPreferences",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-*/
+     private var prefs = EncryptedSharedPreferences.create(
+         context,
+         "PromotrEncryptedPreferences",
+         masterKey,
+         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+     )
+ */
 
     private val editor = prefs.edit()
 
