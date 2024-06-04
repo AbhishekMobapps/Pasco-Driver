@@ -183,7 +183,7 @@ class AllTabPayActivity : AppCompatActivity() {
 
             val datePickerDialog = DatePickerDialog(
                 this,
-                { _, selectedYear, selectedMonth, selectedDay ->
+                { _, selectedDay, selectedMonth,selectedYear  ->
                     // Do something with the selected date
                     selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
                     binding.dateTxt.text = selectedDate
