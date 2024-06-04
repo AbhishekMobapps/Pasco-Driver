@@ -153,11 +153,12 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
-
+                finish()
             } else if (loginValue == "user" && userType == "user") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@LoginOtpVerifyActivity, UserDashboardActivity::class.java)
                 startActivity(intent)
+                finish()
             }
 
 
