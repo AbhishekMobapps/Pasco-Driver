@@ -40,6 +40,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     private var distance = ""
     private var id = ""
     private var totalPrice = ""
+    private var bookingId = ""
     private var biddsDetailsAdapter: AllBiddsDetailsAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
 
         getBiddsDetailsList()
         biddsDetailsObserver()
-        acceptOrRejectObserver()
+
     }
 
 
@@ -154,19 +155,34 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
 
     override fun deleteNotification(position: Int, id: Int) {
         Log.e("ASDFF", "id" + id)
-        acceptOrRejectApi(id)
+
     }
 
-    private fun acceptOrRejectApi(id: Int) {
+    override fun allBids(
+        position: Int,
+        id: Int,
+        pickupLatitude: Double?,
+        pickupLongitude: Double?
+    ) {
+        bookingId = id.toString()
+        acceptOrRejectApi(bookingId)
+        acceptOrRejectObserver(bookingId,pickupLatitude,pickupLongitude)
+    }
+
+    private fun acceptOrRejectApi(id: String) {
         //   val codePhone = strPhoneNo
         val loinBody = AcceptOrRejectBidBody(
             payment_amount = "15.0",
             payment_type = "wallet"
         )
-        paymentAccept.otpCheck(id.toString(), loinBody, this, progressDialog)
+        paymentAccept.otpCheck(id, loinBody, this, progressDialog)
     }
 
-    private fun acceptOrRejectObserver() {
+    private fun acceptOrRejectObserver(
+        bookingId: String,
+        pickupLatitude: Double?,
+        pickupLongitude: Double?
+    ) {
         paymentAccept.progressIndicator.observe(this) {}
         paymentAccept.mRejectResponse.observe(
             this
@@ -175,7 +191,11 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
             Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
 
             val intent = Intent(this, TrackActivity::class.java)
+            intent.putExtra("bookingId",bookingId)
+            intent.putExtra("pickupLatitude",pickupLatitude.toString())
+            intent.putExtra("pickupLongitude",pickupLongitude.toString())
             startActivity(intent)
+            finish()
         }
         paymentAccept.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)

@@ -78,6 +78,15 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
         deleteNotificationApi(id.toString())
     }
 
+    override fun allBids(
+        position: Int,
+        id: Int,
+        pickupLatitude: Double?,
+        pickupLongitude: Double?
+    ) {
+
+    }
+
     private fun deleteNotificationApi(notiId: String) {
         val body = NotificationBody(
             id = notiId
