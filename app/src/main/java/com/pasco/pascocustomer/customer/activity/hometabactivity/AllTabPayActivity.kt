@@ -145,15 +145,23 @@ class AllTabPayActivity : AppCompatActivity() {
             else
             {
                 commonCount++
-                if (cargoQty!! <commonCount)
+                if (cargoQty == null)
                 {
-                    commonCount--
+
                 }
                 else
                 {
-                    count++
-                    binding.cargoQtyTxt.text = count.toString()
+                    if (cargoQty!! <commonCount)
+                    {
+                        commonCount--
+                    }
+                    else
+                    {
+                        count++
+                        binding.cargoQtyTxt.text = count.toString()
+                    }
                 }
+
             }
 
 

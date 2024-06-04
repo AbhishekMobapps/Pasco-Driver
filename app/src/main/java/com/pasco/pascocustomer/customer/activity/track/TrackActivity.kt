@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -46,6 +47,9 @@ import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -104,12 +108,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             if (isClick) {
                 binding.textViewSeeDetails.text = "Hide Details"
                 binding.NewConstraintDetails.visibility = View.VISIBLE
-                isClick =false
-            }
-            else
-            {   binding.NewConstraintDetails.visibility = View.GONE
+                isClick = false
+            } else {
+                binding.NewConstraintDetails.visibility = View.GONE
                 binding.textViewSeeDetails.text = "Show Details"
-                isClick =true
+                isClick = true
             }
         }
 
@@ -164,7 +167,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             return
         }
 
-
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                dropLocation?.let { it1 -> updateRoute(LatLng(it.latitude, it.longitude), it1) }
+            }
+        }
         mMap.isMyLocationEnabled = true
 
     }
@@ -250,7 +257,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
 
         // Add polyline to map
-        mMap.addPolyline(PolylineOptions().addAll(points).color(Color.BLUE))
+        mMap.addPolyline(PolylineOptions().addAll(points).color(R.color.earth_yellow))
 
         //mMap.clear() // Clear previous route
 
@@ -307,7 +314,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
-   /*         val distance = response.peekContent().data?.totalDistance ?: 0.0
+            /*         val distance = response.peekContent().data?.totalDistance ?: 0.0
             binding.routeTime.text = String.format("%1f", distance)*/
 
             val kilometers = response.peekContent().data?.totalDistance
@@ -439,5 +446,69 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onDestroy()
         // Remove callbacks to prevent memory leaks
         handler?.removeCallbacks(runnable)
+    }
+
+    private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
+        val context = GeoApiContext.Builder()
+            .apiKey("YOUR_GOOGLE_MAPS_API_KEY")
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val directionsResult: DirectionsResult = DirectionsApi.newRequest(context)
+                .origin(
+                    com.google.maps.model.LatLng(
+                        currentLocation.latitude,
+                        currentLocation.longitude
+                    )
+                )
+                .destination(
+                    com.google.maps.model.LatLng(
+                        destination.latitude,
+                        destination.longitude
+                    )
+                )
+                .await()
+
+            val path = directionsResult.routes[0].overviewPolyline.decodePath().map {
+                LatLng(it.lat, it.lng)
+            }
+
+            runOnUiThread {
+                mMap.clear()
+                mMap.addPolyline(PolylineOptions().addAll(path).color(R.color.purple_700))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                mMap.isMyLocationEnabled = true
+
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        dropLocation?.let { it1 ->
+                            updateRoute(
+                                LatLng(it.latitude, it.longitude),
+                                it1
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
