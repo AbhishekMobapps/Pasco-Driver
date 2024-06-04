@@ -389,26 +389,7 @@ interface ApiServices {
 
     //user Api
 
-    @FormUrlEncoded
-    @POST("client-registration/")
-    fun getClientReg(
-        @Field("phone_number") phone_number: String,
-        @Field("user_type") user_type: String,
-        @Field("phone_verify") phone_verify: String
-    ): Observable<ClientSignUpResponse>
 
-    @FormUrlEncoded
-    @POST("checkcharges/")
-    fun getCharges(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-        @Field("cargo") cargo: String,
-        @Field("pickup_location") pickup_location: String,
-        @Field("drop_location") drop_location: String,
-        @Field("pickup_latitude") pickup_latitude: String,
-        @Field("pickup_longitude") pickup_longitude: String,
-        @Field("drop_latitude") drop_latitude: String,
-        @Field("drop_longitude") drop_longitude: String
-    ): Observable<CheckChargesResponse>
 
 
     @FormUrlEncoded

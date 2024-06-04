@@ -145,6 +145,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
             strPhoneNo = binding.phoneNumber.text.toString()
+            strPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
             if (loginValue == "driver") {
@@ -529,6 +530,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                         intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
                         intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
                         startActivity(intent)
+                        finish()
                     } else {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
@@ -536,6 +538,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                         intent.putExtra("phoneCountryCode", CountryCode)
                         intent.putExtra("loginValue", loginValue)
                         startActivity(intent)
+                        finish()
                     }
 
 
