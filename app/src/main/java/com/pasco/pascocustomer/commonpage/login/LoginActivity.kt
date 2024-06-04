@@ -53,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var formattedCountryCode = ""
     private var cCodeSignIn = ""
+    private var doubleBackToExitPressedOnce = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var loginValue = ""
 
@@ -379,6 +380,23 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (doubleBackToExitPressedOnce) {
+            // Exit the app by clearing all activities
+            val intent = Intent(this@LoginActivity,LoginActivity::class.java)
+            startActivity(intent)
+            return
+        }
+
+        doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+
+        Handler().postDelayed(
+            { doubleBackToExitPressedOnce = false },
+            2000
+        ) // Delay for 2 seconds to reset the flag
     }
 
 

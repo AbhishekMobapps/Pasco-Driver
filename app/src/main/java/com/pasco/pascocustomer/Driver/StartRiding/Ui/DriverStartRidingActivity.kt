@@ -179,9 +179,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     }
-
-
-
     private fun afterDetailsApi() {
         afterStartTripViewModel.getAfterTripsData(Bid, this)
     }
