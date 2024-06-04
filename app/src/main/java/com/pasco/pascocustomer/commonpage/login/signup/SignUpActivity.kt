@@ -100,7 +100,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             binding.asCustomerSignup.visibility = View.VISIBLE
             binding.asDriverSignup.visibility = View.GONE
         }
-
+//kkk
 
         Log.e("CountryCodeAA", "code..." + formattedCountryCode)
         binding.signInBtn.setOnClickListener {
