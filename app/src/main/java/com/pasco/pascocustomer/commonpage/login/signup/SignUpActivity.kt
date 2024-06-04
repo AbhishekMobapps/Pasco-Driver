@@ -61,6 +61,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
+    private var strUserPhoneNo = ""
     private var verificationId: String = ""
     private var loginValue = ""
     private var strUserName = ""
@@ -99,7 +100,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             binding.asCustomerSignup.visibility = View.VISIBLE
             binding.asDriverSignup.visibility = View.GONE
         }
-
+//kkk
 
         Log.e("CountryCodeAA", "code..." + formattedCountryCode)
         binding.signInBtn.setOnClickListener {
@@ -145,7 +146,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
             strPhoneNo = binding.phoneNumber.text.toString()
-            strPhoneNo = binding.userPhoneNumber.text.toString()
+            strUserPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
             if (loginValue == "driver") {
@@ -430,7 +431,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
                 } else {
                     strPhoneNo = binding.userPhoneNumber.text.toString()
-                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                    sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
                 }
             }
 
@@ -534,7 +535,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     } else {
                         val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
-                        intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("phoneNumber", strUserPhoneNo)
                         intent.putExtra("phoneCountryCode", CountryCode)
                         intent.putExtra("loginValue", loginValue)
                         startActivity(intent)
