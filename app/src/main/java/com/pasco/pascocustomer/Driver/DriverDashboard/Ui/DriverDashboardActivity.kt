@@ -31,6 +31,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -44,6 +45,7 @@ import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
+import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
@@ -73,7 +75,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var navItemIndex = 1
     private var refersh = ""
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
-    private var switcCheck = ""
+    private var switchCheck = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -112,12 +114,10 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         binding.switchbtn.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                switcCheck = "1"
-                binding.switchbtn.isChecked = true
+                switchCheck = "1"
                 markOnDuty()
             } else {
-                switcCheck = "0"
-                binding.switchbtn.isChecked = false
+                switchCheck = "0"
                 markOnDuty()
             }
         }
@@ -370,9 +370,10 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
     private fun markOnDuty() {
+        val body = MarkDutyBody(
+          mark_status = switchCheck)
         markDutyViewModel.putMarkOn(
-            activity
-        )
+            progressDialog,activity,body)
     }
 
     private fun markOnObserver() {
@@ -380,12 +381,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                switcCheck = response.peekContent().duty.toString()
-                PascoApp.encryptedPrefs.CheckedType = switcCheck
-            } else {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-
             }
         }
 

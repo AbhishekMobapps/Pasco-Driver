@@ -10,6 +10,7 @@ import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBidingRespo
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedResponse
+import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
 import com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
@@ -245,7 +246,8 @@ interface ApiServices {
     //duty On
     @PUT("marked-duty-status/")
     fun putMarkDuty(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: MarkDutyBody
     ): Observable<MarkDutyResponse>
 
     //showBooking request data
