@@ -389,13 +389,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
-
-
-
-
-
-
     private fun getNotificationCountDApi() {
         notificationCountViewModel.getCountNoti()
     }

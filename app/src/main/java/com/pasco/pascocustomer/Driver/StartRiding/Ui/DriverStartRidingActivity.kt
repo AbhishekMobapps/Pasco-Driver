@@ -71,6 +71,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var pickupLocation: LatLng
     private lateinit var dropLocation: LatLng
     private var spinnerDriverSId = ""
+    private var driverStatus = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
     private val routeTypeStatic: MutableList<String> = mutableListOf()
@@ -96,6 +97,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
+        driverStatus  = intent.getStringExtra("sID").toString()
 
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -345,7 +347,13 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-            binding.routeSpinnerSpinner.setSelection(dAdapter.getPosition(getString(R.string.selectStatus)))
+
+            val spinnerPosition = if (driverStatus.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectStatus))
+            } else {
+                dAdapter.getPosition(driverStatus)
+            }
+            binding.routeSpinnerSpinner.setSelection(spinnerPosition)
 
             if (response.peekContent().status.equals("False")) {
 
