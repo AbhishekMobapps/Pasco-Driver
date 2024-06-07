@@ -7,9 +7,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
@@ -44,6 +46,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     private val editTextList = mutableListOf<EditText>()
     private val loginModel: LoginModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private var countDownTimer: CountDownTimer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginOtpVerifyBinding.inflate(layoutInflater)
@@ -93,10 +96,46 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         binding.box3.setOnEditorActionListener { _, actionId, _ ->
             actionId == EditorInfo.IME_ACTION_DONE
         }
+        for (i in editTextList.indices) {
+            editTextList[i].setOnKeyListener { v, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
+                    if (editTextList[i].text.isEmpty() && i > 0) {
+                        editTextList[i - 1].requestFocus()
+                        editTextList[i - 1].setText("")
+                    }
+                }
+                false
+            }
+        }
+
+        binding.resendBtn.setOnClickListener {
+            resendOtp()
+        }
 
         loginObserver()
     }
+    private fun startResendOtpTimer() {
+        binding.resendBtn.isEnabled = false
+        countDownTimer = object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                binding.timeDuration.text = "${millisUntilFinished / 1000}s"
+            }
 
+            override fun onFinish() {
+                binding.resendBtn.isEnabled = true
+                binding.timeDuration.text = "You can resend OTP now"
+            }
+        }.start()
+    }
+    private fun resendOtp() {
+        // Logic to resend OTP
+        startResendOtpTimer() // Restart the timer
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer?.cancel() // Cancel the timer to prevent memory leaks
+    }
 
     private fun signInWithPhoneAuthCredential(
         credential: PhoneAuthCredential, deviceModel: String
@@ -113,9 +152,17 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
                     // Sign in failed
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
+                        clearOtpFields()
                     }
                 }
             }
+    }
+
+    private fun clearOtpFields() {
+        for (editText in editTextList) {
+            editText.text.clear()
+        }
+        editTextList[0].requestFocus() // Set focus back to the first EditText
     }
 
     private fun loginApi() {
