@@ -76,6 +76,8 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var refersh = ""
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
     private var switchCheck = ""
+    private var OnDutyStatus = ""
+    private var driverDutyStatus = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -84,6 +86,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
+       driverDutyStatus =  PascoApp.encryptedPrefs.CheckedType
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         refersh = PascoApp.encryptedPrefs.token
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -111,7 +114,18 @@ class DriverDashboardActivity : AppCompatActivity() {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
-
+        if (driverDutyStatus=="1")
+        {
+            binding.switchbtn.isChecked = true
+            switchCheck = "1"
+            markOnDuty()
+        }
+        else
+        {
+            binding.switchbtn.isChecked = false
+            switchCheck = "0"
+            markOnDuty()
+        }
         binding.switchbtn.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 switchCheck = "1"
@@ -381,7 +395,10 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                OnDutyStatus = response.peekContent().status.toString()
+                PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
             }
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         markDutyViewModel.errorResponse.observe(this) {

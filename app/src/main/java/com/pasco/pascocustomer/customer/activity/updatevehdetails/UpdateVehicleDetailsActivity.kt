@@ -28,6 +28,7 @@ import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesVi
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetailsBinding
@@ -665,6 +666,8 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_LONG)
                     .show()
                 getVehicleDetails()
+                val intent = Intent(this@UpdateVehicleDetailsActivity,LoginActivity::class.java)
+                startActivity(intent)
 
 
             }

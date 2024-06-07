@@ -28,9 +28,7 @@ class ShowBookingReqViewModel@Inject constructor(
     var context: Context? = null
 
     fun getShowBookingRequestsData(
-        activity: Activity
-
-    ) =
+        activity: Activity) =
         viewModelScope.launch {
             getShowBookingRequests(
                 activity)

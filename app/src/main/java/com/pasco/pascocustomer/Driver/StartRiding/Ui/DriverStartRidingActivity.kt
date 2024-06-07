@@ -97,7 +97,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
-        driverStatus  = intent.getStringExtra("sID").toString()
 
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -344,13 +343,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-
-            val spinnerPosition = if (driverStatus.isEmpty()) {
-                dAdapter.getPosition(getString(R.string.selectStatus))
-            } else {
-                dAdapter.getPosition(driverStatus)
-            }
-            binding.routeSpinnerSpinner.setSelection(spinnerPosition)
+            dAdapter.getPosition(getString(R.string.selectStatus))
 
             if (response.peekContent().status.equals("False")) {
 
@@ -431,7 +424,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
 
         // Move camera to the initial pickup location
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 17f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))
 
         // Enable my location button and request location permission
         if (ActivityCompat.checkSelfPermission(

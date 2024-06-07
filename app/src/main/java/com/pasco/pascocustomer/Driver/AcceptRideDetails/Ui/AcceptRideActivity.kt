@@ -166,7 +166,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
 
         // Move camera to the initial pickup location
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 17f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))
 
         // Enable my location button and request location permission
         if (ActivityCompat.checkSelfPermission(
