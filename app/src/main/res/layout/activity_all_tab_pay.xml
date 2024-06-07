@@ -325,7 +325,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="12/05/2024"
+                            android:text="DD/MM/YYYY"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintWidth_percent="0.68" />
 

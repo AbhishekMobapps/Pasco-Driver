@@ -389,7 +389,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val cancelBtn = dialog.findViewById<ImageView>(R.id.cancelBtn)
 
 
-        cancelBtn.setOnClickListener { finish() }
+        cancelBtn.setOnClickListener { dialog.dismiss() }
+
         bookingCancelBtn.setOnClickListener {
             val cancelReasonTxt = cancelReasonTxt.text.toString()
             if (cancelReasonTxt.isEmpty()) {

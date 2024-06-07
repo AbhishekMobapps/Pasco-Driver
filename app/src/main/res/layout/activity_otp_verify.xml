@@ -194,7 +194,39 @@
                 app:layout_constraintWidth_percent="0.15" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/signUpCosnt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="@dimen/text_size_20"
+            app:layout_constraintTop_toBottomOf="@+id/otpbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
+            <TextView
+                android:id="@+id/resendBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/resend_otp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/earth_yellow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/timeDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="@string/duration"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toEndOf="@+id/resendBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
             android:id="@+id/continueBtn"
             android:layout_width="0dp"

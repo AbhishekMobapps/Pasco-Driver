@@ -10,7 +10,6 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -18,8 +17,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.widget.EditText
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -36,14 +33,12 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.UpdateAddressAdapter
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
-import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityViewModel
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberModelView
 import com.pasco.pascocustomer.customer.activity.SignUpCityName
-import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
 import com.pasco.pascocustomer.databinding.ActivitySignUpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -145,14 +140,20 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
+
             strPhoneNo = binding.phoneNumber.text.toString()
             strUserPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
+            
             if (loginValue == "driver") {
-                validationDriver()
+                formattedCountryCode = binding.driverCode.text.toString()
+                strPhoneNo = binding.phoneNumber.text.toString()
+                validationDriver(strPhoneNo)
             } else {
-                validationUser()
+                formattedCountryCode = binding.clientCountryCode.text.toString()
+                strUserPhoneNo = binding.userPhoneNumber.text.toString()
+                validationUser(strUserPhoneNo)
             }
 
 
@@ -296,7 +297,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     }
 
 
-    private fun validationDriver() {
+    private fun validationDriver(strPhoneNo: String) {
         with(binding) {
             when {
                 userName.text.isNullOrBlank() -> {
@@ -338,23 +339,22 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                phoneNumber.text.length < 10 -> {
+                phoneNumber.text.length < 8 -> {
                     Toast.makeText(
                         applicationContext,
-                        "Phone number must be at least 10 digits",
+                        "Phone number must be at least 9 digits",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
 
-
                 else -> {
-                    checkNumberApi()
+                    checkNumberApi(strPhoneNo)
                 }
             }
         }
     }
 
-    private fun validationUser() {
+    private fun validationUser(strUserPhoneNo: String) {
         with(binding) {
             when {
                 userPhoneNumber.text.isNullOrBlank() -> {
@@ -390,7 +390,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 }
 
                 else -> {
-                    checkNumberApi()
+                    checkNumberApi(strUserPhoneNo)
                 }
             }
         }
@@ -404,7 +404,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         }
     }
 
-    private fun checkNumberApi() {
+    private fun checkNumberApi(strPhoneNo: String) {
         val loinBody = CheckNumberBody(
             phone_number = strPhoneNo,
             user_type = loginValue
@@ -432,6 +432,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 } else {
                     strPhoneNo = binding.userPhoneNumber.text.toString()
                     sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
+                    Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
                 }
             }
 
