@@ -68,12 +68,15 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".7">
+                    app:layout_constraintWidth_percent=".8">
 
                     <Spinner
                         android:id="@+id/routeSpinnerSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:textAlignment="center"
+                        android:background="@drawable/all_circle_border"
                         android:layout_alignParentRight="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginLeft="15dp"

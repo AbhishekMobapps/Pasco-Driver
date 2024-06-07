@@ -140,6 +140,12 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
+
+            strPhoneNo = binding.phoneNumber.text.toString()
+            strUserPhoneNo = binding.userPhoneNumber.text.toString()
+            CountryCode = binding.clientCountryCode.text.toString()
+            CountryCode = binding.driverCode.text.toString()
+            
             if (loginValue == "driver") {
                 formattedCountryCode = binding.driverCode.text.toString()
                 strPhoneNo = binding.phoneNumber.text.toString()

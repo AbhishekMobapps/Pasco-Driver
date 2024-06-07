@@ -21,8 +21,6 @@ class GetVDetailsResponse:Serializable{
     var data: GetVData? = null
 
     inner class GetVData:Serializable{
-
-
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -66,10 +64,6 @@ class GetVDetailsResponse:Serializable{
         @SerializedName("approval_status")
         @Expose
         var approvalStatus: String? = null
-
-        @SerializedName("comment")
-        @Expose
-        var comment: Any? = null
     }
 
 }
