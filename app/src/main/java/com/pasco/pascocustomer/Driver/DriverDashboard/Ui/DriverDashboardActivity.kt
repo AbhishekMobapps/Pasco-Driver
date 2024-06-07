@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.transportapp.DriverApp.MarkDuty.MarkDutyViewModel
@@ -41,6 +42,7 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
 import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.DriverMoreFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
 import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
+import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
@@ -110,6 +112,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         //Api and Observer
         getNotificationCountDApi()
         notificationCountDObserver()
+
         binding.notificationBtnDriver.setOnClickListener {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
@@ -138,6 +141,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         markOnObserver()
         val homeFragment = HomeFragment()
         replace_fragment(homeFragment)
+
 
         binding.HomeFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE

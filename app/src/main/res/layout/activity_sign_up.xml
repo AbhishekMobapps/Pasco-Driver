@@ -118,8 +118,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
-                            android:hint="+91"
-                            android:maxLength="3"
                             android:hint="+966"
                             android:maxLength="4"
                             android:background="@null"

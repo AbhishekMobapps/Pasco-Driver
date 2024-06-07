@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.Driver.StartRiding.Ui
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -41,6 +42,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewMo
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
+import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
@@ -157,8 +159,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-
-
         binding.imageBackReqRide.setOnClickListener {
             finish()
         }
@@ -173,6 +173,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         //get Api
         afterDetailsApi()
         afterDetailsObserver()
+        binding.cricleImgUserSR.setOnClickListener {
+            val intent = Intent(this@DriverStartRidingActivity, CustomerDetailsActivity::class.java)
+            intent.putExtra("customerId", Bid)
+            startActivity(intent)
+        }
         //call observer
         startTripObserver()
 
