@@ -118,7 +118,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Los Angeles
         binding.cancelBookingBtn.setOnClickListener {
-            showCalenderPopup()
+            showCancelPopup()
         }
 
         binding.chatBtn.setOnClickListener {
@@ -378,7 +378,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun showCalenderPopup() {
+    private fun showCancelPopup() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
@@ -511,5 +511,27 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+    private fun showFeedbackPopup() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.feedback_popup)
+
+
+        val window = dialog.window
+        val lp = window?.attributes
+        if (lp != null) {
+            lp.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
+        if (lp != null) {
+            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
+        }
+        if (window != null) {
+            window.attributes = lp
+        }
+        acceptOrRejectObserver()
+
+        dialog.show()
     }
 }
