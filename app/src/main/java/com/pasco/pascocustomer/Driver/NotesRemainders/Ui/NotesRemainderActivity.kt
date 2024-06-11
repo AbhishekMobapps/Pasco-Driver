@@ -15,6 +15,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityNotesRemainderBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 @AndroidEntryPoint
@@ -27,6 +29,7 @@ class NotesRemainderActivity : AppCompatActivity() {
     private var month: Int = 0
     private var day: Int = 0
     private var formattedDate=""
+    private var formattedDateString=""
     private var formattedTime=""
 //
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +55,14 @@ class NotesRemainderActivity : AppCompatActivity() {
                     val formatDay = String.format("%02d", dayOfMonth)
                     formattedDate = "$year-$formattedMonth-$formatDay"
 
+                    val originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    val desiredFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+                    // Parse the original date string to a LocalDate
+                    val date = LocalDate.parse(formattedDate, originalFormatter)
+
+                    // Format the LocalDate to the desired string format
+                   formattedDateString = date.format(desiredFormatter)
                     binding.startDateTxtNotes.text = formattedDate
                 },
                 year, month, day
@@ -137,7 +148,7 @@ class NotesRemainderActivity : AppCompatActivity() {
     private fun notesReminderApi() {
         val title = binding.addSubjectEdittext.text.toString()
         val desp = binding.commentAddNotesReminder.text.toString()
-        val reminderDate = "${formattedDate}${formattedTime}"
+        val reminderDate = "${formattedDateString}${formattedTime}"
         notesRViewModel.getNotesReminderData(
             progressDialog,
             activity,

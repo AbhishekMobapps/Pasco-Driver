@@ -11,5 +11,6 @@ class DriverBody(
     @SerializedName("current_latitude") var current_latitude: String,
     @SerializedName("current_longitude") var current_longitude: String,
     @SerializedName("user_type") var user_type: String,
-    @SerializedName("phone_verify") var phone_verify: String
+    @SerializedName("phone_verify") var phone_verify: String,
+    @SerializedName("phone_token") var phone_token: String
 )

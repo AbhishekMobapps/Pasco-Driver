@@ -25,6 +25,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
@@ -32,6 +33,7 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginModelView
+import com.pasco.pascocustomer.commonpage.login.loginotpcheck.CheckOtpBody
 import com.pasco.pascocustomer.commonpage.login.loginotpcheck.OtpCheckModelView
 import com.pasco.pascocustomer.commonpage.login.signup.SignUpActivity
 import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupBody
@@ -60,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
     private var userType = ""
+    private var token = ""
     private var verificationId: String = ""
     private val otpModel: OtpCheckModelView by viewModels()
     private val loginModel: LoginModelView by viewModels()
@@ -72,6 +75,23 @@ class LoginActivity : AppCompatActivity() {
 
         loginValue = "user"
         auth = FirebaseAuth.getInstance()
+
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Get new FCM registration token
+            token = task.result
+
+            // Log the token
+            Log.e("MainActivityAA", "FCM Registration Token: $token")
+
+            // Send token to your server if needed
+            // sendTokenToServer(token)
+        }
 
         binding.asDriverConst.setOnClickListener {
             binding.asDriverConst.setBackgroundResource(R.drawable.as_client_white_background)
@@ -232,10 +252,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun otpCheckApi(deviceModel: String) {
         Log.e("OtpCheckData", "loginValue " + loginValue)
-        val loinBody = ClientSignupBody(
+        val loinBody = CheckOtpBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
             phone_verify = deviceModel
+
         )
         otpModel.otpCheck(loinBody, this, progressDialog)
     }
@@ -278,7 +299,8 @@ class LoginActivity : AppCompatActivity() {
         //   val codePhone = strPhoneNo
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
-            user_type = loginValue
+            user_type = loginValue,
+            phone_token = token
         )
         loginModel.otpCheck(loinBody, this, progressDialog)
     }
@@ -381,11 +403,12 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
+
     override fun onBackPressed() {
         super.onBackPressed()
         if (doubleBackToExitPressedOnce) {
             // Exit the app by clearing all activities
-            val intent = Intent(this@LoginActivity,LoginActivity::class.java)
+            val intent = Intent(this@LoginActivity, LoginActivity::class.java)
             startActivity(intent)
             return
         }
