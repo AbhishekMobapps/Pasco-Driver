@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.messaging.FirebaseMessaging
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.R
@@ -43,6 +44,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     var verificationId = ""
     private var userType = ""
     private var countryCode = ""
+    private var token = ""
     private val editTextList = mutableListOf<EditText>()
     private val loginModel: LoginModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -59,9 +61,23 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         strPhoneNo = intent.getStringExtra("phoneNumber").toString()
         loginValue = intent.getStringExtra("loginValue").toString()
         countryCode = intent.getStringExtra("countryCode").toString()
-        binding.phoneNumber.text =  "$countryCode $strPhoneNo"
+        binding.phoneNumber.text = "$countryCode $strPhoneNo"
 
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
 
+            // Get new FCM registration token
+            token = task.result
+
+            // Log the token
+            Log.e("MainActivityAA", "FCM Registration Token: $token")
+
+            // Send token to your server if needed
+            // sendTokenToServer(token)
+        }
         binding.continueBtn.setOnClickListener {
             val verificationCode =
                 "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
@@ -114,6 +130,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
 
         loginObserver()
     }
+
     private fun startResendOtpTimer() {
         binding.resendBtn.isEnabled = false
         countDownTimer = object : CountDownTimer(60000, 1000) {
@@ -127,6 +144,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
             }
         }.start()
     }
+
     private fun resendOtp() {
         // Logic to resend OTP
         startResendOtpTimer() // Restart the timer
@@ -141,21 +159,21 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         credential: PhoneAuthCredential, deviceModel: String
     ) {
         mAuth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in successful, go to the next activity or perform desired actions
-                    if (loginValue == "driver") {
-                        loginApi()
-                    } else {
-                        loginApi()
-                    }
+            if (task.isSuccessful) {
+                // Sign in successful, go to the next activity or perform desired actions
+                if (loginValue == "driver") {
+                    loginApi()
                 } else {
-                    // Sign in failed
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                        clearOtpFields()
-                    }
+                    loginApi()
+                }
+            } else {
+                // Sign in failed
+                if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                    // The verification code entered was invalid
+                    clearOtpFields()
                 }
             }
+        }
     }
 
     private fun clearOtpFields() {
@@ -168,7 +186,9 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     private fun loginApi() {
         //   val codePhone = strPhoneNo
         val loinBody = LoginBody(
-            phone_number = strPhoneNo, user_type = loginValue
+            phone_number = strPhoneNo,
+            user_type = loginValue,
+            phone_token = token
         )
         loginModel.otpCheck(loinBody, this, progressDialog)
     }
@@ -198,7 +218,8 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
                 startActivity(intent)
             } else if (loginValue == "driver" && userType == "driver") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
+                val intent =
+                    Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
                 finish()
             } else if (loginValue == "user" && userType == "user") {
@@ -217,7 +238,8 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     }
 
     private fun openPopUp() {
-        val builder = AlertDialog.Builder(this@LoginOtpVerifyActivity, R.style.Style_Dialog_Rounded_Corner)
+        val builder =
+            AlertDialog.Builder(this@LoginOtpVerifyActivity, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.register_confirmation, null)
         builder.setView(dialogView)
 

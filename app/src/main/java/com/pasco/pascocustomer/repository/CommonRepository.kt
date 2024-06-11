@@ -29,6 +29,7 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestResponse
+import com.pasco.pascocustomer.commonpage.login.loginotpcheck.CheckOtpBody
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBody
@@ -45,6 +46,7 @@ import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationR
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
@@ -59,7 +61,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.getCityList(cityBody)
     }
 
-    fun getOtpCheck(courseBody: ClientSignupBody): Observable<OtpCheckResponse> {
+    fun getOtpCheck(courseBody: CheckOtpBody): Observable<OtpCheckResponse> {
         return apiService.otpCheck(courseBody)
     }
 
@@ -236,5 +238,9 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         id: String
     ): Observable<AcceptOrRejectResponse> {
         return apiService.cancelBooking(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
+    }
+
+    fun getReminderAlert(): Observable<ReminderResponse> {
+        return apiService.getReminder(PascoApp.encryptedPrefs.bearerToken)
     }
 }

@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.commonpage.login.loginotpcheck
+package com.pasco.pascocustomer.reminder
 
 import android.app.Activity
 import android.app.Application
@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupBody
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,25 +18,22 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class OtpCheckModelView @Inject constructor(
+class ReminderModelView @Inject constructor(
     application: Application, private val repository: CommonRepository
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mRejectResponse = MutableLiveData<Event<OtpCheckResponse>>()
+    val mRejectResponse = MutableLiveData<Event<ReminderResponse>>()
     var context: Context? = null
 
 
-    fun otpCheck(
-        sendChatBody: CheckOtpBody, activity: Activity, progressDialog: CustomProgressDialog
+    fun getReminder(activity: Activity, progressDialog: CustomProgressDialog
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getOtpCheck(
-            sendChatBody
-        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<OtpCheckResponse>() {
-                override fun onNext(value: OtpCheckResponse) {
+        repository.getReminderAlert().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableObserver<ReminderResponse>() {
+                override fun onNext(value: ReminderResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
                     mRejectResponse.value = Event(value)

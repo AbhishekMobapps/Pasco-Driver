@@ -1,25 +1,38 @@
 package com.pasco.pascocustomer.dashboard
 
+import android.app.ActionBar
+import android.app.Dialog
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.messaging.FirebaseMessaging
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
+import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
+import com.pasco.pascocustomer.reminder.ReminderAdapter
+import com.pasco.pascocustomer.reminder.ReminderModelView
+import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.HistoryFragment
 import com.pasco.pascocustomer.userFragment.MoreFragment
 import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
@@ -28,9 +41,10 @@ import com.pasco.pascocustomer.userFragment.profile.ProfileFragment
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 
 @AndroidEntryPoint
-class UserDashboardActivity : AppCompatActivity() {
+class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     private lateinit var binding: ActivityUserDashboardBinding
 
     private val shouldLoadHomeFragOnBackPress = true
@@ -38,12 +52,17 @@ class UserDashboardActivity : AppCompatActivity() {
     private var navItemIndex = 0
     private val TAG_DASH_BOARD = "dashboard"
     private var CURRENT_TAG = TAG_DASH_BOARD
-    val notificationCountViewModel: NotificationCountViewModel by viewModels()
+    private val notificationCountViewModel: NotificationCountViewModel by viewModels()
+    private val reminderModelView: ReminderModelView by viewModels()
     private val TAG_NEXT = "next"
     private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var profileUpdate = ""
     private var notificaion = ""
+    private var reminderAdapter: ReminderAdapter? = null
+    private var reminderList: List<ReminderResponse.Datum>? = ArrayList()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDashboardBinding.inflate(layoutInflater)
@@ -51,21 +70,8 @@ class UserDashboardActivity : AppCompatActivity() {
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
-                return@addOnCompleteListener
-            }
 
-            // Get new FCM registration token
-            val token = task.result
 
-            // Log the token
-            Log.e("MainActivityAA", "FCM Registration Token: $token")
-
-            // Send token to your server if needed
-           // sendTokenToServer(token)
-        }
 
 
         if (profileUpdate == "update") {
@@ -98,6 +104,7 @@ class UserDashboardActivity : AppCompatActivity() {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
+
 
         binding.HomeFragmentUser.setOnClickListener {
             navItemIndex = 1
@@ -201,6 +208,9 @@ class UserDashboardActivity : AppCompatActivity() {
         getProfileObserver()
         getNotificationCountApi()
         notificationCountObserver()
+
+        getReminderApi()
+        reminderObserver()
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -311,4 +321,84 @@ class UserDashboardActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun getReminderApi() {
+        reminderModelView.getReminder(
+            this,
+            progressDialog
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun reminderObserver() {
+        reminderModelView.progressIndicator.observe(this@UserDashboardActivity, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        reminderModelView.mRejectResponse.observe(this@UserDashboardActivity) { response ->
+            val message = response.peekContent().msg!!
+            val success = response.peekContent().status
+
+            if (success == "True") {
+                /*  reminderList = response.peekContent().data!!
+                  Log.e("NotificationList", "aaa" + reminderList!!.size)
+                  reminderRecycler.visibility = View.VISIBLE
+                  reminderRecycler.isVerticalScrollBarEnabled = true
+                  reminderRecycler.isVerticalFadingEdgeEnabled = true
+                  reminderRecycler.layoutManager =
+                      LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                  reminderAdapter = ReminderAdapter(this, this, reminderList!!)
+                  reminderRecycler.adapter = reminderAdapter*/
+                val currentDate = LocalDate.now()
+                showCalenderPopup()
+            }
+        }
+
+        reminderModelView.errorResponse.observe(this@UserDashboardActivity) {
+            ErrorUtil.handlerGeneralError(this@UserDashboardActivity, it)
+        }
+    }
+
+
+    private fun showCalenderPopup() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.reminder_user_layout)
+
+
+        val titleTxt = dialog.findViewById<TextView>(R.id.titleTxt)
+        val descriptionTxt = dialog.findViewById<TextView>(R.id.descriptionTxt)
+        val dateTimeTxt = dialog.findViewById<TextView>(R.id.dateTimeTxt)
+        val okBtn = dialog.findViewById<TextView>(R.id.okBtn)
+
+        okBtn.setOnClickListener { dialog.dismiss() }
+        val window = dialog.window
+        val lp = window?.attributes
+        if (lp != null) {
+            lp.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
+        if (lp != null) {
+            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
+        }
+        if (window != null) {
+            window.attributes = lp
+        }
+
+
+        dialog.show()
+    }
+
+    override fun deleteNotification(position: Int, id: Int) {
+        val reminder = id
+    }
+
+    override fun allBids(
+        position: Int,
+        id: Int,
+        pickupLatitude: Double?,
+        pickupLongitude: Double?
+    ) {
+
+    }
 }

@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.messaging.FirebaseMessaging
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientModelView
@@ -43,6 +44,7 @@ class OtpVerifyActivity : AppCompatActivity() {
     private var userName = ""
     private var loginValue = ""
     private var strPhoneCCode = ""
+    private var token = ""
     var verificationId = ""
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
@@ -51,6 +53,7 @@ class OtpVerifyActivity : AppCompatActivity() {
     private val userViewModel: ClientModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var countDownTimer: CountDownTimer? = null
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +78,21 @@ class OtpVerifyActivity : AppCompatActivity() {
         formattedLongitudeSelect = intent.getStringExtra("formattedLongitudeSelect").toString()
 
         binding.phoneNumber.text = "$strPhoneCCode $strPhoneNo"
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
 
+            // Get new FCM registration token
+            token = task.result
+
+            // Log the token
+            Log.e("MainActivityAA", "FCM Registration Token: $token")
+
+            // Send token to your server if needed
+            // sendTokenToServer(token)
+        }
 
         Log.e("LogValueAA", "loginValue " + loginValue)
 
@@ -144,6 +161,7 @@ class OtpVerifyActivity : AppCompatActivity() {
         signUpUserObserver()
 
     }
+
     private fun startResendOtpTimer() {
         binding.resendBtn.isEnabled = false
         countDownTimer = object : CountDownTimer(60000, 1000) {
@@ -157,6 +175,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             }
         }.start()
     }
+
     private fun resendOtp() {
         // Logic to resend OTP
         startResendOtpTimer() // Restart the timer
@@ -166,6 +185,7 @@ class OtpVerifyActivity : AppCompatActivity() {
         super.onDestroy()
         countDownTimer?.cancel() // Cancel the timer to prevent memory leaks
     }
+
     private fun signInWithPhoneAuthCredential(
         credential: PhoneAuthCredential,
         deviceModel: String
@@ -202,6 +222,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             current_longitude = formattedLongitudeSelect,
             user_type = loginValue,
             phone_verify = deviceModel,
+            phone_token = token
         )
         driverViewModel.driverSignUp(loinBody, this, progressDialog)
     }
@@ -232,7 +253,8 @@ class OtpVerifyActivity : AppCompatActivity() {
         val loinBody = ClientSignupBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
-            phone_verify = deviceModel
+            phone_verify = deviceModel,
+            phone_token = token
         )
         userViewModel.clientSignUp(loinBody, this, progressDialog)
     }
@@ -261,6 +283,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             // errorDialogs()
         }
     }
+
     private fun clearOtpFields() {
         for (editText in editTextList) {
             editText.text.clear()
