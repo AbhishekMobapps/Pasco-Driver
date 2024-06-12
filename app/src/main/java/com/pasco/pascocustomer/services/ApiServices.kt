@@ -69,6 +69,7 @@ import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationR
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
@@ -509,4 +510,11 @@ interface ApiServices {
     fun getReminder(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<ReminderResponse>
+
+    @Headers("Accept:application/json")
+    @POST("userfeedback/")
+    fun feedback(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: CustomerFeedbackBody
+    ): Observable<AcceptOrRejectResponse>
 }

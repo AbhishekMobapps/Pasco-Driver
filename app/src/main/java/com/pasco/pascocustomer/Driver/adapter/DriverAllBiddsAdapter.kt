@@ -58,7 +58,7 @@ class DriverAllBiddsAdapter(
 
         val biddingStatus = driverOrderHis.customerStatus.toString()
 
-        if (biddingStatus.equals("confirmed")) {
+        if (biddingStatus == "confirmed") {
             holder.biddingStatusTextView.background =
                 ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
             holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
@@ -77,7 +77,7 @@ class DriverAllBiddsAdapter(
                 }
                 context.startActivity(intent)
             }
-        } else if (biddingStatus.equals("completed")) {
+        } else if (biddingStatus == "completed") {
 
             holder.biddingStatusTextView.background =
                 ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
