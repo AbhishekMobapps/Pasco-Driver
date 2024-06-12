@@ -297,6 +297,7 @@ interface ApiServices {
     fun getDriverStatus(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
     ): Observable<GetRouteUpdateResponse>
+
     //update driver status
     @FormUrlEncoded
     @POST("update-driver-status/{id}/")
@@ -390,10 +391,6 @@ interface ApiServices {
     ): Observable<UpdateLocationResponse>
 
     //user Api
-
-
-
-
     @FormUrlEncoded
     @POST("ride-booking/")
     fun bookRideServices(
