@@ -46,6 +46,7 @@ import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationR
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
@@ -242,5 +243,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getReminderAlert(): Observable<ReminderResponse> {
         return apiService.getReminder(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun feedback(
+        courseBody: CustomerFeedbackBody
+    ): Observable<AcceptOrRejectResponse> {
+        return apiService.feedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
     }
 }
