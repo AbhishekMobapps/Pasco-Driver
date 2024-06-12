@@ -32,9 +32,7 @@ class LoginModelView @Inject constructor(
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getLogin(
-            sendChatBody
-        ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getLogin(sendChatBody).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<LoginResponse>() {
                 override fun onNext(value: LoginResponse) {
                     progressIndicator.value = false

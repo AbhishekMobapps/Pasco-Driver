@@ -20,6 +20,14 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.android.volley.AuthFailureError
+import com.android.volley.NetworkError
+import com.android.volley.NoConnectionError
+import com.android.volley.ParseError
+import com.android.volley.Request
+import com.android.volley.ServerError
+import com.android.volley.TimeoutError
+import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -37,6 +45,7 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
@@ -45,12 +54,15 @@ import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONException
 import java.io.IOException
+import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -81,6 +93,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private val afterStartTripViewModel: AfterStartTripViewModel by viewModels()
     private lateinit var updateLocationBody: UpdationLocationBody
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
+    private val completeRideViewModel: CompleteRideViewModel by viewModels()
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private var city: String? = null
@@ -162,14 +175,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.imageBackReqRide.setOnClickListener {
             finish()
         }
-   /*     binding.reachedIdPickup.setOnClickListener {
-            if (!hasReachedLocation) {
-                binding.reachedIdPickup.text = "Reached the location"
-                hasReachedLocation = true
-            } else {
-                binding.reachedIdPickup.text = "Reached destination"
-            }
-        }*/
         //get Api
         afterDetailsApi()
         afterDetailsObserver()
@@ -314,6 +319,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
                 afterDetailsApi()
+                getDistanceApi()
             }
         }
         updateLocationViewModel.errorResponse.observe(this@DriverStartRidingActivity) {
@@ -321,6 +327,100 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             // errorDialogs()
         }
     }
+
+    private fun completedRideApi(distanceMeters: Double) {
+        completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
+    }
+
+
+    private fun completedRideObserver() {
+        completeRideViewModel.mCRideResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            if (response.peekContent().status == "True") {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
+
+            }
+        }
+
+        startTripViewModel.errorResponse.observe(this) {
+            // Handle general errors
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    private fun getDistanceApi() {
+        val urljsonobjGroup =
+            "https://maps.googleapis.com/maps/api/distancematrix/json?origins=$formattedLatitudeSelect,$formattedLongitudeSelect&destinations=$Dlan,$Dlon&mode=driving&key=AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ"
+        val jsonObjReqGroup = JsonObjectRequest(
+            Request.Method.GET, urljsonobjGroup, null,
+            { response ->
+                try {
+                    val jsonArray = response.getJSONArray("rows")
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject1 = jsonArray.getJSONObject(i)
+                        val elements = jsonObject1.getJSONArray("elements")
+                        for (r in 0 until elements.length()) {
+                            val jsonObject2 = elements.getJSONObject(r) // Use 'r' instead of 'i'
+                            val strDistance = jsonObject2.getJSONObject("distance")
+                            val strDistanceText = strDistance.getString("text")
+                            val strDistanceValue = strDistance.getString("value") // This is in meters
+                            val strDuration = jsonObject2.getJSONObject("duration")
+                            val strDurationText = strDuration.getString("text")
+                            val strDurationValue = strDuration.getString("value")
+
+                            val distanceMeters = strDistanceValue.toDouble()
+                            val durationSeconds = strDurationValue.toDouble()
+
+                            val distanceKm = distanceMeters / 1000
+                            val distanceMiles = distanceMeters / 1609.34
+                            val distanceFeet = distanceMeters * 3.28084
+
+                            val durationMinutes = durationSeconds / 60
+
+                            val formattedDistanceKm = DecimalFormat("##.##").format(distanceKm).toDouble()
+                            val formattedDistanceMiles = DecimalFormat("##.##").format(distanceMiles).toDouble()
+                            val formattedDistanceFeet = DecimalFormat("##.##").format(distanceFeet).toDouble()
+                            val formattedDuration = DecimalFormat("##.##").format(durationMinutes).toDouble()
+
+                            /* binding.distanceTxt.text = "$formattedDistanceKm km"
+                            binding.durationTimeTxt.text = "$formattedDuration mins"*/
+                            if (distanceMeters < 50) {
+                                binding.finishTripTextView.visibility = View.VISIBLE
+                                completedRideApi(distanceMeters)
+                                completedRideObserver()
+                            }
+                            else
+                            {
+                                binding.finishTripTextView.visibility = View.GONE
+                            }
+                            Log.e("BookMap", "$formattedDistanceKm km, $formattedDistanceMiles miles, $formattedDistanceFeet feet, $formattedDuration mins")
+                        }
+                    }
+                } catch (e: JSONException) {
+                    PascoApp.instance.getRequestQueue().cancelAll("survey_list")
+                }
+            },
+            { error ->
+                PascoApp.instance.getRequestQueue().cancelAll("survey_list")
+                val errorMessage = when (error) {
+                    is NetworkError -> "Cannot connect to Internet...Please check your connection!"
+                    is ServerError -> "The server could not be found. Please try again after some time!!"
+                    is AuthFailureError -> "Cannot connect to Internet...Please check your connection!"
+                    is ParseError -> "Parsing error! Please try again after some time!!"
+                    is NoConnectionError -> "Cannot connect to Internet...Please check your connection!"
+                    is TimeoutError -> "Connection TimeOut! Please check your internet connection."
+                    else -> error.message ?: "An error occurred"
+                }
+                Toast.makeText(this@DriverStartRidingActivity, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+        )
+        PascoApp.instance.addToRequestQueue(jsonObjReqGroup, "survey_list")
+    }
+
+
     private fun driverStatusObserver() {
         getRouteUpdateViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed

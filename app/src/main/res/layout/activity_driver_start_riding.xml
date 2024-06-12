@@ -271,13 +271,13 @@
 
 
                 <Button
-                    android:id="@+id/reachedIdPickup"
+                    android:id="@+id/finishTripTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_background_color"
                     android:gravity="center"
                     android:text="Finish Your Ride"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"

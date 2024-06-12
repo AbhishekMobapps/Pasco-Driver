@@ -58,7 +58,6 @@ import kotlin.math.sqrt
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var mMap: GoogleMap
     private lateinit var pickupLocation: LatLng // Define your pickup location
     private var dropLocation: LatLng? = null// Define your drop location

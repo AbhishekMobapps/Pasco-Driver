@@ -102,6 +102,7 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
 
                     // Add the location to the list
                     locationList.add(latLng)
+                    showCurrentLocation1(latLng)
 
                     // Set the clicked location in the existing AutoCompleteTextView
                     binding.txtUserAddressUpLoc.setText(place.address)
@@ -200,7 +201,11 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
         googleMap?.setOnMapClickListener(this)
         showCurrentLocation()
     }
-
+    private fun showCurrentLocation1(latLng: LatLng) {
+        googleMap?.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
+        zoomOnMap(latLng)
+        getAddressFromLocation1(latLng)
+    }
     private fun showCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -254,6 +259,42 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
 
     @SuppressLint("SetTextI18n")
     private fun getAddressFromLocation(location: LatLng) {
+        val latitude = location.latitude
+        val longitude = location.longitude
+
+        pickUplatitude = latitude
+        pickUplongitude = longitude
+        formattedLatitudeSelect= String.format("%.5f", pickUplatitude)
+        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
+
+        Log.e("TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
+                " formattedLongitudeSelect=$formattedLongitudeSelect")
+
+        val geocoder = Geocoder(this, Locale.getDefault())
+        try {
+            val addresses: List<Address>? = geocoder.getFromLocation(
+                location.latitude,
+                location.longitude,
+                1
+            )
+
+            if (addresses != null && addresses.isNotEmpty()) {
+                address = addresses[0].getAddressLine(0) ?: "Address not available"
+                //  binding.txtUserAddress.text = "Address: $address"
+                city = addresses[0].locality ?: "City not available"
+                binding?.txtUserAddressUpLoc?.setText(address)
+            } else {
+                binding?.txtUserAddressUpLoc?.setText("Address not found")
+            }
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+            binding?.txtUserAddressUpLoc?.setText("Error getting address")
+
+        }
+    }
+
+    private fun getAddressFromLocation1(location: LatLng) {
         val latitude = location.latitude
         val longitude = location.longitude
 

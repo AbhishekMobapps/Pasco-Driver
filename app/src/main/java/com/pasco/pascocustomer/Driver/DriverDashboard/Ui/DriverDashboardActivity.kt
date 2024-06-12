@@ -362,12 +362,14 @@ class DriverDashboardActivity : AppCompatActivity() {
             val data = response.peekContent().data
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
+            city = response.peekContent().data!!.currentCity
 
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
+                binding.driverGreeting.text =city.toString()
             } else {
                 binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
             }
