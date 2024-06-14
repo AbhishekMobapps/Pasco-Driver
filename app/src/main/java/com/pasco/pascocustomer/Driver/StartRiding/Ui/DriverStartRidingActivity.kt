@@ -110,7 +110,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverStartRidingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+//pickup loc
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
 
