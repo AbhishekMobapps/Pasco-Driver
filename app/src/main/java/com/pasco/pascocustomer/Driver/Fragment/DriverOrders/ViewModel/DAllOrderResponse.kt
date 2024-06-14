@@ -21,7 +21,6 @@ class DAllOrderResponse:Serializable {
     var data: List<DAllOrderResponseData>? = null
 
     inner class DAllOrderResponseData:Serializable{
-
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -44,7 +43,7 @@ class DAllOrderResponse:Serializable {
 
         @SerializedName("driver_image")
         @Expose
-        var driverImage: String? = null
+        var driverImage: Any? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -112,11 +111,11 @@ class DAllOrderResponse:Serializable {
 
         @SerializedName("message")
         @Expose
-        var message: Any? = null
+        var message: String? = null
 
         @SerializedName("payment_method")
         @Expose
-        var paymentMethod: Any? = null
+        var paymentMethod: String? = null
 
         @SerializedName("upfront_payment")
         @Expose
@@ -132,6 +131,14 @@ class DAllOrderResponse:Serializable {
 
         @SerializedName("availabledrop_datetime")
         @Expose
-        var availabledropDatetime: Any? = null
+        var availabledropDatetime: String? = null
+
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
     }
 }
