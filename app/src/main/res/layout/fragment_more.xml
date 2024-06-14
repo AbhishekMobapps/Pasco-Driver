@@ -363,7 +363,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/text_size_20"
                     android:gravity="center_vertical"
-                    android:text="Notes &amp; Reminder"
+                    android:text="@string/notes_amp_reminder"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textSize="@dimen/normal_txt_size"
@@ -386,7 +386,72 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/loyaltyProgram"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center_vertical"
+                android:text="Loyalty Program"
+                android:textColor="@color/black_dark"
+                android:textSize="@dimen/text_size_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/consNotesReminderDri"
+                app:layout_constraintWidth_percent=".95"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/consLoyaltyProgram"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/customer_profile_back1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loyaltyProgram"
+                app:layout_constraintWidth_percent=".95">
 
+                <ImageView
+                    android:id="@+id/loyaltyImg"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/circle_profile_background"
+                    android:padding="12dp"
+                    android:src="@drawable/data"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/logo_color" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/loyalty_program"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/normal_txt_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/loyaltyImg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7"/>
+
+
+                <ImageView
+                    android:id="@+id/loyaltyImgForward"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/forward_arrow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/black" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView
                 android:id="@+id/shareAppStatic"
                 android:layout_width="0dp"
@@ -398,7 +463,7 @@
                 android:textSize="@dimen/text_size_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/consNotesReminderDri"
+                app:layout_constraintTop_toBottomOf="@+id/consLoyaltyProgram"
                 app:layout_constraintWidth_percent=".95"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout

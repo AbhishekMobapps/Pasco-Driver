@@ -91,7 +91,7 @@ class NotesRemainderActivity : AppCompatActivity() {
                     formattedTime = String.format("%02d:%02d%s", formattedHour, selectedMinute, amPm)
                     binding.startTimetxtNotes.text = formattedTime
 
-                    Log.e("selectedTimesa", "selectedTime..." + formattedTime)
+                    Log.e("formattedDateString", "selectedTime..." + formattedTime)
                 },
                 hour,
                 minute,
@@ -134,8 +134,9 @@ class NotesRemainderActivity : AppCompatActivity() {
     private fun notesReminderApi() {
         val title = binding.addSubjectEdittext.text.toString()
         val desp = binding.commentAddNotesReminder.text.toString()
-        Log.e("formattedDateString","formattedDateString.." +formattedDateString)
-        val reminderDate = "${formattedDateString}${formattedTime}"
+
+        val reminderDate = "${formattedDateString} ${formattedTime}"
+        Log.e("formattedDateString","formattedDateString.." +reminderDate)
         notesRViewModel.getNotesReminderData(
             progressDialog,
             activity,

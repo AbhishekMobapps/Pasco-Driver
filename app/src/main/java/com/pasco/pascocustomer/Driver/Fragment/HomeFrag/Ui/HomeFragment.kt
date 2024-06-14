@@ -1,7 +1,11 @@
 package com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -9,9 +13,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.snackbar.Snackbar
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
@@ -21,6 +30,7 @@ import com.pasco.pascocustomer.Driver.EmergencyResponse.Ui.EmergencyCallActivity
 import com.pasco.pascocustomer.Driver.NotesRemainders.Ui.NotesRemainderActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -49,12 +59,18 @@ class HomeFragment : Fragment() {
     @Inject lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
 
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
         userType = PascoApp.encryptedPrefs.userType
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.viewPagerDriver.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -96,8 +112,8 @@ class HomeFragment : Fragment() {
             setupObservers()
         }
         binding.NotesDriHome.setOnClickListener {
-            val intent = Intent(requireContext(), NotesRemainderActivity::class.java)
-            startActivity(intent)
+            checkLocationPermissionAndShare()
+
         }
 
         binding.supportsLinearDri.setOnClickListener {
@@ -116,7 +132,54 @@ class HomeFragment : Fragment() {
         sliderPageObserver()
         return binding.root
     }
+    private fun checkLocationPermissionAndShare() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE)
+        } else {
+            shareLocation()
+        }
+    }
+    private fun shareLocation() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted, return early.
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+
+                    val locationUri = "https://maps.google.com/?q=$latitude,$longitude"
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "Here's my location: $locationUri")
+                        type = "text/plain"
+                    }
+
+                    startActivity(Intent.createChooser(shareIntent, "Share location using"))
+                } else {
+                    Toast.makeText(requireContext(), "Unable to get current location.", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                shareLocation()
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun sliderPageApi() {
 
@@ -202,4 +265,6 @@ class HomeFragment : Fragment() {
         //call api
         showRideRequestApi()
     }
+
+
 }

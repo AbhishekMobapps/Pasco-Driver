@@ -1,13 +1,11 @@
-package com.pasco.pascocustomer.userFragment.history.complete
+package com.pasco.pascocustomer.loyalty.model
 
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
@@ -16,47 +14,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class CompleteModelView @Inject constructor(
-    application: Application,
-    private val driverCancelledHistory: CommonRepository
+class LoyaltyProgramModelView @Inject constructor(
+    application: Application, private val repository: CommonRepository
 ) : AndroidViewModel(application) {
-
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mCancelledHis = MutableLiveData<Event<CompleteHistoryResponse>>()
+    val mRejectResponse = MutableLiveData<Event<LoyaltyProgramResponse>>()
     var context: Context? = null
 
-    fun driverTripCancelData(
-        progressDialog: CustomProgressDialog,
-        activity: Activity
 
-    ) =
-        viewModelScope.launch {
-            getServicesDatas(
-                progressDialog,
-                activity
-            )
-        }
-
-    suspend fun getServicesDatas(
-        progressDialog: CustomProgressDialog,
-        activity: Activity
+    fun getReminder(activity: Activity, progressDialog: CustomProgressDialog
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        driverCancelledHistory.getCustomerCompletedHistory()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<CompleteHistoryResponse>() {
-                override fun onNext(value: CompleteHistoryResponse) {
+        repository.getLoyalty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableObserver<LoyaltyProgramResponse>() {
+                override fun onNext(value: LoyaltyProgramResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
-                    mCancelledHis.value = Event(value)
+                    mRejectResponse.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {
