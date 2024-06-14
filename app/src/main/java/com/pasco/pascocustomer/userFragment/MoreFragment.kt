@@ -22,6 +22,7 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.databinding.FragmentMoreBinding
+import com.pasco.pascocustomer.loyalty.LoyaltyActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -54,6 +55,11 @@ class MoreFragment : Fragment() {
         }
         binding.consTermsCondInside.setOnClickListener {
             val intent = Intent(requireContext(), TermsAndConditionsActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.consLoyaltyProgram.setOnClickListener {
+            val intent = Intent(requireContext(), LoyaltyActivity::class.java)
             startActivity(intent)
         }
 
@@ -128,7 +134,10 @@ class MoreFragment : Fragment() {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_SUBJECT, "Check out this app!")
-            putExtra(Intent.EXTRA_TEXT, "Check out this amazing app: https://play.google.com/store/apps/details?id=$appPackageName")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this amazing app: https://play.google.com/store/apps/details?id=$appPackageName"
+            )
         }
         startActivity(Intent.createChooser(shareIntent, "Share via"))
     }

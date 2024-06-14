@@ -59,6 +59,12 @@ class DriverOrdersFragment : Fragment() {
         }
         return binding.root
     }
+    private fun currentOrdersApi() {
+        currentOrdersViewModel.getCurrentOrdersData(
+            progressDialog,
+            activity
+        )
+    }
 
     private fun currentOrdersObserver() {
         currentOrdersViewModel.progressIndicator.observe(requireActivity(), Observer {
@@ -90,12 +96,6 @@ class DriverOrdersFragment : Fragment() {
         }
     }
 
-    private fun currentOrdersApi() {
-        currentOrdersViewModel.getCurrentOrdersData(
-            progressDialog,
-            activity
-        )
-    }
 
     private fun allBiddsObserver() {
         dAllOrdersViewModel.progressIndicator.observe(requireActivity(), Observer {

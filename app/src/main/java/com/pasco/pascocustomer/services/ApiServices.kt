@@ -70,7 +70,9 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsRes
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
+import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.reminder.ReminderResponse
+import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
@@ -277,7 +279,7 @@ interface ApiServices {
     //get all orders
     @GET("bookingdriverbiddetail/")
     fun getAllOrderDriver(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<DAllOrderResponse>
 
     @GET("bookdriver-ongoing/")
@@ -339,12 +341,6 @@ interface ApiServices {
         @Part Attachment: MultipartBody.Part
     ): Observable<ProfileResponse>
 
-    @FormUrlEncoded
-    @POST("user-logout/")
-    fun getUserLogout(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-        @Field("refresh") refresh: String
-    ): Observable<LogoutResponse>
 
     //CouponList
     @GET("coupon-detail/")
@@ -491,12 +487,12 @@ interface ApiServices {
     @GET("bookclient-cancelled/")
     fun customerCanceldHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompletedTripHistoryResponse>
+    ):Observable<CompleteHistoryResponse>
 
     @GET("bookclient-completed/")
     fun customerCompletedHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompletedTripHistoryResponse>
+    ):Observable<CompleteHistoryResponse>
 
     @Headers("Accept:application/json")
     @POST("DriverCancelledBooking/{id}/")
@@ -517,4 +513,9 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: CustomerFeedbackBody
     ): Observable<AcceptOrRejectResponse>
+
+    @GET("loyaltyprogram-detail/")
+    fun getLoyaltyProgram(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<LoyaltyProgramResponse>
 }
