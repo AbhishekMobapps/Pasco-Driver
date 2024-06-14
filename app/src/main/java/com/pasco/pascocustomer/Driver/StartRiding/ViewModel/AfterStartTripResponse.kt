@@ -43,7 +43,7 @@ class AfterStartTripResponse:Serializable {
 
         @SerializedName("driver_image")
         @Expose
-        var driverImage: String? = null
+        var driverImage: Any? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -107,7 +107,7 @@ class AfterStartTripResponse:Serializable {
 
         @SerializedName("driver_status")
         @Expose
-        var driverStatus: String? = null
+        var driverStatus: Any? = null
 
         @SerializedName("booking_status")
         @Expose
