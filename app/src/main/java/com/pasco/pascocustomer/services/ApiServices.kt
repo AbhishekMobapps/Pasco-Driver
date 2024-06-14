@@ -477,7 +477,7 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CancelledTripResponse>
 
-    @GET("afterstarttrip/{bookingId}/")
+    @GET("afterstarttrip/{bookingId}")
     fun afterStartTrip(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("bookingId") bookingId: String

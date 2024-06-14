@@ -17,8 +17,7 @@ class GetDriverBidDetailsDataResponse:Serializable {
 
     @SerializedName("data")
     @Expose
-    var data: List<DriverAllBidData>? = null
-
+    var data: DriverAllBidData? = null
     inner class DriverAllBidData:Serializable{
         @SerializedName("id")
         @Expose
@@ -42,7 +41,7 @@ class GetDriverBidDetailsDataResponse:Serializable {
 
         @SerializedName("driver_image")
         @Expose
-        var driverImage: String? = null
+        var driverImage: Any? = null
 
         @SerializedName("shipmentname")
         @Expose

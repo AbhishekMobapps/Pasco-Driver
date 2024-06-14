@@ -101,6 +101,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private var hasReachedLocation = false
     private var handler: Handler? = null
     private lateinit var runnable: Runnable
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
@@ -113,15 +114,23 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
 
+        Bid = intent.getStringExtra("BookId").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
         Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
         Dlon = intent.getStringExtra("longitudeDrop")?.toDoubleOrNull() ?: 0.0
         val deliveryTime = intent.getStringExtra("deltime")
-
         val image = intent.getStringExtra("image").toString()
-        Log.e("image", "onCreate: " + image)
-        Bid = intent.getStringExtra("BookId").toString()
+
+
+        // Log the values for checking
+        Log.e("IntentValues", "BookId: $Bid")
+        Log.e("IntentValues", "latitudePickUp: $Plat")
+        Log.e("IntentValues", "longitudePickUp: $Plon")
+        Log.e("IntentValues", "latitudeDrop: $Dlan")
+        Log.e("IntentValues", "longitudeDrop: $Dlon")
+        Log.e("IntentValues", "deltime: $deliveryTime")
+        Log.e("IntentValues", "image: $image")
 
         Log.d("PickupLocation", "Latitude: $Plat, Longitude: $Plon")
         Log.d("DropLocation", "Latitude: $Dlan, Longitude: $Dlon")
@@ -134,10 +143,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         pickupLocation = LatLng(Plat, Plon)
         dropLocation = LatLng(Dlan, Dlon)
-        // Request location updates
-        requestLocationUpdates()
+
         driverStatusList()
         driverStatusObserver()
+        // Request location updates
+        requestLocationUpdates()
         //call observer
         updateLocationObserver()
         handler = Handler(Looper.getMainLooper())
@@ -175,9 +185,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.imageBackReqRide.setOnClickListener {
             finish()
         }
-        //get Api
-        afterDetailsApi()
+
         afterDetailsObserver()
+        //get Api
+        if (!Bid.isNullOrBlank()) {
+            afterDetailsApi()
+        }
         binding.cricleImgUserSR.setOnClickListener {
             val intent = Intent(this@DriverStartRidingActivity, CustomerDetailsActivity::class.java)
             intent.putExtra("customerId", Bid)
@@ -187,9 +200,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripObserver()
 
 
-    }
-    private fun afterDetailsApi() {
-        afterStartTripViewModel.getAfterTripsData(Bid, this)
     }
 
     private fun afterDetailsObserver() {
@@ -220,6 +230,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
+    private fun afterDetailsApi() {
+        afterStartTripViewModel.getAfterTripsData(Bid, this@DriverStartRidingActivity)
+    }
+
 
     private fun requestLocationUpdates() {
         // Check for location permission
@@ -311,6 +326,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
     }
+
     private fun updateLocationObserver() {
 
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
@@ -330,6 +346,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun completedRideApi() {
         completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
+    private fun completedRideApi(distanceMeters: Double) {
+        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
     }
 
 
@@ -366,7 +384,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             val jsonObject2 = elements.getJSONObject(r) // Use 'r' instead of 'i'
                             val strDistance = jsonObject2.getJSONObject("distance")
                             val strDistanceText = strDistance.getString("text")
-                            val strDistanceValue = strDistance.getString("value") // This is in meters
+                            val strDistanceValue =
+                                strDistance.getString("value") // This is in meters
                             val strDuration = jsonObject2.getJSONObject("duration")
                             val strDurationText = strDuration.getString("text")
                             val strDurationValue = strDuration.getString("value")
@@ -380,10 +399,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
                             val durationMinutes = durationSeconds / 60
 
-                            val formattedDistanceKm = DecimalFormat("##.##").format(distanceKm).toDouble()
-                            val formattedDistanceMiles = DecimalFormat("##.##").format(distanceMiles).toDouble()
-                            val formattedDistanceFeet = DecimalFormat("##.##").format(distanceFeet).toDouble()
-                            val formattedDuration = DecimalFormat("##.##").format(durationMinutes).toDouble()
+                            val formattedDistanceKm =
+                                DecimalFormat("##.##").format(distanceKm).toDouble()
+                            val formattedDistanceMiles =
+                                DecimalFormat("##.##").format(distanceMiles).toDouble()
+                            val formattedDistanceFeet =
+                                DecimalFormat("##.##").format(distanceFeet).toDouble()
+                            val formattedDuration =
+                                DecimalFormat("##.##").format(durationMinutes).toDouble()
 
                             /* binding.distanceTxt.text = "$formattedDistanceKm km"
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
@@ -391,12 +414,13 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                                 binding.finishTripTextView.visibility = View.VISIBLE
                                 completedRideApi()
                                 completedRideObserver()
-                            }
-                            else
-                            {
+                            } else {
                                 binding.finishTripTextView.visibility = View.GONE
                             }
-                            Log.e("BookMap", "$formattedDistanceKm km, $formattedDistanceMiles miles, $formattedDistanceFeet feet, $formattedDuration mins")
+                            Log.e(
+                                "BookMap",
+                                "$formattedDistanceKm km, $formattedDistanceMiles miles, $formattedDistanceFeet feet, $formattedDuration mins"
+                            )
                         }
                     }
                 } catch (e: JSONException) {
@@ -414,7 +438,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     is TimeoutError -> "Connection TimeOut! Please check your internet connection."
                     else -> error.message ?: "An error occurred"
                 }
-                Toast.makeText(this@DriverStartRidingActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@DriverStartRidingActivity, errorMessage, Toast.LENGTH_SHORT)
+                    .show()
             }
         )
         PascoApp.instance.addToRequestQueue(jsonObjReqGroup, "survey_list")
@@ -685,6 +710,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             return if (count > 0) count - 1 else count
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         // Remove callbacks to prevent memory leaks

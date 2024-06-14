@@ -47,17 +47,16 @@ class DriverAllBiddsAdapter(
         try {
             val parsedDate = inputDateFormat.parse(dateTime)
             outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
-            val formattedDateTime = outputDateFormat.format(parsedDate)
+            val formattedDateTime = outputDateFormat.format(parsedDate!!)
             holder.orderDateTimedO.text = formattedDateTime
         } catch (e: ParseException) {
             e.printStackTrace()
         }
+
         val baseUrl = "http://69.49.235.253:8090"
         val imagePath = driverOrderHis.userImage.orEmpty()
         val imageUrl = "$baseUrl$imagePath"
-
-        val biddingStatus = driverOrderHis.customerStatus.toString()
-
+        val biddingStatus = driverOrderHis.bookingStatus.toString()
         when (biddingStatus) {
             "confirmed" -> {
                 holder.biddingStatusTextView.background =
@@ -76,7 +75,24 @@ class DriverAllBiddsAdapter(
                         putExtra("image", imageUrl)
                         putExtra("BookId", driverOrderHis.id.toString())
                     }
-                    context.startActivity(intent)
+
+        if (biddingStatus == "confirmed") {
+            holder.biddingStatusTextView.background =
+                ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
+            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
+            holder.biddingStatusTextView.text = biddingStatus
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, DriverStartRidingActivity::class.java).apply {
+                    putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
+                    putExtra("dropLoc", driverOrderHis.dropLocation.toString())
+                    putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())
+                    putExtra("longitudePickUp", driverOrderHis.pickupLongitude.toString())
+                    putExtra("latitudeDrop", driverOrderHis.dropLatitude.toString())
+                    putExtra("longitudeDrop", driverOrderHis.dropLongitude.toString())
+                    putExtra("deltime", "${driverOrderHis.duration} min")
+                    putExtra("image", imageUrl)
+                    putExtra("BookId", driverOrderHis.id.toString())
                 }
             }
             "completed" -> {
@@ -101,13 +117,33 @@ class DriverAllBiddsAdapter(
 
             }
         }
+        else if (biddingStatus == "completed")
+        {
+            holder.biddingStatusTextView.background =
+                ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
+            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
+            holder.biddingStatusTextView.text = biddingStatus
+        }
+        else {
+            holder.biddingStatusTextView.background =
+                ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
+            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
+            holder.biddingStatusTextView.text = biddingStatus
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, DriverAllBiddsActivity::class.java)
+                intent.putExtra("id", driverOrderHis.id.toString())
+                context.startActivity(intent)
+            }
+        }
+
         with(holder) {
             userNameDriO.text = driverOrderHis.user.toString()
             orderIDDriOrd.text = driverOrderHis.bookingNumber.toString()
             orderPriceTDriO.text = price
         }
-
     }
+
 
     override fun getItemCount(): Int {
         return driverHistory.size
