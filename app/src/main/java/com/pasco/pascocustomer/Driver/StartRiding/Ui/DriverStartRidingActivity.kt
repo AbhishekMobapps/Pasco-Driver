@@ -344,6 +344,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun completedRideApi() {
+        completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
     private fun completedRideApi(distanceMeters: Double) {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
     }
@@ -410,7 +412,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
                             if (distanceMeters < 50) {
                                 binding.finishTripTextView.visibility = View.VISIBLE
-                                completedRideApi(distanceMeters)
+                                completedRideApi()
                                 completedRideObserver()
                             } else {
                                 binding.finishTripTextView.visibility = View.GONE

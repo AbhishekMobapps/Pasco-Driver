@@ -73,7 +73,7 @@
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="2dp"
-                    android:src="@drawable/terms_conditions"
+                    android:src="@drawable/share"
                     android:tint="@color/logo_color" />
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Notes"
+                    android:text="Share Location"
                     android:textColor="@color/black"
                     android:textSize="11sp"
                     android:textStyle="bold" />

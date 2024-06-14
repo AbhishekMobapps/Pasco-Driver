@@ -11,9 +11,7 @@ class UpdateLocationRepository @Inject constructor(private val apiService: ApiSe
         @Body body: UpdationLocationBody
 
 
-        ): Observable<UpdateLocationResponse> {
-        return apiService.updateGeolocation(
-            PascoApp.encryptedPrefs.bearerToken,
-        body)
+    ): Observable<UpdateLocationResponse> {
+        return apiService.updateGeolocation(PascoApp.encryptedPrefs.bearerToken, body)
     }
 }

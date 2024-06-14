@@ -24,6 +24,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".loyalty.LoyaltyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".invoice.InvoiceActivity"
+            android:exported="false" />
+        <activity
             android:name=".chat.ChatActivity"
             android:exported="false" />
         <activity

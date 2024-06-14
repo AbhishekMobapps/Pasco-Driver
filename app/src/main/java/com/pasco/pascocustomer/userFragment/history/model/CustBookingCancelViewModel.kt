@@ -10,6 +10,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,7 +29,7 @@ class CustBookingCancelViewModel @Inject constructor(
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mCancelledHis = MutableLiveData<Event<CompletedTripHistoryResponse>>()
+    val mCancelledHis = MutableLiveData<Event<CompleteHistoryResponse>>()
     var context: Context? = null
 
     fun driverTripCancelData(
@@ -52,8 +53,8 @@ class CustBookingCancelViewModel @Inject constructor(
         driverCancelledHistory.getCustomerCancelledHistory()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<CompletedTripHistoryResponse>() {
-                override fun onNext(value: CompletedTripHistoryResponse) {
+            .subscribe(object : DisposableObserver<CompleteHistoryResponse>() {
+                override fun onNext(value: CompleteHistoryResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
                     mCancelledHis.value = Event(value)
