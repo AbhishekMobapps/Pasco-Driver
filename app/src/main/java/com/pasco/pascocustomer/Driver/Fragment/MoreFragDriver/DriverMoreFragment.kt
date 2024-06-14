@@ -24,6 +24,7 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
+import com.pasco.pascocustomer.loyalty.LoyaltyActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -37,7 +38,7 @@ class DriverMoreFragment : Fragment() {
     private val progressDialog by lazy { CustomProgressDialog(requireContext()) }
     private var refersh = ""
 
-//hello
+    //hello
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,6 +57,11 @@ class DriverMoreFragment : Fragment() {
 
         binding.consUpdateVehDetails.setOnClickListener {
             val intent = Intent(requireActivity(), UpdateVehicleDetailsActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.consLoyaltyProgram.setOnClickListener {
+            val intent = Intent(requireContext(), LoyaltyActivity::class.java)
             startActivity(intent)
         }
         binding.consContactAndSupportInside.setOnClickListener {
@@ -147,7 +153,7 @@ class DriverMoreFragment : Fragment() {
         val bookingBody = LogoutBody(
             refresh = refersh
         )
-        logoutViewModel.otpCheck(bookingBody,requireActivity())
+        logoutViewModel.otpCheck(bookingBody, requireActivity())
     }
 
     private fun logOutObserver() {
@@ -155,18 +161,16 @@ class DriverMoreFragment : Fragment() {
             val message = response.peekContent().msg
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
 
-            if (response.peekContent().status == "True")
-            {
+            if (response.peekContent().status == "True") {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.driverApprovedId = ""
-                PascoApp.encryptedPrefs.CheckedType=""
+                PascoApp.encryptedPrefs.CheckedType = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
             }
-
 
 
         }

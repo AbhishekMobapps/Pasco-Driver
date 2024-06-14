@@ -7,10 +7,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainConst"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         app:layout_constraintWidth_percent="0.95"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/white_radius"
+        android:background="@color/white"
+        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="230dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,6 +20,7 @@
             android:id="@+id/programNameCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -51,6 +53,7 @@
             android:id="@+id/programCodeCons"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             app:layout_constraintTop_toBottomOf="@+id/programNameCons">
 
@@ -106,6 +109,7 @@
             android:id="@+id/loyaltyPercentCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             app:layout_constraintTop_toBottomOf="@+id/programCodeCons">
 
@@ -138,6 +142,7 @@
             android:id="@+id/loyaltyLimitCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="15dp"
             app:layout_constraintTop_toBottomOf="@+id/loyaltyPercentCons">
 
@@ -171,6 +176,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
             app:layout_constraintTop_toBottomOf="@+id/loyaltyLimitCons">
 
             <TextView
