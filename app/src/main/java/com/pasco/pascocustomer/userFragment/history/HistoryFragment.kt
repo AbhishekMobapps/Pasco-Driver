@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.userFragment.history
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,8 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.databinding.FragmentHistoryBinding
 import com.pasco.pascocustomer.databinding.FragmentMoreBinding
+import com.pasco.pascocustomer.userFragment.history.complete.CancelledAdapter
+import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteModelView
 import com.pasco.pascocustomer.userFragment.history.complete.CompletedHistoryAdapter
 import com.pasco.pascocustomer.userFragment.history.model.CustBookingCancelViewModel
@@ -35,7 +38,7 @@ class HistoryFragment : Fragment() {
     private val logoutViewModel: LogOutModelView by viewModels()
     private var refresh = ""
     private lateinit var activity: Activity
-    private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
+    private var completeHistoryList: List<CompleteHistoryResponse.Datum> =
         ArrayList()
     private var refersh = ""
     private val acceptedModelView: AcceptedModelView by viewModels()
@@ -55,28 +58,28 @@ class HistoryFragment : Fragment() {
         activity = requireActivity()
 
 
-        binding.ordersConst.setOnClickListener {
-            binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
-            binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            binding.allBiddsRecycler.visibility = View.GONE
-            binding.acceptRecycler.visibility = View.GONE
-            binding.asAcceptConst.setBackgroundResource(0)
-            binding.allBiddsConst.setBackgroundResource(0)
-            getAcceptedApi()
+        /* binding.ordersConst.setOnClickListener {
+             binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
+             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+             binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+             binding.allBiddsRecycler.visibility = View.GONE
+             binding.acceptRecycler.visibility = View.GONE
+             binding.asAcceptConst.setBackgroundResource(0)
+             binding.allBiddsConst.setBackgroundResource(0)
+             getAcceptedApi()
 
-        }
+         }*/
 
         binding.allBiddsConst.setOnClickListener {
-            binding.allBiddsConst.setBackgroundResource(R.drawable.all_bidds_back)
+            binding.allBiddsConst.setBackgroundResource(R.drawable.complete_button_back)
             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            // binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             binding.oderRecycler.visibility = View.GONE
             binding.acceptRecycler.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
-            binding.ordersConst.setBackgroundResource(0)
+            // binding.ordersConst.setBackgroundResource(0)
 
             completedApi()
         }
@@ -84,17 +87,18 @@ class HistoryFragment : Fragment() {
         binding.asAcceptConst.setOnClickListener {
             binding.asAcceptConst.setBackgroundResource(R.drawable.accept_back)
             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            //   binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.oderRecycler.visibility = View.GONE
             binding.allBiddsRecycler.visibility = View.GONE
             binding.allBiddsConst.setBackgroundResource(0)
-            binding.ordersConst.setBackgroundResource(0)
+            //   binding.ordersConst.setBackgroundResource(0)
 
             cancelledApi()
         }
-        getAcceptedApi()
-        acceptedObserver()
+        // getAcceptedApi()
+        // acceptedObserver()
+        completedApi()
         completedObserver()
         cancelledObserver()
         return view
@@ -114,7 +118,9 @@ class HistoryFragment : Fragment() {
 
         cancelledTripViewModel.mCancelledHis.observe(requireActivity()) { response ->
             val message = response.peekContent().msg!!
-            driverTripHistory = response.peekContent().data ?: emptyList()
+            completeHistoryList = response.peekContent().data ?: emptyList()
+            val msg = response.peekContent().msg
+            Log.e("CancelTripAA", "aaaa.." + msg)
 
             if (response.peekContent().status == "False") {
                 binding.noDataFoundTxt.visibility = View.VISIBLE
@@ -129,7 +135,7 @@ class HistoryFragment : Fragment() {
                 binding.oderRecycler.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 binding.oderRecycler.adapter =
-                    CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
+                    CancelledAdapter(requireContext(), completeHistoryList)
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
             }
@@ -154,7 +160,8 @@ class HistoryFragment : Fragment() {
 
         completedTripViewModel.mCancelledHis.observe(requireActivity()) { response ->
             val message = response.peekContent().msg!!
-            driverTripHistory = response.peekContent().data ?: emptyList()
+            completeHistoryList = response.peekContent().data ?: emptyList()
+            Log.e("CancelTripAA", "aaaa..AAA" + message)
 
             if (response.peekContent().status == "False") {
                 binding.noDataFoundTxt.visibility = View.VISIBLE
@@ -168,7 +175,7 @@ class HistoryFragment : Fragment() {
                 binding.allBiddsRecycler.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 binding.allBiddsRecycler.adapter =
-                    CompletedHistoryAdapter(requireContext(), driverTripHistory)
+                    CancelledAdapter(requireContext(), completeHistoryList)
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
             }

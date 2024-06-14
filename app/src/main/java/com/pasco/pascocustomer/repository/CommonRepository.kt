@@ -47,7 +47,9 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsRes
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
+import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.reminder.ReminderResponse
+import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
@@ -226,11 +228,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
-    fun getCustomerCancelledHistory(): Observable<CompletedTripHistoryResponse> {
+    fun getCustomerCancelledHistory(): Observable<CompleteHistoryResponse> {
         return apiService.customerCanceldHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
-    fun getCustomerCompletedHistory(): Observable<CompletedTripHistoryResponse> {
+    fun getCustomerCompletedHistory(): Observable<CompleteHistoryResponse> {
         return apiService.customerCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
@@ -249,5 +251,9 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         courseBody: CustomerFeedbackBody
     ): Observable<AcceptOrRejectResponse> {
         return apiService.feedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
+    }
+
+    fun getLoyalty(): Observable<LoyaltyProgramResponse> {
+        return apiService.getLoyaltyProgram(PascoApp.encryptedPrefs.bearerToken)
     }
 }

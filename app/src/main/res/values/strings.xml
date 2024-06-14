@@ -250,4 +250,12 @@
     <string name="are_you_sure_you_want_to_cancel_booking">Are you sure you want to cancel booking?</string>
     <string name="resend_otp">Resend OTP :</string>
     <string name="duration">duration</string>
+    <string name="loyalty_program">Loyalty Program</string>
+    <string name="invoice">INVOICE</string>
+    <string name="program_name">Program Name :</string>
+    <string name="program_code">Program Code :</string>
+    <string name="loyalty_percent">Loyalty Percent :</string>
+    <string name="program_limit">Program Limit :</string>
+    <string name="loyalty_end_dat">Loyalty End Dat :</string>
+    <string name="notes_amp_reminder"><![CDATA[Notes & Reminder]]></string>
 </resources>
