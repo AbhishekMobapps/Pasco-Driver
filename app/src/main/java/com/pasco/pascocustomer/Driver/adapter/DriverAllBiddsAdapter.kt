@@ -23,15 +23,13 @@ import java.util.TimeZone
 class DriverAllBiddsAdapter(
     private val context: Context,
     private val driverHistory: List<DAllOrderResponse.DAllOrderResponseData>
-) :
-    RecyclerView.Adapter<DriverAllBiddsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DriverAllBiddsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): DriverAllBiddsAdapter.ViewHolder {
-        val view =
-            LayoutInflater.from(context).inflate(R.layout.recycler_all_bids_driver, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.recycler_all_bids_driver, parent, false)
         return ViewHolder(view)
     }
 
@@ -57,33 +55,20 @@ class DriverAllBiddsAdapter(
         val imagePath = driverOrderHis.userImage.orEmpty()
         val imageUrl = "$baseUrl$imagePath"
         val biddingStatus = driverOrderHis.bookingStatus.toString()
-        when (biddingStatus) {
-            "confirmed" -> {
-                holder.biddingStatusTextView.background =
-                    ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
-                holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-                holder.biddingStatusTextView.text = biddingStatus
-                holder.itemView.setOnClickListener {
-                    val intent = Intent(context, DriverStartRidingActivity::class.java).apply {
-                        putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
-                        putExtra("dropLoc", driverOrderHis.dropLocation.toString())
-                        putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())
-                        putExtra("longitudePickUp", driverOrderHis.pickupLongitude.toString())
-                        putExtra("latitudeDrop", driverOrderHis.dropLatitude.toString())
-                        putExtra("longitudeDrop", driverOrderHis.dropLongitude.toString())
-                        putExtra("deltime", "${driverOrderHis.duration.toString()} min")
-                        putExtra("image", imageUrl)
-                        putExtra("BookId", driverOrderHis.id.toString())
-                    }
 
-        if (biddingStatus == "confirmed") {
-            holder.biddingStatusTextView.background =
-                ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
-            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-            holder.biddingStatusTextView.text = biddingStatus
+        holder.biddingStatusTextView.apply {
+            background = when (biddingStatus) {
+                "confirmed" -> ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
+                "completed" -> ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
+                else -> ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
+            }
+            setTextColor(Color.parseColor("#FFFFFFFF"))
+            text = biddingStatus
+        }
 
-            holder.itemView.setOnClickListener {
-                val intent = Intent(context, DriverStartRidingActivity::class.java).apply {
+        holder.itemView.setOnClickListener {
+            val intent = when (biddingStatus) {
+                "confirmed" -> Intent(context, DriverStartRidingActivity::class.java).apply {
                     putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
                     putExtra("dropLoc", driverOrderHis.dropLocation.toString())
                     putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())
@@ -94,47 +79,11 @@ class DriverAllBiddsAdapter(
                     putExtra("image", imageUrl)
                     putExtra("BookId", driverOrderHis.id.toString())
                 }
-            }
-            "completed" -> {
-
-                holder.biddingStatusTextView.background =
-                    ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
-                holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-                holder.biddingStatusTextView.text = biddingStatus
-            }
-            else -> {
-
-                holder.biddingStatusTextView.background =
-                    ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
-                holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-                holder.biddingStatusTextView.text = biddingStatus
-
-                holder.itemView.setOnClickListener {
-                    val intent = Intent(context, DriverAllBiddsActivity::class.java)
-                    intent.putExtra("id", driverOrderHis.id.toString())
-                    context.startActivity(intent)
+                else -> Intent(context, DriverAllBiddsActivity::class.java).apply {
+                    putExtra("id", driverOrderHis.id.toString())
                 }
-
             }
-        }
-        else if (biddingStatus == "completed")
-        {
-            holder.biddingStatusTextView.background =
-                ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
-            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-            holder.biddingStatusTextView.text = biddingStatus
-        }
-        else {
-            holder.biddingStatusTextView.background =
-                ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
-            holder.biddingStatusTextView.setTextColor(Color.parseColor("#FFFFFFFF"))
-            holder.biddingStatusTextView.text = biddingStatus
-
-            holder.itemView.setOnClickListener {
-                val intent = Intent(context, DriverAllBiddsActivity::class.java)
-                intent.putExtra("id", driverOrderHis.id.toString())
-                context.startActivity(intent)
-            }
+            context.startActivity(intent)
         }
 
         with(holder) {
@@ -144,18 +93,15 @@ class DriverAllBiddsAdapter(
         }
     }
 
-
     override fun getItemCount(): Int {
         return driverHistory.size
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val userNameDriO = itemView.findViewById<TextView>(R.id.userNameDriO)
-        val orderIDDriOrd = itemView.findViewById<TextView>(R.id.orderIDDriOrd)
-        val orderPriceTDriO = itemView.findViewById<TextView>(R.id.orderPriceTDriO)
-        val orderDateTimedO = itemView.findViewById<TextView>(R.id.orderDateTimedO)
-        val biddingStatusTextView = itemView.findViewById<TextView>(R.id.biddingStatusTextView)
-
-
+        val userNameDriO: TextView = itemView.findViewById(R.id.userNameDriO)
+        val orderIDDriOrd: TextView = itemView.findViewById(R.id.orderIDDriOrd)
+        val orderPriceTDriO: TextView = itemView.findViewById(R.id.orderPriceTDriO)
+        val orderDateTimedO: TextView = itemView.findViewById(R.id.orderDateTimedO)
+        val biddingStatusTextView: TextView = itemView.findViewById(R.id.biddingStatusTextView)
     }
 }

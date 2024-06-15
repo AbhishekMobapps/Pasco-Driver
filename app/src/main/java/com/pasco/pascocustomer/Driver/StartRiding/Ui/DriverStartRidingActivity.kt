@@ -345,12 +345,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun completedRideApi() {
-        completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
-    private fun completedRideApi(distanceMeters: Double) {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
+
     }
-
-
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
