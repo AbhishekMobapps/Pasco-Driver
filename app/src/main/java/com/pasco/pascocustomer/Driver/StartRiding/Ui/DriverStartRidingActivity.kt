@@ -110,7 +110,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverStartRidingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+//pickup loc
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
 
@@ -345,11 +345,13 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun completedRideApi() {
+
         completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
 
     }
+        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
 
-
+    }
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
