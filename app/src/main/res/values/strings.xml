@@ -213,7 +213,7 @@
     <string name="you_must_be_allowed_to_access_your_location">You must be allowed to access your location</string>
     <string name="give_permission_in_the_phone_settings">Give permission in the phone settings</string>
     <string name="okay">Okay</string>
-    <string name="driver_name">Hello Abhishek</string>
+    <string name="driver_name">Hello Abhishekdasdasdssd</string>
     <string name="order">Order</string>
     <string name="submit_driver_profile">Submit</string>
     <string name="confirm">Confirm</string>
@@ -261,6 +261,11 @@
     <string name="voice_message">Voice message</string>
     <string name="chat">Chat</string>
     <string name="currently_no_data_are_found">Currently, no data are found.</string>
+
     <string name="select_start_date_and_time">Select Start Date and Time</string>
     <string name="status">Status</string>
+    <string name="are_you_sure_you_want_to_clear_all_notifications">Are you sure you want to clear all notifications?</string>
+    <string name="no">NO</string>
+    <string name="yes_capital">YES</string>
+
 </resources>

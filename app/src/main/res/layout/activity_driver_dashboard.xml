@@ -17,7 +17,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:visibility="visible"
-            app:layout_constraintHeight_percent=".07"
+            app:layout_constraintHeight_percent=".08"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -250,8 +250,7 @@
                     android:layout_height="25dp"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
-                    android:src="@drawable/hostory_icon"
-                    app:tint="@color/logo_color" />
+                    android:src="@drawable/hostory_icon"/>
 
                 <!--  <ImageView
                       android:layout_width="15dp"
