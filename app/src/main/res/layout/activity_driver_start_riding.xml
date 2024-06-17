@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Driver.StartRiding.Ui.DriverStartRidingActivity">
 
-
     <fragment
         android:id="@+id/mapStart"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -277,7 +276,6 @@
                     android:background="@drawable/button_background_color"
                     android:gravity="center"
                     android:text="Finish Your Ride"
-                    android:visibility="gone"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"
