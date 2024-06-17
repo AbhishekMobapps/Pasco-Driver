@@ -503,7 +503,7 @@ interface ApiServices {
         @Body body: CancelBookingBody
     ): Observable<AcceptOrRejectResponse>
 
-    @GET("app-reminder-notification/")
+    @GET("add-reminder/")
     fun getReminder(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<ReminderResponse>
@@ -527,4 +527,11 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: LoyaltyCodeUseBody
     ): Observable<AcceptOrRejectResponse>
+
+    @GET("delete-reminder/{id}/")
+    fun reminderDelete(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") bookingId: String
+
+    ):Observable<AcceptOrRejectResponse>
 }

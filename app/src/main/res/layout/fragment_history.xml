@@ -17,27 +17,7 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintWidth_percent="0.95">
 
-    <!--<androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ordersConst"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:background="@drawable/orders_tab_back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.3">
 
-      <TextView
-          android:id="@+id/orderTxt"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="On Going"
-          android:textColor="@color/white"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -90,7 +70,7 @@
       android:layout_marginTop="@dimen/text_size_20"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintHeight_percent="0.88"
+      app:layout_constraintHeight_percent="0.86"
       app:layout_constraintTop_toBottomOf="@+id/userConst"
       app:layout_constraintWidth_percent="0.95">
 

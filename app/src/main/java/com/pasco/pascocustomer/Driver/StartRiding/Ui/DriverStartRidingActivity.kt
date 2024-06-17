@@ -144,6 +144,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLocation = LatLng(Plat, Plon)
         dropLocation = LatLng(Dlan, Dlon)
 
+        binding.finishTripTextView.setOnClickListener {
+            completedRideApi()
+            completedRideObserver()
+        }
+
+
         driverStatusList()
         driverStatusObserver()
         // Request location updates
@@ -198,11 +204,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         //call observer
         startTripObserver()
-
-        binding.finishTripTextView.setOnClickListener {
-            completedRideApi()
-        }
-        completedRideObserver()
 
 
     }
@@ -350,10 +351,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun completedRideApi() {
-
-        completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
-
-    }
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
 
     }
@@ -417,11 +414,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             /* binding.distanceTxt.text = "$formattedDistanceKm km"
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
                             if (distanceMeters < 50) {
-                            //    binding.finishTripTextView.visibility = View.VISIBLE
-                              //  completedRideApi()
+                               // binding.finishTripTextView.visibility = View.VISIBLE
+                               // completedRideApi()
                                 //completedRideObserver()
                             } else {
-                               // binding.finishTripTextView.visibility = View.GONE
+                              //  binding.finishTripTextView.visibility = View.GONE
                             }
                             Log.e(
                                 "BookMap",

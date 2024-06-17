@@ -3,8 +3,7 @@ package com.pasco.pascocustomer.reminder
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
-
-
+import java.io.Serializable
 
 
 class ReminderResponse {
@@ -20,11 +19,15 @@ class ReminderResponse {
     @Expose
     var data: List<Datum>? = null
 
-    inner class Datum : java.io.Serializable
+    inner class Datum : Serializable
     {
-        @SerializedName("reminderid")
+        @SerializedName("id")
         @Expose
-        var reminderid: Int? = null
+        var id: Int? = null
+
+        @SerializedName("user")
+        @Expose
+        var user: String? = null
 
         @SerializedName("title")
         @Expose
@@ -37,9 +40,5 @@ class ReminderResponse {
         @SerializedName("reminderdate")
         @Expose
         var reminderdate: String? = null
-
-        @SerializedName("remindercheck")
-        @Expose
-        var remindercheck: Int? = null
     }
 }

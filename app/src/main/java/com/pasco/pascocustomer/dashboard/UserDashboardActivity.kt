@@ -27,12 +27,8 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
-import com.pasco.pascocustomer.reminder.ReminderAdapter
-import com.pasco.pascocustomer.reminder.ReminderModelView
-import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.HistoryFragment
 import com.pasco.pascocustomer.userFragment.MoreFragment
 import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
@@ -53,16 +49,12 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     private val TAG_DASH_BOARD = "dashboard"
     private var CURRENT_TAG = TAG_DASH_BOARD
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
-    private val feedbackModelView: CustomerFeedbackModelView by viewModels()
-    private val reminderModelView: ReminderModelView by viewModels()
+
     private val TAG_NEXT = "next"
     private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var profileUpdate = ""
     private var notificaion = ""
-    private var reminderAdapter: ReminderAdapter? = null
-    private var reminderList: List<ReminderResponse.Datum>? = ArrayList()
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -323,42 +315,7 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     }
 
 
-    private fun getReminderApi() {
-        reminderModelView.getReminder(
-            this,
-            progressDialog
-        )
-    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun reminderObserver() {
-        reminderModelView.progressIndicator.observe(this@UserDashboardActivity, Observer {
-            // Handle progress indicator changes if needed
-        })
-
-        reminderModelView.mRejectResponse.observe(this@UserDashboardActivity) { response ->
-            val message = response.peekContent().msg!!
-            val success = response.peekContent().status
-
-            if (success == "True") {
-                /*  reminderList = response.peekContent().data!!
-                  Log.e("NotificationList", "aaa" + reminderList!!.size)
-                  reminderRecycler.visibility = View.VISIBLE
-                  reminderRecycler.isVerticalScrollBarEnabled = true
-                  reminderRecycler.isVerticalFadingEdgeEnabled = true
-                  reminderRecycler.layoutManager =
-                      LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                  reminderAdapter = ReminderAdapter(this, this, reminderList!!)
-                  reminderRecycler.adapter = reminderAdapter*/
-                val currentDate = LocalDate.now()
-                //showCalenderPopup()
-            }
-        }
-
-        reminderModelView.errorResponse.observe(this@UserDashboardActivity) {
-            ErrorUtil.handlerGeneralError(this@UserDashboardActivity, it)
-        }
-    }
 
 
     private fun showCalenderPopup() {
@@ -403,71 +360,9 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
 
     }
 
-    private fun showFeedbackPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.feedback_popup)
 
 
-        val ratingBar = dialog.findViewById<RatingBar>(R.id.ratingBar)
-        val commentTxt = dialog.findViewById<EditText>(R.id.commentTxt)
-        val submitBtn = dialog.findViewById<TextView>(R.id.submitBtn)
 
-        var ratingBars = ""
-        ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-            ratingBars = rating.toString()
-        }
-
-        submitBtn.setOnClickListener {
-
-            feedbackApi(commentTxt.text.toString(), ratingBars)
-            feedbackObserver()
-        }
-
-        val window = dialog.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog.show()
-    }
-
-    private fun feedbackApi(commentTxt: String, ratingBars: String) {
-        //   val codePhone = strPhoneNo
-        val loinBody = CustomerFeedbackBody(
-            bookingconfirmation = "",
-            rating = ratingBars,
-            feedback = commentTxt
-        )
-        feedbackModelView.cancelBooking(loinBody, this, progressDialog)
-    }
-
-    private fun feedbackObserver() {
-        feedbackModelView.progressIndicator.observe(this) {}
-        feedbackModelView.mRejectResponse.observe(
-            this
-        ) {
-            val msg = it.peekContent().msg
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
-        }
-        feedbackModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this@UserDashboardActivity, it)
-            // errorDialogs()
-        }
-    }
 
 
 }
