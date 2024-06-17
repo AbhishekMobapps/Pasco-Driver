@@ -48,6 +48,7 @@ import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetail
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
+import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -220,6 +221,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun trackLocation(body: TrackLocationBody): Observable<TrackLocationResponse> {
         return apiService.trackLocation(PascoApp.encryptedPrefs.bearerToken, body)
     }
+
     fun getDriverCHistory(): Observable<CompletedTripHistoryResponse> {
         return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
     }
@@ -250,10 +252,14 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun feedback(
         courseBody: CustomerFeedbackBody
     ): Observable<AcceptOrRejectResponse> {
-        return apiService.feedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
+        return apiService.feedback(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
     fun getLoyalty(): Observable<LoyaltyProgramResponse> {
         return apiService.getLoyaltyProgram(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun loyaltyCodeUse(body: LoyaltyCodeUseBody): Observable<AcceptOrRejectResponse> {
+        return apiService.loyaltyCodeUse(PascoApp.encryptedPrefs.bearerToken, body)
     }
 }

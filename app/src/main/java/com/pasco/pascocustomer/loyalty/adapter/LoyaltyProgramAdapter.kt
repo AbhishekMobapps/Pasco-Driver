@@ -2,6 +2,8 @@ package com.pasco.pascocustomer.loyalty.adapter
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.track.TrackActivity
+import com.pasco.pascocustomer.loyalty.LoyaltyProgramItemClick
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
 import java.text.ParseException
@@ -21,7 +26,8 @@ import java.util.*
 
 class LoyaltyProgramAdapter(
     private val required: Context,
-    private var orderList: List<LoyaltyProgramResponse.Datum>
+    private var orderList: List<LoyaltyProgramResponse.Datum>,
+    private val loyaltyItemClick :LoyaltyProgramItemClick
 ) :
     RecyclerView.Adapter<LoyaltyProgramAdapter.ViewHolder>() {
 
@@ -31,6 +37,7 @@ class LoyaltyProgramAdapter(
         val programPercentTxt: TextView = itemView.findViewById(R.id.programPercentTxt)
         val programLimitTxt: TextView = itemView.findViewById(R.id.programLimitTxt)
         val loyaltyEndTxt: TextView = itemView.findViewById(R.id.loyaltyEndTxt)
+        val copyCode: ImageView = itemView.findViewById(R.id.copyCode)
 
     }
 
@@ -64,11 +71,25 @@ class LoyaltyProgramAdapter(
             e.printStackTrace()
         }
 
+        holder.copyCode.setOnClickListener {
+            val offerCode = holder.programCodeTxt.text.toString()
+            val id = orderList[position].id
+            if (id != null) {
+                loyaltyItemClick.loyaltyItemClick(position,id)
+            }
+            copyToClipboard(offerCode)
+        }
 
     }
 
     override fun getItemCount(): Int {
         return orderList.size
     }
+    private fun copyToClipboard(text: String) {
+        val clipboard = required.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Offer Code", text)
+        clipboard.setPrimaryClip(clip)
 
+        Toast.makeText(required, "Offer code copied to clipboard", Toast.LENGTH_SHORT).show()
+    }
 }

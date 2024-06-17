@@ -406,7 +406,6 @@ class DriverDashboardActivity : AppCompatActivity() {
                 val homeFragment = HomeFragment()
                 replace_fragment(homeFragment)
             }
-         //   Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         markDutyViewModel.errorResponse.observe(this) {
