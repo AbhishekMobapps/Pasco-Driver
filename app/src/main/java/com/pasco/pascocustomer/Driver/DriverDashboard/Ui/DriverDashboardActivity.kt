@@ -403,8 +403,9 @@ class DriverDashboardActivity : AppCompatActivity() {
                // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 OnDutyStatus = response.peekContent().status.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
+                val homeFragment = HomeFragment()
+                replace_fragment(homeFragment)
             }
-            //Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         markDutyViewModel.errorResponse.observe(this) {
