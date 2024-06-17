@@ -73,6 +73,7 @@ import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetail
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
+import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -532,4 +533,12 @@ interface ApiServices {
     fun getLoyaltyProgram(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<LoyaltyProgramResponse>
+
+
+    @Headers("Accept:application/json")
+    @POST("add-loyaltyprogramused/")
+    fun loyaltyCodeUse(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: LoyaltyCodeUseBody
+    ): Observable<AcceptOrRejectResponse>
 }

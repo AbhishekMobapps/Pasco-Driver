@@ -210,8 +210,8 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         getNotificationCountApi()
         notificationCountObserver()
 
-        getReminderApi()
-        reminderObserver()
+        //getReminderApi()
+        //reminderObserver()
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -351,7 +351,7 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
                   reminderAdapter = ReminderAdapter(this, this, reminderList!!)
                   reminderRecycler.adapter = reminderAdapter*/
                 val currentDate = LocalDate.now()
-                showCalenderPopup()
+                //showCalenderPopup()
             }
         }
 

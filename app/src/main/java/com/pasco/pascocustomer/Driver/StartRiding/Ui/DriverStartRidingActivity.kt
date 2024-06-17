@@ -353,6 +353,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun completedRideApi() {
+
+        completeRideViewModel.getCompletedRideData(progressDialog,activity, Bid)
+
+    }
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
 
     }

@@ -2,10 +2,8 @@ package com.pasco.pascocustomer.Driver.DriverDashboard.Ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -18,10 +16,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.Button
-import android.widget.EditText
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -49,16 +44,11 @@ import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
 import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
-import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
-import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
-import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
@@ -89,9 +79,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
     private var switchCheck = ""
     private var OnDutyStatus = ""
-    private var one: Int = -1
-    private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
-    private var feedbackValue = ""
+    private var driverDutyStatus = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -100,16 +88,9 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
+       driverDutyStatus =  PascoApp.encryptedPrefs.CheckedType
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
-        switchCheck = PascoApp.encryptedPrefs.CheckedType
-        Log.e("switchValue", "switchCheck: "+switchCheck )
         refersh = PascoApp.encryptedPrefs.token
-
-        feedbackValue = intent.getStringExtra("feedbackValue").toString()
-        if (feedbackValue.equals("CompletedRide"))
-        {
-            showFeedbackPopup()
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
         if (checkLocationPermission()) {
@@ -136,27 +117,26 @@ class DriverDashboardActivity : AppCompatActivity() {
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
-        one = intent.getIntExtra("onee", -1)
-
-        // Conditional logic to check the switch button state
-        if (switchCheck == "1" || one == 1) {
+        if (driverDutyStatus=="1")
+        {
             binding.switchbtn.isChecked = true
             switchCheck = "1"
             markOnDuty()
-        } else {
+        }
+        else
+        {
             binding.switchbtn.isChecked = false
             switchCheck = "0"
-            markOffDuty()
-        }
-
-        // Set up listener for switch button changes
-        binding.switchbtn.setOnCheckedChangeListener { _, isChecked ->
-            switchCheck = if (isChecked) {
-                "1"
-            } else {
-                "0"
-            }
             markOnDuty()
+        }
+        binding.switchbtn.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                switchCheck = "1"
+                markOnDuty()
+            } else {
+                switchCheck = "0"
+                markOnDuty()
+            }
         }
         markOnObserver()
         val homeFragment = HomeFragment()
@@ -256,78 +236,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
 
 
-    }
-
-    private fun showFeedbackPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.feedback_popup)
-
-
-        val ratingBar = dialog.findViewById<RatingBar>(R.id.ratingBar)
-        val commentTxt = dialog.findViewById<EditText>(R.id.commentTxt)
-        val submitBtn = dialog.findViewById<TextView>(R.id.submitBtn)
-
-        var ratingBars = ""
-        ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-            ratingBars = rating.toString()
-        }
-
-        submitBtn.setOnClickListener {
-
-            feedbackApi(commentTxt.text.toString(), ratingBars)
-            feedbackObserver()
-        }
-
-        val window = dialog.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog.show()
-    }
-
-    private fun feedbackApi(commentTxt: String, ratingBars: String) {
-        //   val codePhone = strPhoneNo
-        val driverFBody = DriverFeedbackBody(
-            bookingconfirmation = "",
-            rating = ratingBars,
-            feedback = commentTxt
-        )
-        driverFeedbackModelView.cancelBooking(driverFBody, this, progressDialog)
-    }
-
-    private fun feedbackObserver() {
-        driverFeedbackModelView.progressIndicator.observe(this) {}
-        driverFeedbackModelView.mRejectResponse.observe(
-            this
-        ) {
-            val msg = it.peekContent().msg
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
-        }
-        driverFeedbackModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this@DriverDashboardActivity, it)
-            // errorDialogs()
-        }
-    }
-
-    private fun markOffDuty() {
-        // Assuming similar logic for marking off duty
-        val body = MarkDutyBody(mark_status = switchCheck)
-        markDutyViewModel.putMarkOn(progressDialog, activity, body)
     }
 
     private fun enableAll() {
@@ -461,15 +369,16 @@ class DriverDashboardActivity : AppCompatActivity() {
                 Glide.with(this)
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
-                binding.driverGreeting.text = city.toString()
+                binding.driverGreeting.text =city.toString()
             } else {
                 binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
             }
 
             Log.e("getDetails", "ObservergetUserProfile: ")
-            val helloName = data?.fullName?.split(" ")?.firstOrNull().orEmpty()
-            val hName = "Hello $helloName"
+            val helloName = data?.fullName.toString()
+            var hName = "Hello $helloName"
             binding.driverNameDash.text = hName
+
 
         }
 
@@ -482,24 +391,22 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     private fun markOnDuty() {
         val body = MarkDutyBody(
-            mark_status = switchCheck
-        )
+          mark_status = switchCheck)
         markDutyViewModel.putMarkOn(
-            progressDialog, activity, body
-        )
+            progressDialog,activity,body)
     }
 
     private fun markOnObserver() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                OnDutyStatus = response.peekContent().duty.toString()
+               // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                OnDutyStatus = response.peekContent().status.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
                 val homeFragment = HomeFragment()
                 replace_fragment(homeFragment)
             }
-            //   Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         markDutyViewModel.errorResponse.observe(this) {
@@ -507,7 +414,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
     private fun getNotificationCountDApi() {
         notificationCountViewModel.getCountNoti()
     }
