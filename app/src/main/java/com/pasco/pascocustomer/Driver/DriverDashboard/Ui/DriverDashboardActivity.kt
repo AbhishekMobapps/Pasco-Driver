@@ -400,11 +400,13 @@ class DriverDashboardActivity : AppCompatActivity() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+               // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 OnDutyStatus = response.peekContent().status.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
+                val homeFragment = HomeFragment()
+                replace_fragment(homeFragment)
             }
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
         markDutyViewModel.errorResponse.observe(this) {

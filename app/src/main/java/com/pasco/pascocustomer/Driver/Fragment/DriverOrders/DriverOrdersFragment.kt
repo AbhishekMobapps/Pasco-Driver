@@ -74,19 +74,30 @@ class DriverOrdersFragment : Fragment() {
         currentOrdersViewModel.mAllOrderResponse.observe(requireActivity()) { response ->
             val message = response.peekContent().msg!!
             driverHistory = response.peekContent().data ?: emptyList()
-//hello
+
             if (response.peekContent().status == "False") {
+                binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
+                binding.recycerHistoryList.visibility = View.GONE
                 binding.recycerHistoryList.isVerticalScrollBarEnabled = true
                 binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
                 binding.recycerHistoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 binding.recycerHistoryList.adapter = DriverHistoryAdapter(requireContext(), driverHistory)
                 Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
-                binding.recycerHistoryList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryList.adapter = DriverHistoryAdapter(requireContext(), driverHistory)
-                // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+                if (driverHistory.isEmpty()) {
+                    binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
+                    binding.recycerHistoryList.visibility = View.GONE
+                }
+                else{
+                    binding.bidingStatusNoDataTextView.visibility = View.GONE
+                    binding.recycerHistoryList.visibility = View.VISIBLE
+                    binding.recycerHistoryList.isVerticalScrollBarEnabled = true
+                    binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
+                    binding.recycerHistoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.recycerHistoryList.adapter = DriverHistoryAdapter(requireContext(), driverHistory)
+                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+
+                }
 
             }
         }
@@ -113,11 +124,20 @@ class DriverOrdersFragment : Fragment() {
                 binding.recycerHistoryList.adapter = DriverAllBiddsAdapter(requireContext(), driverHistory)
                 Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
-                binding.recycerHistoryList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryList.adapter = DriverAllBiddsAdapter(requireContext(), driverHistory)
-                // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+                if (driverHistory.isEmpty()) {
+                    binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
+                    binding.recycerHistoryList.visibility = View.GONE
+                }
+                else{
+                    binding.bidingStatusNoDataTextView.visibility = View.GONE
+                    binding.recycerHistoryList.visibility = View.VISIBLE
+                    binding.recycerHistoryList.isVerticalScrollBarEnabled = true
+                    binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
+                    binding.recycerHistoryList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.recycerHistoryList.adapter = DriverAllBiddsAdapter(requireContext(), driverHistory)
+                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+                }
+
 
             }
         }

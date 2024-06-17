@@ -1,4 +1,5 @@
 package com.pasco.pascocustomer.Driver.Fragment
+
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,9 +27,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TripHistoryFragment : Fragment() {
-    private lateinit var binding:FragmentTripHistoryBinding
-    private var driverTripHistory:List<CompletedTripHistoryResponse.DriverTripHistoryData> = ArrayList()
-    private var cancelledTrips:List<CancelledTripResponse.CancelledData> = ArrayList()
+    private lateinit var binding: FragmentTripHistoryBinding
+    private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
+        ArrayList()
+    private var cancelledTrips: List<CancelledTripResponse.CancelledData> = ArrayList()
     private var refersh = ""
     private val completedTripHistoryViewModel: CompletedTripHistoryViewModel by viewModels()
     private val cancelledTripViewModel: CancelledTripViewModel by viewModels()
@@ -43,7 +45,8 @@ class TripHistoryFragment : Fragment() {
         completedApi()
         completedObserver()
         binding.completedHisTextview.setOnClickListener {
-            binding.completedHisTextview.background = ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
+            binding.completedHisTextview.background =
+                ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
             binding.cancelledHisTextview.background = null
             binding.completedHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
             binding.cancelledHisTextview.setTextColor(Color.parseColor("#FF000000"))
@@ -53,7 +56,8 @@ class TripHistoryFragment : Fragment() {
         }
         binding.cancelledHisTextview.setOnClickListener {
             binding.completedHisTextview.background = null
-            binding.cancelledHisTextview.background = ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
+            binding.cancelledHisTextview.background =
+                ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
             binding.completedHisTextview.setTextColor(Color.parseColor("#FF000000"))
             binding.cancelledHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
             cancelledApi()
@@ -63,13 +67,13 @@ class TripHistoryFragment : Fragment() {
     }
 
 
-
     private fun cancelledApi() {
         cancelledTripViewModel.driverTripCancelData(
             progressDialog,
             requireActivity()
         )
     }
+
     private fun cancelledObserver() {
         cancelledTripViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
@@ -77,20 +81,26 @@ class TripHistoryFragment : Fragment() {
 
         cancelledTripViewModel.mCancelledHis.observe(requireActivity()) { response ->
             val message = response.peekContent().msg!!
-            cancelledTrips =  response.peekContent().data ?: emptyList()
+            cancelledTrips = response.peekContent().data ?: emptyList()
 
             if (response.peekContent().status == "False") {
-                binding.staticCTextview.visibility = View.VISIBLE
-                binding.staticCTextview.text = "You have not cancelled any trips yet."
-                binding.recycerHistoryDriverList.visibility = View.VISIBLE
                 //Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
-                binding.staticCTextview.visibility = View.GONE
-                binding.recycerHistoryDriverList.visibility = View.VISIBLE
-                binding.recycerHistoryDriverList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryDriverList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryDriverList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryDriverList.adapter = CancelledTripHistoryAdapter(requireContext(), cancelledTrips)
+                if (cancelledTrips.isEmpty()) {
+                    binding.staticCTextview.visibility = View.VISIBLE
+                    binding.staticCTextview.text = "You have not cancelled any trips yet."
+                    binding.recycerHistoryDriverList.visibility = View.GONE
+                } else {
+                    binding.staticCTextview.visibility = View.GONE
+                    binding.recycerHistoryDriverList.visibility = View.VISIBLE
+                    binding.recycerHistoryDriverList.isVerticalScrollBarEnabled = true
+                    binding.recycerHistoryDriverList.isVerticalFadingEdgeEnabled = true
+                    binding.recycerHistoryDriverList.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.recycerHistoryDriverList.adapter =
+                        CancelledTripHistoryAdapter(requireContext(), cancelledTrips)
+
+                }
 
             }
         }
@@ -99,12 +109,14 @@ class TripHistoryFragment : Fragment() {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
         }
     }
+
     private fun completedApi() {
         completedTripHistoryViewModel.driverTripHisData(
             progressDialog,
             requireActivity()
         )
     }
+
     private fun completedObserver() {
         completedTripHistoryViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
@@ -115,17 +127,23 @@ class TripHistoryFragment : Fragment() {
             driverTripHistory = response.peekContent().data ?: emptyList()
 
             if (response.peekContent().status == "False") {
-                binding.staticCTextview.visibility = View.VISIBLE
-                binding.recycerHistoryDriverList.visibility = View.GONE
                 //Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
-                binding.staticCTextview.visibility = View.GONE
-                binding.recycerHistoryDriverList.visibility = View.VISIBLE
-                binding.recycerHistoryDriverList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryDriverList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryDriverList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryDriverList.adapter = CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
-                // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+                if (driverTripHistory.isEmpty()) {
+                    binding.staticCTextview.visibility = View.VISIBLE
+                    binding.recycerHistoryDriverList.visibility = View.GONE
+                } else {
+                    binding.staticCTextview.visibility = View.GONE
+                    binding.recycerHistoryDriverList.visibility = View.VISIBLE
+                    binding.recycerHistoryDriverList.isVerticalScrollBarEnabled = true
+                    binding.recycerHistoryDriverList.isVerticalFadingEdgeEnabled = true
+                    binding.recycerHistoryDriverList.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    binding.recycerHistoryDriverList.adapter =
+                        CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
+                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+
+                }
 
             }
         }
@@ -134,7 +152,6 @@ class TripHistoryFragment : Fragment() {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
         }
     }
-
 
 
     override fun onResume() {
