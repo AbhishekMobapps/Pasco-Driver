@@ -85,6 +85,7 @@ class DriverOrdersFragment : Fragment() {
                 Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
                 if (driverHistory.isEmpty()) {
+                    //hello
                     binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
                     binding.recycerHistoryList.visibility = View.GONE
                 }
