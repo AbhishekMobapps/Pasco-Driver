@@ -81,6 +81,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var addBiddingBody: AddBiddingBody
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var isDestinationReached = false
+    private var one: Int = -1
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -93,6 +94,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         activity = this
 
         reqId = intent.getStringExtra("rideReqId").orEmpty()
+        one = intent.getIntExtra("one", -1) // Default value set to -1
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
         currentLatitudePickup = intent.getStringExtra("pickuplatitudea")?.toDoubleOrNull() ?: 0.0
         currentLongitudePickup = intent.getStringExtra("pickuplongitudea")?.toDoubleOrNull() ?: 0.0
@@ -401,6 +403,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 intent.putExtra("totalDistanceLoc", totalDistanceLoc)
                 intent.putExtra("pickUpLocBid", totalTimeLoc)
                 intent.putExtra("totalPriceLoc", totalPriceLoc)
+                intent.putExtra("onee", 1)
                 startActivity(intent)
 
             }

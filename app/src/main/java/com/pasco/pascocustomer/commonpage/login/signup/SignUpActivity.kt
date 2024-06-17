@@ -435,8 +435,6 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
                 }
             }
-
-
         }
         checkNumberModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@SignUpActivity, it)

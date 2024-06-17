@@ -44,6 +44,7 @@ import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
@@ -55,6 +56,7 @@ import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.chat.ChatActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.Dispatchers
@@ -152,6 +154,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         updateLocationObserver()
         handler = Handler(Looper.getMainLooper())
 
+
         binding.routeSpinnerSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -198,6 +201,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         //call observer
         startTripObserver()
+
+        binding.chatImageStartRidingImageView.setOnClickListener {
+            val intent = Intent(this@DriverStartRidingActivity,ChatActivity::class.java)
+            startActivity(intent)
+        }
 
 
     }
@@ -355,11 +363,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
-
+                val intent = Intent(this@DriverStartRidingActivity,DriverDashboardActivity::class.java)
+                intent.putExtra("feedbackValue","CompletedRide")
+                startActivity(intent)
             }
         }
-
         startTripViewModel.errorResponse.observe(this) {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)

@@ -5,6 +5,7 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripRe
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginResponse
@@ -38,6 +39,7 @@ import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptr
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
+import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.ClearAllNotificationResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
@@ -178,6 +180,10 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.deleteNotifications(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
+    fun clearAllNotification(): Observable<ClearAllNotificationResponse> {
+        return apiService.getClearAllNotification(PascoApp.encryptedPrefs.bearerToken)
+    }
+
     fun getCountNotifications(): Observable<NotificationCountResponse> {
         return apiService.getCountNotification(
             PascoApp.encryptedPrefs.bearerToken
@@ -251,6 +257,12 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         courseBody: CustomerFeedbackBody
     ): Observable<AcceptOrRejectResponse> {
         return apiService.feedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
+    }
+
+    fun feedbackDriver(
+        courseBody: DriverFeedbackBody
+    ): Observable<AcceptOrRejectResponse> {
+        return apiService.driverFeedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
     }
 
     fun getLoyalty(): Observable<LoyaltyProgramResponse> {

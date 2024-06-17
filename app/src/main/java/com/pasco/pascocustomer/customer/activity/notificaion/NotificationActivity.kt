@@ -1,15 +1,21 @@
 package com.pasco.pascocustomer.customer.activity.notificaion
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.adapter.NotificationAdapter
+import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.ClearAllNotifcationViewModel
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.DeleteNotificationViewModel
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationModelView
@@ -22,6 +28,7 @@ import java.util.ArrayList
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     private val getNotificationViewModel: NotificationModelView by viewModels()
+    private val clearAllNotifcationViewModel: ClearAllNotifcationViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this@NotificationActivity) }
     private var notificationData: List<NotificationResponse.Datum> = ArrayList()
     private lateinit var binding: ActivityNotificationBinding
@@ -36,6 +43,63 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
         getNotification()
         getNotificationObserver()
         deleteNotificationObserver()
+
+        binding.clearAllBtn.setOnClickListener {
+            clearAllPopUp()
+        }
+        clearAllObserver()
+
+    }
+
+    private fun clearAllPopUp() {
+        val builder = AlertDialog.Builder(
+           this@NotificationActivity,
+            R.style.Style_Dialog_Rounded_Corner
+        )
+        val dialogView = layoutInflater.inflate(R.layout.clear_all_notifications, null)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val noTextViewClearNoti = dialogView.findViewById<TextView>(R.id.noTextViewClearNoti)
+        val yesTextViewClearNoti = dialogView.findViewById<TextView>(R.id.yesTextViewClearNoti)
+        dialog.show()
+        noTextViewClearNoti.setOnClickListener {
+            dialog.dismiss()
+        }
+        yesTextViewClearNoti.setOnClickListener {
+            clearAllNotification()
+        }
+    }
+
+    private fun clearAllObserver() {
+        clearAllNotifcationViewModel.progressIndicator.observe(this@NotificationActivity, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        clearAllNotifcationViewModel.mClearAllNotificationsResponse.observe(this@NotificationActivity) { response ->
+            val message = response.peekContent().msg!!
+            val success = response.peekContent().status
+            if (success == "True") {
+                Toast.makeText(this@NotificationActivity, message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@NotificationActivity, message, Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        clearAllNotifcationViewModel.errorResponse.observe(this@NotificationActivity) {
+            ErrorUtil.handlerGeneralError(this@NotificationActivity, it)
+        }
+    }
+
+    private fun clearAllNotification() {
+        clearAllNotifcationViewModel.getClearAllNotifications(
+            progressDialog,
+            this
+
+        )
     }
 
     private fun getNotification() {
