@@ -403,7 +403,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 intent.putExtra("totalDistanceLoc", totalDistanceLoc)
                 intent.putExtra("pickUpLocBid", totalTimeLoc)
                 intent.putExtra("totalPriceLoc", totalPriceLoc)
-                intent.putExtra("onee", 1)
+                intent.putExtra("onee", one)
                 startActivity(intent)
 
             }
