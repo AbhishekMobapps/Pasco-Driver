@@ -258,5 +258,7 @@
     <string name="program_limit">Program Limit :</string>
     <string name="loyalty_end_dat">Loyalty End Dat :</string>
     <string name="notes_amp_reminder"><![CDATA[Notes & Reminder]]></string>
+    <string name="voice_message">Voice message</string>
+    <string name="chat">Chat</string>
     <string name="currently_no_data_are_found">Currently, no data are found.</string>
 </resources>
