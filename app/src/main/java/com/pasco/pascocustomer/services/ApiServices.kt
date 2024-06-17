@@ -26,6 +26,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.UpDriverStatusRespon
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Profile.PutViewModel.ProfileResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
@@ -61,6 +62,7 @@ import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptr
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
+import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.ClearAllNotificationResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
@@ -240,6 +242,11 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: NotificationBody
     ): Observable<DeleteNotificationResponse>
+
+    @GET("ClearAllNotification/")
+    fun getClearAllNotification(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+    ):Observable<ClearAllNotificationResponse>
 
 
 
@@ -513,6 +520,13 @@ interface ApiServices {
     fun feedback(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: CustomerFeedbackBody
+    ): Observable<AcceptOrRejectResponse>
+
+    @Headers("Accept:application/json")
+    @POST("driverfeedback/")
+    fun driverFeedback(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: DriverFeedbackBody
     ): Observable<AcceptOrRejectResponse>
 
     @GET("loyaltyprogram-detail/")

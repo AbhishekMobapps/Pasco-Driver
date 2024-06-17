@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.customer.activity.notificaion.adapter.NotificationAdapter
+import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.ClearAllNotifcationViewModel
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.DeleteNotificationViewModel
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationModelView
@@ -22,6 +23,7 @@ import java.util.ArrayList
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     private val getNotificationViewModel: NotificationModelView by viewModels()
+    private val clearAllNotifcationViewModel: ClearAllNotifcationViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this@NotificationActivity) }
     private var notificationData: List<NotificationResponse.Datum> = ArrayList()
     private lateinit var binding: ActivityNotificationBinding
@@ -36,6 +38,46 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
         getNotification()
         getNotificationObserver()
         deleteNotificationObserver()
+
+        binding.clearAllBtn.setOnClickListener {
+            clearAllPopUp()
+            clearAllNotification()
+        }
+        clearAllObserver()
+
+    }
+
+    private fun clearAllPopUp() {
+        TODO("Not yet implemented")
+    }
+
+    private fun clearAllObserver() {
+        clearAllNotifcationViewModel.progressIndicator.observe(this@NotificationActivity, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        clearAllNotifcationViewModel.mClearAllNotificationsResponse.observe(this@NotificationActivity) { response ->
+            val message = response.peekContent().msg!!
+            val success = response.peekContent().status
+            if (success == "True") {
+                Toast.makeText(this@NotificationActivity, message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@NotificationActivity, message, Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        clearAllNotifcationViewModel.errorResponse.observe(this@NotificationActivity) {
+            ErrorUtil.handlerGeneralError(this@NotificationActivity, it)
+        }
+    }
+
+    private fun clearAllNotification() {
+        clearAllNotifcationViewModel.getClearAllNotifications(
+            progressDialog,
+            this
+
+        )
     }
 
     private fun getNotification() {

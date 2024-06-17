@@ -88,6 +88,7 @@ class AcceptRideAdapter(
                 intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
                 intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
                 intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
+                intent.putExtra("one",1)
                 context.startActivity(intent)
             }
             orderIdDynamicReq.setOnClickListener {

@@ -246,7 +246,7 @@ class HomeFragment : Fragment() {
             }
 
             if (response.peekContent().status == "False") {
-                Toast.makeText(requireContext(), "$message", Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(), "$message", Toast.LENGTH_LONG).show()
             }
         }
     }
