@@ -207,6 +207,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
 
+        binding.finishTripTextView.setOnClickListener {
+            completedRideApi()
+        }
+        completedRideObserver()
+
 
     }
 
@@ -416,11 +421,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             /* binding.distanceTxt.text = "$formattedDistanceKm km"
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
                             if (distanceMeters < 50) {
-                                binding.finishTripTextView.visibility = View.VISIBLE
-                                completedRideApi()
-                                completedRideObserver()
+                            //    binding.finishTripTextView.visibility = View.VISIBLE
+                              //  completedRideApi()
+                                //completedRideObserver()
                             } else {
-                                binding.finishTripTextView.visibility = View.GONE
+                               // binding.finishTripTextView.visibility = View.GONE
                             }
                             Log.e(
                                 "BookMap",
