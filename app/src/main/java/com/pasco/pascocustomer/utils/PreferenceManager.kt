@@ -9,6 +9,7 @@ class PreferenceManager(context: Context) {
 
     private var mPrefs: PreferenceManager? = null
 
+/*
 
     private val masterKeyAlias: String = MasterKey.DEFAULT_MASTER_KEY_ALIAS
     private val masterKey: MasterKey =
@@ -22,8 +23,9 @@ class PreferenceManager(context: Context) {
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
+*/
 
-    /* private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+     private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
          .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
          .build()
 
@@ -34,7 +36,6 @@ class PreferenceManager(context: Context) {
          EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
          EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
      )
- */
 
     private val editor = prefs.edit()
 

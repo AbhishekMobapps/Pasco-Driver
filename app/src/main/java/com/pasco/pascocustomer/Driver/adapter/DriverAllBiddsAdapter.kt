@@ -54,7 +54,7 @@ class DriverAllBiddsAdapter(
         val baseUrl = "http://69.49.235.253:8090"
         val imagePath = driverOrderHis.userImage.orEmpty()
         val imageUrl = "$baseUrl$imagePath"
-        val biddingStatus = driverOrderHis.bookingStatus.toString()
+        val biddingStatus = driverOrderHis.customerStatus.toString()
 
         holder.biddingStatusTextView.apply {
             background = when (biddingStatus) {

@@ -108,9 +108,9 @@ class HomeFragment : Fragment() {
             disableAll()
         } else if (dAdminApprovedId == "1") {
             enableAll()
-            showRideRequestApi()
-            setupObservers()
         }
+        showRideRequestApi()
+        setupObservers()
         binding.NotesDriHome.setOnClickListener {
             checkLocationPermissionAndShare()
 
