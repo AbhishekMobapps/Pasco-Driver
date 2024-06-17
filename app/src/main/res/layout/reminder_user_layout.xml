@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainConst"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="180dp"
+        android:background="@drawable/order_details_radius"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/reminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="15dp"
-            android:text="Ok"
-            android:textColor="@color/earth_yellow"
-            android:textSize="@dimen/text_size_20"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleConst" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/titleCn"
             android:layout_width="0dp"
@@ -130,18 +121,17 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
+        <ImageView
             android:id="@+id/okBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="15dp"
-            android:text="Ok"
-            android:textColor="@color/earth_yellow"
-            android:textSize="@dimen/text_size_20"
-            android:textStyle="bold"
+            android:tint="@color/earth_yellow"
+            android:src="@drawable/baseline_delete_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleConst" />
+            app:layout_constraintTop_toBottomOf="@+id/titleConst"
+            tools:ignore="UseAppTint" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

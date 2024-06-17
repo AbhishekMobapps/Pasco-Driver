@@ -72,6 +72,10 @@ class TrackLocationResponse {
         @Expose
         var totalDistance: Double? = null
 
+        @SerializedName("booking_status")
+        @Expose
+        var bookingStatus: String? = null
+
         @SerializedName("driver_status")
         @Expose
         var driverStatus: String? = null

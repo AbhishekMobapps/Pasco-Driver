@@ -274,4 +274,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun loyaltyCodeUse(body: LoyaltyCodeUseBody): Observable<AcceptOrRejectResponse> {
         return apiService.loyaltyCodeUse(PascoApp.encryptedPrefs.bearerToken, body)
     }
+    fun getReminderDelete(Id: String): Observable<AcceptOrRejectResponse> {
+        return apiService.reminderDelete(PascoApp.encryptedPrefs.bearerToken, Id)
+    }
 }

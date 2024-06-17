@@ -15,10 +15,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
@@ -42,7 +39,10 @@ import com.pasco.pascocustomer.chat.ChatActivity
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
+import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationDetailsModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationModelView
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -66,8 +66,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityTrackBinding
     private val cancelBookingModelView: CancelBookingModelView by viewModels()
     private val trackModelView: TrackLocationModelView by viewModels()
+    private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private val feedbackModelView: CustomerFeedbackModelView by viewModels()
 
+    private var dialog : Dialog? = null
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
@@ -102,6 +105,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         //dropLatitude = intent.getStringExtra("dropLatitude").toString()
         //  dropLongitude = intent.getStringExtra("dropLongitude").toString()
 
+        Log.e("show-locationAA", "show-location.." + bookingId)
         binding.textViewSeeDetails.setOnClickListener {
 
             if (isClick) {
@@ -129,8 +133,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         runnable = object : Runnable {
             override fun run() {
-                locationApi()
-                locationObserver()
+                locationLatApi()
+                locationLatObserver()
                 handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
         }
@@ -138,10 +142,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         // Start the periodic task
         handler?.post(runnable)
 
+        locationApi()
+        locationObserver()
 
 
-        locationLatApi()
-        locationLatObserver()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -301,20 +305,20 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val bookingBody = TrackLocationBody(
             driverbookedid = bookingId
         )
-        trackModelView.trackLocation(bookingBody, this)
+        trackDetailsModelView.trackLocation(bookingBody, this)
     }
 
     private fun locationObserver() {
 
-        trackModelView.mRejectResponse.observe(this) { response ->
+        trackDetailsModelView.mDetailsResponse.observe(this) { response ->
 
             val dataGet = response.peekContent().data
 
             binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
-            /*         val distance = response.peekContent().data?.totalDistance ?: 0.0
-            binding.routeTime.text = String.format("%1f", distance)*/
+
+            Log.e("ShowDetails","API....Details")
 
             val kilometers = response.peekContent().data?.totalDistance
             val meters = convertKilometersToMeters(kilometers!!)
@@ -326,7 +330,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
-        trackModelView.errorResponse.observe(this) {
+        trackDetailsModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
@@ -351,11 +355,17 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.addMarker(MarkerOptions().position(pickupLocation!!).title("Pickup Location"))
             mMap.addMarker(MarkerOptions().position(dropLocation!!).title("Drop Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 12f))
-
+            Log.e("ShowDetails","API....Repeat...Details")
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
-                binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
+                if (response.peekContent().data!!.bookingStatus == "completed") {
+                    binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
+                    showFeedbackPopup()
+                } else {
+                    binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
+                }
+
             }
 
             // New York City
@@ -511,14 +521,31 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
     private fun showFeedbackPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.feedback_popup)
+         dialog = Dialog(this)
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.setCancelable(true)
+        dialog?.setContentView(R.layout.feedback_popup)
 
 
-        val window = dialog.window
+        val ratingBar = dialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = dialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = dialog?.findViewById<TextView>(R.id.submitBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+
+            feedbackApi(commentTxt?.text.toString(), ratingBars)
+            feedbackObserver()
+        }
+
+        val window = dialog?.window
         val lp = window?.attributes
         if (lp != null) {
             lp.width = ActionBar.LayoutParams.MATCH_PARENT
@@ -529,8 +556,36 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         if (window != null) {
             window.attributes = lp
         }
-        acceptOrRejectObserver()
 
-        dialog.show()
+
+        dialog?.show()
     }
+
+    private fun feedbackApi(commentTxt: String, ratingBars: String) {
+        //   val codePhone = strPhoneNo
+        val loinBody = CustomerFeedbackBody(
+            bookingconfirmation = bookingId,
+            rating = ratingBars,
+            feedback = commentTxt
+        )
+        feedbackModelView.cancelBooking(loinBody, this, progressDialog)
+    }
+
+    private fun feedbackObserver() {
+        feedbackModelView.progressIndicator.observe(this) {}
+        feedbackModelView.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, UserDashboardActivity::class.java)
+            startActivity(intent)
+        }
+        feedbackModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@TrackActivity, it)
+            // errorDialogs()
+        }
+    }
+
 }

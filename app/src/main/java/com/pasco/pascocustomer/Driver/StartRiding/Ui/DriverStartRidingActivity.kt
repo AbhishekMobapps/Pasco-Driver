@@ -146,6 +146,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLocation = LatLng(Plat, Plon)
         dropLocation = LatLng(Dlan, Dlon)
 
+        binding.finishTripTextView.setOnClickListener {
+            completedRideApi()
+            completedRideObserver()
+        }
+
+
         driverStatusList()
         driverStatusObserver()
         // Request location updates
@@ -202,6 +208,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         //call observer
         startTripObserver()
 
+
         binding.chatImageStartRidingImageView.setOnClickListener {
             val intent = Intent(this@DriverStartRidingActivity,ChatActivity::class.java)
             startActivity(intent)
@@ -209,8 +216,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.finishTripTextView.setOnClickListener {
             completedRideApi()
+  completedRideObserver()
         }
-        completedRideObserver()
+      
+
 
 
     }
@@ -421,11 +430,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             /* binding.distanceTxt.text = "$formattedDistanceKm km"
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
                             if (distanceMeters < 50) {
-                            //    binding.finishTripTextView.visibility = View.VISIBLE
-                              //  completedRideApi()
+                               // binding.finishTripTextView.visibility = View.VISIBLE
+                               // completedRideApi()
                                 //completedRideObserver()
                             } else {
-                               // binding.finishTripTextView.visibility = View.GONE
+                              //  binding.finishTripTextView.visibility = View.GONE
                             }
                             Log.e(
                                 "BookMap",

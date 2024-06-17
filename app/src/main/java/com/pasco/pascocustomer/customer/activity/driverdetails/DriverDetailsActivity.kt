@@ -9,9 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
-import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
-import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.BiddsDtailsModelView
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsModelView
 import com.pasco.pascocustomer.databinding.ActivityDriverDetailsBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
