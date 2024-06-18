@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -75,8 +76,7 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
         val title = addSubjectEdittext.text.toString()
         val desp = commentAddNotesReminder.text.toString()
 
-        val reminderDate = "${formattedDateString} ${formattedTime}"
-        Log.e("formattedDateString", "formattedDateString.." + reminderDate)
+        val reminderDate = "$formattedDateString $formattedTime"
         notesRViewModel.getNotesReminderData(
             progressDialog,
             activity,
@@ -94,10 +94,14 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
             val success = response.peekContent().status
             if (success == "False") {
                 // Handle unsuccessful login
+
                 Toast.makeText(this@NotesRemainderActivity, message, Toast.LENGTH_SHORT).show()
+
+
+            } else {
+
                 getReminderApi()
                 dialog?.dismiss()
-            } else {
                 Toast.makeText(this@NotesRemainderActivity, message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -122,17 +126,13 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
         val addSubjectEdittext = dialog?.findViewById<EditText>(R.id.addSubjectEdittext)
         val commentAddNotesReminder = dialog?.findViewById<EditText>(R.id.commentAddNotesReminder)
         val saveBtnAddNotes = dialog?.findViewById<LinearLayout>(R.id.saveBtnAddNotes)
+        val backArrowAddNotes = dialog?.findViewById<ImageView>(R.id.backArrowAddNotes)
 
 
-
+        backArrowAddNotes?.setOnClickListener { dialog?.dismiss() }
         saveBtnAddNotes?.setOnClickListener {
 
-            validation(
-                startDateTxtNotes!!,
-                startTimetxtNotes!!,
-                addSubjectEdittext!!,
-                commentAddNotesReminder!!
-            )
+            validation(startDateTxtNotes!!, startTimetxtNotes!!, addSubjectEdittext!!, commentAddNotesReminder!!)
         }
 
         startDateTxtNotes?.setOnClickListener {
@@ -226,11 +226,7 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
                 Toast.LENGTH_SHORT
             ).show()
         } else if (commentAddNotesReminder.text.isNullOrBlank()) {
-            Toast.makeText(
-                this@NotesRemainderActivity,
-                "Please add the description",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this@NotesRemainderActivity, "Please add the description", Toast.LENGTH_SHORT).show()
         } else {
             //call api
             notesReminderApi(addSubjectEdittext, commentAddNotesReminder)
@@ -298,7 +294,7 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
             val message = it.peekContent().msg
             val success = it.peekContent().status
 
-            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        //    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             getReminderApi()
         }
         deleteReminderModelView.errorResponse.observe(this@NotesRemainderActivity) {
