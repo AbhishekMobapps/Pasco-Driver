@@ -90,8 +90,6 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var switchCheck = ""
     private var OnDutyStatus = ""
     private var one: Int = -1
-    private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
-    private var feedbackValue = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -105,11 +103,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         Log.e("switchValue", "switchCheck: "+switchCheck )
         refersh = PascoApp.encryptedPrefs.token
 
-        feedbackValue = intent.getStringExtra("feedbackValue").toString()
-        if (feedbackValue.equals("CompletedRide"))
-        {
-            showFeedbackPopup()
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
         if (checkLocationPermission()) {
@@ -257,73 +250,6 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
     }
-
-    private fun showFeedbackPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.feedback_popup)
-
-
-        val ratingBar = dialog.findViewById<RatingBar>(R.id.ratingBar)
-        val commentTxt = dialog.findViewById<EditText>(R.id.commentTxt)
-        val submitBtn = dialog.findViewById<TextView>(R.id.submitBtn)
-
-        var ratingBars = ""
-        ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-            ratingBars = rating.toString()
-        }
-
-        submitBtn.setOnClickListener {
-
-            feedbackApi(commentTxt.text.toString(), ratingBars)
-            feedbackObserver()
-        }
-
-        val window = dialog.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog.show()
-    }
-
-    private fun feedbackApi(commentTxt: String, ratingBars: String) {
-        //   val codePhone = strPhoneNo
-        val driverFBody = DriverFeedbackBody(
-            bookingconfirmation = "",
-            rating = ratingBars,
-            feedback = commentTxt
-        )
-        driverFeedbackModelView.cancelBooking(driverFBody, this, progressDialog)
-    }
-
-    private fun feedbackObserver() {
-        driverFeedbackModelView.progressIndicator.observe(this) {}
-        driverFeedbackModelView.mRejectResponse.observe(
-            this
-        ) {
-            val msg = it.peekContent().msg
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
-        }
-        driverFeedbackModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this@DriverDashboardActivity, it)
-            // errorDialogs()
-        }
-    }
-
     private fun markOffDuty() {
         // Assuming similar logic for marking off duty
         val body = MarkDutyBody(mark_status = switchCheck)

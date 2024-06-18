@@ -11,7 +11,7 @@ import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusRes
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedResponse
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
-import com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel.EmergencyCResponse
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
@@ -27,6 +27,8 @@ import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergercyHelpResponse
 import com.pasco.pascocustomer.Profile.PutViewModel.ProfileResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
@@ -364,10 +366,28 @@ interface ApiServices {
         @Field("coupon_used") coupon_used: String
     ): Observable<CouponUsedResponse>
 
+    //EmergencyDriverList
+    @FormUrlEncoded
+    @POST("NearbyVehicle/")
+    fun getDriverEHelp(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Field("driver_latitude") driver_latitude: String,
+        @Field("driver_longitude") driver_longitude: String
+    ): Observable<EmergencyHelpDriverResponse>
+
+@FormUrlEncoded
+    @POST("send-emergency-help/{id}")
+    fun sendEmergencyHelp(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String,
+        @Field("driver_id") driver_id: String,
+        @Field("current_location") current_location: String
+    ):Observable<SendEmergercyHelpResponse>
+
     //EmergencyList
     @GET("show-emergencydetail/")
     fun getEmergencyList(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<EmergencyCResponse>
 
 

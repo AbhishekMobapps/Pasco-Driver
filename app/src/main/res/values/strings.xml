@@ -213,7 +213,7 @@
     <string name="you_must_be_allowed_to_access_your_location">You must be allowed to access your location</string>
     <string name="give_permission_in_the_phone_settings">Give permission in the phone settings</string>
     <string name="okay">Okay</string>
-    <string name="driver_name">Hello Abhishekdasdasdssd</string>
+    <string name="driver_name">Hello</string>
     <string name="order">Order</string>
     <string name="submit_driver_profile">Submit</string>
     <string name="confirm">Confirm</string>
@@ -267,5 +267,14 @@
     <string name="are_you_sure_you_want_to_clear_all_notifications">Are you sure you want to clear all notifications?</string>
     <string name="no">NO</string>
     <string name="yes_capital">YES</string>
+    <string name="emergency_call">Emergency Call</string>
+    <string name="share_location">Share Location</string>
+    <string name="_24_7_supports">24*7 Supports</string>
+    <string name="update_service_location">Update Service Location</string>
+    <string name="emergency_contacts">Emergency Contacts</string>
+    <string name="country">Country</string>
+    <string name="emergency_help">Emergency Help</string>
+    <string name="all_nearby_available_drivers_for_help">All Nearby Available Drivers for Help</string>
+    <string name="driver_namee">Driver Name</string>
 
 </resources>

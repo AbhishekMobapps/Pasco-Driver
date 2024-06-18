@@ -63,10 +63,6 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
 
-
-
-
-
         if (profileUpdate == "update") {
             navItemIndex = 1
             CURRENT_TAG = TAG_NEXT

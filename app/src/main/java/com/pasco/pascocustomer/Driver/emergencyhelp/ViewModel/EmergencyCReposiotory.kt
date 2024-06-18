@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel
+package com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel
 
 import io.reactivex.Observable
 import com.pasco.pascocustomer.application.PascoApp

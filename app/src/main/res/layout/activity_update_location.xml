@@ -32,7 +32,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="80dp"
         android:gravity="center_vertical"
-        android:text="@string/update_location"
+        android:text="@string/update_service_location"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_16"
         android:textStyle="bold" />
@@ -112,7 +112,7 @@ android:layout_width="match_parent">
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
-    android:text="Update Location"
+    android:text="@string/update"
     android:textColor="#FFFFFF"
     android:textSize="16sp" />
 
