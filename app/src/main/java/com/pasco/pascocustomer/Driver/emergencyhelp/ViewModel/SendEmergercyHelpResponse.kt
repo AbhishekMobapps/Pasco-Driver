@@ -1,10 +1,13 @@
-package com.pasco.pascocustomer.Driver.StartRiding.ViewModel
+package com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel
 
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
 
-class StartTripResponse {
+
+
+
+class SendEmergercyHelpResponse {
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -12,5 +15,4 @@ class StartTripResponse {
     @SerializedName("msg")
     @Expose
     var msg: String? = null
-
 }

@@ -51,11 +51,13 @@ class CancelledTripHistoryAdapter(
         }
         holder.clientNameDriHisCan.text = cancelTripHis.user
         holder.totalCostDriverHisCan.text = price
-        val durationInMinutes = cancelTripHis.duration!!
+        val durationInSeconds = cancelTripHis.duration!!
+        val durationInMinutes = durationInSeconds / 60
         val hours = durationInMinutes / 60
         val minutes = durationInMinutes % 60
         val durationString = "$hours hours $minutes min"
         holder.arrivalTimeDriverHisCan.text = durationString
+
         holder.pickUpDetailsDriHisCan.text = cancelTripHis.pickupLocation
         holder.DropDetailsDriHisCan.text = cancelTripHis.dropLocation
         holder.bookingstatusCan.text = "Cancelled"
