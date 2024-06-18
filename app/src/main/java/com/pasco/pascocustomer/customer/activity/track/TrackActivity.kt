@@ -12,12 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -28,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
@@ -69,7 +74,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
-
+    var bottomSheetDialog: BottomSheetDialog? = null
     private var dialog : Dialog? = null
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -102,10 +107,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
-        //dropLatitude = intent.getStringExtra("dropLatitude").toString()
-        //  dropLongitude = intent.getStringExtra("dropLongitude").toString()
+       //showFeedbackPopup()
 
-        Log.e("show-locationAA", "show-location.." + bookingId)
         binding.textViewSeeDetails.setOnClickListener {
 
             if (isClick) {
@@ -253,8 +256,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             .await()
 
         Log.e(
-            "location",
-            "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
+            "location", "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
         )
         // Decode polyline and draw on map
         val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
@@ -322,7 +324,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val kilometers = response.peekContent().data?.totalDistance
             val meters = convertKilometersToMeters(kilometers!!)
-            binding.totalDistanceBidd.text = "Kilometers: $kilometers\nMeters: $meters"
+            binding.totalDistanceBidd.text = "Km $kilometers\nmtr: $meters"
 
             val url = response.peekContent().data!!.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
@@ -360,6 +362,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             } else {
                 if (response.peekContent().data!!.bookingStatus == "completed") {
+                    handler?.removeCallbacks(runnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
                     showFeedbackPopup()
                 } else {
@@ -427,7 +430,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun acceptOrRejectApi(cancelReasonTxt: String) {
-        //   val codePhone = strPhoneNo
         val loinBody = CancelBookingBody(
             cancelreason = cancelReasonTxt
         )
@@ -522,7 +524,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun showFeedbackPopup() {
+    /*private fun showFeedbackPopup() {
          dialog = Dialog(this)
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog?.setCancelable(true)
@@ -559,6 +561,57 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         dialog?.show()
+    }*/
+
+    private fun showFeedbackPopup() {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+
+        val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+        val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+
+            feedbackApi(commentTxt?.text.toString(), ratingBars)
+            feedbackObserver()
+        }
+        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+
+        val displayMetrics = DisplayMetrics()
+        (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreenHeight = screenHeight * .6
+        val eightyPercentScreenHeight = screenHeight * .6
+
+        // Set the initial height of the bottom sheet to 50% of the screen height
+        val layoutParams = view.layoutParams
+        layoutParams.height = halfScreenHeight.toInt()
+        view.layoutParams = layoutParams
+
+        var isExpanded = false
+        view.setOnClickListener {
+            // Expand or collapse the bottom sheet when it is touched
+            if (isExpanded) {
+                layoutParams.height = halfScreenHeight.toInt()
+            } else {
+                layoutParams.height = eightyPercentScreenHeight.toInt()
+            }
+            view.layoutParams = layoutParams
+            isExpanded = !isExpanded
+        }
+
+        bottomSheetDialog!!.show()
+
     }
 
     private fun feedbackApi(commentTxt: String, ratingBars: String) {
@@ -587,5 +640,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             // errorDialogs()
         }
     }
+
+
 
 }
