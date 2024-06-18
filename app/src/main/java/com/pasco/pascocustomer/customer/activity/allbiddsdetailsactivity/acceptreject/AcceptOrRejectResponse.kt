@@ -3,10 +3,6 @@ package com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.accept
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
-
-
-
-
 class AcceptOrRejectResponse {
     @SerializedName("status")
     @Expose

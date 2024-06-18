@@ -57,29 +57,13 @@ class HistoryFragment : Fragment() {
 
         activity = requireActivity()
 
-
-        /* binding.ordersConst.setOnClickListener {
-             binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
-             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-             binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-             binding.allBiddsRecycler.visibility = View.GONE
-             binding.acceptRecycler.visibility = View.GONE
-             binding.asAcceptConst.setBackgroundResource(0)
-             binding.allBiddsConst.setBackgroundResource(0)
-             getAcceptedApi()
-
-         }*/
-
         binding.allBiddsConst.setOnClickListener {
             binding.allBiddsConst.setBackgroundResource(R.drawable.complete_button_back)
             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            // binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
             binding.oderRecycler.visibility = View.GONE
             binding.acceptRecycler.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
-            // binding.ordersConst.setBackgroundResource(0)
 
             completedApi()
         }
@@ -87,17 +71,13 @@ class HistoryFragment : Fragment() {
         binding.asAcceptConst.setOnClickListener {
             binding.asAcceptConst.setBackgroundResource(R.drawable.accept_back)
             binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            //   binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.oderRecycler.visibility = View.GONE
             binding.allBiddsRecycler.visibility = View.GONE
             binding.allBiddsConst.setBackgroundResource(0)
-            //   binding.ordersConst.setBackgroundResource(0)
-
             cancelledApi()
         }
-        // getAcceptedApi()
-        // acceptedObserver()
+
         completedApi()
         completedObserver()
         cancelledObserver()

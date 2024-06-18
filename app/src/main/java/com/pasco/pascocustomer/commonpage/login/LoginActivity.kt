@@ -351,6 +351,7 @@ class LoginActivity : AppCompatActivity() {
     private fun sendVerificationCode(phoneNumber: String) {
 
         // showLoader()
+        progressDialog.start("Loading.....")
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
@@ -371,6 +372,7 @@ class LoginActivity : AppCompatActivity() {
                     token: PhoneAuthProvider.ForceResendingToken
                 ) {
                     // Save the verification ID
+                    progressDialog.start()
                     this@LoginActivity.verificationId = verificationId
 
                     val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)

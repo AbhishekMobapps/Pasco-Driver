@@ -210,16 +210,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         binding.chatImageStartRidingImageView.setOnClickListener {
-            val intent = Intent(this@DriverStartRidingActivity,ChatActivity::class.java)
+            val intent = Intent(this@DriverStartRidingActivity, ChatActivity::class.java)
             startActivity(intent)
         }
 
         binding.finishTripTextView.setOnClickListener {
             completedRideApi()
-  completedRideObserver()
+            completedRideObserver()
         }
-      
-
 
 
     }
@@ -370,6 +368,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
 
     }
+
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -377,8 +376,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                val intent = Intent(this@DriverStartRidingActivity,DriverDashboardActivity::class.java)
-                intent.putExtra("feedbackValue","CompletedRide")
+                val intent =
+                    Intent(this@DriverStartRidingActivity, DriverDashboardActivity::class.java)
+                intent.putExtra("feedbackValue", "CompletedRide")
                 startActivity(intent)
             }
         }
@@ -430,11 +430,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                             /* binding.distanceTxt.text = "$formattedDistanceKm km"
                             binding.durationTimeTxt.text = "$formattedDuration mins"*/
                             if (distanceMeters < 50) {
-                               // binding.finishTripTextView.visibility = View.VISIBLE
-                               // completedRideApi()
+                                // binding.finishTripTextView.visibility = View.VISIBLE
+                                // completedRideApi()
                                 //completedRideObserver()
                             } else {
-                              //  binding.finishTripTextView.visibility = View.GONE
+                                //  binding.finishTripTextView.visibility = View.GONE
                             }
                             Log.e(
                                 "BookMap",
