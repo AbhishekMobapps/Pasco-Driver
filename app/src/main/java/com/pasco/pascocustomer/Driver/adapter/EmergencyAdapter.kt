@@ -9,11 +9,11 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel.EmergencyCResponse
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.R
 
 class EmergencyAdapter(
@@ -28,11 +28,12 @@ class EmergencyAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val emegencyResponse = emergencyNumbers[position]
-        holder.SrNoTxtDetailsEmer.text = (position + 1).toString()
-        val phoneNo = holder.PhoneNoDynamicEp.text.toString()
-        holder.countryDynamicEp.text=emegencyResponse.country.toString()
+        val phoneNo = emegencyResponse.emergencynum.toString()
+        holder.PhoneNoDynamicEp.text = phoneNo
 
-        holder.callLinear.setOnClickListener {
+        holder.countryNameDynamic.text=emegencyResponse.country.toString()
+
+        holder.itemView.setOnClickListener {
             try {
                 if (Build.VERSION.SDK_INT > 22) {
                     if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -55,9 +56,8 @@ class EmergencyAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var SrNoTxtDetailsEmer: TextView = itemView.findViewById(R.id.SrNoTxtDetailsEmer)
-        var countryDynamicEp: TextView = itemView.findViewById(R.id.countryDynamicEp)
-        var callLinear: LinearLayout = itemView.findViewById(R.id.callLinear)
+        var countryNameDynamic: TextView = itemView.findViewById(R.id.countryNameDynamic)
+        var emergencyCallImageView: ImageView = itemView.findViewById(R.id.emergencyCallImageView)
         var PhoneNoDynamicEp: TextView = itemView.findViewById(R.id.PhoneNoDynamicEp)
     }
 }

@@ -63,8 +63,9 @@ class CompletedTripHistoryAdapter(
         with(holder) {
             clientNameDriHis.text = driverTripHis.user.toString()
             totalCostDriverHis.text = price
-            val durationInMinutes = driverTripHis.duration
-            val hours = durationInMinutes!! / 60
+            val durationInSeconds = driverTripHis.duration
+            val durationInMinutes = durationInSeconds!! / 60
+            val hours = durationInMinutes / 60
             val minutes = durationInMinutes % 60
             val durationString = "$hours hours $minutes min"
             arrivalTimeDriverHis.text = durationString

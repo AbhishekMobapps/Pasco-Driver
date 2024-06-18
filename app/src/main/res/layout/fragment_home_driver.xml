@@ -61,9 +61,9 @@
             app:layout_constraintTop_toBottomOf="@+id/indicatorDriver">
 
             <LinearLayout
-                android:id="@+id/NotesDriHome"
+                android:id="@+id/LinearShareLocation"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="2.5"
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical">
@@ -82,7 +82,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Share Location"
+                    android:text="@string/share_location"
                     android:textColor="@color/black"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -91,7 +91,7 @@
             <LinearLayout
                 android:id="@+id/supportsLinearDri"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="2.5"
                 android:orientation="vertical">
 
@@ -110,14 +110,14 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="24*7 Supports"
+                    android:text="@string/_24_7_supports"
                     android:textColor="@color/black"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LinearWallHomeF"
+                android:id="@+id/LinearUpdateServiceLoc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.5"
@@ -137,7 +137,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="UpdateLocation"
+                    android:text="@string/update_service_location"
                     android:textColor="@color/black"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -146,7 +146,7 @@
             <LinearLayout
                 android:id="@+id/linearDriHEmergency"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="2.5"
                 android:orientation="vertical">
 
@@ -163,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Emergency"
+                    android:text="@string/emergency_help"
                     android:textColor="@color/black"
                     android:textSize="11sp"
                     android:textStyle="bold" />

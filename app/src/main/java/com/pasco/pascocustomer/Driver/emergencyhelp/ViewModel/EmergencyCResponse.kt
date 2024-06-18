@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.EmergencyResponse.ViewModel
+package com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel
 
 import com.google.gson.annotations.Expose
 
@@ -19,7 +19,6 @@ class EmergencyCResponse:Serializable{
     @SerializedName("data")
     @Expose
     var data: List<EmergencyResponseData>? = null
-
     inner class EmergencyResponseData :Serializable
     {
         @SerializedName("id")
@@ -34,6 +33,4 @@ class EmergencyCResponse:Serializable{
         @Expose
         var emergencynum: String? = null
     }
-
-
 }

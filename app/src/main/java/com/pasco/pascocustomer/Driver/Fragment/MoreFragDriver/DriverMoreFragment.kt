@@ -85,6 +85,7 @@ class DriverMoreFragment : Fragment() {
             val intent = Intent(requireContext(), NotesRemainderActivity::class.java)
             startActivity(intent)
         }
+        binding.consShareAppDriver.setOnClickListener { shareApp() }
 
 
         binding.consLogout.setOnClickListener {
@@ -94,6 +95,19 @@ class DriverMoreFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun shareApp() {
+        val appPackageName = "com.pasco.pascocustomer" // Hardcoded package name
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out this app!")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this amazing app: https://play.google.com/store/apps/details?id=$appPackageName"
+            )
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 
     private fun enableAll() {

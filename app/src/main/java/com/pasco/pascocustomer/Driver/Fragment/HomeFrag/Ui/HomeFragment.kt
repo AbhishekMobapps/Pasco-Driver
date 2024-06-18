@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -20,17 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.snackbar.Snackbar
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.Driver.DriverMessageActivity
-import com.pasco.pascocustomer.Driver.EmergencyResponse.Ui.EmergencyCallActivity
-import com.pasco.pascocustomer.Driver.NotesRemainders.Ui.NotesRemainderActivity
+import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyCallActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
-import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyHelpActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -111,7 +108,7 @@ class HomeFragment : Fragment() {
         }
         showRideRequestApi()
         setupObservers()
-        binding.NotesDriHome.setOnClickListener {
+        binding.LinearShareLocation.setOnClickListener {
             checkLocationPermissionAndShare()
 
         }
@@ -121,10 +118,10 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
         binding.linearDriHEmergency.setOnClickListener {
-            val intent = Intent(requireContext(), EmergencyCallActivity::class.java)
+            val intent = Intent(requireContext(), EmergencyHelpActivity::class.java)
             startActivity(intent)
         }
-        binding.LinearWallHomeF.setOnClickListener {
+        binding.LinearUpdateServiceLoc.setOnClickListener {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)
         }
@@ -212,16 +209,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun enableAll() {
-        binding.NotesDriHome.isEnabled = true
+        binding.LinearShareLocation.isEnabled = true
         binding.supportsLinearDri.isEnabled = true
-        binding.LinearWallHomeF.isEnabled = true
+        binding.LinearUpdateServiceLoc.isEnabled = true
         binding.linearDriHEmergency.isEnabled = true
     }
 
     private fun disableAll() {
-        binding.NotesDriHome.isEnabled = false
+        binding.LinearShareLocation.isEnabled = false
         binding.supportsLinearDri.isEnabled = false
-        binding.LinearWallHomeF.isEnabled = false
+        binding.LinearUpdateServiceLoc.isEnabled = false
         binding.linearDriHEmergency.isEnabled = false
     }
 
