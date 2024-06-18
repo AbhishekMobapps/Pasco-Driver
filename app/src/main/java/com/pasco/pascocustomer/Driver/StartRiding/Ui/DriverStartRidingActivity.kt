@@ -12,10 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
@@ -53,10 +59,13 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.ChatActivity
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.Dispatchers
@@ -96,6 +105,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var updateLocationBody: UpdationLocationBody
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
     private val completeRideViewModel: CompleteRideViewModel by viewModels()
+    private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private var city: String? = null
@@ -103,6 +113,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private var hasReachedLocation = false
     private var handler: Handler? = null
     private lateinit var runnable: Runnable
+    var bottomSheetDialog: BottomSheetDialog? = null
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -372,19 +383,94 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
-            if (response.peekContent().status == "True") {
+            if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                val intent =
-                    Intent(this@DriverStartRidingActivity, DriverDashboardActivity::class.java)
-                intent.putExtra("feedbackValue", "CompletedRide")
-                startActivity(intent)
+                showFeedbackPopup()
             }
         }
         startTripViewModel.errorResponse.observe(this) {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    private fun showFeedbackPopup() {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+
+        val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+        val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+
+            feedbackApi(commentTxt?.text.toString(), ratingBars)
+            feedbackObserver()
+        }
+        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+
+        val displayMetrics = DisplayMetrics()
+        (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreenHeight = screenHeight * .6
+        val eightyPercentScreenHeight = screenHeight * .6
+
+        // Set the initial height of the bottom sheet to 50% of the screen height
+        val layoutParams = view.layoutParams
+        layoutParams.height = halfScreenHeight.toInt()
+        view.layoutParams = layoutParams
+
+        var isExpanded = false
+        view.setOnClickListener {
+            // Expand or collapse the bottom sheet when it is touched
+            if (isExpanded) {
+                layoutParams.height = halfScreenHeight.toInt()
+            } else {
+                layoutParams.height = eightyPercentScreenHeight.toInt()
+            }
+            view.layoutParams = layoutParams
+            isExpanded = !isExpanded
+        }
+
+        bottomSheetDialog!!.show()
+
+    }
+
+    private fun feedbackApi(commentTxt: String, ratingBars: String) {
+        //   val codePhone = strPhoneNo
+        val loinBody = DriverFeedbackBody(
+            bookingconfirmation = Bid,
+            rating = ratingBars,
+            feedback = commentTxt
+        )
+        driverFeedbackModelView.cancelBooking(loinBody, this, progressDialog)
+    }
+
+    private fun feedbackObserver() {
+        driverFeedbackModelView.progressIndicator.observe(this) {}
+        driverFeedbackModelView.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, DriverDashboardActivity::class.java)
+            startActivity(intent)
+        }
+        driverFeedbackModelView.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
+            // errorDialogs()
         }
     }
 

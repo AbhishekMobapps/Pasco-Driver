@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/old_lace"
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,7 +12,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/customer_profile_back1"
         android:layout_marginTop="10dp"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,6 +61,7 @@
             app:layout_constraintWidth_percent=".2"
             android:layout_marginEnd="20dp"
             android:background="@drawable/button_background"
+            android:backgroundTint="@color/red"
             tools:ignore="UseAppTint" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
