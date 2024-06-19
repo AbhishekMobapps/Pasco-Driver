@@ -23,6 +23,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.UpDriverStatusResponse
+import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationResponse
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
@@ -340,6 +341,19 @@ interface ApiServices {
         @Path("id") id: String,
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
     ):Observable<CompleteRideResponse>
+
+    @Multipart
+    @Headers("Accept:application/json")
+    @PUT("/addddeliveryproof/")
+    fun addDeliveryProof(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Part("booking_confimation") booking_confimation: RequestBody,
+        @Part("driverID") driverID: RequestBody,
+        @Part delivery_image: MultipartBody.Part
+    ): Observable<DeliveryProofResponse>
+
+
+
 
     //put profile
     @Multipart

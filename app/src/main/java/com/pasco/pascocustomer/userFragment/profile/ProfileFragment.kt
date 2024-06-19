@@ -310,8 +310,6 @@ class ProfileFragment : Fragment() {
 
         }
 
-
-
         updateProfileModelView.updateProfile(
             progressDialog,
             activity,

@@ -5,13 +5,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,8 +24,12 @@ import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.android.volley.AuthFailureError
 import com.android.volley.NetworkError
@@ -40,6 +46,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
@@ -56,22 +63,29 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewMode
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.ChatActivity
-import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
+import dagger.hilt.android.AndroidEntryPoint
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.DecimalFormat
 import java.util.Locale
@@ -79,6 +93,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+
 
 @AndroidEntryPoint
 class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -95,6 +110,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var pickupLocation: LatLng
     private lateinit var dropLocation: LatLng
+    private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
     private var driverStatus = ""
     private var isDestinationReached = false
@@ -108,12 +124,31 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
+    private lateinit var formattedLatitudeLat: LatLng
+    private lateinit var formatteddropLat: LatLng
     private var city: String? = null
     private var address: String? = null
     private var hasReachedLocation = false
     private var handler: Handler? = null
     private lateinit var runnable: Runnable
+    private var selectedImageFile: File? = null
+    private var imageUrl: String? = null
+    private val cameraPermissionCode = 101
+    private lateinit var savedImggSelectProof: CircleImageView
     var bottomSheetDialog: BottomSheetDialog? = null
+    private val deliveryProofViewModel: DeliveryProofViewModel by viewModels()
+    private lateinit var poiName: String
+    private lateinit var poiType: String
+    private lateinit var couponCode: String
+    private lateinit var startDate: String
+    private lateinit var endDate: String
+    private var limit: Int = 0
+    private lateinit var poiAddress: String
+    private lateinit var poiCity: String
+    private lateinit var poiDesc: String
+    private lateinit var poiImage: String
+    private lateinit var locationArrayList: ArrayList<LatLng?>
+
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -123,9 +158,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverStartRidingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//pickup loc
+
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
+
+        locationArrayList = ArrayList()
+
 
         Bid = intent.getStringExtra("BookId").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -156,17 +194,18 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         pickupLocation = LatLng(Plat, Plon)
         dropLocation = LatLng(Dlan, Dlon)
-
+        // Request location updates
+        requestLocationUpdates()
+        //camera permission
+        requestPermission()
         binding.finishTripTextView.setOnClickListener {
             completedRideApi()
             completedRideObserver()
         }
 
-
         driverStatusList()
         driverStatusObserver()
-        // Request location updates
-        requestLocationUpdates()
+
         //call observer
         updateLocationObserver()
         handler = Handler(Looper.getMainLooper())
@@ -233,6 +272,168 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(
+                    this@DriverStartRidingActivity,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@DriverStartRidingActivity,
+                    arrayOf(Manifest.permission.CAMERA),
+                    cameraPermissionCode
+                )
+            }
+        }
+    }
+
+    private fun showDeliveryPopUp() {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.delivery_proof_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+
+        val consUploadDeliveryProof =
+            bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
+        val submitBtnDeliveryProof =
+            bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
+        savedImggSelectProof = bottomSheetDialog?.findViewById(R.id.savedImggSelectProof)!!
+
+        submitBtnDeliveryProof?.setOnClickListener {
+            bottomSheetDialog!!.dismiss()
+        }
+
+        consUploadDeliveryProof!!.setOnClickListener {
+            selectImage()
+        }
+
+        submitBtnDeliveryProof!!.setOnClickListener {
+            if (selectedImageFile == null) {
+                Toast.makeText(
+                    this@DriverStartRidingActivity,
+                    "Please Upload the Image",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                addDeliveryProofApi()
+            }
+        }
+        addDeliveryObserver()
+        bottomSheetDialog!!.show()
+
+    }
+
+    private fun addDeliveryObserver() {
+        deliveryProofViewModel.progressIndicator.observe(this, androidx.lifecycle.Observer {
+        })
+        deliveryProofViewModel.mDeliveryProofResponse.observe(
+            this
+        ) {
+
+            var message = it.peekContent().msg!!
+            var status = it.peekContent().status!!
+            if (status.equals("False")) {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                showFeedbackPopup()
+            }
+
+        }
+
+        deliveryProofViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
+        }
+    }
+
+    private fun addDeliveryProofApi() {
+        val BookingID = Bid.toRequestBody(MultipartBody.FORM)
+        val driverID = spinnerDriverSId.toRequestBody(MultipartBody.FORM)
+        var deliveryImage: MultipartBody.Part? = null
+
+        deliveryImage = if (selectedImageFile == null) {
+
+            MultipartBody.Part.createFormData(
+                "",
+                selectedImageFile?.name,
+                "".toRequestBody("*delivery_image/*".toMediaTypeOrNull())
+            )
+
+        } else {
+            MultipartBody.Part.createFormData(
+                "delivery_image",
+                selectedImageFile?.name,
+                selectedImageFile!!.asRequestBody("*delivery_image/*".toMediaTypeOrNull())
+            )
+
+        }
+        deliveryProofViewModel.deliveryProofData(
+            progressDialog,
+            activity,
+            BookingID,
+            driverID,
+            deliveryImage
+
+        )
+    }
+
+    fun selectImage() {
+        val options = arrayOf<CharSequence>("Take Photo", "Cancel")
+        val builder = android.app.AlertDialog.Builder(this@DriverStartRidingActivity)
+        builder.setTitle("Select Option")
+        builder.setItems(options) { dialog, item ->
+            when {
+                options[item] == "Take Photo" -> openCamera()
+                options[item] == "Cancel" -> dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+    private fun openCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (cameraIntent.resolveActivity(this@DriverStartRidingActivity.packageManager) != null) {
+            takePictureLauncher.launch(cameraIntent)
+        }
+    }
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+                if (imageBitmap != null) {
+                    // Generate a dynamic filename using a unique identifier
+                    val fileName = "image_${System.currentTimeMillis()}.jpg"
+                    // Convert Bitmap to File
+                    selectedImageFile = bitmapToFile(imageBitmap, fileName)
+                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFile)
+                    //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
+                    savedImggSelectProof.setImageBitmap(imageBitmap)
+                } else {
+                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+    private fun bitmapToFile(bitmap: Bitmap, fileName: String): File {
+        // Create a new file in the app's cache directory
+        val file = File(this@DriverStartRidingActivity.cacheDir, fileName)
+
+        // Use FileOutputStream to write the bitmap data to the file
+        try {
+            val stream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return file
+    }
+
     private fun afterDetailsObserver() {
 
         afterStartTripViewModel.mAfterTripResponse.observe(this) { response ->
@@ -289,16 +490,17 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
-
+/*
                     runnable = object : Runnable {
                         override fun run() {
-                            showAddress(it)
+
                             handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
                         }
                     }
 
                     // Start the periodic task
-                    handler?.post(runnable)
+                    handler?.post(runnable)*/
+                    showAddress(it)
                 }
 
             }
@@ -311,10 +513,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         val latitude = location.latitude
         val longitude = location.longitude
 
-        Plat = latitude
-        Plon = longitude
-        formattedLatitudeSelect = String.format("%.4f", Plat)
-        formattedLongitudeSelect = String.format("%.4f", Plon)
+        formattedLatitudeSelect = String.format("%.4f", latitude)
+        formattedLongitudeSelect = String.format("%.4f", longitude)
+        formattedLatitudeLat =  LatLng(latitude, longitude)
 
         /*  Log.e(
               "LocationDetails", "Formatted Latitude: $formattedLatitudeSelect," +
@@ -365,6 +566,30 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
+                val data = response.peekContent().data!!
+                for (item in data)
+                {
+                    poiName = item.poiname ?: ""
+                    poiType = item.poitype ?: ""
+                    couponCode = item.couponcode ?: ""
+                    startDate = item.startdate ?: ""
+                    endDate = item.enddate ?: ""
+                    limit = item.limit ?: 0
+                    poiAddress = item.poiaddress ?: ""
+                    poiCity = item.poicity ?: ""
+                    poiDesc = item.description ?: ""
+                    val baseUrl = "http://69.49.235.253:8090"
+                    val imagePath = item?.poiimage.orEmpty()
+                    imageUrl = "$baseUrl$imagePath"
+
+                    poiLocation = LatLng(item!!.poilatitude!!.toDouble() ?: 0.0, item!!.poilongitude!!.toDouble())
+
+
+                    // You can now use these variables as needed
+                    Log.d("DataItem", "POI Name: $poiName, POI Type: $poiType")
+                }
+                updatePoiLocation(poiLocation,poiName,poiType,imageUrl)
+
                 afterDetailsApi()
                 getDistanceApi()
             }
@@ -374,6 +599,29 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             // errorDialogs()
         }
     }
+
+    private fun updatePoiLocation(
+        location: LatLng,
+        poiName: String,
+        poiType: String,
+        imageUrl: String?
+    ) {
+        // Check if mMap is initialized before adding the marker
+        if (::mMap.isInitialized) {
+            val markerOptions = MarkerOptions()
+                .position(location)
+                .title(poiName) // Set the marker title to poiName
+                .snippet(poiType) // Set the marker snippet (description) to poiType
+               // .icon(BitmapDescriptorFactory.fromBitmap(imageUrl)) // Set the marker icon
+
+            mMap.addMarker(markerOptions)
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+        } else {
+            Log.e("updatePoiLocation", "mMap is not initialized")
+        }
+    }
+
 
     private fun completedRideApi() {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
@@ -387,7 +635,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                showFeedbackPopup()
+                showDeliveryPopUp()
+
+
             }
         }
         startTripViewModel.errorResponse.observe(this) {
@@ -605,11 +855,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripViewModel.mStartTripResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
-
             }
         }
 
@@ -654,12 +902,27 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.isTrafficEnabled = true
-        // Add markers for pickup and drop locations
-        mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pickup Location"))
-        mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop Location"))
+        requestLocationUpdates()
 
-        // Move camera to the initial pickup location
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))
+        // Add markers for pickup and drop locations
+        if (::formattedLatitudeLat.isInitialized) {
+            mMap.addMarker(MarkerOptions().position(formattedLatitudeLat).title("Current Location"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
+            mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
+        }
+        else
+        {
+            mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
+            mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop-off Location"))
+            // Move camera to the initial pickup location
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))
+        }
+
+        // Move camera to the first location in locationArrayList (if available)
+        if (locationArrayList.isNotEmpty()) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationArrayList[0]!!, 14f))
+        }
+
 
         // Enable my location button and request location permission
         if (ActivityCompat.checkSelfPermission(
@@ -679,16 +942,28 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         mMap.isMyLocationEnabled = true
 
-        // Get and draw route when map is ready
-        getLastLocationAndDrawRoute()
+        if (::formattedLatitudeLat.isInitialized) {
+            mMap.addMarker(MarkerOptions().position(formattedLatitudeLat).title("Current Location"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
+            mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
+            // Get and draw route when map is ready
+            getLastLocationAndDrawRoute()
+            mMap.setOnMyLocationChangeListener { location ->
+                val userLocation = LatLng(location.latitude, location.longitude)
+                checkDestinationReached(userLocation, dropLocation)
+            }
 
-        mMap.setOnMyLocationChangeListener { location ->
-            val userLocation = LatLng(location.latitude, location.longitude)
-            checkDestinationReached(userLocation, dropLocation)
         }
+        else
+        {
+            getLastLocationAndDrawRouteFromPickToDrop1()
+            mMap.setOnMyLocationChangeListener { location ->
+                val userLocation = LatLng(location.latitude, location.longitude)
+                checkDestinationReached(pickupLocation, dropLocation)
+            }
+        }
+
     }
-
-
     private fun getLastLocationAndDrawRoute() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -708,11 +983,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    drawRoute(LatLng(location.latitude, location.longitude))
-                    Log.e(
-                        "location",
-                        "location.." + location.latitude + "longitude " + location.longitude
-                    )
+                    drawRoute(LatLng(location.latitude, location.longitude), 0)
+                    Log.e("location", "location..${location.latitude} longitude ${location.longitude}")
                 }
             }
             .addOnFailureListener { e ->
@@ -723,6 +995,39 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 ).show()
             }
     }
+
+    private fun getLastLocationAndDrawRouteFromPickToDrop1() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    drawRoute(LatLng(Plat, Plon), 1)
+                    Log.e("location", "location..${Plat} longitude ${Plon}")
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    this,
+                    "Failed to get location: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
 
     private fun checkDestinationReached(userLocation: LatLng, destinationLocation: LatLng) {
         val distanceToDestination = calculateDistance(userLocation, destinationLocation)
@@ -736,6 +1041,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+
     // Calculate distance between two LatLng points using Haversine formula
     private fun calculateDistance(startLatLng: LatLng, endLatLng: LatLng): Float {
         val earthRadius = 6371000 // Radius of the Earth in meters
@@ -748,17 +1054,29 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         return (earthRadius * c).toFloat()
     }
 
-    private fun drawRoute(latLng: LatLng) {
+    private fun drawRoute(latLng: LatLng,routeType: Int) {
         val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
             .build()
 
-        Log.e("location", "location.." + latLng.latitude + "longitude " + latLng.longitude)
+        val origin = when (routeType) {
+            0 -> "${latLng.latitude},${latLng.longitude}"
+            1 -> "${Plat},${Plon}"
+            else -> "${latLng.latitude},${latLng.longitude}"
+        }
+
+        val destination = when (routeType) {
+            0 -> "${pickupLocation.latitude},${pickupLocation.longitude}"
+            1 -> "${dropLocation.latitude},${dropLocation.longitude}"
+            else -> "${pickupLocation.latitude},${pickupLocation.longitude}"
+        }
+
+        Log.e("location", "origin: $origin, destination: $destination")
         val result: DirectionsResult = DirectionsApi.newRequest(context)
             .mode(TravelMode.DRIVING)
-            .origin("${latLng.latitude},${latLng.longitude}")
-            .destination("${dropLocation.latitude},${dropLocation.longitude}")
+            .origin(origin)
+            .destination(destination)
             .await()
 
         // Decode polyline and draw on map

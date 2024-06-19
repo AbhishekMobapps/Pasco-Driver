@@ -276,5 +276,7 @@
     <string name="emergency_help">Emergency Help</string>
     <string name="all_nearby_available_drivers_for_help">All Nearby Available Drivers for Help</string>
     <string name="driver_namee">Driver Name</string>
+    <string name="select_proof_of_delivery">Select proof of delivery</string>
+    <string name="images_can_be_saved_only_once_you_can_not_edit_of_re_upload">Images can be saved only once.You can not edit of re-upload</string>
 
 </resources>
