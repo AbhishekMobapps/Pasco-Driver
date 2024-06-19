@@ -59,9 +59,9 @@ class LocationsActivity : AppCompatActivity(), OnMapReadyCallback {
         pickYourLocation = intent.getStringExtra("pickYourLocation").toString()
 
         if (pickYourLocation == "pickYourLocation") {
-            binding.locationTxt.text = "Pic Start Points"
+            binding.locationTxt.text = "Pick Start Points"
         } else {
-            binding.locationTxt.text = "Pic Destination Points"
+            binding.locationTxt.text = "Pick Destination Points"
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
