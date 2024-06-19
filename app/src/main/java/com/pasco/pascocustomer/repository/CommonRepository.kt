@@ -4,6 +4,7 @@ import VehicleTypeResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
+import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.application.PascoApp
@@ -169,6 +170,16 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     ): Observable<UpdateProfileResponse> {
         return apiService.updateProfile(
             PascoApp.encryptedPrefs.bearerToken, full_name, email, current_city, image
+        )
+    }
+
+    fun uploadDeliveryProofRepo(
+        booking_confimation: RequestBody,
+        driverID: RequestBody,
+        delivery_image: MultipartBody.Part
+    ): Observable<DeliveryProofResponse> {
+        return apiService.addDeliveryProof(
+            PascoApp.encryptedPrefs.bearerToken, booking_confimation, driverID, delivery_image
         )
     }
 
