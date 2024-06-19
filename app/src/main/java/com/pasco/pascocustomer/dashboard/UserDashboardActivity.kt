@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
@@ -55,6 +56,7 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var profileUpdate = ""
     private var notificaion = ""
+    private var profile = ""
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +64,11 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         setContentView(binding.root)
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
+        profile = PascoApp.encryptedPrefs.profileUpdate
+        if (profile == "0") {
+            showCalenderPopup()
+        }
+
 
         if (profileUpdate == "update") {
             navItemIndex = 1
@@ -262,6 +269,7 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
             val success = it.peekContent().status
             val users = it.peekContent().data
             binding.userName.text = users?.fullName
+            binding.cityName.text = users?.currentCity
 
             val url = it.peekContent().data?.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url)
@@ -314,34 +322,7 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
 
 
 
-    private fun showCalenderPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.reminder_user_layout)
 
-
-        val titleTxt = dialog.findViewById<TextView>(R.id.titleTxt)
-        val descriptionTxt = dialog.findViewById<TextView>(R.id.descriptionTxt)
-        val dateTimeTxt = dialog.findViewById<TextView>(R.id.dateTimeTxt)
-        val okBtn = dialog.findViewById<TextView>(R.id.okBtn)
-
-        okBtn.setOnClickListener { dialog.dismiss() }
-        val window = dialog.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog.show()
-    }
 
     override fun deleteNotification(position: Int, id: Int) {
         val reminder = id
@@ -357,7 +338,35 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     }
 
 
+    private fun showCalenderPopup() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.update_profile_popup)
 
+        val yesBtn = dialog.findViewById<TextView>(R.id.yesBtn)
+        val cancel = dialog.findViewById<TextView>(R.id.cancelBtn)
+
+        cancel.setOnClickListener { finish() }
+        yesBtn.setOnClickListener {
+            val intent = Intent(this, UserDashboardActivity::class.java)
+            intent.putExtra("profileUpdate", "update")
+            startActivity(intent)
+        }
+        val window = dialog.window
+        val lp = window?.attributes
+        if (lp != null) {
+            lp.width = ActionBar.LayoutParams.MATCH_PARENT
+        }
+        if (lp != null) {
+            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
+        }
+        if (window != null) {
+            window.attributes = lp
+        }
+
+        dialog.show()
+    }
 
 
 

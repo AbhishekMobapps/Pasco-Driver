@@ -97,13 +97,25 @@ class OtpVerifyActivity : AppCompatActivity() {
         Log.e("LogValueAA", "loginValue " + loginValue)
 
         binding.continueBtn.setOnClickListener {
-            val verificationCode =
-                "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
-            val credential: PhoneAuthCredential =
-                PhoneAuthProvider.getCredential(verificationId, verificationCode)
-            signInWithPhoneAuthCredential(credential, deviceModel)
-            /* val intent = Intent(this, DashboardActivity::class.java)
-             startActivity(intent)*/
+            val otpFields = listOf(
+                binding.box5.text.toString(),
+                binding.box1.text.toString(),
+                binding.box2.text.toString(),
+                binding.box3.text.toString(),
+                binding.box4.text.toString(),
+                binding.box6.text.toString()
+            )
+            if (otpFields.any { it.isEmpty() }) {
+                Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
+            } else {
+                val verificationCode =
+                    "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
+                val credential: PhoneAuthCredential =
+                    PhoneAuthProvider.getCredential(verificationId, verificationCode)
+                signInWithPhoneAuthCredential(credential, deviceModel)
+            }
+
+
         }
         editTextList.addAll(
             listOf(
@@ -203,8 +215,8 @@ class OtpVerifyActivity : AppCompatActivity() {
                 } else {
                     // Sign in failed
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                        clearOtpFields()
+                        Toast.makeText(this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
+                        //   clearOtpFields()
                     }
                 }
             }

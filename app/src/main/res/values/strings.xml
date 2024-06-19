@@ -276,5 +276,6 @@
     <string name="emergency_help">Emergency Help</string>
     <string name="all_nearby_available_drivers_for_help">All Nearby Available Drivers for Help</string>
     <string name="driver_namee">Driver Name</string>
+    <string name="city">City</string>
 
 </resources>

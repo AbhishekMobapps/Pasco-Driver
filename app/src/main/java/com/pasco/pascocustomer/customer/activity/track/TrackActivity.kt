@@ -242,7 +242,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         return (earthRadius * c).toFloat()
     }
 
-    /*private fun drawRoute(latLng: LatLng) {
+    private fun drawRoute(latLng: LatLng) {
         val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
@@ -266,66 +266,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //mMap.clear() // Clear previous route
 
-    }*/
-
-    private fun drawRoute(startLocation: LatLng) {
-        if (dropLocation == null) return
-
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ"
-        if (apiKey.isBlank()) {
-            Toast.makeText(this, "API key is missing.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val geoApiContext = GeoApiContext.Builder()
-            .apiKey(apiKey)
-            .build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val directionsResult: DirectionsResult = DirectionsApi.newRequest(geoApiContext)
-                    .mode(TravelMode.DRIVING)
-                    .origin(com.google.maps.model.LatLng(startLocation.latitude, startLocation.longitude))
-                    .destination(com.google.maps.model.LatLng(dropLocation!!.latitude, dropLocation!!.longitude))
-                    .await()
-
-                runOnUiThread {
-                    val route = directionsResult.routes.firstOrNull()
-                    if (route != null) {
-                        val polylineOptions = PolylineOptions()
-                            .color(Color.RED)
-                            .width(5f)
-
-                        route.legs.forEach { leg ->
-                            leg.steps.forEach { step ->
-                                val points = step.polyline.decodePath().map { point ->
-                                    LatLng(point.lat, point.lng)
-                                }
-                                polylineOptions.addAll(points)
-                            }
-                        }
-
-                        mMap.addPolyline(polylineOptions)
-
-                        // Move camera to the route
-                        val bounds = route.bounds
-                        val latLngBounds = com.google.android.gms.maps.model.LatLngBounds(
-                            LatLng(bounds.southwest.lat, bounds.southwest.lng),
-                            LatLng(bounds.northeast.lat, bounds.northeast.lng)
-                        )
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100))
-                    } else {
-                        Toast.makeText(this@TrackActivity, "No routes found.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    Toast.makeText(this@TrackActivity, "Failed to get directions: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
+
+
 
     private fun decodePolyline(encoded: String): List<LatLng> {
         val poly = ArrayList<LatLng>()
@@ -519,7 +462,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         handler?.removeCallbacks(runnable)
     }
 
- /*   private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
+    private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
         val context = GeoApiContext.Builder()
             .apiKey("AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30")
             .build()
@@ -550,63 +493,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
             }
         }
-    }*/
-
-    private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ"
-        if (apiKey.isBlank()) {
-            Toast.makeText(this, "API key is missing.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val geoApiContext = GeoApiContext.Builder()
-            .apiKey(apiKey)
-            .build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val directionsResult = DirectionsApi.newRequest(geoApiContext)
-                    .origin(com.google.maps.model.LatLng(currentLocation.latitude, currentLocation.longitude))
-                    .destination(com.google.maps.model.LatLng(destination.latitude, destination.longitude))
-                    .mode(TravelMode.DRIVING)
-                    .await()
-
-                runOnUiThread {
-                    val route = directionsResult.routes.firstOrNull()
-                    if (route != null) {
-                        mMap.clear() // Clear previous polylines
-                        val polylineOptions = PolylineOptions()
-                            .color(Color.RED)
-                            .width(5f)
-
-                        route.legs.forEach { leg ->
-                            leg.steps.forEach { step ->
-                                val points = step.polyline.decodePath().map { point ->
-                                    LatLng(point.lat, point.lng)
-                                }
-                                polylineOptions.addAll(points)
-                            }
-                        }
-
-                        mMap.addPolyline(polylineOptions)
-                        val bounds = route.bounds
-                        val latLngBounds = com.google.android.gms.maps.model.LatLngBounds(
-                            LatLng(bounds.southwest.lat, bounds.southwest.lng),
-                            LatLng(bounds.northeast.lat, bounds.northeast.lng)
-                        )
-                       // mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100))
-                    } else {
-                        Toast.makeText(this@TrackActivity, "No routes found.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    Toast.makeText(this@TrackActivity, "Failed to get directions: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
+
+
 
 
     override fun onRequestPermissionsResult(
@@ -640,44 +529,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    /*private fun showFeedbackPopup() {
-         dialog = Dialog(this)
-        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog?.setCancelable(true)
-        dialog?.setContentView(R.layout.feedback_popup)
 
-
-        val ratingBar = dialog?.findViewById<RatingBar>(R.id.ratingBar)
-        val commentTxt = dialog?.findViewById<EditText>(R.id.commentTxt)
-        val submitBtn = dialog?.findViewById<TextView>(R.id.submitBtn)
-
-        var ratingBars = ""
-        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-            ratingBars = rating.toString()
-        }
-
-        submitBtn?.setOnClickListener {
-
-            feedbackApi(commentTxt?.text.toString(), ratingBars)
-            feedbackObserver()
-        }
-
-        val window = dialog?.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog?.show()
-    }*/
 
     private fun showFeedbackPopup() {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
