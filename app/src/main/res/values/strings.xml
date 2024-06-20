@@ -39,7 +39,7 @@
     <string name="selectTransType">Select Transporter Type</string>
     <string name="selectVehicleType">Select vehicle type</string>
     <string name="pick_start_point">Pickup Point</string>
-    <string name="pick_destination_point">Dropping Point</string>
+    <string name="pick_destination_point">Destination Point</string>
     <string name="cargo_qty">Cargo Qty</string>
     <string name="payment_method">Payment Method</string>
     <string name="your_message">Your Message</string>
@@ -279,6 +279,9 @@
     <string name="city">City</string>
     <string name="select_proof_of_delivery">Select proof of delivery</string>
     <string name="images_can_be_saved_only_once_you_can_not_edit_of_re_upload">Images can be saved only once.You can not edit of re-upload</string>
+    <string name="select_time">Select Time</string>
+    <string name="select_date">Select Date</string>
+    <string name="all_bids_details">All Bids Details</string>
 
 
 </resources>

@@ -167,7 +167,8 @@ class AllTabPayActivity : AppCompatActivity() {
                 if (count > minValue) { // Check if count is greater than 0 before subtracting
                     count--
                     commonCount--
-                    binding.cargoQtyTxt.text = count.toString()
+
+                    binding.cargoQtyTxt.text = "Cargo Qty"
                 }
             }
 
@@ -429,15 +430,17 @@ class AllTabPayActivity : AppCompatActivity() {
             Toast.makeText(this, "Please select destination location", Toast.LENGTH_SHORT).show()
         } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(R.string.selectVehicleType)) {
             Toast.makeText(this, "Please Select Vehicle", Toast.LENGTH_SHORT).show()
-        } else if (binding.cargoQtyTxt.text.isNullOrBlank()) {
+        } else if (binding.cargoQtyTxt.text.isEmpty()) {
             Toast.makeText(this, "Please enter quantity", Toast.LENGTH_SHORT).show()
-        } else if (binding.dateTxt.text.isNullOrBlank()) {
+        } else if (binding.dateTxt.text.isEmpty()) {
             Toast.makeText(this, "Please select date", Toast.LENGTH_SHORT).show()
-        } else if (binding.timeTxt.text.isNullOrBlank()) {
+        } else if (binding.timeTxt.text.isEmpty()) {
             Toast.makeText(this, "Please select time", Toast.LENGTH_SHORT).show()
-        } /*else if (binding.cashRadioButton.isChecked || binding.walletRadioButton.isChecked || binding.visaRadioButton.isChecked) {
+        } else if (!binding.cashRadioButton.isChecked && !binding.walletRadioButton.isChecked && !binding.visaRadioButton.isChecked) {
             Toast.makeText(this, "Please select payment method", Toast.LENGTH_SHORT).show()
-        }*/ else {
+        } else if (binding.yourMsg.text.isEmpty()) {
+            Toast.makeText(this, "Please drop your message", Toast.LENGTH_SHORT).show()
+        } else {
             bookTripPopup()
         }
     }

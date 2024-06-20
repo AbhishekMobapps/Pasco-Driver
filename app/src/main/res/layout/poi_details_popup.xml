@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/iv_coupon_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contentDescription="Coupon Image"/>
+
+    <TextView
+        android:id="@+id/tv_coupon_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coupon Title"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_coupon_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coupon Type"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_coupon_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coupon Code"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_coupon_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Date"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_coupon_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Date"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_coupon_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Limit"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_poi_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POI Address"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_poi_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POI City"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_poi_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="POI Description"
+        android:textSize="14sp" />
+</LinearLayout>

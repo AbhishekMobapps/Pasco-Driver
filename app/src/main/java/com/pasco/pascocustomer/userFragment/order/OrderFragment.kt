@@ -74,6 +74,7 @@ class OrderFragment : Fragment() {
             binding.oderRecycler.visibility = View.GONE
             binding.allBiddsRecycler.visibility = View.VISIBLE
             binding.acceptRecycler.visibility = View.GONE
+            binding.noDataFoundTxt.visibility = View.GONE
             binding.asAcceptConst.setBackgroundResource(0)
             binding.ordersConst.setBackgroundResource(0)
             getAllBiddsApi()
@@ -87,6 +88,7 @@ class OrderFragment : Fragment() {
             binding.oderRecycler.visibility = View.GONE
             binding.allBiddsRecycler.visibility = View.GONE
             binding.acceptRecycler.visibility = View.VISIBLE
+            binding.noDataFoundTxt.visibility = View.GONE
             binding.allBiddsConst.setBackgroundResource(0)
             binding.ordersConst.setBackgroundResource(0)
             getAcceptedApi()
