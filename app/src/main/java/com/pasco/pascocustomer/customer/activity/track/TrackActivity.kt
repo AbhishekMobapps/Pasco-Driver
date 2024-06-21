@@ -323,15 +323,31 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
 
             Log.e("ShowDetails","API....Details")
+            val distance = response.peekContent().data?.totalDistance
 
-            val kilometers = response.peekContent().data?.totalDistance
-            val meters = convertKilometersToMeters(kilometers!!)
-            binding.totalDistanceBidd.text = "Km $kilometers\nmtr: $meters"
+            val formattedTotalDistance = "%.1f".format(response.peekContent().data?.totalDistance ?: 0.0)
+            binding.totalDistanceBidd.text = "$formattedTotalDistance km"
 
             val url = response.peekContent().data!!.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
             Log.e("AAAAAA", "0001")
 
+            val duration = response?.peekContent()?.data!!.duration.toString()
+            val durationInSeconds = duration.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min %02d sec", hours, minutes, seconds)
+                } else {
+                    String.format("%d min %02d sec", minutes, seconds)
+                }
+            }
+
+            binding.routeTime.text = formattedDuration
         }
 
         trackDetailsModelView.errorResponse.observe(this) {

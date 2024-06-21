@@ -44,6 +44,7 @@ class OrderAdapter(
         holder.oderIdTxt.text = truncateBookingNumber(orderList[position].bookingNumber.toString())
         holder.itemView.setOnClickListener {
             showFullAddressDialog(
+                orderList[position].user.toString(),
                 orderList[position].bookingNumber.toString(),
                 orderList[position].pickupLocation.toString(),
                 orderList[position].dropLocation.toString(),
@@ -97,12 +98,14 @@ class OrderAdapter(
        }*/
 
     private fun showFullAddressDialog(
+        name: String,
         bookingNumber: String,
         pickupLocation: String,
         dropLocations: String,
         totalDistance: String,
         pickupDatetime: String,
         basicprice: String
+
     ) {
         val dialog = Dialog(required)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -116,11 +119,13 @@ class OrderAdapter(
         val distanceTxt = dialog.findViewById<TextView>(R.id.distanceTxt)
         val dateTxt = dialog.findViewById<TextView>(R.id.dateTxt)
         val totalPriceTxt = dialog.findViewById<TextView>(R.id.totalPriceTxt)
+        val userName = dialog.findViewById<TextView>(R.id.userName)
 
         oderIdTxt.text = bookingNumber
         pickUpLocation.text = pickupLocation
         dropLocation.text = dropLocations
         totalPriceTxt.text = "$ $basicprice"
+        userName.text = name
 
         val distanceValue = totalDistance.toDoubleOrNull() ?: 0.0 // Convert distance to Double
         val formattedDistance = String.format("%.2f", distanceValue)
