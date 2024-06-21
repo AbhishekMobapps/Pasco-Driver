@@ -268,6 +268,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+
+
     private fun decodePolyline(encoded: String): List<LatLng> {
         val poly = ArrayList<LatLng>()
         var index = 0
@@ -321,15 +323,31 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
 
             Log.e("ShowDetails","API....Details")
+            val distance = response.peekContent().data?.totalDistance
 
-            val kilometers = response.peekContent().data?.totalDistance
-            val meters = convertKilometersToMeters(kilometers!!)
-            binding.totalDistanceBidd.text = "Km $kilometers\nmtr: $meters"
+            val formattedTotalDistance = "%.1f".format(response.peekContent().data?.totalDistance ?: 0.0)
+            binding.totalDistanceBidd.text = "$formattedTotalDistance km"
 
             val url = response.peekContent().data!!.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
             Log.e("AAAAAA", "0001")
 
+            val duration = response?.peekContent()?.data!!.duration.toString()
+            val durationInSeconds = duration.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min %02d sec", hours, minutes, seconds)
+                } else {
+                    String.format("%d min %02d sec", minutes, seconds)
+                }
+            }
+
+            binding.routeTime.text = formattedDuration
         }
 
         trackDetailsModelView.errorResponse.observe(this) {
@@ -462,7 +480,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
         val context = GeoApiContext.Builder()
-            .apiKey("YOUR_GOOGLE_MAPS_API_KEY")
+            .apiKey("AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30")
             .build()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -492,6 +510,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
+
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -524,44 +545,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    /*private fun showFeedbackPopup() {
-         dialog = Dialog(this)
-        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog?.setCancelable(true)
-        dialog?.setContentView(R.layout.feedback_popup)
 
-
-        val ratingBar = dialog?.findViewById<RatingBar>(R.id.ratingBar)
-        val commentTxt = dialog?.findViewById<EditText>(R.id.commentTxt)
-        val submitBtn = dialog?.findViewById<TextView>(R.id.submitBtn)
-
-        var ratingBars = ""
-        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-            ratingBars = rating.toString()
-        }
-
-        submitBtn?.setOnClickListener {
-
-            feedbackApi(commentTxt?.text.toString(), ratingBars)
-            feedbackObserver()
-        }
-
-        val window = dialog?.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-
-
-        dialog?.show()
-    }*/
 
     private fun showFeedbackPopup() {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)

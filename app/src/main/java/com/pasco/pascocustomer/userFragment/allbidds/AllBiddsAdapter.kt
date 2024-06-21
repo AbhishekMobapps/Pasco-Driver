@@ -68,7 +68,7 @@ class AllBiddsAdapter(
             e.printStackTrace()
         }
 
-        holder.showDetailsBtn.setOnClickListener {
+        holder.itemView.setOnClickListener {
             val id = orderList[position].id
             val intent = Intent(required, AllBiddsDetailsActivity::class.java)
             intent.putExtra("userName", orderList[position].user)

@@ -94,10 +94,7 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
             val success = response.peekContent().status
             if (success == "False") {
                 // Handle unsuccessful login
-
                 Toast.makeText(this@NotesRemainderActivity, message, Toast.LENGTH_SHORT).show()
-
-
             } else {
 
                 getReminderApi()
@@ -132,7 +129,12 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
         backArrowAddNotes?.setOnClickListener { dialog?.dismiss() }
         saveBtnAddNotes?.setOnClickListener {
 
-            validation(startDateTxtNotes!!, startTimetxtNotes!!, addSubjectEdittext!!, commentAddNotesReminder!!)
+            validation(
+                startDateTxtNotes!!,
+                startTimetxtNotes!!,
+                addSubjectEdittext!!,
+                commentAddNotesReminder!!
+            )
         }
 
         startDateTxtNotes?.setOnClickListener {
@@ -226,7 +228,11 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
                 Toast.LENGTH_SHORT
             ).show()
         } else if (commentAddNotesReminder.text.isNullOrBlank()) {
-            Toast.makeText(this@NotesRemainderActivity, "Please add the description", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@NotesRemainderActivity,
+                "Please add the description",
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
             //call api
             notesReminderApi(addSubjectEdittext, commentAddNotesReminder)
@@ -250,17 +256,20 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
         reminderModelView.mRejectResponse.observe(this@NotesRemainderActivity) { response ->
             val message = response.peekContent().msg!!
             val success = response.peekContent().status
-            reminderList = response.peekContent().data!!
 
-            Log.e("NotificationListAA", "aaa" + reminderList!!.size)
             if (success == "True") {
+                reminderList = response.peekContent().data!!
                 if (reminderList!!.isEmpty()) {
                     binding.noDataFoundTxt.visibility = View.VISIBLE
+                    binding.constRecycler.visibility = View.GONE
+                    Log.e("NoteReminderA","aaa")
 
                 } else {
+                    Log.e("NoteReminderA","addNotesRecycler..")
                     binding.constRecycler.visibility = View.VISIBLE
                     binding.addNotesRecycler.isVerticalScrollBarEnabled = true
                     binding.addNotesRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.noDataFoundTxt.visibility = View.GONE
                     binding.addNotesRecycler.layoutManager =
                         LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
                     reminderAdapter = ReminderAdapter(this, this, reminderList!!)
@@ -294,7 +303,7 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
             val message = it.peekContent().msg
             val success = it.peekContent().status
 
-        //    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            //    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             getReminderApi()
         }
         deleteReminderModelView.errorResponse.observe(this@NotesRemainderActivity) {

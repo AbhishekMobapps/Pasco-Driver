@@ -87,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
             token = task.result
 
             // Log the token
-            Log.e("MainActivityAA", "FCM Registration Token: $token")
+
 
             // Send token to your server if needed
             // sendTokenToServer(token)
@@ -297,6 +297,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginApi() {
         //   val codePhone = strPhoneNo
+        Log.e("MainActivityAA", "FCM Registration Token: $token")
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
