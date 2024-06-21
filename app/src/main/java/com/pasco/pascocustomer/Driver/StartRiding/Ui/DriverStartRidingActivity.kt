@@ -6,6 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -40,6 +44,8 @@ import com.android.volley.ServerError
 import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -64,11 +70,14 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateRespon
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.MarkerData
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
+import com.pasco.pascocustomer.Driver.adapter.PoiInfoAdapter
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
+import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyMainActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.ChatActivity
@@ -112,6 +121,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dropLocation: LatLng
     private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
+    private var spinnerDriverStatus= ""
     private var driverStatus = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
@@ -148,6 +158,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiDesc: String
     private lateinit var poiImage: String
     private lateinit var locationArrayList: ArrayList<LatLng?>
+    private lateinit var updatedDriverStatus:String
 
 
     companion object {
@@ -198,13 +209,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         requestLocationUpdates()
         //camera permission
         requestPermission()
-        binding.finishTripTextView.setOnClickListener {
-            completedRideApi()
-            completedRideObserver()
-        }
-
         driverStatusList()
         driverStatusObserver()
+
+        updatedDriverStatus = PascoApp.encryptedPrefs.DriverStatus
 
         //call observer
         updateLocationObserver()
@@ -226,12 +234,15 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
+                        spinnerDriverStatus = routeType?.get(i)?.status.toString()
+                        PascoApp.encryptedPrefs.DriverStatus = spinnerDriverStatus
                         Log.e("onItemSelected", spinnerDriverSId)
 
                         //call vehicleType
                         if (!spinnerDriverSId.isNullOrBlank()) {
                             val sId = spinnerDriverSId
                             startTrip(sId)
+                            binding.finishTripTextView.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -263,11 +274,26 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this@DriverStartRidingActivity, ChatActivity::class.java)
             startActivity(intent)
         }
-
+        binding.emergencyTextView.setOnClickListener {
+            val intent = Intent(this@DriverStartRidingActivity, EmergencyMainActivity::class.java)
+            intent.putExtra("bookingIdForHelp", Bid)
+            startActivity(intent)
+        }
         binding.finishTripTextView.setOnClickListener {
-            completedRideApi()
+             if (spinnerDriverSId.isNullOrBlank())
+             {
+                 Toast.makeText(this@DriverStartRidingActivity, "Please select status", Toast.LENGTH_SHORT).show()
+             }
+            else
+             {
+                 completedRideApi()
+             }
+
             completedRideObserver()
         }
+
+
+
 
 
     }
@@ -330,14 +356,16 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         deliveryProofViewModel.mDeliveryProofResponse.observe(
             this
         ) {
+            val driverIDs = it.peekContent().message?.driverID.orEmpty()
+            val message = if (driverIDs.isNotEmpty()) driverIDs.joinToString(", ") else "No Driver ID"
 
-            var message = it.peekContent().msg!!
             var status = it.peekContent().status!!
-            if (status.equals("False")) {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            if (status == "True") {
+                Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+                showFeedbackPopup()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                showFeedbackPopup()
+
             }
 
         }
@@ -515,7 +543,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         formattedLatitudeSelect = String.format("%.4f", latitude)
         formattedLongitudeSelect = String.format("%.4f", longitude)
-        formattedLatitudeLat =  LatLng(latitude, longitude)
+        formattedLatitudeLat = LatLng(latitude, longitude)
 
         /*  Log.e(
               "LocationDetails", "Formatted Latitude: $formattedLatitudeSelect," +
@@ -560,35 +588,43 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateLocationObserver() {
-
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
                 val data = response.peekContent().data!!
-                for (item in data)
-                {
-                    poiName = item.poiname ?: ""
-                    poiType = item.poitype ?: ""
-                    couponCode = item.couponcode ?: ""
-                    startDate = item.startdate ?: ""
-                    endDate = item.enddate ?: ""
-                    limit = item.limit ?: 0
-                    poiAddress = item.poiaddress ?: ""
-                    poiCity = item.poicity ?: ""
-                    poiDesc = item.description ?: ""
+                for (item in data) {
+                    val poiName = item.poiname ?: ""
+                    val poiType = item.poitype ?: ""
+                    val couponCode = item.couponcode ?: ""
+                    val startDate = item.startdate ?: ""
+                    val endDate = item.enddate ?: ""
+                    val limit = item.limit ?: 0
+                    val poiAddress = item.poiaddress ?: ""
+                    val poiCity = item.poicity ?: ""
+                    val poiDesc = item.description ?: ""
                     val baseUrl = "http://69.49.235.253:8090"
-                    val imagePath = item?.poiimage.orEmpty()
-                    imageUrl = "$baseUrl$imagePath"
+                    val imagePath = item.poiimage.orEmpty()
+                    val imageUrl = "$baseUrl$imagePath"
+                    val poiLocation =
+                        LatLng(item.poilatitude!!.toDouble(), item.poilongitude!!.toDouble())
 
-                    poiLocation = LatLng(item!!.poilatitude!!.toDouble() ?: 0.0, item!!.poilongitude!!.toDouble())
+                    val markerData = MarkerData(
+                        poiName = poiName,
+                        poiType = poiType,
+                        couponCode = couponCode,
+                        startDate = startDate,
+                        endDate = endDate,
+                        limit = limit,
+                        poiAddress = poiAddress,
+                        poiCity = poiCity,
+                        poiDesc = poiDesc,
+                        imageUrl = imageUrl
+                    )
 
-
-                    // You can now use these variables as needed
-                    Log.d("DataItem", "POI Name: $poiName, POI Type: $poiType")
+                    updatePoiLocation(poiLocation, markerData)
                 }
-                updatePoiLocation(poiLocation,poiName,poiType,imageUrl)
 
                 afterDetailsApi()
                 getDistanceApi()
@@ -596,32 +632,83 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         updateLocationViewModel.errorResponse.observe(this@DriverStartRidingActivity) {
             ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
-            // errorDialogs()
         }
     }
 
-    private fun updatePoiLocation(
-        location: LatLng,
-        poiName: String,
-        poiType: String,
-        imageUrl: String?
-    ) {
-        // Check if mMap is initialized before adding the marker
-        if (::mMap.isInitialized) {
-            val markerOptions = MarkerOptions()
-                .position(location)
-                .title(poiName) // Set the marker title to poiName
-                .snippet(poiType) // Set the marker snippet (description) to poiType
-               // .icon(BitmapDescriptorFactory.fromBitmap(imageUrl)) // Set the marker icon
 
-            mMap.addMarker(markerOptions)
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+    /*
+        private fun updatePoiLocation(
+            location: LatLng,
+            poiName: String,
+            poiType: String,
+            imageUrl: String?
+        ) {
+            // Check if mMap is initialized before adding the marker
+            if (::mMap.isInitialized) {
+                val markerOptions = MarkerOptions()
+                    .position(location)
+                    .title(poiName) // Set the marker title to poiName
+                    .snippet(poiType) // Set the marker snippet (description) to poiType
+                   // .icon(BitmapDescriptorFactory.fromBitmap(imageUrl)) // Set the marker icon
+
+                mMap.addMarker(markerOptions)
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+            } else {
+                Log.e("updatePoiLocation", "mMap is not initialized")
+            }
+        }
+    */
+    private fun updatePoiLocation(location: LatLng, markerData: MarkerData) {
+        if (::mMap.isInitialized) {
+            Glide.with(this)
+                .asBitmap()
+                .load(markerData.imageUrl)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        val greenMarker = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(greenMarker)
+                        val paint = Paint()
+                        paint.color = Color.GREEN
+                        canvas.drawCircle(50f, 50f, 50f, paint)
+
+                        val markerOptions = MarkerOptions()
+                            .position(location)
+                            .icon(BitmapDescriptorFactory.fromBitmap(greenMarker))
+
+                        val marker = mMap.addMarker(markerOptions)
+                        marker?.tag = markerData
+
+                        var isInfoWindowShown = false
+
+                        mMap.setOnMarkerClickListener { marker ->
+                            if (!isInfoWindowShown) {
+                                marker.showInfoWindow()
+                                isInfoWindowShown =
+                                    true // Set flag to true since info window is shown
+                            } else {
+                                marker.hideInfoWindow()
+                                isInfoWindowShown =
+                                    false // Set flag to false since info window is hidden
+                            }
+
+                            true // Return true to consume the event
+                        }
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        // Handle any cleanup here if needed
+                    }
+                })
         } else {
             Log.e("updatePoiLocation", "mMap is not initialized")
         }
     }
-
 
     private fun completedRideApi() {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
@@ -634,7 +721,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+              //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 showDeliveryPopUp()
 
 
@@ -828,7 +915,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-            dAdapter.getPosition(getString(R.string.selectStatus))
+            val spinnerPosition = if (updatedDriverStatus.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectStatus))
+            } else {
+                dAdapter.getPosition(updatedDriverStatus)
+            }
+            binding.routeSpinnerSpinner.setSelection(spinnerPosition)
 
             if (response.peekContent().status.equals("False")) {
 
@@ -855,9 +947,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripViewModel.mStartTripResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                binding.finishTripTextView.visibility = View.GONE
             }
         }
 
@@ -909,9 +1002,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.addMarker(MarkerOptions().position(formattedLatitudeLat).title("Current Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
             mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
-        }
-        else
-        {
+        } else {
             mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
             mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop-off Location"))
             // Move camera to the initial pickup location
@@ -953,17 +1044,29 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 checkDestinationReached(userLocation, dropLocation)
             }
 
-        }
-        else
-        {
+        } else {
             getLastLocationAndDrawRouteFromPickToDrop1()
             mMap.setOnMyLocationChangeListener { location ->
                 val userLocation = LatLng(location.latitude, location.longitude)
                 checkDestinationReached(pickupLocation, dropLocation)
             }
         }
+        // Assuming this is inside an Activity or Fragment where you have access to a valid context
+
+// Ensure mMap is initialized properly
+        if (::mMap.isInitialized) {
+            // Initialize the PoiInfoAdapter with appropriate context
+            val poiInfoAdapter = PoiInfoAdapter(this)
+
+            // Set the info window adapter for the map
+            mMap.setInfoWindowAdapter(poiInfoAdapter)
+        } else {
+            Log.e("MapError", "mMap is not initialized")
+        }
+
 
     }
+
     private fun getLastLocationAndDrawRoute() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -984,7 +1087,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     drawRoute(LatLng(location.latitude, location.longitude), 0)
-                    Log.e("location", "location..${location.latitude} longitude ${location.longitude}")
+                    Log.e(
+                        "location",
+                        "location..${location.latitude} longitude ${location.longitude}"
+                    )
                 }
             }
             .addOnFailureListener { e ->
@@ -1054,7 +1160,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         return (earthRadius * c).toFloat()
     }
 
-    private fun drawRoute(latLng: LatLng,routeType: Int) {
+    private fun drawRoute(latLng: LatLng, routeType: Int) {
         val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
@@ -1134,9 +1240,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onDestroy() {
+   /* override fun onDestroy() {
         super.onDestroy()
         // Remove callbacks to prevent memory leaks
         handler?.removeCallbacks(runnable)
-    }
+    }*/
 }

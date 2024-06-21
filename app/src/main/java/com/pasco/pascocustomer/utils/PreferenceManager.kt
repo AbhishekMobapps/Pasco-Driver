@@ -105,6 +105,13 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
+    var DriverStatus: String
+        get() = prefs.getString(DRIVERSTATUS, "") ?: ""
+        set(driverStatus) {
+            editor.putString(DRIVERSTATUS, driverStatus)
+            editor.apply()
+        }
+
 
     var FCMToken: String
         get() = prefs.getString(FCM_TOKEN, "") ?: ""
@@ -180,6 +187,7 @@ class PreferenceManager(context: Context) {
         private const val APPROVEDID = "APPROVEDID"
         private const val IS_NOTIFICATION = "IS_NOTIFICATION"
         private const val CHECKED_TYPE = "CHECKED_TYPE"
+        private const val DRIVERSTATUS = "DRIVERSTATUS"
     }
 
 }

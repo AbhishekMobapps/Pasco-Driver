@@ -28,6 +28,7 @@ import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyCallActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
 import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyHelpActivity
+import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyMainActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -118,7 +119,7 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
         binding.linearDriHEmergency.setOnClickListener {
-            val intent = Intent(requireContext(), EmergencyHelpActivity::class.java)
+            val intent = Intent(requireContext(), EmergencyMainActivity::class.java)
             startActivity(intent)
         }
         binding.LinearUpdateServiceLoc.setOnClickListener {
