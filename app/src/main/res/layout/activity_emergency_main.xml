@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Driver.emergencyhelp.Ui.EmergencyMainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/relativeCouponnnnn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/earth_yellow">
+
+
+            <ImageView
+                android:id="@+id/closeImage"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/back"
+                app:tint="@color/white" />
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="25dp"
+                android:text="@string/need_help"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16"
+                app:layout_constraintStart_toEndOf="@+id/closeImage"
+                app:layout_constraintWidth_percent=".6"
+                android:textStyle="bold" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consBenefits"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent=".3"
+            android:background="@drawable/customer_profile_back1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeCouponnnnn"
+            app:layout_constraintWidth_percent=".95">
+
+            <ImageView
+                android:id="@+id/benefitsImgg"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="30dp"
+                android:background="@drawable/emergency_background"
+                android:padding="35dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/siren"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
+
+            <TextView
+                android:id="@+id/emergencyHelpTextViewStatic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_size_20"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/emergency_help"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textSize="@dimen/text_size_16"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/benefitsImgg"
+                app:layout_constraintWidth_percent=".7"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_size_20"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="@string/always_ready_anytime_and_anywhere"
+                android:textSize="@dimen/normal_txt_size_12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emergencyHelpTextViewStatic"
+                app:layout_constraintWidth_percent=".7"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent=".6"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/consBenefits"
+            app:layout_constraintWidth_percent=".88">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/consAllNearByDrivers"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/border_radius"
+                app:layout_constraintHeight_percent=".42"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent=".47">
+
+                <ImageView
+                    android:id="@+id/circle_image_total_Students"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/emergency_circle_background_app_color"
+                    android:elevation="5dp"
+                    android:padding="25dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/contacts"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/toAllDriversTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/seek_help_from_all_nearby_drivers"
+                    android:gravity="center"
+                    app:layout_constraintWidth_percent=".45"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/normal_txt_size"
+                    android:padding="5dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/circle_image_total_Students" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/consHelpContacts"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/border_radius"
+                app:layout_constraintHeight_percent=".42"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="50dp"
+                app:layout_constraintWidth_percent=".47">
+
+                <ImageView
+                    android:id="@+id/circle_image_students_results"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/emergency_circle_background_app_color"
+                    android:elevation="5dp"
+                    android:padding="25dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/emergency_contact"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/studentResultTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/emergency_conatct_list"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/normal_txt_size"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/circle_image_students_results" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
