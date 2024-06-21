@@ -48,6 +48,14 @@ class TrackLocationResponse {
         @Expose
         var pickupLocation: String? = null
 
+        @SerializedName("pickup_latitude")
+        @Expose
+        var pickupLatitude: Double? = null
+
+        @SerializedName("pickup_longitude")
+        @Expose
+        var pickupLongitude: Double? = null
+
         @SerializedName("pickup_city")
         @Expose
         var pickupCity: String? = null
@@ -55,6 +63,14 @@ class TrackLocationResponse {
         @SerializedName("drop_location")
         @Expose
         var dropLocation: String? = null
+
+        @SerializedName("drop_latitude")
+        @Expose
+        var dropLatitude: Double? = null
+
+        @SerializedName("drop_longitude")
+        @Expose
+        var dropLongitude: Double? = null
 
         @SerializedName("drop_city")
         @Expose
@@ -71,6 +87,10 @@ class TrackLocationResponse {
         @SerializedName("total_distance")
         @Expose
         var totalDistance: Double? = null
+
+        @SerializedName("duration")
+        @Expose
+        var duration: Int? = null
 
         @SerializedName("booking_status")
         @Expose

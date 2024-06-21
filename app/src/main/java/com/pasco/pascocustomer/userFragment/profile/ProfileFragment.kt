@@ -102,7 +102,17 @@ class ProfileFragment : Fragment() {
             requestCameraPermission()
         }
 
-        binding.updateBtn.setOnClickListener { updateProfile() }
+        binding.updateBtn.setOnClickListener {
+
+            val email = binding.emailTxtA.text.toString()
+            val isValid = isValidEmail(email)
+            if (isValid) {
+                updateProfile()
+            } else {
+                Toast.makeText(requireContext(), "Please enter valid email", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
 
         getProfileApi()
         getProfileObserver()
@@ -337,5 +347,10 @@ class ProfileFragment : Fragment() {
         updateProfileModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(requireContext(), it)
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+        return email.matches(Regex(emailRegex))
     }
 }

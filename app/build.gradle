@@ -39,6 +39,7 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "true")
             buildConfigField("String", "API_KEY", '"http://69.49.235.253:8090/api/"')
             buildConfigField("String", "IMAGE_KEY", '"http://69.49.235.253:8090"')
+            buildConfigField("String", "GOOGLE_MAPS_API_KEY", '"AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30"')
 
         }
     }

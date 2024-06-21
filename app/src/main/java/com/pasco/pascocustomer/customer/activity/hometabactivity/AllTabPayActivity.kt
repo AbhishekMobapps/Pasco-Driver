@@ -122,8 +122,6 @@ class AllTabPayActivity : AppCompatActivity() {
 
         if (profile == "0") {
             showCalenderPopup()
-        } else {
-
         }
 
         lightTrans = intent.getStringExtra("lightTrans").toString()
@@ -137,29 +135,24 @@ class AllTabPayActivity : AppCompatActivity() {
 
 
         binding.addBtn.setOnClickListener {
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                if (spinnerVehicleTypeId.isEmpty()) {
 
-            if (spinnerVehicleTypeId.isEmpty())
-            {
+                } else {
+                    commonCount++
+                    if (cargoQty == null) {
 
-            }
-            else
-            {
-                commonCount++
-                if (cargoQty == null)
-                {
-
-                }
-                else
-                {
-                    if (cargoQty!! <commonCount)
-                    {
-                        commonCount--
+                    } else {
+                        if (cargoQty!! < commonCount) {
+                            commonCount--
+                        } else {
+                            count++
+                            binding.cargoQtyTxt.text = count.toString()
+                        }
                     }
-                    else
-                    {
-                        count++
-                        binding.cargoQtyTxt.text = count.toString()
-                    }
+
                 }
 
             }
@@ -168,73 +161,106 @@ class AllTabPayActivity : AppCompatActivity() {
         }
 
         binding.subtractBtn.setOnClickListener {
-            if (count > minValue) { // Check if count is greater than 0 before subtracting
-                count--
-                commonCount--
-                binding.cargoQtyTxt.text = count.toString()
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                if (count > minValue) { // Check if count is greater than 0 before subtracting
+                    count--
+                    commonCount--
+
+                    binding.cargoQtyTxt.text = "Cargo Qty"
+                }
             }
+
         }
 
         binding.calenderBtn.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog(
-                this,
-                { _, selectedDay, selectedMonth,selectedYear  ->
-                    // Do something with the selected date
-                    selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                    binding.dateTxt.text = selectedDate
-                },
-                year,
-                month,
-                day
-            )
-            datePickerDialog.show()
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, selectedDay, selectedMonth, selectedYear ->
+                        // Do something with the selected date
+                        selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                        binding.dateTxt.text = selectedDate
+                    },
+                    year,
+                    month,
+                    day
+                )
+                datePickerDialog.datePicker.minDate = calendar.timeInMillis
+                datePickerDialog.show()
+            }
+
         }
 
         binding.timeBtn.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-            val minute = calendar.get(Calendar.MINUTE)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
 
-            val timePickerDialog = TimePickerDialog(
-                this,
-                { _, selectedHour, selectedMinute ->
-                    // Do something with the selected time
-                    val formattedHour = if (selectedHour % 12 == 0) 12 else selectedHour % 12
-                    val amPm = if (selectedHour < 12) "AM" else "PM"
-                    selectedTime = String.format("%02d:%02d%s", formattedHour, selectedMinute, amPm)
-                    binding.timeTxt.text = selectedTime
+                val timePickerDialog = TimePickerDialog(
+                    this,
+                    { _, selectedHour, selectedMinute ->
+                        // Do something with the selected time
+                        val formattedHour = if (selectedHour % 12 == 0) 12 else selectedHour % 12
+                        val amPm = if (selectedHour < 12) "AM" else "PM"
+                        selectedTime =
+                            String.format("%02d:%02d%s", formattedHour, selectedMinute, amPm)
+                        binding.timeTxt.text = selectedTime
 
-                    Log.e("selectedTimesa", "selectedTime..." + selectedTime)
-                },
-                hour,
-                minute,
-                false // Set to false for 12-hour format with AM/PM
-            )
-            timePickerDialog.show()
+                        Log.e("selectedTimesa", "selectedTime..." + selectedTime)
+                    },
+                    hour,
+                    minute,
+                    false // Set to false for 12-hour format with AM/PM
+                )
+                timePickerDialog.show()
+            }
+
         }
 
 
         binding.pickUp.setOnClickListener {
-            indexOfLocation = -2
-            val intent = Intent(this, LocationsActivity::class.java)
-            intent.putExtra("pickYourLocation", "pickYourLocation")
-            startActivityForResult(intent, PLACE_PICKUP_REQUEST_CODE)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                indexOfLocation = -2
+                val intent = Intent(this, LocationsActivity::class.java)
+                intent.putExtra("pickYourLocation", "pickYourLocation")
+                startActivityForResult(intent, PLACE_PICKUP_REQUEST_CODE)
+            }
+
         }
 
         binding.dropUp.setOnClickListener {
-            indexOfLocation = -3
-            val intent = Intent(this, LocationsActivity::class.java)
-            intent.putExtra("pickYourLocation", "destinationLocation")
-            startActivityForResult(intent, PLACE_PICKUP_REQUEST_CODE)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                indexOfLocation = -3
+                val intent = Intent(this, LocationsActivity::class.java)
+                intent.putExtra("pickYourLocation", "destinationLocation")
+                startActivityForResult(intent, PLACE_PICKUP_REQUEST_CODE)
+            }
+
         }
 
         binding.confirmBtn.setOnClickListener {
-            validation()
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                validation()
+            }
+
         }
 
 
@@ -285,17 +311,32 @@ class AllTabPayActivity : AppCompatActivity() {
 
 
         binding.cashRadioButton.setOnClickListener { view ->
-            onCashConsClicked(view)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                onCashConsClicked(view)
+            }
+
         }
 
 
         binding.walletRadioButton.setOnClickListener { view ->
-            onWalletConsClicked(view)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                onWalletConsClicked(view)
+            }
+
         }
 
 
         binding.visaRadioButton.setOnClickListener { view ->
-            onVisaConsClicked(view)
+            if (profile == "0") {
+                showCalenderPopup()
+            } else {
+                onVisaConsClicked(view)
+            }
+
         }
 
         // Vehicle Api and observer
@@ -360,7 +401,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.visaRadioButton.isChecked = false
         selectedOption = "Cash"
 
-        Log.e("onCashConsClicked","onCashConsClicked...." +selectedOption)
+        Log.e("onCashConsClicked", "onCashConsClicked...." + selectedOption)
 
     }
 
@@ -370,7 +411,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.cashRadioButton.isChecked = false
         binding.visaRadioButton.isChecked = false
         selectedOption = "Wallet"
-        Log.e("onCashConsClicked","Wallet...." +selectedOption)
+        Log.e("onCashConsClicked", "Wallet...." + selectedOption)
     }
 
     fun onVisaConsClicked(view: View) {
@@ -379,7 +420,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.cashRadioButton.isChecked = false
         binding.walletRadioButton.isChecked = false
         selectedOption = "Visa"
-        Log.e("onCashConsClicked","Visa...." +selectedOption)
+        Log.e("onCashConsClicked", "Visa...." + selectedOption)
 
     }
 
@@ -390,15 +431,17 @@ class AllTabPayActivity : AppCompatActivity() {
             Toast.makeText(this, "Please select destination location", Toast.LENGTH_SHORT).show()
         } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(R.string.selectVehicleType)) {
             Toast.makeText(this, "Please Select Vehicle", Toast.LENGTH_SHORT).show()
-        } else if (binding.cargoQtyTxt.text.isNullOrBlank()) {
+        } else if (binding.cargoQtyTxt.text.isEmpty()) {
             Toast.makeText(this, "Please enter quantity", Toast.LENGTH_SHORT).show()
-        } else if (binding.dateTxt.text.isNullOrBlank()) {
+        } else if (binding.dateTxt.text.isEmpty()) {
             Toast.makeText(this, "Please select date", Toast.LENGTH_SHORT).show()
-        } else if (binding.timeTxt.text.isNullOrBlank()) {
+        } else if (binding.timeTxt.text.isEmpty()) {
             Toast.makeText(this, "Please select time", Toast.LENGTH_SHORT).show()
-        } /*else if (binding.cashRadioButton.isChecked || binding.walletRadioButton.isChecked || binding.visaRadioButton.isChecked) {
+        } else if (!binding.cashRadioButton.isChecked && !binding.walletRadioButton.isChecked && !binding.visaRadioButton.isChecked) {
             Toast.makeText(this, "Please select payment method", Toast.LENGTH_SHORT).show()
-        }*/ else {
+        } else if (binding.yourMsg.text.isEmpty()) {
+            Toast.makeText(this, "Please drop your message", Toast.LENGTH_SHORT).show()
+        } else {
             bookTripPopup()
         }
     }
@@ -826,7 +869,8 @@ class AllTabPayActivity : AppCompatActivity() {
             for (element in additionalServiceList!!) {
                 element.additionalType?.let { it1 -> servicesTypeStatic.add(it1) }
             }
-            val dAdapter = SpinnerAdapter(this@AllTabPayActivity,
+            val dAdapter = SpinnerAdapter(
+                this@AllTabPayActivity,
                 R.layout.custom_service_type_spinner,
                 servicesTypeStatic
             )
@@ -848,7 +892,8 @@ class AllTabPayActivity : AppCompatActivity() {
         }
     }
 
-    class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>
+    class SpinnerAdapter(
+        context: Context, textViewResourceId: Int, smonking: List<String>
     ) :
         ArrayAdapter<String>(context, textViewResourceId, smonking) {
 

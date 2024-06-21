@@ -69,7 +69,7 @@ class AcceptedAdapter(
             e.printStackTrace()
         }
 
-        holder.showDetailsBtn.setOnClickListener {
+        holder.itemView.setOnClickListener {
             val intent = Intent(required, TrackActivity::class.java)
             val pickupLatitude = orderList[position].pickupLatitude
             val pickupLongitude = orderList[position].pickupLongitude
