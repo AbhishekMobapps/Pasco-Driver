@@ -61,6 +61,7 @@ class ReminderAdapter(
         holder.okBtn.setOnClickListener {
             var id = notificationItem.id
             onItemClick.reminderItemClick(position,id!!)
+            notifyDataSetChanged()
         }
 
     }

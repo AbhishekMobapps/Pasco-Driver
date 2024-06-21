@@ -88,6 +88,10 @@ class TrackLocationResponse {
         @Expose
         var totalDistance: Double? = null
 
+        @SerializedName("duration")
+        @Expose
+        var duration: Int? = null
+
         @SerializedName("booking_status")
         @Expose
         var bookingStatus: String? = null

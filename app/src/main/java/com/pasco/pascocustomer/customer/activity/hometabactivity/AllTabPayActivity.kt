@@ -194,6 +194,7 @@ class AllTabPayActivity : AppCompatActivity() {
                     month,
                     day
                 )
+                datePickerDialog.datePicker.minDate = calendar.timeInMillis
                 datePickerDialog.show()
             }
 

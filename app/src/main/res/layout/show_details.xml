@@ -97,31 +97,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/locationImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="3dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pickUp"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/pickUpLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
-                android:text="Noida Sector 59"
+                android:layout_marginStart="5dp"
+                android:text="Noida Sector 59 "
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/locationImg"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/pickUp"
+                app:layout_constraintTop_toTopOf="@+id/pickUp" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -147,31 +134,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/dropImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="17dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/drop"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
+
 
             <TextView
                 android:id="@+id/dropLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:gravity="center"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="15dp"
                 android:text=" Noida Sector 59"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dropImg"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@+id/drop"
+                app:layout_constraintStart_toEndOf="@+id/drop"
+                app:layout_constraintTop_toTopOf="@+id/drop" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -190,7 +166,7 @@
                 android:id="@+id/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dist.         :"
+                android:text="Distance    :"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -202,7 +178,7 @@
                 android:id="@+id/distanceTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:text="35Km"
@@ -228,7 +204,7 @@
                 android:id="@+id/dateId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order Date     :"
+                android:text="Order Date :"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -286,6 +262,7 @@
                     android:layout_marginStart="3dp"
                     android:gravity="center"
                     android:text="$708111.00"
+                    android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
