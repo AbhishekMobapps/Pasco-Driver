@@ -102,7 +102,7 @@ interface ApiServices {
     @POST("addcity/")
     fun getCityList(
         @Body body: UpdateCityBody
-    ):Observable<UpdateCityResponse>
+    ): Observable<UpdateCityResponse>
 
     @Headers("Accept:application/json")
     @POST("check-login/")
@@ -121,6 +121,7 @@ interface ApiServices {
     fun userLogin(
         @Body body: LoginBody
     ): Observable<LoginResponse>
+
     //services List
     @GET("service-lists/")
     fun getServicesList(
@@ -166,7 +167,7 @@ interface ApiServices {
         @Part attachmentP: MultipartBody.Part,
         @Part attachmentD: MultipartBody.Part,
         @Part attachmentDl: MultipartBody.Part
-    ):Observable<PutVDetailsResponse>
+    ): Observable<PutVDetailsResponse>
 
     @Headers("Accept:application/json")
     @POST("ride-booking/")
@@ -232,7 +233,7 @@ interface ApiServices {
         @Part("email") email: RequestBody,
         @Part("current_city") current_city: RequestBody,
         @Part image: MultipartBody.Part
-        ): Observable<UpdateProfileResponse>
+    ): Observable<UpdateProfileResponse>
 
     @GET("ShowNotification/")
     fun getNotification(
@@ -249,8 +250,7 @@ interface ApiServices {
     @GET("ClearAllNotification/")
     fun getClearAllNotification(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-    ):Observable<ClearAllNotificationResponse>
-
+    ): Observable<ClearAllNotificationResponse>
 
 
     //approval status
@@ -303,7 +303,7 @@ interface ApiServices {
     fun bookingDriverData(
         @Path("bookingId") bookingId: String,
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<GetDriverBidDetailsDataResponse>
+    ): Observable<GetDriverBidDetailsDataResponse>
 
 
     //driver status list
@@ -340,19 +340,17 @@ interface ApiServices {
     fun getCompletedRide(
         @Path("id") id: String,
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-    ):Observable<CompleteRideResponse>
+    ): Observable<CompleteRideResponse>
 
     @Multipart
     @Headers("Accept:application/json")
-    @PUT("/addddeliveryproof/")
+    @POST("/addddeliveryproof/")
     fun addDeliveryProof(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Part("booking_confimation") booking_confimation: RequestBody,
         @Part("driverID") driverID: RequestBody,
         @Part delivery_image: MultipartBody.Part
     ): Observable<DeliveryProofResponse>
-
-
 
 
     //put profile
@@ -389,21 +387,20 @@ interface ApiServices {
         @Field("driver_longitude") driver_longitude: String
     ): Observable<EmergencyHelpDriverResponse>
 
-@FormUrlEncoded
+    @FormUrlEncoded
     @POST("send-emergency-help/{id}")
     fun sendEmergencyHelp(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String,
         @Field("driver_id") driver_id: String,
         @Field("current_location") current_location: String
-    ):Observable<SendEmergercyHelpResponse>
+    ): Observable<SendEmergercyHelpResponse>
 
     //EmergencyList
     @GET("show-emergencydetail/")
     fun getEmergencyList(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<EmergencyCResponse>
-
 
 
     @GET("UnreadNotification/")
@@ -448,28 +445,27 @@ interface ApiServices {
     ): Observable<BookingRideResponse>
 
 
-
     //add wallet Money
     @FormUrlEncoded
     @POST("addUserWallet/")
     fun addUserWallet(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Field("amount") amount: String
-    ):Observable<AddAmountResponse>
+    ): Observable<AddAmountResponse>
 
 
     //get User wallet balance
     @GET("addUserWallet/")
     fun getUserWallet(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<GetAmountResponse>
+    ): Observable<GetAmountResponse>
 
 
     //get  additional Service
     @GET("additional-service/")
     fun additionalService(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<AdditionalServiceResponse>
+    ): Observable<AdditionalServiceResponse>
 
     @GET("DriverbookedDetail/{id}")
     fun driverDetails(
@@ -492,7 +488,6 @@ interface ApiServices {
     ): Observable<CustomerDetailsResponse>
 
 
-
     @Headers("Accept: application/json")
     @POST("slideshow-detail/")
     fun sliderHome(
@@ -512,29 +507,29 @@ interface ApiServices {
     @GET("bookdriver-completed/")
     fun driverCompletedHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompletedTripHistoryResponse>
+    ): Observable<CompletedTripHistoryResponse>
 
     @GET("bookdriver-cancelled/")
     fun driverCancelledHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CancelledTripResponse>
+    ): Observable<CancelledTripResponse>
 
     @GET("afterstarttrip/{bookingId}")
     fun afterStartTrip(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("bookingId") bookingId: String
-    ):Observable<AfterStartTripResponse>
+    ): Observable<AfterStartTripResponse>
 
 
     @GET("bookclient-cancelled/")
     fun customerCanceldHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompleteHistoryResponse>
+    ): Observable<CompleteHistoryResponse>
 
     @GET("bookclient-completed/")
     fun customerCompletedHistory(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<CompleteHistoryResponse>
+    ): Observable<CompleteHistoryResponse>
 
     @Headers("Accept:application/json")
     @POST("DriverCancelledBooking/{id}/")
@@ -547,7 +542,7 @@ interface ApiServices {
     @GET("add-reminder/")
     fun getReminder(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<ReminderResponse>
+    ): Observable<ReminderResponse>
 
     @Headers("Accept:application/json")
     @POST("userfeedback/")
@@ -566,7 +561,7 @@ interface ApiServices {
     @GET("loyaltyprogram-detail/")
     fun getLoyaltyProgram(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ):Observable<LoyaltyProgramResponse>
+    ): Observable<LoyaltyProgramResponse>
 
 
     @Headers("Accept:application/json")
@@ -581,5 +576,5 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") bookingId: String
 
-    ):Observable<AcceptOrRejectResponse>
+    ): Observable<AcceptOrRejectResponse>
 }

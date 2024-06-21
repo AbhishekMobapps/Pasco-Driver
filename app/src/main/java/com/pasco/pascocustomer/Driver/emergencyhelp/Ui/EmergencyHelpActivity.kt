@@ -21,6 +21,8 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.DriversListAdapter
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverViewModel
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergencyHelpViewModel
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendHelpClickListner
 import com.pasco.pascocustomer.databinding.ActivityEmergencyHelpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,21 +34,26 @@ import java.util.ArrayList
 import java.util.Locale
 
 @AndroidEntryPoint
-class EmergencyHelpActivity : AppCompatActivity() {
+class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     private lateinit var binding:ActivityEmergencyHelpBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var activity: Activity
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
+    private var bookingId = ""
     private var emergencyDriNumbers: List<EmergencyHelpDriverResponse.EmergencyHelpDriverResponseData> = ArrayList()
     private val emergencyHelpDriverModel: EmergencyHelpDriverViewModel by viewModels()
+    private val sendEmergencyHelpViewModel: SendEmergencyHelpViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private var driversListAdapter: DriversListAdapter? = null
     private var address: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyHelpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activity = this
+
+        bookingId = intent.getStringExtra("bookingIdH").toString()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
         if (checkLocationPermission()) {
@@ -59,7 +66,24 @@ class EmergencyHelpActivity : AppCompatActivity() {
             finish()
         }
         getEmergencyObserver()
+        sendHelpObserver()
     }
+
+    private fun sendHelpObserver() {
+        sendEmergencyHelpViewModel.mGetHelpDriverResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+
+            if (response.peekContent().status == "False") {
+                Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+        sendEmergencyHelpViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
     private fun requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this@EmergencyHelpActivity,
@@ -158,16 +182,26 @@ class EmergencyHelpActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerAllDriverList.apply {
-            isVerticalScrollBarEnabled = true
-            isVerticalFadingEdgeEnabled = true
-            layoutManager = LinearLayoutManager(this@EmergencyHelpActivity, LinearLayoutManager.VERTICAL, false)
-            adapter = DriversListAdapter(this@EmergencyHelpActivity, emergencyDriNumbers)
-        }
+        binding.recyclerAllDriverList.isVerticalScrollBarEnabled = true
+        binding.recyclerAllDriverList.isVerticalFadingEdgeEnabled = true
+        binding.recyclerAllDriverList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        driversListAdapter = DriversListAdapter(this, this, emergencyDriNumbers,bookingId)
+        binding.recyclerAllDriverList.adapter = driversListAdapter
     }
 
     private fun getEmergency() {
         emergencyHelpDriverModel.getEmergencyHelpDriverList(progressDialog, activity, formattedLatitudeSelect, formattedLongitudeSelect)
     }
 
-}
+    override fun sendHelp(position: Int, id: Int) {
+        sendHelpApi(id)
+    }
+
+    private fun sendHelpApi(id: Int) {
+            val driverId = id.toString()
+        sendEmergencyHelpViewModel.sendEmergencyData(progressDialog,activity,bookingId,driverId,address.toString())
+
+        }
+
+    }

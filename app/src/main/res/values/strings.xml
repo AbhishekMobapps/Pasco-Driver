@@ -274,11 +274,19 @@
     <string name="emergency_contacts">Emergency Contacts</string>
     <string name="country">Country</string>
     <string name="emergency_help">Emergency Help</string>
-    <string name="all_nearby_available_drivers_for_help">All Nearby Available Drivers for Help</string>
+    <string name="all_nearby_available_drivers_for_help">Nearby Available Drivers</string>
     <string name="driver_namee">Driver Name</string>
     <string name="city">City</string>
     <string name="select_proof_of_delivery">Select proof of delivery</string>
     <string name="images_can_be_saved_only_once_you_can_not_edit_of_re_upload">Images can be saved only once.You can not edit of re-upload</string>
+    <string name="seek_help_from_all_nearby_drivers">Seek help from all nearby drivers</string>
+    <string name="emergency_conatct_list">Emergency Conatct List</string>
+    <string name="always_ready_anytime_and_anywhere">Always Ready Anytime and Anywhere</string>
+    <string name="help">Emergency Help</string>
+    <string name="select_all">Select All</string>
+    <string name="need_help">Need Help</string>
+    <string name="Send">Send</string>
+=======
     <string name="select_time">Select Time</string>
     <string name="select_date">Select Date</string>
     <string name="all_bids_details">All Bids Details</string>
@@ -286,6 +294,5 @@
     <string name="add_subject">Add Subject</string>
     <string name="title">Title            :</string>
     <string name="date">Date             :</string>
-
 
 </resources>

@@ -33,17 +33,17 @@ class DAllOrderResponse:Serializable {
         @Expose
         var user: String? = null
 
-        @SerializedName("driver")
-        @Expose
-        var driver: String? = null
-
         @SerializedName("user_image")
         @Expose
         var userImage: String? = null
 
+        @SerializedName("driver")
+        @Expose
+        var driver: String? = null
+
         @SerializedName("driver_image")
         @Expose
-        var driverImage: Any? = null
+        var driverImage: String? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -85,29 +85,25 @@ class DAllOrderResponse:Serializable {
         @Expose
         var duration: Int? = null
 
-        @SerializedName("customer_status")
+        @SerializedName("basicprice")
         @Expose
-        var customerStatus: String? = null
-
-        @SerializedName("payment_status")
-        @Expose
-        var paymentStatus: String? = null
+        var basicprice: Float? = null
 
         @SerializedName("booking_status")
         @Expose
         var bookingStatus: String? = null
 
+        @SerializedName("payment_status")
+        @Expose
+        var paymentStatus: String? = null
+
         @SerializedName("pickup_datetime")
         @Expose
         var pickupDatetime: String? = null
 
-        @SerializedName("created_at")
+        @SerializedName("commision_price")
         @Expose
-        var createdAt: String? = null
-
-        @SerializedName("basicprice")
-        @Expose
-        var basicprice: Float? = null
+        var commisionPrice: Float? = null
 
         @SerializedName("message")
         @Expose
@@ -117,9 +113,21 @@ class DAllOrderResponse:Serializable {
         @Expose
         var paymentMethod: String? = null
 
-        @SerializedName("upfront_payment")
+        @SerializedName("customer_status")
         @Expose
-        var upfrontPayment: Float? = null
+        var customerStatus: String? = null
+
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
+
+        @SerializedName("created_at")
+        @Expose
+        var createdAt: String? = null
 
         @SerializedName("availability_datetime")
         @Expose
@@ -129,16 +137,13 @@ class DAllOrderResponse:Serializable {
         @Expose
         var bidPrice: Float? = null
 
-        @SerializedName("availabledrop_datetime")
+        @SerializedName("driver_status_id")
         @Expose
-        var availabledropDatetime: String? = null
+        var driverStatusId: Int? = null
 
-        @SerializedName("additionalservice_name")
+        @SerializedName("driver_status")
         @Expose
-        var additionalserviceName: Any? = null
+        var driverStatus: String? = null
 
-        @SerializedName("additionalservice_amount")
-        @Expose
-        var additionalserviceAmount: Any? = null
     }
 }

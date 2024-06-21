@@ -107,6 +107,23 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_percent=".3" />
 
+                    <TextView
+                        android:id="@+id/emergencyTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_background_color"
+                        android:backgroundTint="@color/red"
+                        android:gravity="center"
+                        android:text="@string/help"
+                        android:textAllCaps="false"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintWidth_percent=".2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/normal_txt_size9"
+                        tools:ignore="MissingConstraints,NotSibling" />
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -145,6 +162,7 @@
                 android:layout_height="25dp"
                 android:layout_marginEnd="20dp"
                 android:src="@drawable/chat"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/priceSeleCons"
                 app:tint="@color/logo_color" />
@@ -278,6 +296,7 @@
                     android:gravity="center"
                     android:text="Finish Your Ride"
                     android:textAllCaps="false"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"
                     tools:ignore="MissingConstraints,NotSibling" />

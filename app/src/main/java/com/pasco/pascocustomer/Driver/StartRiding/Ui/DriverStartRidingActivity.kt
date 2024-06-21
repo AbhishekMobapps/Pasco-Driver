@@ -77,6 +77,7 @@ import com.pasco.pascocustomer.Driver.adapter.PoiInfoAdapter
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
+import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyMainActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.ChatActivity
@@ -120,6 +121,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dropLocation: LatLng
     private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
+    private var spinnerDriverStatus= ""
     private var driverStatus = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
@@ -156,6 +158,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiDesc: String
     private lateinit var poiImage: String
     private lateinit var locationArrayList: ArrayList<LatLng?>
+    private lateinit var updatedDriverStatus:String
 
 
     companion object {
@@ -206,13 +209,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         requestLocationUpdates()
         //camera permission
         requestPermission()
-        binding.finishTripTextView.setOnClickListener {
-            completedRideApi()
-            completedRideObserver()
-        }
-
         driverStatusList()
         driverStatusObserver()
+
+        updatedDriverStatus = PascoApp.encryptedPrefs.DriverStatus
 
         //call observer
         updateLocationObserver()
@@ -234,12 +234,15 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
+                        spinnerDriverStatus = routeType?.get(i)?.status.toString()
+                        PascoApp.encryptedPrefs.DriverStatus = spinnerDriverStatus
                         Log.e("onItemSelected", spinnerDriverSId)
 
                         //call vehicleType
                         if (!spinnerDriverSId.isNullOrBlank()) {
                             val sId = spinnerDriverSId
                             startTrip(sId)
+                            binding.finishTripTextView.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -271,11 +274,26 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this@DriverStartRidingActivity, ChatActivity::class.java)
             startActivity(intent)
         }
-
+        binding.emergencyTextView.setOnClickListener {
+            val intent = Intent(this@DriverStartRidingActivity, EmergencyMainActivity::class.java)
+            intent.putExtra("bookingIdForHelp", Bid)
+            startActivity(intent)
+        }
         binding.finishTripTextView.setOnClickListener {
-            completedRideApi()
+             if (spinnerDriverSId.isNullOrBlank())
+             {
+                 Toast.makeText(this@DriverStartRidingActivity, "Please select status", Toast.LENGTH_SHORT).show()
+             }
+            else
+             {
+                 completedRideApi()
+             }
+
             completedRideObserver()
         }
+
+
+
 
 
     }
@@ -338,14 +356,16 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         deliveryProofViewModel.mDeliveryProofResponse.observe(
             this
         ) {
+            val driverIDs = it.peekContent().message?.driverID.orEmpty()
+            val message = if (driverIDs.isNotEmpty()) driverIDs.joinToString(", ") else "No Driver ID"
 
-            var message = it.peekContent().msg!!
             var status = it.peekContent().status!!
-            if (status.equals("False")) {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            if (status == "True") {
+                Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+                showFeedbackPopup()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                showFeedbackPopup()
+
             }
 
         }
@@ -701,7 +721,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+              //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 showDeliveryPopUp()
 
 
@@ -895,7 +915,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-            dAdapter.getPosition(getString(R.string.selectStatus))
+            val spinnerPosition = if (updatedDriverStatus.isEmpty()) {
+                dAdapter.getPosition(getString(R.string.selectStatus))
+            } else {
+                dAdapter.getPosition(updatedDriverStatus)
+            }
+            binding.routeSpinnerSpinner.setSelection(spinnerPosition)
 
             if (response.peekContent().status.equals("False")) {
 
@@ -922,9 +947,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripViewModel.mStartTripResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                binding.finishTripTextView.visibility = View.GONE
             }
         }
 
@@ -1214,9 +1240,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onDestroy() {
+   /* override fun onDestroy() {
         super.onDestroy()
         // Remove callbacks to prevent memory leaks
         handler?.removeCallbacks(runnable)
-    }
+    }*/
 }
