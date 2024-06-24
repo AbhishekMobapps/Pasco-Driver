@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.Driver.emergencyhelp.Ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityEmergencyMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 

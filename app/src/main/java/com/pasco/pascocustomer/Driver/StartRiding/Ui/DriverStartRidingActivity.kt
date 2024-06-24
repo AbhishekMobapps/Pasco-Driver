@@ -90,6 +90,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
@@ -127,6 +128,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
     private val routeTypeStatic: MutableList<String> = mutableListOf()
     private var Bid = ""
+    private var driStatus = ""
+    private var driId = ""
+    private var orderStatusDriverR = ""
+    private var userId = ""
     private val afterStartTripViewModel: AfterStartTripViewModel by viewModels()
     private lateinit var updateLocationBody: UpdationLocationBody
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
@@ -159,6 +164,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiImage: String
     private lateinit var locationArrayList: ArrayList<LatLng?>
     private lateinit var updatedDriverStatus: String
+    private lateinit var imagePart: MultipartBody.Part
 
 
     companion object {
@@ -170,13 +176,16 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityDriverStartRidingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        userId = PascoApp.encryptedPrefs.userId
+
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
 
         locationArrayList = ArrayList()
-
-
         Bid = intent.getStringExtra("BookId").toString()
+        driStatus = intent.getStringExtra("driStatus").toString()
+        driId = intent.getStringExtra("driverStatusId").toString()
+        orderStatusDriverR = intent.getStringExtra("currentOrder").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
         Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
@@ -193,6 +202,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.e("IntentValues", "longitudeDrop: $Dlon")
         Log.e("IntentValues", "deltime: $deliveryTime")
         Log.e("IntentValues", "image: $image")
+        Log.e("driverStatus", "driverStatus: $driStatus,driverId: $driId")
 
         Log.d("PickupLocation", "Latitude: $Plat, Longitude: $Plon")
         Log.d("DropLocation", "Latitude: $Dlan, Longitude: $Dlon")
@@ -211,8 +221,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         requestPermission()
         driverStatusList()
         driverStatusObserver()
-
-        updatedDriverStatus = PascoApp.encryptedPrefs.DriverStatus
 
         //call observer
         updateLocationObserver()
@@ -291,6 +299,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             completedRideObserver()
+            //showFeedbackPopup()
         }
 
 
@@ -329,7 +338,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         consUploadDeliveryProof!!.setOnClickListener {
-            selectImage()
+            openCamera()
         }
 
         submitBtnDeliveryProof!!.setOnClickListener {
@@ -357,12 +366,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
             var status = it.peekContent().status!!
           //  var message = it.peekContent().message!!
-            if (status == "True") {
-              //  Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
-                showFeedbackPopup()
+       
+          if (status == "True") {
+                Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+               showFeedbackPopup()
             } else {
                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
             }
 
         }
@@ -373,6 +382,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addDeliveryProofApi() {
+      
         val BookingID = Bid.toRequestBody(MultipartBody.FORM)
         val driverID = spinnerDriverSId.toRequestBody(MultipartBody.FORM)
         var deliveryImage: MultipartBody.Part? = null
@@ -380,37 +390,33 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         deliveryImage = if (selectedImageFile == null) {
 
             MultipartBody.Part.createFormData("", selectedImageFile?.name, "".toRequestBody("*delivery_image/*".toMediaTypeOrNull())
-            )
-
+        if (selectedImageFile != null) {
+            imagePart = MultipartBody.Part.createFormData(
+                "delivery_image",
+                selectedImageFile!!.name,
+                selectedImageFile!!.asRequestBody("delivery_image/*".toMediaTypeOrNull()))
+            Log.e("endDate3", "file: " + selectedImageFile)
         } else {
             MultipartBody.Part.createFormData(
                 "delivery_image",
                 selectedImageFile?.name,
                 selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
-            )
+            imagePart = MultipartBody.Part.createFormData(
+                "delivery_image", "",
+                "".toRequestBody("delivery_image/*".toMediaTypeOrNull())
+       )
 
+
+            Log.e("endDate3", "file:  null " + selectedImageFile)
         }
         deliveryProofViewModel.deliveryProofData(
             progressDialog,
             activity,
             BookingID,
             driverID,
-            deliveryImage
+            imagePart
 
         )
-    }
-
-    fun selectImage() {
-        val options = arrayOf<CharSequence>("Take Photo", "Cancel")
-        val builder = android.app.AlertDialog.Builder(this@DriverStartRidingActivity)
-        builder.setTitle("Select Option")
-        builder.setItems(options) { dialog, item ->
-            when {
-                options[item] == "Take Photo" -> openCamera()
-                options[item] == "Cancel" -> dialog.dismiss()
-            }
-        }
-        builder.show()
     }
 
     private fun openCamera() {
@@ -663,7 +669,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                         resource: Bitmap,
                         transition: Transition<in Bitmap>?
                     ) {
-                        val greenMarker = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val greenMarker = Bitmap.createBitmap(70, 70, Bitmap.Config.ARGB_8888)
                         val canvas = Canvas(greenMarker)
                         val paint = Paint()
                         paint.color = Color.GREEN
@@ -740,7 +746,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         var ratingBars = ""
         ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
             ratingBars = rating.toString()
         }
 
@@ -891,21 +897,18 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             val content = response.peekContent()
             val message = content.msg ?: return@observe
             routeType = content.data!!
-
-            // Clear the list before adding new items
             routeTypeStatic.clear()
 
             for (element in routeType!!) {
                 element.status?.let { it1 -> routeTypeStatic.add(it1) }
             }
-            val dAdapter =
-                SpinnerAdapter(
-                    this,
-                    R.layout.custom_service_type_spinner,
-                    routeTypeStatic
-                )
+            val dAdapter = SpinnerAdapter(
+                this,
+                R.layout.custom_service_type_spinner,
+                routeTypeStatic
+            )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            //dAdapter.addAll(strCatNameList)
+
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
@@ -913,14 +916,23 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
             if (response.peekContent().status.equals("False")) {
 
+            if (orderStatusDriverR == "withoutSelected") {
+                val spinnerPosition = if (driStatus.isNotEmpty()) {
+                    dAdapter.getPosition(driStatus)
+                } else {
+                    dAdapter.getPosition(getString(R.string.selectStatus))
+                }
+                binding.routeSpinnerSpinner.setSelection(spinnerPosition)
             } else {
 
+            }
+            if (response.peekContent().status == "False") {
+            } else {
 
             }
         }
-
         getRouteUpdateViewModel.errorResponse.observe(this) {
-            // Handle general errors
+            // Handle general errors using ErrorUtil
             ErrorUtil.handlerGeneralError(this, it)
         }
     }

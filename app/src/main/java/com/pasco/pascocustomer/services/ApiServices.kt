@@ -552,7 +552,7 @@ interface ApiServices {
     ): Observable<AcceptOrRejectResponse>
 
     @Headers("Accept:application/json")
-    @POST("driverfeedback/")
+    @POST("Driverfeedback/")
     fun driverFeedback(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: DriverFeedbackBody

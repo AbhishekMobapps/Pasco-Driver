@@ -67,6 +67,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         }
         getEmergencyObserver()
         sendHelpObserver()
+        //heloo
     }
 
     private fun sendHelpObserver() {

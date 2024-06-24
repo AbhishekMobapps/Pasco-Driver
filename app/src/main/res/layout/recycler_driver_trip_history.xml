@@ -25,6 +25,7 @@
             android:textColor="@color/green"
             android:textSize="@dimen/normal_txt_size"
             android:textStyle="bold"
+            android:text="Completed"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -268,6 +269,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/arrivalTimeStatic"
                 app:layout_constraintWidth_percent=".2"
+                tools:ignore="MissingConstraints" />
+
+
+            <TextView
+                android:id="@+id/invoiceTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Download Invoice"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/normal_txt_size13"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/arrivalTimeDriverHis"
+                app:layout_constraintWidth_percent=".5"
                 tools:ignore="MissingConstraints" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

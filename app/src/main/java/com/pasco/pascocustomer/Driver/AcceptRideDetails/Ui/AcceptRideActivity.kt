@@ -133,11 +133,20 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.acceptOrderCButton.setOnClickListener {
             val dateTime = dateTimes
             val bidPrice = binding.showPriceEditText.text.toString()
+            val priceText = binding.showPriceEditTextdasdas.text.toString()
+
+            val dateTimePattern = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}"
 
             if (dateTime.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
                     "Please add the availability",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (!priceText.matches(dateTimePattern.toRegex())) {
+                Toast.makeText(
+                    this@AcceptRideActivity,
+                    "Please enter both date and time",
                     Toast.LENGTH_SHORT
                 ).show()
             } else if (bidPrice.isEmpty()) {
@@ -154,10 +163,10 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 ).show()
             } else {
                 // Call API
-
                 addBiding()
             }
         }
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -514,18 +523,17 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         createSlotsBtnPop.setOnClickListener {
-            if (!startDateTxtPop.text.isEmpty() && !startTimetxtPop.text.isEmpty()) {
+            if (startDateTxtPop.text.isNotEmpty() && startTimetxtPop.text.isNotEmpty()) {
                 val dateCheck = startDateTxtPop.text.toString()
                 val timeCheck = startTimetxtPop.text.toString()
-                val dateTime = dateCheck + " " + timeCheck
+                val dateTime = "$dateCheck $timeCheck"
                 dateTimes = dateTime
                 if (!dateTimes.isNullOrBlank()) {
                     binding.showPriceEditTextdasdas.text = dateTimes
                 }
-                // Toast.makeText(this@AcceptRideActivity, "Added Successfully", Toast.LENGTH_SHORT).show()
                 Log.d("DateTime", dateTime)
                 dialog.dismiss() // Dismiss the dialog explicitly
-            } else {
+            } else if (startDateTxtPop.text.isEmpty() || startTimetxtPop.text.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
                     "Please select both start date and start time",
