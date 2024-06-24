@@ -2,8 +2,8 @@ package com.pasco.pascocustomer.Driver.StartRiding.deliveryproof
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
+class DeliveryProofResponse {
 class DeliveryProofResponse:Serializable{
     @SerializedName("status")
     @Expose
@@ -11,6 +11,7 @@ class DeliveryProofResponse:Serializable{
 
     @SerializedName("msg")
     @Expose
+    var message: String? = null
     var msg: String? = null
 
     @SerializedName("data")

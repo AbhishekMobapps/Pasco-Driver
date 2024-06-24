@@ -326,7 +326,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="@string/select_date"
+                            android:hint="@string/select_date"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintWidth_percent="0.68" />
 
@@ -369,7 +369,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="@string/select_time"
+                            android:hint="@string/select_time"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintWidth_percent="0.68" />
 

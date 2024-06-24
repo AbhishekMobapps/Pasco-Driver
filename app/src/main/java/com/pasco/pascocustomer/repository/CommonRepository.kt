@@ -174,9 +174,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
     fun uploadDeliveryProofRepo(
-        booking_confimation: RequestBody,
-        driverID: RequestBody,
-        delivery_image: MultipartBody.Part
+        booking_confimation: RequestBody, driverID: RequestBody, delivery_image: MultipartBody.Part
     ): Observable<DeliveryProofResponse> {
         return apiService.addDeliveryProof(
             PascoApp.encryptedPrefs.bearerToken, booking_confimation, driverID, delivery_image
@@ -220,8 +218,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
 
     fun acceptReject(
-        courseBody: AcceptOrRejectBidBody,
-        id: String
+        courseBody: AcceptOrRejectBidBody, id: String
     ): Observable<AcceptOrRejectResponse> {
         return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
@@ -256,8 +253,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
     fun cancelBooking(
-        courseBody: CancelBookingBody,
-        id: String
+        courseBody: CancelBookingBody, id: String
     ): Observable<AcceptOrRejectResponse> {
         return apiService.cancelBooking(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
@@ -275,7 +271,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun feedbackDriver(
         courseBody: DriverFeedbackBody
     ): Observable<AcceptOrRejectResponse> {
-        return apiService.driverFeedback(PascoApp.encryptedPrefs.bearerToken,courseBody)
+        return apiService.driverFeedback(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
     fun getLoyalty(): Observable<LoyaltyProgramResponse> {
@@ -285,6 +281,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     fun loyaltyCodeUse(body: LoyaltyCodeUseBody): Observable<AcceptOrRejectResponse> {
         return apiService.loyaltyCodeUse(PascoApp.encryptedPrefs.bearerToken, body)
     }
+
     fun getReminderDelete(Id: String): Observable<AcceptOrRejectResponse> {
         return apiService.reminderDelete(PascoApp.encryptedPrefs.bearerToken, Id)
     }

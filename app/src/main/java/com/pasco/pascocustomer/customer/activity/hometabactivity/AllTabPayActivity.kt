@@ -167,8 +167,8 @@ class AllTabPayActivity : AppCompatActivity() {
                 if (count > minValue) { // Check if count is greater than 0 before subtracting
                     count--
                     commonCount--
+                    binding.cargoQtyTxt.text = "$count"
 
-                    binding.cargoQtyTxt.text = "Cargo Qty"
                 }
             }
 
@@ -433,9 +433,9 @@ class AllTabPayActivity : AppCompatActivity() {
             Toast.makeText(this, "Please Select Vehicle", Toast.LENGTH_SHORT).show()
         } else if (binding.cargoQtyTxt.text.isEmpty()) {
             Toast.makeText(this, "Please enter quantity", Toast.LENGTH_SHORT).show()
-        } else if (binding.dateTxt.text.isEmpty()) {
+        } else if (binding.dateTxt.text.isNullOrEmpty()) {
             Toast.makeText(this, "Please select date", Toast.LENGTH_SHORT).show()
-        } else if (binding.timeTxt.text.isEmpty()) {
+        } else if (binding.timeTxt.text.isNullOrEmpty()) {
             Toast.makeText(this, "Please select time", Toast.LENGTH_SHORT).show()
         } else if (!binding.cashRadioButton.isChecked && !binding.walletRadioButton.isChecked && !binding.visaRadioButton.isChecked) {
             Toast.makeText(this, "Please select payment method", Toast.LENGTH_SHORT).show()
@@ -721,20 +721,30 @@ class AllTabPayActivity : AppCompatActivity() {
     private fun bookingObserver() {
         bookingRideViewModel.mRejectResponse.observe(this@AllTabPayActivity) { response ->
             val message = response.peekContent().msg
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-            bottomSheetDialog?.dismiss()
-            binding.cargoQtyTxt.text = ""
-            binding.pickStartPoint.text = ""
-            binding.pickDestinationPoint.text = ""
-            formattedLatitudeSelect = ""
-            formattedLongitudeSelect = ""
-            formattedLatitudeDropSelect = ""
-            formattedLongitudeDropSelect = ""
-            selectedDate = ""
-            selectedTime = ""
-            binding.yourMsg.setText("")
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
+            val status = response.peekContent().status
+
+
+
+            if (status == "False") {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            } else {
+                bottomSheetDialog?.dismiss()
+                binding.cargoQtyTxt.text = ""
+                binding.pickStartPoint.text = ""
+                binding.pickDestinationPoint.text = ""
+                formattedLatitudeSelect = ""
+                formattedLongitudeSelect = ""
+                formattedLatitudeDropSelect = ""
+                formattedLongitudeDropSelect = ""
+                selectedDate = ""
+                selectedTime = ""
+                binding.yourMsg.setText("")
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                val intent = Intent(this, UserDashboardActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
+
         }
 
         bookingRideViewModel.errorResponse.observe(this@AllTabPayActivity) {
@@ -764,11 +774,13 @@ class AllTabPayActivity : AppCompatActivity() {
             val min = response.peekContent().duration?.minutes
             val distance = response.peekContent().distance
 
-            val timeDuration = "$hours:$min"
+            val timeDuration = "$hours hrs:$min min"
             val formattedDistance = String.format("%.2f", distance)
             kmTxt?.text = "$formattedDistance Km"
-            hourTxt?.text = "$timeDuration hrs"
-            timeDurationTxt?.text = "$timeDuration hrs"
+
+
+            hourTxt?.text = "$timeDuration"
+            timeDurationTxt?.text = "$timeDuration"
             val price = response.peekContent().price
             val totalPrice = String.format("%.2f", price)
             totalAmount?.text = "$$totalPrice"

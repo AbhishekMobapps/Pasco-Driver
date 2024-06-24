@@ -294,5 +294,7 @@
     <string name="add_subject">Add Subject</string>
     <string name="title">Title            :</string>
     <string name="date">Date             :</string>
+    <string name="please_rate_the_pasco">Please rate the pasco</string>
+    <string name="cancle">Cancel</string>
 
 </resources>

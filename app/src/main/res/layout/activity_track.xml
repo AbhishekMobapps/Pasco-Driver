@@ -131,18 +131,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     app:layout_constraintWidth_percent=".93"/>
-                <TextView
-                    android:id="@+id/cancelBookingBtn"
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/earth_yellow"
-                    android:gravity="center"
-                    android:layout_marginRight="20dp"
-                    android:text="Cancel"
-                    android:textColor="@color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout

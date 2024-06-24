@@ -48,7 +48,7 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     }
 
     private fun clearAllPopUp() {
-        TODO("Not yet implemented")
+
     }
 
     private fun clearAllObserver() {

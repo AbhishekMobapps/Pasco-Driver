@@ -2,8 +2,11 @@ package com.pasco.pascocustomer.application
 
 import android.app.Application
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.res.Configuration
 import android.text.TextUtils
+import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
@@ -13,7 +16,11 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 //abhi comment
 
-class PascoApp : Application() {
+class PascoApp :  MultiDexApplication() {
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
     companion object {
         lateinit var encryptedPrefs: PreferenceManager
         lateinit var instance: PascoApp
