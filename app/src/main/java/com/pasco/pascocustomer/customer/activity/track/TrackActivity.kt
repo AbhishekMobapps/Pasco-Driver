@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.widget.AppCompatButton
@@ -69,13 +70,14 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
-    private val cancelBookingModelView: CancelBookingModelView by viewModels()
+
     private val trackModelView: TrackLocationModelView by viewModels()
     private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
     var bottomSheetDialog: BottomSheetDialog? = null
-    private var dialog : Dialog? = null
+    private var dialog: Dialog? = null
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
@@ -99,7 +101,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         binding.imageBackReqRide.setOnClickListener { finish() }
-
+     //   showFeedbackPopup()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapsa) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -107,7 +109,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
-       //showFeedbackPopup()
+
 
         binding.textViewSeeDetails.setOnClickListener {
 
@@ -123,9 +125,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         // Los Angeles
-        binding.cancelBookingBtn.setOnClickListener {
-            showCancelPopup()
-        }
+
 
         binding.chatBtn.setOnClickListener {
             val intent = Intent(this@TrackActivity, ChatActivity::class.java)
@@ -256,7 +256,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             .await()
 
         Log.e(
-            "location", "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
+            "location",
+            "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
         )
         // Decode polyline and draw on map
         val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
@@ -267,7 +268,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         //mMap.clear() // Clear previous route
 
     }
-
 
 
     private fun decodePolyline(encoded: String): List<LatLng> {
@@ -322,10 +322,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
 
-            Log.e("ShowDetails","API....Details")
+            Log.e("ShowDetails", "API....Details")
             val distance = response.peekContent().data?.totalDistance
 
-            val formattedTotalDistance = "%.1f".format(response.peekContent().data?.totalDistance ?: 0.0)
+            val formattedTotalDistance =
+                "%.1f".format(response.peekContent().data?.totalDistance ?: 0.0)
             binding.totalDistanceBidd.text = "$formattedTotalDistance km"
 
             val url = response.peekContent().data!!.image
@@ -375,7 +376,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.addMarker(MarkerOptions().position(pickupLocation!!).title("Pickup Location"))
             mMap.addMarker(MarkerOptions().position(dropLocation!!).title("Drop Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 12f))
-            Log.e("ShowDetails","API....Repeat...Details")
+            Log.e("ShowDetails", "API....Repeat...Details")
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
@@ -385,10 +386,12 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                     showFeedbackPopup()
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
+                    Log.e("ReachedAAA", "aa" + response.peekContent().data?.driverStatus)
+                    if (response.peekContent().data?.driverStatus == "Reached at PickUp Location") {
+                        mMap.clear()
+                    }
                 }
-
             }
-
             // New York City
             getLastLocationAndDrawRoute()
 
@@ -399,77 +402,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun convertKilometersToMeters(kilometers: Double): Double {
-        return kilometers * 1000
-    }
-
-    private fun convertMetersToKilometers(meters: Double): Double {
-        return meters / 1000
-    }
-
-    @SuppressLint("SuspiciousIndentation")
-    private fun showCancelPopup() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.cancel_booking)
-
-        val bookingCancelBtn = dialog.findViewById<TextView>(R.id.bookingCancelBtn)
-        val cancelReasonTxt = dialog.findViewById<EditText>(R.id.cancelReasonTxt)
-        val cancelBtn = dialog.findViewById<ImageView>(R.id.cancelBtn)
 
 
-        cancelBtn.setOnClickListener { dialog.dismiss() }
 
-        bookingCancelBtn.setOnClickListener {
-            val cancelReasonTxt = cancelReasonTxt.text.toString()
-            if (cancelReasonTxt.isEmpty()) {
-                Toast.makeText(applicationContext, "Please enter valid reason", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                acceptOrRejectApi(cancelReasonTxt)
-            }
-
-        }
-        val window = dialog.window
-        val lp = window?.attributes
-        if (lp != null) {
-            lp.width = ActionBar.LayoutParams.MATCH_PARENT
-        }
-        if (lp != null) {
-            lp.height = ActionBar.LayoutParams.WRAP_CONTENT
-        }
-        if (window != null) {
-            window.attributes = lp
-        }
-        acceptOrRejectObserver()
-
-        dialog.show()
-    }
-
-    private fun acceptOrRejectApi(cancelReasonTxt: String) {
-        val loinBody = CancelBookingBody(
-            cancelreason = cancelReasonTxt
-        )
-        cancelBookingModelView.cancelBooking(bookingId, loinBody, this, progressDialog)
-    }
-
-    private fun acceptOrRejectObserver() {
-        cancelBookingModelView.progressIndicator.observe(this) {}
-        cancelBookingModelView.mRejectResponse.observe(
-            this
-        ) {
-            val msg = it.peekContent().msg
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
-        }
-        cancelBookingModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this@TrackActivity, it)
-            // errorDialogs()
-        }
-    }
 
 
     override fun onDestroy() {
@@ -512,8 +447,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -546,13 +479,12 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-
     private fun showFeedbackPopup() {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
         val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
         bottomSheetDialog!!.setContentView(view)
 
-
+        Log.e("SHowFeed","AAAA")
         val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
         val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
         val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
@@ -560,43 +492,25 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         var ratingBars = ""
         ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-            Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
             ratingBars = rating.toString()
         }
 
         submitBtn?.setOnClickListener {
-
             feedbackApi(commentTxt?.text.toString(), ratingBars)
             feedbackObserver()
         }
         skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
 
-        val displayMetrics = DisplayMetrics()
-        (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenHeight = displayMetrics.heightPixels
-        val halfScreenHeight = screenHeight * .6
-        val eightyPercentScreenHeight = screenHeight * .6
+        // Get the window of the dialog and set its height to match parent
+        val dialogWindow = bottomSheetDialog?.window
+        val layoutParams = dialogWindow?.attributes
+        layoutParams?.height = WindowManager.LayoutParams.MATCH_PARENT
+        dialogWindow?.attributes = layoutParams
 
-        // Set the initial height of the bottom sheet to 50% of the screen height
-        val layoutParams = view.layoutParams
-        layoutParams.height = halfScreenHeight.toInt()
-        view.layoutParams = layoutParams
-
-        var isExpanded = false
-        view.setOnClickListener {
-            // Expand or collapse the bottom sheet when it is touched
-            if (isExpanded) {
-                layoutParams.height = halfScreenHeight.toInt()
-            } else {
-                layoutParams.height = eightyPercentScreenHeight.toInt()
-            }
-            view.layoutParams = layoutParams
-            isExpanded = !isExpanded
-        }
-
-        bottomSheetDialog!!.show()
-
+        bottomSheetDialog?.show()
     }
+
+
 
     private fun feedbackApi(commentTxt: String, ratingBars: String) {
         //   val codePhone = strPhoneNo
@@ -624,7 +538,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             // errorDialogs()
         }
     }
-
 
 
 }

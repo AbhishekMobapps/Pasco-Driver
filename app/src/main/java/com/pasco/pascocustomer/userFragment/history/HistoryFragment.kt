@@ -166,37 +166,5 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private fun getAcceptedApi() {
-        acceptedModelView.acceptedBids(activity, progressDialog)
-    }
 
-    private fun acceptedObserver() {
-        acceptedModelView.progressIndicator.observe(this) {
-        }
-        acceptedModelView.mRejectResponse.observe(this) {
-            val message = it.peekContent().msg
-            val success = it.peekContent().status
-            if (success == "True") {
-                acceptedList = it.peekContent().data!!
-                if (acceptedList.isEmpty()) {
-                    binding.noDataFoundTxt.visibility = View.VISIBLE
-                    binding.noDataFoundTxt.text = "No Accepted"
-                } else {
-                    binding.acceptRecycler.visibility = View.VISIBLE
-                    binding.acceptRecycler.isVerticalScrollBarEnabled = true
-                    binding.acceptRecycler.isVerticalFadingEdgeEnabled = true
-                    binding.acceptRecycler.layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    acceptedAdapter = AcceptedAdapter(requireContext(), acceptedList)
-                    binding.acceptRecycler.adapter = acceptedAdapter
-                }
-
-            }
-        }
-
-        acceptedModelView.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(requireActivity(), it)
-            //errorDialogs()
-        }
-    }
 }

@@ -457,7 +457,12 @@ class DriverDashboardActivity : AppCompatActivity() {
             }
 
 
-
+            if (countNotification == 0) {
+                binding.countNotificationDri.visibility = View.GONE
+            } else {
+                binding.countNotificationDri.visibility = View.VISIBLE
+                binding.countNotificationDri.text = countNotification.toString()
+            }
         }
 
         notificationCountViewModel.errorResponse.observe(this) {
