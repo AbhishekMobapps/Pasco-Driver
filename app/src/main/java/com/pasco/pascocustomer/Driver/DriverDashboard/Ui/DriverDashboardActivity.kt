@@ -90,6 +90,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var switchCheck = ""
     private var OnDutyStatus = ""
     private var one: Int = -1
+    private var notificaion = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -102,6 +103,8 @@ class DriverDashboardActivity : AppCompatActivity() {
         switchCheck = PascoApp.encryptedPrefs.CheckedType
         Log.e("switchValue", "switchCheck: "+switchCheck )
         refersh = PascoApp.encryptedPrefs.token
+
+        requestLocationPermission()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
@@ -126,6 +129,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         notificationCountDObserver()
 
         binding.notificationBtnDriver.setOnClickListener {
+            notificaion = "1"
             val intent = Intent(this, NotificationActivity::class.java)
             startActivity(intent)
         }
@@ -445,9 +449,13 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             val countNotification = it.peekContent().count
+            if (countNotification == 0) {
+                binding.countNotificationDri.visibility = View.GONE
+            } else {
+                binding.countNotificationDri.visibility = View.VISIBLE
+                binding.countNotificationDri.text = countNotification.toString()
+            }
 
-
-            binding.countNotificationDri.text = countNotification.toString()
 
 
         }
@@ -568,6 +576,9 @@ class DriverDashboardActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         //getProfileApi call
+        if (notificaion == "1") {
+            getNotificationCountDApi()
+        }
         getProfileApi()
     }
 

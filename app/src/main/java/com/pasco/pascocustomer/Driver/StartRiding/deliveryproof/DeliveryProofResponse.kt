@@ -4,19 +4,33 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class DeliveryProofResponse(
+class DeliveryProofResponse:Serializable{
     @SerializedName("status")
     @Expose
-    var status: String? = null,
+    var status: String? = null
 
-    @SerializedName("message")
+    @SerializedName("msg")
     @Expose
-    var message: Message? = null
-) : Serializable {
+    var msg: String? = null
 
-    data class Message(
+    @SerializedName("data")
+    @Expose
+    var data: Data? = null
+
+    inner class Data:Serializable
+    {
+
+        @SerializedName("booking_confimation")
+        @Expose
+        var bookingConfimation: Int? = null
+
         @SerializedName("driverID")
         @Expose
-        var driverID: List<String>? = null
-    )
+        var driverID: Int? = null
+
+        @SerializedName("delivery_image")
+        @Expose
+        var deliveryImage: String? = null
+    }
+
 }

@@ -155,4 +155,10 @@ class DriverOrdersFragment : Fragment() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        allOrdersApi()
+        currentOrdersApi()
+    }
+
 }
