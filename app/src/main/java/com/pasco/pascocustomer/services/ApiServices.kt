@@ -388,7 +388,7 @@ interface ApiServices {
     ): Observable<EmergencyHelpDriverResponse>
 
     @FormUrlEncoded
-    @POST("send-emergency-help/{id}")
+    @POST("send-emergency-help/{id}/")
     fun sendEmergencyHelp(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String,

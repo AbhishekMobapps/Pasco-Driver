@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.Driver.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.invoice.InvoiceActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -74,6 +76,12 @@ class CompletedTripHistoryAdapter(
             DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
             bookingstatus.text = "Completed"
         }
+        holder.invoiceTextView.setOnClickListener {
+            val id = driverTripHistory[position].id
+            val intent = Intent(context, InvoiceActivity::class.java)
+            intent.putExtra("id", id.toString())
+            context.startActivity(intent)
+        }
 
     }
 
@@ -90,6 +98,7 @@ class CompletedTripHistoryAdapter(
         val dateTimeDriHis = itemView.findViewById<TextView>(R.id.dateTimeDriHis)
         val driverProfileCth = itemView.findViewById<ImageView>(R.id.driverProfileCth)
         val bookingstatus = itemView.findViewById<TextView>(R.id.bookingstatus)
+        val invoiceTextView = itemView.findViewById<TextView>(R.id.invoiceTextView)
 
 
     }

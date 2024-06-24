@@ -29,19 +29,18 @@ class DriversListAdapter(
         holder.driverNameSHelp.text=emegencyDriResponse.user.toString()
         val id = emergencyDriNumbers[position].driverid
 
-        holder.checkBoxForHelp.isChecked = isChecked
-
-        holder.checkBoxForHelp.setOnCheckedChangeListener { _, isChecked ->
-            if (bookingId == null) {
-                Toast.makeText(context, "You cannot request assistance until you start a trip.", Toast.LENGTH_SHORT).show()
-            } else {
-                if (isChecked) {
+        holder.checkBoxForHelp.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                if (bookingId == null) {
+                    Toast.makeText(context, "You cannot request assistance until you start a trip.", Toast.LENGTH_SHORT).show()
+                }
+                else{
                     onItemClick.sendHelp(position, id!!)
                     notifyDataSetChanged()
                 }
+            } else {
+
             }
-            // Update isChecked state
-            this.isChecked = isChecked
         }
     }
     override fun getItemCount(): Int {

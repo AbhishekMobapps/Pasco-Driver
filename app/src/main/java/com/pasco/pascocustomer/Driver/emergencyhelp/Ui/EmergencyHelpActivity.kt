@@ -23,6 +23,7 @@ import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDrive
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverViewModel
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergencyHelpViewModel
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendHelpClickListner
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityEmergencyHelpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +48,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var driversListAdapter: DriversListAdapter? = null
     private var address: String? = null
+    private var driverId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyHelpBinding.inflate(layoutInflater)
@@ -54,6 +56,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         activity = this
 
         bookingId = intent.getStringExtra("bookingIdH").toString()
+        driverId = PascoApp.encryptedPrefs.userId
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationUpdates()
         if (checkLocationPermission()) {
@@ -200,7 +203,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     }
 
     private fun sendHelpApi(id: Int) {
-            val driverId = id.toString()
+          //  val driverId = id
         sendEmergencyHelpViewModel.sendEmergencyData(progressDialog,activity,bookingId,driverId,address.toString())
 
         }
