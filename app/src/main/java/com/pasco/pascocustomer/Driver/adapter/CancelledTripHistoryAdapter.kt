@@ -1,5 +1,6 @@
 package com.pasco.pascocustomer.Driver.adapter
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse.CancelledData
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.invoice.InvoiceActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -62,6 +64,13 @@ class CancelledTripHistoryAdapter(
         holder.DropDetailsDriHisCan.text = cancelTripHis.dropLocation
         holder.bookingstatusCan.text = "Cancelled"
         holder.cancelReasonTextView.text = cancelTripHis.cancelreason.toString()
+
+        holder.invoiceTextViewcancelled.setOnClickListener {
+            val id = cancelTripHistory[position].id
+            val intent = Intent(context, InvoiceActivity::class.java)
+            intent.putExtra("id", id.toString())
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -78,6 +87,7 @@ class CancelledTripHistoryAdapter(
         var bookingstatusCan: TextView
         var cancelReasonTextView: TextView
         var driverProfileCthCan: ImageView
+        var invoiceTextViewcancelled: TextView
 
         init {
             clientNameDriHisCan = itemView.findViewById(R.id.clientNameDriHisCan)
@@ -89,6 +99,7 @@ class CancelledTripHistoryAdapter(
             driverProfileCthCan = itemView.findViewById(R.id.driverProfileCthCan)
             bookingstatusCan = itemView.findViewById(R.id.bookingstatusCan)
             cancelReasonTextView = itemView.findViewById(R.id.cancelReasonTextView)
+            invoiceTextViewcancelled = itemView.findViewById(R.id.invoiceTextViewcancelled)
         }
     }
 }

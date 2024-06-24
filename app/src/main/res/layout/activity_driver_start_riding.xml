@@ -59,223 +59,261 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <RelativeLayout
-                    android:id="@+id/OnWay"
-                    android:layout_width="0dp"
-                    android:background="@drawable/button_background"
-                    android:backgroundTint="@color/darkWhite"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".8">
-
-                    <Spinner
-                        android:id="@+id/routeSpinnerSpinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="-5dp"
-                        android:gravity="center" />
-
-                </RelativeLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/OnWay"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent=".93">
 
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/cricleImgUserSR"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginTop="15dp"
                         android:src="@drawable/ic_launcher_background"
                         app:civ_border_color="@color/logo_color"
                         app:civ_border_width="2dp"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHeight_percent=".3"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_percent=".3" />
 
+
                     <TextView
-                        android:id="@+id/emergencyTextView"
+                        android:id="@+id/driverNameStartRideTextView"
                         android:layout_width="0dp"
                         android:layout_height="30dp"
-                        android:background="@drawable/button_background_color"
-                        android:backgroundTint="@color/red"
-                        android:gravity="center"
-                        android:text="@string/help"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/driver_name"
+                        android:layout_marginTop="15dp"
                         android:textAllCaps="false"
+                        android:textColor="@color/earth_yellow"
+                        android:textSize="@dimen/normal_txt_size_12"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/cricleImgUserSR"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent=".2"
+                        tools:ignore="MissingConstraints,NotSibling" />
+
+                    <TextView
+                        android:id="@+id/textViewSeeDetailsSR"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/show_details"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_16"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/driverNameStartRideTextView"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintWidth_percent=".3" />
+
+                    <ImageView
+                        android:id="@+id/chatImageStartRidingImageView"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/chat"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintWidth_percent=".2"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/normal_txt_size9"
-                        tools:ignore="MissingConstraints,NotSibling" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/logo_color" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <ImageView
-                android:id="@+id/imgStaticcc"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:src="@drawable/pin"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/NewConstraintDetailsRide"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/priceSeleCons"
-                app:layout_constraintWidth_percent="0.1"
-                app:tint="@color/logo_color" />
+                app:layout_constraintWidth_percent=".93">
+
+                <ImageView
+                    android:id="@+id/imgStaticcc"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/pin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.1"
+                    app:tint="@color/logo_color" />
 
 
-            <TextView
-                android:id="@+id/pickUpStaticc"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/pickUpStaticc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="@string/pickup_location"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/normal_txt_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/emergencyTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background_color"
+                    android:backgroundTint="@color/red"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:text="Emergency"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/normal_txt_size9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/priceSeleCons"
+                    tools:ignore="MissingConstraints,NotSibling" />
+
+
+                <TextView
+                    android:id="@+id/pickUpLocDynamic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/normal_txt_size_12"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toBottomOf="@+id/pickUpStaticc"
+                    app:layout_constraintWidth_percent=".8" />
+
+
+                <ImageView
+                    android:id="@+id/imgStaticDlT"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/time"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pickUpLocDynamic"
+                    app:layout_constraintWidth_percent="0.1"
+                    app:tint="@color/logo_color" />
+
+                <TextView
+                    android:id="@+id/DeliTStaticc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="@string/your_delivery_time"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/normal_txt_size"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toTopOf="@+id/imgStaticDlT" />
+
+
+                <TextView
+                    android:id="@+id/delTimeDynamic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/normal_txt_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toBottomOf="@+id/DeliTStaticc"
+                    app:layout_constraintWidth_percent=".8" />
+
+                <ImageView
+                    android:id="@+id/imgStaticDropp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/pin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/delTimeDynamic"
+                    app:layout_constraintWidth_percent="0.1"
+                    app:tint="@color/logo_color" />
+
+                <TextView
+                    android:id="@+id/dropLocUpStaticc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:text="@string/drop_location"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/normal_txt_size"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toTopOf="@+id/imgStaticDropp" />
+
+                <ImageView
+                    android:id="@+id/showRouteImg"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/white_oval_background"
+                    android:backgroundTint="@color/logo_color"
+                    android:padding="10dp"
+                    android:src="@drawable/compass"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imgStaticDropp"
+                    app:layout_constraintWidth_percent="0.1"
+                    app:tint="@color/white" />
+
+
+                <TextView
+                    android:id="@+id/dropLocDynamic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/normal_txt_size_12"
+                    app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
+                    app:layout_constraintTop_toBottomOf="@+id/dropLocUpStaticc"
+                    app:layout_constraintWidth_percent=".7" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/OnWay"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="15dp"
-                android:gravity="center"
-                android:text="PickUp Location"
-                android:textColor="@color/black"
-                android:textSize="@dimen/normal_txt_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toBottomOf="@+id/priceSeleCons" />
-
-            <ImageView
-                android:id="@+id/chatImageStartRidingImageView"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginEnd="20dp"
-                android:src="@drawable/chat"
-                android:layout_marginTop="8dp"
+                android:background="@drawable/button_background"
+                android:backgroundTint="@color/darkWhite"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/priceSeleCons"
-                app:tint="@color/logo_color" />
-
-            <TextView
-                android:id="@+id/pickUpLocDynamic"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="3dp"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/grey"
-                android:textSize="@dimen/normal_txt_size_12"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toBottomOf="@+id/pickUpStaticc"
-                app:layout_constraintWidth_percent=".8" />
-
-
-            <ImageView
-                android:id="@+id/imgStaticDlT"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:src="@drawable/time"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pickUpLocDynamic"
-                app:layout_constraintWidth_percent="0.1"
-                app:tint="@color/logo_color" />
+                app:layout_constraintTop_toBottomOf="@id/NewConstraintDetailsRide"
+                app:layout_constraintWidth_percent=".8">
 
-            <TextView
-                android:id="@+id/DeliTStaticc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:text="Your Delivery Time"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/normal_txt_size"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toTopOf="@+id/imgStaticDlT" />
+                <Spinner
+                    android:id="@+id/routeSpinnerSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="-5dp"
+                    android:gravity="center"
+                    android:textAlignment="center" />
 
-
-            <TextView
-                android:id="@+id/delTimeDynamic"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/black"
-                android:textSize="@dimen/normal_txt_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toBottomOf="@+id/DeliTStaticc"
-                app:layout_constraintWidth_percent=".8" />
-
-            <ImageView
-                android:id="@+id/imgStaticDropp"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:src="@drawable/pin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/delTimeDynamic"
-                app:layout_constraintWidth_percent="0.1"
-                app:tint="@color/logo_color" />
-
-            <TextView
-                android:id="@+id/dropLocUpStaticc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
-                android:text="Drop Location"
-                android:textColor="@color/black"
-                android:textSize="@dimen/normal_txt_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toTopOf="@+id/imgStaticDropp" />
-
-            <ImageView
-                android:id="@+id/showRouteImg"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/white_oval_background"
-                android:backgroundTint="@color/logo_color"
-                android:padding="10dp"
-                android:src="@drawable/compass"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imgStaticDropp"
-                app:layout_constraintWidth_percent="0.1"
-                app:tint="@color/white" />
-
-
-            <TextView
-                android:id="@+id/dropLocDynamic"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:gravity="center_vertical"
-                android:text=""
-                android:textColor="@color/grey"
-                android:textSize="@dimen/normal_txt_size_12"
-                app:layout_constraintStart_toEndOf="@+id/imgStaticcc"
-                app:layout_constraintTop_toBottomOf="@+id/dropLocUpStaticc"
-                app:layout_constraintWidth_percent=".7" />
+            </RelativeLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
@@ -283,7 +321,7 @@
                 android:layout_marginTop="35dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropLocDynamic"
+                app:layout_constraintTop_toBottomOf="@+id/OnWay"
                 app:layout_constraintWidth_percent=".93"
                 tools:ignore="NotSibling">
 
@@ -296,9 +334,9 @@
                     android:gravity="center"
                     android:text="Finish Your Ride"
                     android:textAllCaps="false"
-                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"
+                    android:visibility="visible"
                     tools:ignore="MissingConstraints,NotSibling" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

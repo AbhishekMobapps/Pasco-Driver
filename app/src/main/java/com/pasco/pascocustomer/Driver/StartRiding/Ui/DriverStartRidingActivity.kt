@@ -160,6 +160,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiCity: String
     private lateinit var poiDesc: String
     private lateinit var poiImage: String
+    private var isClick = true
     private lateinit var locationArrayList: ArrayList<LatLng?>
     private lateinit var imagePart: MultipartBody.Part
 
@@ -219,6 +220,19 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         driverStatusList()
         driverStatusObserver()
 
+        binding.textViewSeeDetailsSR.setOnClickListener {
+
+            if (isClick) {
+                binding.textViewSeeDetailsSR.text = "Hide Details"
+                binding.NewConstraintDetailsRide.visibility = View.VISIBLE
+                isClick = false
+            } else {
+                binding.NewConstraintDetailsRide.visibility = View.GONE
+                binding.textViewSeeDetailsSR.text = "Show Details"
+                isClick = true
+            }
+        }
+
         //call observer
         updateLocationObserver()
         handler = Handler(Looper.getMainLooper())
@@ -262,6 +276,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         afterDetailsObserver()
         //get Api
         if (!Bid.isNullOrBlank()) {
+
             afterDetailsApi()
         }
         binding.cricleImgUserSR.setOnClickListener {
@@ -283,21 +298,19 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
         binding.finishTripTextView.setOnClickListener {
-             if (spinnerDriverSId.isNullOrBlank())
-             {
-                 Toast.makeText(this@DriverStartRidingActivity, "Please select status", Toast.LENGTH_SHORT).show()
-             }
-            else
-             {
-                 completedRideApi()
-             }
+            if (spinnerDriverSId.isNullOrBlank()) {
+                Toast.makeText(
+                    this@DriverStartRidingActivity,
+                    "Please select status",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                completedRideApi()
+            }
 
             completedRideObserver()
             //showFeedbackPopup()
         }
-
-
-
 
 
     }
@@ -361,11 +374,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             this
         ) {
             val status = it.peekContent().status!!
-            val message =  it.peekContent().msg!!
+            val message = it.peekContent().msg!!
 
             if (status == "True") {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
-               showFeedbackPopup()
+                showFeedbackPopup()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
@@ -380,7 +393,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun addDeliveryProofApi() {
         val BookingID = RequestBody.create(MultipartBody.FORM, Bid)
-        val driverID = RequestBody.create(MultipartBody.FORM,userId)
+        val driverID = RequestBody.create(MultipartBody.FORM, userId)
         if (selectedImageFile != null) {
             imagePart = MultipartBody.Part.createFormData(
                 "delivery_image",
@@ -458,6 +471,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
             binding.pickUpLocDynamic.text = dataGet?.pickupLocation
             binding.dropLocDynamic.text = dataGet?.dropLocation
+            val fullName = dataGet?.user ?: ""
+            val firstName = fullName.split(" ").firstOrNull() ?: fullName
+            binding.driverNameStartRideTextView.text = firstName
+
             // Convert duration to hours and minutes if more than 60 seconds
             dataGet?.duration?.let { durationInSeconds ->
                 val formattedDuration = if (durationInSeconds < 60) {
@@ -709,7 +726,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-              //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 showDeliveryPopUp()
 
 
@@ -723,7 +740,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun showFeedbackPopup() {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
-        val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
+        val view = LayoutInflater.from(this).inflate(R.layout.driver_feedback_popup, null)
         bottomSheetDialog!!.setContentView(view)
 
 
@@ -734,7 +751,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         var ratingBars = ""
         ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-           // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
             ratingBars = rating.toString()
         }
 
@@ -896,10 +913,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 routeTypeStatic
             )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
-
+            // Determine spinner selection based on orderStatusDriverR condition
             if (orderStatusDriverR == "withoutSelected") {
                 val spinnerPosition = if (driStatus.isNotEmpty()) {
                     dAdapter.getPosition(driStatus)
@@ -907,8 +923,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     dAdapter.getPosition(getString(R.string.selectStatus))
                 }
                 binding.routeSpinnerSpinner.setSelection(spinnerPosition)
-            } else {
 
+            } else {
+                val spinnerPosition = dAdapter.getPosition(getString(R.string.selectStatus))
+                binding.routeSpinnerSpinner.setSelection(spinnerPosition)
             }
             if (response.peekContent().status == "False") {
             } else {
@@ -932,7 +950,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripViewModel.mStartTripResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 binding.finishTripTextView.visibility = View.GONE
@@ -1225,9 +1243,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-   /* override fun onDestroy() {
-        super.onDestroy()
-        // Remove callbacks to prevent memory leaks
-        handler?.removeCallbacks(runnable)
-    }*/
+    /* override fun onDestroy() {
+         super.onDestroy()
+         // Remove callbacks to prevent memory leaks
+         handler?.removeCallbacks(runnable)
+     }*/
 }

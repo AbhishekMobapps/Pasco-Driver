@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.invoice.InvoiceActivity
 import java.text.ParseException
@@ -89,7 +88,6 @@ class CancelledAdapter(
             val intent = Intent(context, InvoiceActivity::class.java)
             intent.putExtra("id", id.toString())
             context.startActivity(intent)
-
         }
 
     }

@@ -65,7 +65,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
                 putExtra("BookId", driverOrderHis.id.toString())
                 putExtra("driverStatusId", driverOrderHis.driverStatusId.toString())
                 putExtra("driStatus", driverOrderHis.driverStatus.toString())
-                putExtra("currentOrder", "withoutSelected")
+                putExtra("currentOrder", "withoutSelected").toString()
             }
             context.startActivity(intent)
         }

@@ -294,5 +294,9 @@
     <string name="add_subject">Add Subject</string>
     <string name="title">Title            :</string>
     <string name="date">Date             :</string>
+    <string name="pickup_location">PickUp Location</string>
+    <string name="your_delivery_time">Your Delivery Time</string>
+    <string name="drop_location">Drop Location</string>
+    <string name="show_details">Show Details</string>
 
 </resources>
