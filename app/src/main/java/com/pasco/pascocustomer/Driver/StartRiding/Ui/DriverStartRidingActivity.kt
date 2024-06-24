@@ -121,7 +121,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dropLocation: LatLng
     private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
-    private var spinnerDriverStatus= ""
+    private var spinnerDriverStatus = ""
     private var driverStatus = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
@@ -158,7 +158,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiDesc: String
     private lateinit var poiImage: String
     private lateinit var locationArrayList: ArrayList<LatLng?>
-    private lateinit var updatedDriverStatus:String
+    private lateinit var updatedDriverStatus: String
 
 
     companion object {
@@ -235,7 +235,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
                         spinnerDriverStatus = routeType?.get(i)?.status.toString()
-                        PascoApp.encryptedPrefs.DriverStatus = spinnerDriverStatus
+                    //    PascoApp.encryptedPrefs.DriverStatus = spinnerDriverStatus
                         Log.e("onItemSelected", spinnerDriverSId)
 
                         //call vehicleType
@@ -280,20 +280,18 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
         binding.finishTripTextView.setOnClickListener {
-             if (spinnerDriverSId.isNullOrBlank())
-             {
-                 Toast.makeText(this@DriverStartRidingActivity, "Please select status", Toast.LENGTH_SHORT).show()
-             }
-            else
-             {
-                 completedRideApi()
-             }
+            if (spinnerDriverSId.isNullOrBlank()) {
+                Toast.makeText(
+                    this@DriverStartRidingActivity,
+                    "Please select status",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                completedRideApi()
+            }
 
             completedRideObserver()
         }
-
-
-
 
 
     }
@@ -345,7 +343,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 addDeliveryProofApi()
             }
         }
-        addDeliveryObserver()
+        //addDeliveryObserver()
         bottomSheetDialog!!.show()
 
     }
@@ -356,15 +354,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         deliveryProofViewModel.mDeliveryProofResponse.observe(
             this
         ) {
-            val driverIDs = it.peekContent().message?.driverID.orEmpty()
-            val message = if (driverIDs.isNotEmpty()) driverIDs.joinToString(", ") else "No Driver ID"
 
             var status = it.peekContent().status!!
+          //  var message = it.peekContent().message!!
             if (status == "True") {
-                Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+              //  Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
                 showFeedbackPopup()
             } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
             }
 
@@ -382,17 +379,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         deliveryImage = if (selectedImageFile == null) {
 
-            MultipartBody.Part.createFormData(
-                "",
-                selectedImageFile?.name,
-                "".toRequestBody("*delivery_image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("", selectedImageFile?.name, "".toRequestBody("*delivery_image/*".toMediaTypeOrNull())
             )
 
         } else {
             MultipartBody.Part.createFormData(
                 "delivery_image",
                 selectedImageFile?.name,
-                selectedImageFile!!.asRequestBody("*delivery_image/*".toMediaTypeOrNull())
+                selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
             )
 
         }
@@ -721,9 +715,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-              //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                showDeliveryPopUp()
-
+                //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                //showDeliveryPopUp()
+                showFeedbackPopup()
 
             }
         }
@@ -915,12 +909,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
             binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-            val spinnerPosition = if (updatedDriverStatus.isEmpty()) {
-                dAdapter.getPosition(getString(R.string.selectStatus))
-            } else {
-                dAdapter.getPosition(updatedDriverStatus)
-            }
-            binding.routeSpinnerSpinner.setSelection(spinnerPosition)
+
 
             if (response.peekContent().status.equals("False")) {
 
@@ -947,7 +936,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         startTripViewModel.mStartTripResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 binding.finishTripTextView.visibility = View.GONE
@@ -1240,9 +1229,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-   /* override fun onDestroy() {
-        super.onDestroy()
-        // Remove callbacks to prevent memory leaks
-        handler?.removeCallbacks(runnable)
-    }*/
+    /* override fun onDestroy() {
+         super.onDestroy()
+         // Remove callbacks to prevent memory leaks
+         handler?.removeCallbacks(runnable)
+     }*/
 }

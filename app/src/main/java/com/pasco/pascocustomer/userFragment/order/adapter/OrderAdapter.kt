@@ -11,6 +11,7 @@ import android.view.Window
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.reminder.ReminderItemClick
 import com.pasco.pascocustomer.userFragment.order.odermodel.OrderResponse
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -18,7 +19,8 @@ import java.util.*
 
 class OrderAdapter(
     private val required: Context,
-    private var orderList: List<OrderResponse.Datum>
+    private var orderList: List<OrderResponse.Datum>,
+    private val itemClick: ReminderItemClick
 ) :
     RecyclerView.Adapter<OrderAdapter.ViewHolder>() {
 
@@ -27,6 +29,7 @@ class OrderAdapter(
         val oderIdTxt: TextView = itemView.findViewById(R.id.oderIdTxt)
         val dateTime: TextView = itemView.findViewById(R.id.dateTime)
         val totalPriceTxt: TextView = itemView.findViewById(R.id.totalPriceTxt)
+        val cancelBookingBtn: TextView = itemView.findViewById(R.id.cancelBookingBtn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -72,7 +75,10 @@ class OrderAdapter(
             e.printStackTrace()
         }
 
-
+        holder.cancelBookingBtn.setOnClickListener {
+            val id = orderList[position].id
+            itemClick.reminderItemClick(position,id!!)
+        }
     }
 
     override fun getItemCount(): Int {

@@ -344,7 +344,7 @@ interface ApiServices {
 
     @Multipart
     @Headers("Accept:application/json")
-    @POST("/addddeliveryproof/")
+    @POST("addddeliveryproof/")
     fun addDeliveryProof(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Part("booking_confimation") booking_confimation: RequestBody,

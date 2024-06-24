@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/left_right_corner">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/left_right_corner"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,21 +32,14 @@
             android:layout_marginTop="@dimen/text_size_20"
             app:layout_constraintTop_toBottomOf="@+id/skipBtn">
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="5dp"
-                android:background="@drawable/dot_line"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-
+                android:id="@+id/thnk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RATE YOUR RIDE"
-                android:textColor="@color/earth_yellow"
-                android:textSize="14sp"
+                android:text="Thank you for your order!"
+                android:textColor="@color/black"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,30 +47,64 @@
 
 
             <TextView
-                android:layout_width="120dp"
-                android:layout_height="5dp"
-                android:background="@drawable/dot_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your ordered has been Deliverd!"
+                android:textColor="@color/dark_white1"
+                android:textSize="14sp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="@+id/thnk"
+                app:layout_constraintStart_toStartOf="@+id/thnk"
+                app:layout_constraintTop_toBottomOf="@+id/thnk" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/imageConst"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainConst"
+            app:layout_constraintWidth_percent="0.95">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/check"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/rateTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/please_rate_the_pasco"
+            android:textColor="@color/grey_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageConst" />
+
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
             android:numStars="5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainConst" />
+            app:layout_constraintTop_toBottomOf="@+id/rateTxt" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/feedbackConst"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="60dp"
             android:layout_marginTop="@dimen/text_size_20"
             android:background="@drawable/all_circle_border"
             app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +118,7 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:gravity="start"
-                android:hint="Your feedback here.."
+                android:hint="Leave a feedback"
                 android:padding="10dp" />
 
 
@@ -101,18 +128,30 @@
             android:id="@+id/submitBtn"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
             android:background="@drawable/button_background"
             android:gravity="center"
             android:text="Submit"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedbackConst"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.95" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/submitBtn"
+            app:layout_constraintWidth_percent="0.95" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

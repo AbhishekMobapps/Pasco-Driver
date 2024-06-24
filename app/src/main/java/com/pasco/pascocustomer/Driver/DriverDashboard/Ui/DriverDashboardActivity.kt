@@ -446,8 +446,12 @@ class DriverDashboardActivity : AppCompatActivity() {
             val success = it.peekContent().status
             val countNotification = it.peekContent().count
 
-
-            binding.countNotificationDri.text = countNotification.toString()
+            if (countNotification == 0) {
+                binding.countNotificationDri.visibility = View.GONE
+            } else {
+                binding.countNotificationDri.visibility = View.VISIBLE
+                binding.countNotificationDri.text = countNotification.toString()
+            }
 
 
         }
