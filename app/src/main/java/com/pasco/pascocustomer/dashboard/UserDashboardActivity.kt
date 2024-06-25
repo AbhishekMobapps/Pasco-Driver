@@ -65,9 +65,9 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
         profile = PascoApp.encryptedPrefs.profileUpdate
-        if (profile == "0") {
+     /*   if (profile == "0") {
             showCalenderPopup()
-        }
+        }*/
 
 
         if (profileUpdate == "update") {

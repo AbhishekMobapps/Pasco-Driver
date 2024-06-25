@@ -30,6 +30,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
@@ -56,6 +57,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -101,7 +103,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         binding.imageBackReqRide.setOnClickListener { finish() }
-     //   showFeedbackPopup()
+        //   showFeedbackPopup()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapsa) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -138,173 +140,20 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun run() {
                 locationLatApi()
                 locationLatObserver()
-                handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
+                handler?.postDelayed(this, 10000) // 2000 milliseconds = 2 seconds
             }
         }
 
         // Start the periodic task
         handler?.post(runnable)
 
-        locationApi()
-        locationObserver()
+        locationDetailsApi()
+        locationDetailsObserver()
 
 
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mMap.isTrafficEnabled = true
-        // Add markers for pickup and drop locations
-
-        // Enable my location button and request location permission
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-            return
-        }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                dropLocation?.let { it1 -> updateRoute(LatLng(it.latitude, it.longitude), it1) }
-            }
-        }
-        mMap.isMyLocationEnabled = true
-
-    }
-
-
-    private fun getLastLocationAndDrawRoute() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    drawRoute(LatLng(location.latitude, location.longitude))
-                    Log.e(
-                        "location",
-                        "location.." + location.latitude + "longitude " + location.longitude
-                    )
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    this,
-                    "Failed to get location: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun checkDestinationReached(userLocation: LatLng, destinationLocation: LatLng) {
-        val distanceToDestination = calculateDistance(userLocation, destinationLocation)
-        val thresholdDistance = 100 // Define your threshold distance in meters
-
-        if (distanceToDestination <= thresholdDistance && !isDestinationReached) {
-            // Destination reached
-            isDestinationReached = true
-            Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
-            // Perform any action you want when the destination is reached
-        }
-    }
-
-    // Calculate distance between two LatLng points using Haversine formula
-    private fun calculateDistance(startLatLng: LatLng, endLatLng: LatLng): Float {
-        val earthRadius = 6371000 // Radius of the Earth in meters
-        val dLat = Math.toRadians((endLatLng.latitude - startLatLng.latitude).toDouble())
-        val dLng = Math.toRadians((endLatLng.longitude - startLatLng.longitude).toDouble())
-        val a = (sin(dLat / 2) * sin(dLat / 2) +
-                cos(Math.toRadians(startLatLng.latitude)) * cos(Math.toRadians(endLatLng.latitude)) *
-                sin(dLng / 2) * sin(dLng / 2))
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return (earthRadius * c).toFloat()
-    }
-
-    private fun drawRoute(latLng: LatLng) {
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
-        val context = GeoApiContext.Builder()
-            .apiKey(apiKey)
-            .build()
-
-
-        val result: DirectionsResult = DirectionsApi.newRequest(context)
-            .mode(TravelMode.DRIVING)
-            .origin("${latLng.latitude},${latLng.longitude}")
-            .destination("${dropLocation?.latitude},${dropLocation?.longitude}")
-            .await()
-
-        Log.e(
-            "location",
-            "location.." + dropLocation?.latitude + "longitude " + dropLocation?.longitude
-        )
-        // Decode polyline and draw on map
-        val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
-
-        // Add polyline to map
-        mMap.addPolyline(PolylineOptions().addAll(points).color(R.color.earth_yellow))
-
-        //mMap.clear() // Clear previous route
-
-    }
-
-
-    private fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = ArrayList<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
-            lat += dlat
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
-            lng += dlng
-            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(p)
-        }
-        return poly
-    }
-
-
-    private fun locationApi() {
+    private fun locationDetailsApi() {
 
         val bookingBody = TrackLocationBody(
             driverbookedid = bookingId
@@ -312,7 +161,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         trackDetailsModelView.trackLocation(bookingBody, this)
     }
 
-    private fun locationObserver() {
+    private fun locationDetailsObserver() {
 
         trackDetailsModelView.mDetailsResponse.observe(this) { response ->
 
@@ -356,8 +205,98 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun locationLatApi() {
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        mMap.isTrafficEnabled = true
 
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                dropLocation?.let { it1 -> updateRoute(LatLng(it.latitude, it.longitude), it1) }
+                zoomMapToLocation(LatLng(it.latitude, it.longitude))
+            }
+        }
+        mMap.isMyLocationEnabled = true
+    }
+
+
+    private fun drawRoute(startLatLng: LatLng, endLatLng: LatLng?) {
+        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val context = GeoApiContext.Builder().apiKey(apiKey).build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val result: DirectionsResult =
+                    DirectionsApi.newRequest(context).mode(TravelMode.DRIVING)
+                        .origin("${startLatLng.latitude},${startLatLng.longitude}")
+                        .destination("${endLatLng?.latitude},${endLatLng?.longitude}").await()
+
+                Log.e(
+                    "location",
+                    "location.." + endLatLng?.latitude + "longitude " + endLatLng?.longitude
+                )
+                // Decode polyline and draw on map
+                val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
+
+                withContext(Dispatchers.Main) {
+                    // Clear previous route
+                    mMap.clear()
+                    // Add polyline to map
+                    mMap.addPolyline(PolylineOptions().addAll(points).color(R.color.earth_yellow))
+                }
+            } catch (e: Exception) {
+                Log.e("DrawRoute", "Error drawing route: ${e.message}")
+            }
+        }
+    }
+
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
+    }
+
+    private fun locationLatApi() {
         val bookingBody = TrackLocationBody(
             driverbookedid = bookingId
         )
@@ -365,18 +304,21 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun locationLatObserver() {
-
         trackModelView.mRejectResponse.observe(this) { response ->
 
-            dropLatitude = response.peekContent().data?.currentLatitude.toString()
-            dropLongitude = response.peekContent().data?.currentLongitude.toString()
-            pickupLocation = LatLng(pickupLatitude.toDouble(), pickupLongitude.toDouble())
-            dropLocation = LatLng(dropLatitude.toDouble(), dropLongitude.toDouble())
+            val driverCurrentLat = response.peekContent().data?.currentLatitude.toString()
+            val driverCurrentLong = response.peekContent().data?.currentLongitude.toString()
+            val userPickUpLat = response.peekContent().data?.pickupLatitude.toString()
+            val userPickUpLong = response.peekContent().data?.pickupLongitude.toString()
+            val userDropLat = response.peekContent().data?.dropLatitude.toString()
+            val userDropLong = response.peekContent().data?.dropLongitude.toString()
 
-            mMap.addMarker(MarkerOptions().position(pickupLocation!!).title("Pickup Location"))
-            mMap.addMarker(MarkerOptions().position(dropLocation!!).title("Drop Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation!!, 12f))
             Log.e("ShowDetails", "API....Repeat...Details")
+
+            drawRoute(
+                LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
+                LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble())
+            )
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
@@ -387,25 +329,28 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
                     Log.e("ReachedAAA", "aa" + response.peekContent().data?.driverStatus)
-                    if (response.peekContent().data?.driverStatus == "Reached at PickUp Location") {
+
+                    if (response.peekContent().data!!.driverStatus == "Reached at  PickUp Location") {
+                        // Clear the first route
                         mMap.clear()
+                        // Draw the second route from pickup to drop location
+                        drawRoute(
+                            LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
+                            LatLng(userDropLat.toDouble(), userDropLong.toDouble())
+                        )
+                    } else {
+                        // Draw the first route from driver current location to pickup location
+                        drawRoute(LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()), LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble()))
                     }
                 }
-            }
-            // New York City
-            getLastLocationAndDrawRoute()
 
+            }
         }
 
         trackModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
-
-
-
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -414,52 +359,45 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
-        val context = GeoApiContext.Builder()
-            .apiKey("AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30")
-            .build()
+        val context =
+            GeoApiContext.Builder().apiKey("AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ").build()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val directionsResult: DirectionsResult = DirectionsApi.newRequest(context)
-                .origin(
-                    com.google.maps.model.LatLng(
-                        currentLocation.latitude,
-                        currentLocation.longitude
-                    )
-                )
-                .destination(
-                    com.google.maps.model.LatLng(
-                        destination.latitude,
-                        destination.longitude
-                    )
-                )
-                .await()
+            try {
+                val directionsResult: DirectionsResult = DirectionsApi.newRequest(context).origin(
+                        com.google.maps.model.LatLng(
+                            currentLocation.latitude, currentLocation.longitude
+                        )
+                    ).destination(
+                        com.google.maps.model.LatLng(
+                            destination.latitude, destination.longitude
+                        )
+                    ).await()
 
-            val path = directionsResult.routes[0].overviewPolyline.decodePath().map {
-                LatLng(it.lat, it.lng)
-            }
+                val path = directionsResult.routes[0].overviewPolyline.decodePath().map {
+                    LatLng(it.lat, it.lng)
+                }
 
-            runOnUiThread {
-                mMap.clear()
-                mMap.addPolyline(PolylineOptions().addAll(path).color(R.color.purple_700))
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+                withContext(Dispatchers.Main) {
+                    mMap.clear()
+                    mMap.addPolyline(PolylineOptions().addAll(path).color(R.color.purple_700))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+                }
+            } catch (e: Exception) {
+                Log.e("UpdateRoute", "Error updating route: ${e.message}")
             }
         }
     }
 
-
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    this, Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    this, Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 mMap.isMyLocationEnabled = true
@@ -468,8 +406,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                     location?.let {
                         dropLocation?.let { it1 ->
                             updateRoute(
-                                LatLng(it.latitude, it.longitude),
-                                it1
+                                LatLng(it.latitude, it.longitude), it1
                             )
                         }
                     }
@@ -484,7 +421,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
         bottomSheetDialog!!.setContentView(view)
 
-        Log.e("SHowFeed","AAAA")
+        Log.e("SHowFeed", "AAAA")
         val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
         val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
         val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
@@ -511,13 +448,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-
     private fun feedbackApi(commentTxt: String, ratingBars: String) {
         //   val codePhone = strPhoneNo
         val loinBody = CustomerFeedbackBody(
-            bookingconfirmation = bookingId,
-            rating = ratingBars,
-            feedback = commentTxt
+            bookingconfirmation = bookingId, rating = ratingBars, feedback = commentTxt
         )
         feedbackModelView.cancelBooking(loinBody, this, progressDialog)
     }
@@ -537,6 +471,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this@TrackActivity, it)
             // errorDialogs()
         }
+    }
+
+    private fun zoomMapToLocation(location: LatLng) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
     }
 
 

@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-class DeliveryProofResponse: Serializable {
-    @SerializedName("status")
+
+class DeliveryProofResponse: java.io.Serializable {
+
+   @SerializedName("status")
     @Expose
     var status: String? = null
 

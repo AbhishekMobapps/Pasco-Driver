@@ -426,12 +426,35 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
             } else {
                 if (loginValue == "driver") {
-                    sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                    //sendVerificationCode("$formattedCountryCode$strPhoneNo")
+
+                    val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
+                    intent.putExtra("verificationId", verificationId)
+                    intent.putExtra("phoneNumber", strPhoneNo)
+                    intent.putExtra("phoneCountryCode", CountryCode)
+                    intent.putExtra("city", city)
+                    intent.putExtra("email", strEmail)
+                    intent.putExtra("address", address)
+                    intent.putExtra("userName", strUserName)
+                    intent.putExtra("loginValue", loginValue)
+                    intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
+                    intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
+                    startActivity(intent)
+                    finish()
                     progressDialog.start("Loading....")
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
                 } else {
                     strPhoneNo = binding.userPhoneNumber.text.toString()
-                    sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
+
+                    val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
+                    intent.putExtra("verificationId", verificationId)
+                    intent.putExtra("phoneNumber", strUserPhoneNo)
+                    intent.putExtra("phoneCountryCode", CountryCode)
+                    intent.putExtra("loginValue", loginValue)
+                    startActivity(intent)
+                    finish()
+
+                    //sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
                     Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
                 }
             }
