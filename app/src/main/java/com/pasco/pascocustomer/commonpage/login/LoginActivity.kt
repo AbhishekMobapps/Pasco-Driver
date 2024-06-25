@@ -99,6 +99,7 @@ class LoginActivity : AppCompatActivity() {
             binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.asClientConst.setBackgroundResource(0)
             loginValue = "driver"
+            Log.e("OtpCheckData", "loginValue  Btn" + loginValue)
         }
 
         binding.asClientConst.setOnClickListener {
@@ -107,6 +108,7 @@ class LoginActivity : AppCompatActivity() {
             binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.grey_dark))
             binding.asDriverConst.setBackgroundResource(0)
             loginValue = "user"
+            Log.e("OtpCheckData", "loginValue  Btn" + loginValue)
         }
         binding.signUpBtn.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
@@ -163,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
 
         }
         // Observer
-        checkLoginObserver(loginValue)
+        checkLoginObserver()
         loginObserver()
     }
 
@@ -251,7 +253,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun otpCheckApi(deviceModel: String) {
-        Log.e("OtpCheckData", "loginValue " + loginValue)
+        Log.e("OtpCheckData", "loginValue  Api " + loginValue)
         val loinBody = CheckOtpBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
@@ -261,7 +263,7 @@ class LoginActivity : AppCompatActivity() {
         otpModel.otpCheck(loinBody, this, progressDialog)
     }
 
-    private fun checkLoginObserver(loginValue: String) {
+    private fun checkLoginObserver() {
         otpModel.progressIndicator.observe(this) {
             // Implement progress indicator handling if needed
         }
@@ -273,13 +275,28 @@ class LoginActivity : AppCompatActivity() {
             if (success == "True") {
                 if (loginValue == "driver") {
                     if (otpStatus == 0) {
-                        sendVerificationCode("$cCodeSignIn$strPhoneNo")
+                        //sendVerificationCode("$cCodeSignIn$strPhoneNo")
+
+                        val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
+                        intent.putExtra("verificationId", verificationId)
+                        intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("loginValue", loginValue)
+                        intent.putExtra("countryCode", binding.signInCountryCode.text.toString())
+                        startActivity(intent)
+                        Log.e("OtpCheckData","loginValue..Driver " +loginValue)
                     } else {
                         loginApi()
                     }
                 } else {
                     if (otpStatus == 0) {
-                        sendVerificationCode("$cCodeSignIn$strPhoneNo")
+                       // sendVerificationCode("$cCodeSignIn$strPhoneNo")
+                        Log.e("OtpCheckData","loginValue..User " +loginValue)
+                        val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
+                        intent.putExtra("verificationId", verificationId)
+                        intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("loginValue", loginValue)
+                        intent.putExtra("countryCode", binding.signInCountryCode.text.toString())
+                        startActivity(intent)
                     } else {
                         loginApi()
                     }

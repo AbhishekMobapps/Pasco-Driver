@@ -63,6 +63,8 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         countryCode = intent.getStringExtra("countryCode").toString()
         binding.phoneNumber.text = "$countryCode $strPhoneNo"
 
+        Log.e("OtpCheckData","loginValue..Otp" +loginValue)
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
@@ -91,11 +93,17 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
             }
             else
-            {
+            {/*
                 val verificationCode = "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
                 val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(verificationId, verificationCode)
-                signInWithPhoneAuthCredential(credential, deviceModel)
+                signInWithPhoneAuthCredential(credential, deviceModel)*/
+
+                if (loginValue == "driver") {
+                    loginApi()
+                } else {
+                    loginApi()
+                }
             }
 
 
@@ -199,7 +207,9 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     }
 
     private fun loginApi() {
-        //   val codePhone = strPhoneNo
+           val codePhone = strPhoneNo
+
+        Log.e("PhoneNumber", "strPhoneNo..$strPhoneNo   $loginValue")
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
