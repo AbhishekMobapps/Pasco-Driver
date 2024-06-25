@@ -1,14 +1,19 @@
 package com.pasco.pascocustomer.Driver.emergencyhelp.Ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -18,11 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.adapter.DriversListAdapter
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverViewModel
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergencyHelpViewModel
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendHelpClickListner
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendToAllBody
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendToAllViewModel
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityEmergencyHelpBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -45,8 +54,10 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     private var emergencyDriNumbers: List<EmergencyHelpDriverResponse.EmergencyHelpDriverResponseData> = ArrayList()
     private val emergencyHelpDriverModel: EmergencyHelpDriverViewModel by viewModels()
     private val sendEmergencyHelpViewModel: SendEmergencyHelpViewModel by viewModels()
+    private val sendToAllViewModel: SendToAllViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var driversListAdapter: DriversListAdapter? = null
+    private lateinit var body: SendToAllBody
     private var address: String? = null
     private var driverId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,9 +79,60 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         binding.backArrowImgEmegencyDriHelp.setOnClickListener {
             finish()
         }
+        binding.sReqAllDrivers.setOnClickListener {
+            openLogoutPop()
+        }
         getEmergencyObserver()
         sendHelpObserver()
         //heloo
+    }
+
+    @SuppressLint("MissingInflatedId")
+    private fun openLogoutPop() {
+        val builder = AlertDialog.Builder(
+           this,
+            R.style.Style_Dialog_Rounded_Corner
+        )
+        val dialogView = layoutInflater.inflate(R.layout.logout_popup, null)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val noTextViewCp = dialogView.findViewById<TextView>(R.id.noTextViewCp)
+        val yesTextViewCp = dialogView.findViewById<TextView>(R.id.yesTextViewCp)
+        dialog.show()
+        noTextViewCp.setOnClickListener {
+            dialog.dismiss()
+        }
+        yesTextViewCp.setOnClickListener {
+            sendToAllApi()
+        }
+        sendToAllObserver()
+    }
+
+    private fun sendToAllObserver() {
+        sendToAllViewModel.mSendToAllResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+
+            if (response.peekContent().status == "False") {
+                Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+        sendEmergencyHelpViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    private fun sendToAllApi() {
+        body = SendToAllBody(
+            address.toString(),
+            formattedLatitudeSelect,
+            formattedLongitudeSelect
+        )
+        sendToAllViewModel.sendHelpToAllData(body, activity, progressDialog)
     }
 
     private fun sendHelpObserver() {
@@ -198,13 +260,13 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         emergencyHelpDriverModel.getEmergencyHelpDriverList(progressDialog, activity, formattedLatitudeSelect, formattedLongitudeSelect)
     }
 
-    override fun sendHelp(position: Int, id: Int) {
-        sendHelpApi(id)
+    override fun sendHelp(position: Int, id: Int, comment: String) {
+        sendHelpApi(id,comment)
     }
 
-    private fun sendHelpApi(id: Int) {
-          //  val driverId = id
-        sendEmergencyHelpViewModel.sendEmergencyData(progressDialog,activity,bookingId,driverId,address.toString())
+    private fun sendHelpApi(id: Int, comment: String) {
+           val reason = comment
+        sendEmergencyHelpViewModel.sendEmergencyData(progressDialog,activity,bookingId,driverId,address.toString(),reason)
 
         }
 

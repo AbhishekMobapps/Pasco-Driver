@@ -118,10 +118,10 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), DriverMessageActivity::class.java)
             startActivity(intent)
         }
-        binding.linearDriHEmergency.setOnClickListener {
+     /*   binding.linearDriHEmergency.setOnClickListener {
             val intent = Intent(requireContext(), EmergencyMainActivity::class.java)
             startActivity(intent)
-        }
+        }*/
         binding.LinearUpdateServiceLoc.setOnClickListener {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)

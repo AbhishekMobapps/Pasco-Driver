@@ -48,13 +48,28 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:layout_marginLeft="25dp"
-            android:text="@string/select_all"
+            android:text="See Status"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent=".2"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/sReqAllDrivers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="@string/sendtoalldrivers"
+        android:textColor="@color/blue"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeCouponnnnn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent=".95"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_All_driverList"
@@ -64,7 +79,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeCouponnnnn" />
+        app:layout_constraintTop_toBottomOf="@+id/sReqAllDrivers" />
 
     <TextView
         android:id="@+id/driversListNoDataTextView"

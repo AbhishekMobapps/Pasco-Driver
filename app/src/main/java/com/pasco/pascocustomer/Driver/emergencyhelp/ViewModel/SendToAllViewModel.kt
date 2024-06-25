@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.utils.Event
@@ -14,51 +13,31 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SendEmergencyHelpViewModel@Inject constructor(
-    application: Application,
-    private val repository: SendEmergencyHelpRepository
+class SendToAllViewModel@Inject constructor(
+    application: Application, private val repository: SendToAllRepository
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mGetHelpDriverResponse = MutableLiveData<Event<SendEmergercyHelpResponse>>()
+    val mSendToAllResponse = MutableLiveData<Event<SendEmergercyHelpResponse>>()
     var context: Context? = null
 
-    fun sendEmergencyData(
-        progressDialog: CustomProgressDialog,
-        activity: Activity,
-        id: String,
-        driver_id: String,
-        current_location: String,
-        reason :String
-    ) =
-        viewModelScope.launch {
-            getNotesReminderDatas(progressDialog,activity,id,driver_id,current_location,reason)
-        }
 
-    private suspend fun getNotesReminderDatas(
-        progressDialog: CustomProgressDialog,
-        activity: Activity,
-        id: String,
-        driver_id: String,
-        current_location: String,
-        reason :String
-    ) {
+     fun sendHelpToAllData(body: SendToAllBody, activity: Activity, progressDialog: CustomProgressDialog) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.sendEmergencyHelpRepo(id, driver_id, current_location,reason)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        repository.sendToAllRepository(body).subscribeOn(Schedulers.io()).observeOn(
+            AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<SendEmergercyHelpResponse>() {
                 override fun onNext(value: SendEmergercyHelpResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
-                    mGetHelpDriverResponse.value = Event(value)
+                    mSendToAllResponse.value = Event(value)
                 }
+
                 override fun onError(e: Throwable) {
                     progressIndicator.value = false
                     progressDialog.stop()

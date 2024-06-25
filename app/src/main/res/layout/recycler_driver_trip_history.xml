@@ -171,7 +171,6 @@
             app:layout_constraintHeight_percent=".2"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/consDiatnceORD"
@@ -271,23 +270,53 @@
                 app:layout_constraintWidth_percent=".2"
                 tools:ignore="MissingConstraints" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consInvoiceFeedback"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHeight_percent=".2"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameAndPendingConst"
+            app:layout_constraintWidth_percent="0.93">
+
+        <TextView
+            android:id="@+id/invoiceTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="start"
+            android:text="@string/invoice"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/normal_txt_size13"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent=".5"
+            tools:ignore="MissingConstraints" />
+
 
             <TextView
-                android:id="@+id/invoiceTextView"
+                android:id="@+id/addFeedbackTextView"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Download Invoice"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent=".78"
+                android:background="@drawable/button_background_color"
+                android:gravity="center"
+                android:text="@string/feedback"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/normal_txt_size13"
-                android:textStyle="bold"
+                app:layout_constraintWidth_percent=".3"
+                android:textSize="@dimen/normal_txt_size"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/arrivalTimeDriverHis"
-                app:layout_constraintWidth_percent=".5"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints,NotSibling" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

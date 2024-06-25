@@ -756,9 +756,15 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         submitBtn?.setOnClickListener {
-
-            feedbackApi(commentTxt?.text.toString(), ratingBars)
-            feedbackObserver()
+            val comment = commentTxt?.text.toString()
+            if (ratingBars.isEmpty()) {
+                Toast.makeText(this, "Please add a rating", Toast.LENGTH_SHORT).show()
+            } else if (comment.isBlank()) {
+                Toast.makeText(this, "Please add a comment", Toast.LENGTH_SHORT).show()
+            } else {
+                feedbackApi(comment, ratingBars)
+                feedbackObserver()
+            }
         }
         skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
 
