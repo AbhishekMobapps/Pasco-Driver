@@ -1,23 +1,29 @@
 package com.pasco.pascocustomer.Driver.Fragment
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.AddFeedbackOnClickListner
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse.CancelledData
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripViewModel
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryViewModel
 import com.pasco.pascocustomer.Driver.adapter.CancelledTripHistoryAdapter
 import com.pasco.pascocustomer.Driver.adapter.CompletedTripHistoryAdapter
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentTripHistoryBinding
@@ -26,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class TripHistoryFragment : Fragment() {
+class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
     private lateinit var binding: FragmentTripHistoryBinding
     private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
         ArrayList()
@@ -34,6 +40,8 @@ class TripHistoryFragment : Fragment() {
     private var refersh = ""
     private val completedTripHistoryViewModel: CompletedTripHistoryViewModel by viewModels()
     private val cancelledTripViewModel: CancelledTripViewModel by viewModels()
+    private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
+    var bottomSheetDialog1: BottomSheetDialog? = null
     private val progressDialog by lazy { CustomProgressDialog(requireActivity()) }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +52,7 @@ class TripHistoryFragment : Fragment() {
 
         completedApi()
         completedObserver()
+        feedbackObserver()
         binding.completedHisTextview.setOnClickListener {
             binding.completedHisTextview.background =
                 ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
@@ -64,6 +73,31 @@ class TripHistoryFragment : Fragment() {
             cancelledObserver()
         }
         return binding.root
+    }
+
+    private fun feedbackObserver() {
+        driverFeedbackModelView.progressIndicator.observe(requireActivity()) {}
+        driverFeedbackModelView.mRejectResponse.observe(
+            requireActivity()
+        ) {
+            val msg = it.peekContent().msg
+            val status = it.peekContent().status
+            Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show()
+            if (status=="False")
+            {
+
+            }
+            else{
+                val intent = Intent(requireActivity(), DriverDashboardActivity::class.java)
+                startActivity(intent)
+            }
+
+
+        }
+        driverFeedbackModelView.errorResponse.observe(requireActivity()) {
+            ErrorUtil.handlerGeneralError(requireActivity(), it)
+            // errorDialogs()
+        }
     }
 
 
@@ -140,7 +174,7 @@ class TripHistoryFragment : Fragment() {
                     binding.recycerHistoryDriverList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.recycerHistoryDriverList.adapter =
-                        CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
+                        CompletedTripHistoryAdapter(requireContext(),this,driverTripHistory)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
@@ -157,6 +191,25 @@ class TripHistoryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         completedApi()
+    }
+
+    override fun addFeedbackItemClick(
+        position: Int,
+        id: Int,
+        comment: String,
+        ratingBars: String,
+        bottomSheetDialog: BottomSheetDialog
+    ) {
+        feedbackApi(id,comment, ratingBars)
+    }
+
+    private fun feedbackApi(id: Int, comment: String, ratingBars: String) {
+        val loinBody = DriverFeedbackBody(
+            bookingconfirmation = id.toString(),
+            rating = ratingBars,
+            feedback = comment
+        )
+        driverFeedbackModelView.cancelBooking(loinBody,requireActivity(), progressDialog)
     }
 
 }

@@ -30,6 +30,7 @@ import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergercyHelpResponse
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendToAllBody
 import com.pasco.pascocustomer.Profile.PutViewModel.ProfileResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
@@ -393,8 +394,16 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String,
         @Field("driver_id") driver_id: String,
-        @Field("current_location") current_location: String
+        @Field("current_location") current_location: String,
+        @Field("reason") reason: String
     ): Observable<SendEmergercyHelpResponse>
+
+    @Headers("Accept: application/json")
+    @POST("sendemergencyhelptoall/{id}/")
+    fun sendToAllDriver(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: SendToAllBody
+    ):Observable<SendEmergercyHelpResponse>
 
     //EmergencyList
     @GET("show-emergencydetail/")

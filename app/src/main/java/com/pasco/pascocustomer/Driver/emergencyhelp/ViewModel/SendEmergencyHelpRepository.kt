@@ -9,11 +9,12 @@ class SendEmergencyHelpRepository@Inject constructor(private val apiService: Api
     suspend fun sendEmergencyHelpRepo(
         id: String,
         driver_id: String,
-        current_location :String
+        current_location :String,
+        reason :String
     ): Observable<SendEmergercyHelpResponse>
     {
         return apiService.sendEmergencyHelp(
             PascoApp.encryptedPrefs.bearerToken,
-            id,driver_id,current_location)
+            id,driver_id,current_location,reason)
     }
 }

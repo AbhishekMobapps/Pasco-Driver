@@ -35,6 +35,9 @@
     <style name="Style_Dialog_Rounded_Corner" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowMinWidthMinor">75%</item>`
     </style>
+    <style name="Style_Dialog_Rounded_Corner1" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMinor">80%</item>`
+    </style>
     <style name="TopCircleDialogStyle" parent="Theme.Design.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
