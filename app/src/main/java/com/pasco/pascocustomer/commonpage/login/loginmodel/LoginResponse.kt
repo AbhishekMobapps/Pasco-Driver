@@ -46,6 +46,9 @@ class LoginResponse {
     @Expose
     var approved: Int? = null
 
+    @SerializedName("phone_verify")
+    @Expose
+    var phoneVerify: String? = null
 
 
     inner class Token : java.io.Serializable {

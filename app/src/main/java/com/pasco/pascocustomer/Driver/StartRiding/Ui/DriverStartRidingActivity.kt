@@ -122,8 +122,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dropLocation: LatLng
     private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
-    private var spinnerDriverStatus = ""
-    private var driverStatus = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
     private val routeTypeStatic: MutableList<String> = mutableListOf()
@@ -164,7 +162,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiImage: String
     private var isClick = true
     private lateinit var locationArrayList: ArrayList<LatLng?>
-    private lateinit var updatedDriverStatus: String
     private lateinit var imagePart: MultipartBody.Part
 
 
@@ -256,8 +253,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
-                        spinnerDriverStatus = routeType?.get(i)?.status.toString()
-                    //    PascoApp.encryptedPrefs.DriverStatus = spinnerDriverStatus
                         Log.e("onItemSelected", spinnerDriverSId)
 
                         //call vehicleType
@@ -367,7 +362,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 addDeliveryProofApi()
             }
         }
-        //addDeliveryObserver()
+        addDeliveryObserver()
         bottomSheetDialog!!.show()
 
     }
@@ -378,15 +373,15 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         deliveryProofViewModel.mDeliveryProofResponse.observe(
             this
         ) {
-
             val status = it.peekContent().status!!
             val message = it.peekContent().msg!!
-       
-          if (status == "True") {
+
+            if (status == "True") {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
                 showFeedbackPopup()
             } else {
-               // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
             }
 
         }
@@ -397,32 +392,20 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addDeliveryProofApi() {
-
         val BookingID = RequestBody.create(MultipartBody.FORM, Bid)
         val driverID = RequestBody.create(MultipartBody.FORM, userId)
-      
-  
-        var deliveryImage: MultipartBody.Part? = null
-
-        deliveryImage = if (selectedImageFile == null) {
-
-            MultipartBody.Part.createFormData("", selectedImageFile?.name, "".toRequestBody("*delivery_image/*".toMediaTypeOrNull())
-
         if (selectedImageFile != null) {
             imagePart = MultipartBody.Part.createFormData(
                 "delivery_image",
                 selectedImageFile!!.name,
-                selectedImageFile!!.asRequestBody("delivery_image/*".toMediaTypeOrNull()))
+                selectedImageFile!!.asRequestBody("delivery_image/*".toMediaTypeOrNull())
+            )
             Log.e("endDate3", "file: " + selectedImageFile)
         } else {
-            MultipartBody.Part.createFormData(
-                "delivery_image",
-                selectedImageFile?.name,
-                selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
             imagePart = MultipartBody.Part.createFormData(
                 "delivery_image", "",
                 "".toRequestBody("delivery_image/*".toMediaTypeOrNull())
-       )
+            )
 
 
             Log.e("endDate3", "file:  null " + selectedImageFile)
@@ -744,12 +727,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
                 showDeliveryPopUp()
-
-
-                //showDeliveryPopUp()
-                showFeedbackPopup()
 
 
             }
@@ -937,12 +915,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dAdapter.add(getString(R.string.selectStatus))
             binding.routeSpinnerSpinner.adapter = dAdapter
-
-            binding.routeSpinnerSpinner.setSelection(dAdapter.count)
-
-
-            if (response.peekContent().status.equals("False")) {
-
+            // Determine spinner selection based on orderStatusDriverR condition
             if (orderStatusDriverR == "withoutSelected") {
                 val spinnerPosition = if (driStatus.isNotEmpty()) {
                     dAdapter.getPosition(driStatus)

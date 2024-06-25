@@ -108,11 +108,18 @@ class OtpVerifyActivity : AppCompatActivity() {
             if (otpFields.any { it.isEmpty() }) {
                 Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
             } else {
-                val verificationCode =
+              /*  val verificationCode =
                     "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
                 val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(verificationId, verificationCode)
-                signInWithPhoneAuthCredential(credential, deviceModel)
+                signInWithPhoneAuthCredential(credential, deviceModel)*/
+
+                if (loginValue == "driver") {
+                    getDriverSignupApi(deviceModel)
+                } else {
+                    getUserSignUp(deviceModel)
+                    Log.e("LogValueAA", "loginValueUSER " + loginValue)
+                }
             }
 
 

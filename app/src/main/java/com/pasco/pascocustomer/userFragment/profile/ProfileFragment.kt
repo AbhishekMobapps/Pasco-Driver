@@ -103,10 +103,12 @@ class ProfileFragment : Fragment() {
         }
 
         binding.updateBtn.setOnClickListener {
-
             val email = binding.emailTxtA.text.toString()
             val isValid = isValidEmail(email)
-            if (isValid) {
+            if (selectedImageFile == null) {
+                Toast.makeText(requireContext(), "Please upload profile", Toast.LENGTH_SHORT)
+                    .show()
+            } else if (isValid) {
                 updateProfile()
             } else {
                 Toast.makeText(requireContext(), "Please enter valid email", Toast.LENGTH_SHORT)
