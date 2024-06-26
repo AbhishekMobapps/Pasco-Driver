@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.adapter.DriversListAdapter
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverViewModel
@@ -80,20 +79,15 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
             finish()
         }
         binding.sReqAllDrivers.setOnClickListener {
-            openLogoutPop()
+            sendHelpAlertPopup()
         }
         getEmergencyObserver()
         sendHelpObserver()
-        //heloo
     }
-
     @SuppressLint("MissingInflatedId")
-    private fun openLogoutPop() {
-        val builder = AlertDialog.Builder(
-           this,
-            R.style.Style_Dialog_Rounded_Corner
-        )
-        val dialogView = layoutInflater.inflate(R.layout.logout_popup, null)
+    private fun sendHelpAlertPopup() {
+        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.send_req_all_confirmation_popup, null)
         builder.setView(dialogView)
 
         val dialog = builder.create()
@@ -101,23 +95,25 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
 
         val noTextViewCp = dialogView.findViewById<TextView>(R.id.noTextViewCp)
         val yesTextViewCp = dialogView.findViewById<TextView>(R.id.yesTextViewCp)
-        dialog.show()
         noTextViewCp.setOnClickListener {
             dialog.dismiss()
         }
         yesTextViewCp.setOnClickListener {
             sendToAllApi()
         }
-        sendToAllObserver()
+        dialog.show()
+
+        sendToAllObserver(dialog)
     }
 
-    private fun sendToAllObserver() {
+    private fun sendToAllObserver(dialog: AlertDialog) {
         sendToAllViewModel.mSendToAllResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
 
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
             } else {
+                dialog.dismiss()
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -132,7 +128,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
             formattedLatitudeSelect,
             formattedLongitudeSelect
         )
-        sendToAllViewModel.sendHelpToAllData(body, activity, progressDialog)
+        sendToAllViewModel.sendHelpToAllData(bookingId,body, activity, progressDialog)
     }
 
     private fun sendHelpObserver() {
@@ -234,9 +230,11 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
                 if (emergencyDriNumbers.isEmpty()) {
                     binding.driversListNoDataTextView.visibility = View.VISIBLE
                     binding.recyclerAllDriverList.visibility = View.GONE
+                    binding.sReqAllDrivers.visibility = View.GONE
                 } else {
                     binding.driversListNoDataTextView.visibility = View.GONE
                     binding.recyclerAllDriverList.visibility = View.VISIBLE
+                    binding.sReqAllDrivers.visibility = View.VISIBLE
                     setupRecyclerView()
                 }
             }
@@ -261,6 +259,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     }
 
     override fun sendHelp(position: Int, id: Int, comment: String) {
+
         sendHelpApi(id,comment)
     }
 

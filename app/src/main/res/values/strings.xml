@@ -133,7 +133,7 @@
     <string name="emergency_number">Emergency Number</string>
     <string name="arabic_language">Arabic Language</string>
     <string name="english_lag">English</string>
-    <string name="selectStatus">Select Status\n</string>
+    <string name="selectStatus">Select Status</string>
     <string name="selectCountryType">Select Country\n</string>
     <string name="selectCity">Select City\n</string>
     <string name="pickup_details">Pickup Point</string>
@@ -323,6 +323,9 @@
     <string name="completed_booking">Completed Booking</string>
     <string name="push_notifications">Push Notifications</string>
     <string name="see_notifications">See Notifications</string>
-
+    <string name="are_you_sure_you_want_to_send_requests_to_all_drivers">Are you sure you want to send requests to all drivers?</string>
+    <string name="enter_verification_code">Enter Verification Code</string>
+    <string name="verify">Verify</string>
+    <string name="update_your_status">Update Your Status</string>
 
 </resources>

@@ -353,6 +353,15 @@ interface ApiServices {
         @Part delivery_image: MultipartBody.Part
     ): Observable<DeliveryProofResponse>
 
+    @FormUrlEncoded
+    @POST("verifydeliveryproof/")
+    fun verifyDeliveryCode(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Field("bookingid") bookingid: String,
+        @Field("delivery_code") delivery_code: String
+    ): Observable<DeliveryProofResponse>
+
+
 
     //put profile
     @Multipart
@@ -402,6 +411,7 @@ interface ApiServices {
     @POST("sendemergencyhelptoall/{id}/")
     fun sendToAllDriver(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String,
         @Body body: SendToAllBody
     ):Observable<SendEmergercyHelpResponse>
 
