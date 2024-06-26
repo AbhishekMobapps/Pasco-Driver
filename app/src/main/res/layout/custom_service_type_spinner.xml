@@ -4,5 +4,6 @@
     android:layout_height="45dp"
     android:padding="10dp"
     android:textSize="16sp"
+    android:id="@+id/statusTextView"
     android:text="Select Transport Type"
     android:textColor="@color/black"/>

@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel
+package com.pasco.pascocustomer.Driver.StartRiding.deliveryproof
 
 import android.app.Activity
 import android.app.Application
@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,25 +18,25 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SendToAllViewModel@Inject constructor(
-    application: Application, private val repository: SendToAllRepository
+class DeliveryVerifyViewModel@Inject constructor(
+    application: Application, private val repository: CommonRepository
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mSendToAllResponse = MutableLiveData<Event<SendEmergercyHelpResponse>>()
+    val mDelVerifyResponse = MutableLiveData<Event<DeliveryProofResponse>>()
     var context: Context? = null
 
 
-     fun sendHelpToAllData( id: String,body: SendToAllBody, activity: Activity, progressDialog: CustomProgressDialog) {
+    fun getDriverDetails(bookingid: String,delivery_code:String, activity: Activity, progressDialog: CustomProgressDialog) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.sendToAllRepository(id,body).subscribeOn(Schedulers.io()).observeOn(
-            AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<SendEmergercyHelpResponse>() {
-                override fun onNext(value: SendEmergercyHelpResponse) {
+        repository.verifyDeliveryProof(bookingid,delivery_code).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableObserver<DeliveryProofResponse>() {
+                override fun onNext(value: DeliveryProofResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
-                    mSendToAllResponse.value = Event(value)
+                    mDelVerifyResponse.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {
