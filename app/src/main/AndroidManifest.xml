@@ -6,6 +6,7 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.CAMERA"
@@ -30,19 +31,19 @@
         android:theme="@style/Theme.PascoCustomer"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <activity
-            android:name=".Driver.emergencyhelp.Ui.EmergencyMainActivity"
+            android:name=".notificationoffon.NotificationOnOffActivity"
             android:exported="false" />
         <activity
             android:name=".Driver.emergencyhelp.Ui.EmergencyMainActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".Driver.emergencyhelp.Ui.EmergencyMainActivity"
+            android:exported="false"
+            tools:ignore="DuplicateActivity" />
         <activity
             android:name=".Driver.emergencyhelp.Ui.EmergencyHelpActivity"
             android:exported="false" />
-
-
         <activity
             android:name=".Driver.NotesRemainders.Ui.NotesRemainderActivity"
             android:exported="false" />
@@ -60,9 +61,6 @@
             android:exported="false" />
         <activity
             android:name=".customer.activity.driverdetails.DriverDetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Driver.NotesRemainders.Ui.NotesRemainderActivity"
             android:exported="false" />
         <activity
             android:name=".customer.activity.track.TrackActivity"
@@ -139,7 +137,6 @@
         <activity
             android:name=".customer.activity.vehicledetailactivity.VehicleDetailsActivity"
             android:exported="false" />
-
         <activity
             android:name=".commonpage.login.signup.SignUpActivity"
             android:exported="false" />

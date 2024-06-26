@@ -23,6 +23,7 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.databinding.FragmentMoreBinding
 import com.pasco.pascocustomer.loyalty.LoyaltyActivity
+import com.pasco.pascocustomer.notificationoffon.NotificationOnOffActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -51,6 +52,11 @@ class MoreFragment : Fragment() {
         }
         binding.consMyWalletVehDetails.setOnClickListener {
             val intent = Intent(requireContext(), DriverWalletActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.notificationConst.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationOnOffActivity::class.java)
             startActivity(intent)
         }
         binding.consTermsCondInside.setOnClickListener {

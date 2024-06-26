@@ -97,11 +97,13 @@ class DriverDashboardActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.switchbtn.isChecked = false
 
+
+        getNotificationPermission()
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         switchCheck = PascoApp.encryptedPrefs.CheckedType
-        Log.e("switchValue", "switchCheck: "+switchCheck )
+        Log.e("switchValue", "switchCheck: " + switchCheck)
         refersh = PascoApp.encryptedPrefs.token
 
         requestLocationPermission()
@@ -254,6 +256,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
     }
+
     private fun markOffDuty() {
         // Assuming similar logic for marking off duty
         val body = MarkDutyBody(mark_status = switchCheck)
@@ -418,7 +421,8 @@ class DriverDashboardActivity : AppCompatActivity() {
             progressDialog, activity, body
         )
     }
-//h
+
+    //h
     private fun markOnObserver() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -587,4 +591,17 @@ class DriverDashboardActivity : AppCompatActivity() {
         getProfileApi()
     }
 
+    private fun getNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this@DriverDashboardActivity,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@DriverDashboardActivity,
+                arrayOf<String>(Manifest.permission.POST_NOTIFICATIONS),
+                101
+            )
+        }
+    }
 }
