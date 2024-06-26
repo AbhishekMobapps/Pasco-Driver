@@ -1,8 +1,10 @@
 package com.pasco.pascocustomer.dashboard
 
+import android.Manifest
 import android.app.ActionBar
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,16 +12,14 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.Window
-import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
@@ -28,7 +28,6 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
 import com.pasco.pascocustomer.userFragment.history.HistoryFragment
 import com.pasco.pascocustomer.userFragment.MoreFragment
@@ -38,7 +37,6 @@ import com.pasco.pascocustomer.userFragment.profile.ProfileFragment
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalDate
 
 @AndroidEntryPoint
 class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
@@ -62,6 +60,8 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        getNotificationPermission()
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
         profile = PascoApp.encryptedPrefs.profileUpdate
@@ -368,6 +368,19 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         dialog.show()
     }
 
+    private fun getNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this@UserDashboardActivity,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@UserDashboardActivity,
+                arrayOf<String>(Manifest.permission.POST_NOTIFICATIONS),
+                101
+            )
+        }
+    }
 
 
 }

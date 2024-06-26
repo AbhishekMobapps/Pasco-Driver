@@ -33,7 +33,7 @@ class ReminderAdapter(
         val titleTxt: TextView = itemView.findViewById(R.id.titleTxt)
         val dateTimeTxt: TextView = itemView.findViewById(R.id.dateTimeTxt)
         val descriptionTxt: TextView = itemView.findViewById(R.id.descriptionTxt)
-        val okBtn: ImageView = itemView.findViewById(R.id.okBtn)
+        val okBtn: TextView = itemView.findViewById(R.id.okBtn)
 
 
     }

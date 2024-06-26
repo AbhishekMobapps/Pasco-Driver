@@ -250,6 +250,75 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                android:id="@+id/notificationCustomer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center_vertical"
+                android:text="@string/push_notifications"
+                android:textColor="@color/black_dark"
+                android:textSize="@dimen/text_size_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/consSupportLegal"
+                app:layout_constraintWidth_percent=".95" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/notificationConst"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/customer_profile_back1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notificationCustomer"
+                app:layout_constraintWidth_percent=".95">
+
+                <ImageView
+                    android:id="@+id/notiRimg"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/circle_profile_background"
+                    android:padding="12dp"
+                    android:src="@drawable/notificaion"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/logo_color" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_size_20"
+                    android:gravity="center_vertical"
+                    android:text="@string/see_notifications"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/normal_txt_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/notiRimg"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".7" />
+
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/forward_arrow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/black" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
                 android:id="@+id/NotesStaticCustomer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -260,7 +329,7 @@
                 android:textSize="@dimen/text_size_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/consSupportLegal"
+                app:layout_constraintTop_toBottomOf="@+id/notificationConst"
                 app:layout_constraintWidth_percent=".95" />
 
 
@@ -317,6 +386,8 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
             <TextView
                 android:id="@+id/loyaltyProgram"

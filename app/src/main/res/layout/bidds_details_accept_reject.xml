@@ -12,6 +12,7 @@
         android:layout_marginTop="@dimen/text_size_20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.3"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -95,12 +96,24 @@
                 android:id="@+id/customerId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order ID :"
+                android:text="@string/order_id"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/colonTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" :"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/customerId"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
             <TextView
                 android:id="@+id/oderIdTxt"
@@ -111,9 +124,9 @@
                 android:text="PSR45678912"
                 android:textColor="@color/grey_dark"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/customerId"
                 app:layout_constraintStart_toEndOf="@+id/customerId"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/customerId" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -140,17 +153,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/locationImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="3dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pickUp"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/pickUpLocation"
@@ -162,7 +164,7 @@
                 android:textColor="@color/grey"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/locationImg"
+                app:layout_constraintStart_toEndOf="@+id/pickUp"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -176,7 +178,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pickupCons"
-            app:layout_constraintWidth_percent="0.89">
+            app:layout_constraintWidth_percent="0.95">
 
             <TextView
                 android:id="@+id/drop"
@@ -189,17 +191,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/dropImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="3dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/drop"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
 
             <TextView
                 android:id="@+id/dropLocation"
@@ -211,7 +202,7 @@
                 android:textColor="@color/grey"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dropImg"
+                app:layout_constraintStart_toEndOf="@+id/drop"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -225,13 +216,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dropCons"
-            app:layout_constraintWidth_percent="0.89">
+            app:layout_constraintWidth_percent="0.95">
 
             <TextView
                 android:id="@+id/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dist.      :"
+                android:text="@string/destination"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -254,9 +245,6 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -300,10 +288,10 @@
             android:id="@+id/priceConst"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/upfrontCons"
-            android:layout_marginTop="10dp"
             app:layout_constraintWidth_percent="0.95">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -328,8 +316,8 @@
                     android:id="@+id/totalPriceTx"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$1235"
                     android:layout_marginStart="3dp"
+                    android:text="$1235"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -361,11 +349,11 @@
                     android:id="@+id/bidPriceTx"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="1452"
                     android:layout_marginStart="3dp"
+                    android:text="1452"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/bidPrice"
                     app:layout_constraintStart_toEndOf="@+id/bidPrice"
                     app:layout_constraintTop_toTopOf="@+id/bidPrice" />

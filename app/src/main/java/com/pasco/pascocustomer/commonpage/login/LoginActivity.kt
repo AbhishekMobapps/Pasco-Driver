@@ -82,15 +82,9 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
-
             // Get new FCM registration token
             token = task.result
 
-            // Log the token
-
-
-            // Send token to your server if needed
-            // sendTokenToServer(token)
         }
 
         binding.asDriverConst.setOnClickListener {
@@ -99,7 +93,6 @@ class LoginActivity : AppCompatActivity() {
             binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.black))
             binding.asClientConst.setBackgroundResource(0)
             loginValue = "driver"
-            Log.e("OtpCheckData", "loginValue  Btn" + loginValue)
         }
 
         binding.asClientConst.setOnClickListener {
@@ -108,7 +101,6 @@ class LoginActivity : AppCompatActivity() {
             binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.grey_dark))
             binding.asDriverConst.setBackgroundResource(0)
             loginValue = "user"
-            Log.e("OtpCheckData", "loginValue  Btn" + loginValue)
         }
         binding.signUpBtn.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
@@ -232,11 +224,6 @@ class LoginActivity : AppCompatActivity() {
                     val phoneUtil = PhoneNumberUtil.getInstance()
                     val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
 
-                    // Log the country code and country name
-                    Log.e("Country Code", countryCode ?: "No country code found")
-                    Log.e("Country Name", countryName ?: "No country name found")
-                    Log.e("Phone Country Code", "+$phoneCountryCode")
-
                     // Switch to the main thread before updating UI
                     withContext(Dispatchers.Main) {
                         formattedCountryCode = "+$phoneCountryCode"
@@ -253,7 +240,6 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun otpCheckApi(deviceModel: String) {
-        Log.e("OtpCheckData", "loginValue  Api " + loginValue)
         val loinBody = CheckOtpBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
@@ -283,14 +269,12 @@ class LoginActivity : AppCompatActivity() {
                         intent.putExtra("loginValue", loginValue)
                         intent.putExtra("countryCode", binding.signInCountryCode.text.toString())
                         startActivity(intent)
-                        Log.e("OtpCheckData","loginValue..Driver " +loginValue)
                     } else {
                         loginApi()
                     }
                 } else {
                     if (otpStatus == 0) {
                        // sendVerificationCode("$cCodeSignIn$strPhoneNo")
-                        Log.e("OtpCheckData","loginValue..User " +loginValue)
                         val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
@@ -314,7 +298,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginApi() {
         //   val codePhone = strPhoneNo
-        Log.e("MainActivityAA", "FCM Registration Token: $token")
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
@@ -344,7 +327,6 @@ class LoginActivity : AppCompatActivity() {
             PascoApp.encryptedPrefs.isFirstTime = false
 
             if (approved == 2 && userType == "driver") {
-                Log.e("AAAAA", "aaaaaaa....")
                 val intent = Intent(this@LoginActivity, VehicleDetailsActivity::class.java)
                 startActivity(intent)
             } else if (loginValue == "driver" && userType == "driver") {

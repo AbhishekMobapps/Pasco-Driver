@@ -29,6 +29,7 @@ class AcceptedAdapter(
         val dateTime: TextView = itemView.findViewById(R.id.dateTime)
         val totalPriceTxt: TextView = itemView.findViewById(R.id.totalPriceTxt)
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
+        val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
         val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
     }
 
@@ -53,6 +54,7 @@ class AcceptedAdapter(
         holder.totalPriceTxt.text = "$ $price"
 
         holder.statusTxt.text = orderList[position].bookingStatus
+        holder.verificationTxt.text = orderList[position].deliverycode
 
         val dateTime = orderList[position].pickupDatetime
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())

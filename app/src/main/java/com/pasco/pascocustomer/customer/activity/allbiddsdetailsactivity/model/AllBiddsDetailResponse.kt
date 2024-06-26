@@ -130,5 +130,9 @@ class AllBiddsDetailResponse {
         @SerializedName("availabledrop_datetime")
         @Expose
         var availabledropDatetime: String? = null
+
+        @SerializedName("deliverycode")
+        @Expose
+        var deliverycode: String? = null
     }
 }
