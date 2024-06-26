@@ -20,6 +20,7 @@ import com.pasco.pascocustomer.Driver.NotesRemainders.Ui.NotesRemainderActivity
 import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.activity.Driver.PrivacyPolicyActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetailsActivity
@@ -78,7 +79,7 @@ class DriverMoreFragment : Fragment() {
         }
 
         binding.consPrivacyPolicyInside.setOnClickListener {
-            val intent = Intent(requireContext(), TermsAndConditionsActivity::class.java)
+            val intent = Intent(requireContext(), PrivacyPolicyActivity::class.java)
             startActivity(intent)
         }
         binding.consNotesReminderDri.setOnClickListener {

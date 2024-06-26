@@ -53,7 +53,8 @@ class InvoiceActivity : AppCompatActivity() {
         webSettings.javaScriptEnabled = true
         webSettings.loadWithOverviewMode = true
         webSettings.allowFileAccess = true
-
+        binding.webView.settings.setSupportZoom(true)
+        binding.webView.settings.setBuiltInZoomControls(true)
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
         webSettings.databaseEnabled = true
         webSettings.domStorageEnabled = true
