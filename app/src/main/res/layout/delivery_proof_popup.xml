@@ -22,6 +22,7 @@
             android:text="@string/select_proof_of_delivery"
             android:textColor="@color/black"
             android:gravity="center"
+            android:visibility="gone"
             android:textSize="@dimen/text_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:visibility="gone"
             android:background="@drawable/customer_profile_back1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,14 +86,60 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
+            android:id="@+id/AddreasonStatic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center_vertical"
+            android:text="@string/enter_verification_code"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/proofDeliveryTextView"
+            app:layout_constraintWidth_percent=".95" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/consReasonn"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/all_circle_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AddreasonStatic"
+            app:layout_constraintWidth_percent=".95">
+
+
+            <EditText
+                android:id="@+id/verificationCodeEditText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:text=""
+                android:hint=""
+                android:inputType="textWebEditText"
+                android:textSize="16sp"
+                android:padding="12dp"
+                app:layout_constraintWidth_percent=".98"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
             android:id="@+id/submitBtnDeliveryProof"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintHeight_percent=".16"
+            android:layout_height="45dp"
+            app:layout_constraintHeight_percent=".18"
             android:layout_marginTop="30dp"
             android:background="@drawable/button_background"
             android:gravity="center"
-            android:text="Submit"
+            android:text="@string/verify"
             android:textColor="@color/white"
             android:textSize="@dimen/normal_txt_size"
             android:textStyle="bold"
@@ -99,7 +147,7 @@
             android:layout_marginBottom="@dimen/text_size_20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/consUploadDeliveryProof"
+            app:layout_constraintTop_toBottomOf="@+id/consReasonn"
             app:layout_constraintWidth_percent="0.4" />
 
 

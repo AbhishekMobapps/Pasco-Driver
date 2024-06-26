@@ -181,6 +181,10 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         )
     }
 
+    fun verifyDeliveryProof(bookingid: String,delivery_code:String): Observable<DeliveryProofResponse> {
+        return apiService.verifyDeliveryCode(PascoApp.encryptedPrefs.bearerToken, bookingid,delivery_code)
+    }
+
     fun getUserNotification(): Observable<NotificationResponse> {
         return apiService.getNotification(PascoApp.encryptedPrefs.bearerToken)
     }

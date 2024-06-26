@@ -70,6 +70,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateRespon
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryVerifyViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.MarkerData
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
@@ -112,6 +113,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var activity: Activity
     private val startTripViewModel: StartTripViewModel by viewModels()
     private val getRouteUpdateViewModel: GetRouteUpdateViewModel by viewModels()
+    private val deliveryVerifyViewModel: DeliveryVerifyViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var Plat: Double = 0.0
     private var Plon: Double = 0.0
@@ -149,7 +151,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private val cameraPermissionCode = 101
     private lateinit var savedImggSelectProof: CircleImageView
     var bottomSheetDialog: BottomSheetDialog? = null
-    private val deliveryProofViewModel: DeliveryProofViewModel by viewModels()
+
     private lateinit var poiName: String
     private lateinit var poiType: String
     private lateinit var couponCode: String
@@ -305,7 +307,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                completedRideApi()
+                showDeliveryPopUp()
+
             }
 
             completedRideObserver()
@@ -337,88 +340,68 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         bottomSheetDialog!!.setContentView(view)
 
 
-        val consUploadDeliveryProof =
-            bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
-        val submitBtnDeliveryProof =
-            bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
-        savedImggSelectProof = bottomSheetDialog?.findViewById(R.id.savedImggSelectProof)!!
+        val consUploadDeliveryProof = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
+        val submitBtnDeliveryProof = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
+        val verificationCodeEditText = bottomSheetDialog?.findViewById<EditText>(R.id.verificationCodeEditText)
 
         submitBtnDeliveryProof?.setOnClickListener {
             bottomSheetDialog!!.dismiss()
         }
 
-        consUploadDeliveryProof!!.setOnClickListener {
-            openCamera()
-        }
+        /* consUploadDeliveryProof!!.setOnClickListener {
+             openCamera()
+         }*/
 
         submitBtnDeliveryProof!!.setOnClickListener {
-            if (selectedImageFile == null) {
+            if (verificationCodeEditText!!.text.toString().isNullOrBlank()) {
                 Toast.makeText(
                     this@DriverStartRidingActivity,
-                    "Please Upload the Image",
+                    "Please enter verification code",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                addDeliveryProofApi()
+                // addDeliveryProofApi()
+                Log.e("VerifyCodeA","aaaObaa")
+                deliveryVerifyViewModel.getDriverDetails(Bid, verificationCodeEditText!!.text.toString(),
+                    activity,
+                    progressDialog
+                )
+                addDeliveryObserver()
+
             }
         }
-        addDeliveryObserver()
+
         bottomSheetDialog!!.show()
 
     }
 
     private fun addDeliveryObserver() {
-        deliveryProofViewModel.progressIndicator.observe(this, androidx.lifecycle.Observer {
+        deliveryVerifyViewModel.progressIndicator.observe(this, androidx.lifecycle.Observer {
         })
-        deliveryProofViewModel.mDeliveryProofResponse.observe(
+        deliveryVerifyViewModel.mDelVerifyResponse.observe(
             this
         ) {
             val status = it.peekContent().status!!
             val message = it.peekContent().msg!!
-
-            if (status == "True") {
+            Log.e("VerifyCodeA","aaaOb")
+            if (status=="True")
+            {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
-                showFeedbackPopup()
-            } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-
+                completedRideApi()
             }
+            else{
+                Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+            }
+
 
         }
 
-        deliveryProofViewModel.errorResponse.observe(this) {
+        deliveryVerifyViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
         }
     }
 
-    private fun addDeliveryProofApi() {
-        val BookingID = RequestBody.create(MultipartBody.FORM, Bid)
-        val driverID = RequestBody.create(MultipartBody.FORM, userId)
-        if (selectedImageFile != null) {
-            imagePart = MultipartBody.Part.createFormData(
-                "delivery_image",
-                selectedImageFile!!.name,
-                selectedImageFile!!.asRequestBody("delivery_image/*".toMediaTypeOrNull())
-            )
-            Log.e("endDate3", "file: " + selectedImageFile)
-        } else {
-            imagePart = MultipartBody.Part.createFormData(
-                "delivery_image", "",
-                "".toRequestBody("delivery_image/*".toMediaTypeOrNull())
-            )
 
-
-            Log.e("endDate3", "file:  null " + selectedImageFile)
-        }
-        deliveryProofViewModel.deliveryProofData(
-            progressDialog,
-            activity,
-            BookingID,
-            driverID,
-            imagePart
-
-        )
-    }
 
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -715,11 +698,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun completedRideApi() {
-        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
-
-    }
-
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -727,7 +705,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                showDeliveryPopUp()
+                showFeedbackPopup()
 
 
             }
@@ -737,6 +715,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+    private fun completedRideApi() {
+        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
+
+    }
+
+
 
     private fun showFeedbackPopup() {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)

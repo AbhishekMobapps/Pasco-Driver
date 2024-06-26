@@ -7,8 +7,9 @@ import javax.inject.Inject
 
 class SendToAllRepository @Inject constructor(private val apiService: ApiServices) {
      fun sendToAllRepository(
+         id: String,
         @Body body: SendToAllBody
     ): Observable<SendEmergercyHelpResponse> {
-        return apiService.sendToAllDriver(PascoApp.encryptedPrefs.bearerToken, body)
+        return apiService.sendToAllDriver(PascoApp.encryptedPrefs.bearerToken,id, body)
     }
 }
