@@ -18,8 +18,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
@@ -109,6 +112,11 @@ import kotlin.math.sqrt
 @AndroidEntryPoint
 class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityDriverStartRidingBinding
+    private val editTextList = mutableListOf<EditText>()
+    private lateinit var box1:EditText
+    private lateinit var box2:EditText
+    private lateinit var box3:EditText
+    private lateinit var box4:EditText
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var activity: Activity
     private val startTripViewModel: StartTripViewModel by viewModels()
@@ -255,7 +263,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
-                        Log.e("onItemSelected", spinnerDriverSId)
+
 
                         //call vehicleType
                         if (!spinnerDriverSId.isNullOrBlank()) {
@@ -342,7 +350,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val consUploadDeliveryProof = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
         val submitBtnDeliveryProof = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
-        val verificationCodeEditText = bottomSheetDialog?.findViewById<EditText>(R.id.verificationCodeEditText)
+         box1 = bottomSheetDialog?.findViewById(R.id.box1Pop)!!
+         box2 = bottomSheetDialog?.findViewById(R.id.box2Pop)!!
+        box3 = bottomSheetDialog?.findViewById(R.id.box3Pop)!!
+         box4 = bottomSheetDialog?.findViewById(R.id.box4Pop)!!
 
         submitBtnDeliveryProof?.setOnClickListener {
             bottomSheetDialog!!.dismiss()
@@ -353,23 +364,72 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
          }*/
 
         submitBtnDeliveryProof!!.setOnClickListener {
-            if (verificationCodeEditText!!.text.toString().isNullOrBlank()) {
-                Toast.makeText(
-                    this@DriverStartRidingActivity,
-                    "Please enter verification code",
-                    Toast.LENGTH_SHORT
-                ).show()
+            val otpFields = listOf(
+                box1!!.text.toString(),
+                box2!!.text.toString(),
+                box3!!.text.toString(),
+                box4!!.text.toString()
+            )
+            if (otpFields.any { it.isEmpty() }) {
+                Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
             } else {
                 // addDeliveryProofApi()
-                Log.e("VerifyCodeA","aaaObaa")
-                deliveryVerifyViewModel.getDriverDetails(Bid, verificationCodeEditText!!.text.toString(),
+
+                val otpTextView = otpFields.joinToString("")
+
+                deliveryVerifyViewModel.getDriverDetails(
+                    Bid,
+                    otpTextView,
                     activity,
                     progressDialog
                 )
-                addDeliveryObserver()
 
+                addDeliveryObserver()
+            }
+
+
+        }
+        editTextList.addAll(
+            listOf(
+                box1,
+                box2,
+                box3,
+                box4
+            )
+        )
+
+        for (i in editTextList.indices) {
+            editTextList[i].setOnKeyListener { v, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DEL) {
+                    if (editTextList[i].text.isEmpty() && i > 0) {
+                        editTextList[i - 1].requestFocus()
+                        editTextList[i - 1].setText("")
+                    }
+                }
+                false
             }
         }
+
+        for (i in 0 until editTextList.size - 1) {
+            editTextList[i].addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    if (s?.length == 1) {
+                        editTextList[i + 1].requestFocus()
+                    }
+                }
+            })
+        }
+
 
         bottomSheetDialog!!.show()
 
@@ -383,7 +443,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         ) {
             val status = it.peekContent().status!!
             val message = it.peekContent().msg!!
-            Log.e("VerifyCodeA","aaaOb")
             if (status=="True")
             {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
@@ -419,7 +478,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     val fileName = "image_${System.currentTimeMillis()}.jpg"
                     // Convert Bitmap to File
                     selectedImageFile = bitmapToFile(imageBitmap, fileName)
-                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFile)
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     savedImggSelectProof.setImageBitmap(imageBitmap)
                 } else {
@@ -1135,7 +1193,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         if (distanceToDestination <= thresholdDistance && !isDestinationReached) {
             // Destination reached
             isDestinationReached = true
-            Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
             // Perform any action you want when the destination is reached
         }
     }
