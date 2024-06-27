@@ -110,9 +110,10 @@ class OtpVerifyActivity : AppCompatActivity() {
             } else {
                 val verificationCode =
                     "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
-               /* val credential: PhoneAuthCredential =
+                /*val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(verificationId, verificationCode)
                 signInWithPhoneAuthCredential(credential, deviceModel)*/
+
 
                 if (loginValue == "driver") {
                     getDriverSignupApi(deviceModel)

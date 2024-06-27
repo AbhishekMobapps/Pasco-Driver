@@ -31,6 +31,9 @@ class AcceptedAdapter(
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
         val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
         val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
+
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,7 +58,7 @@ class AcceptedAdapter(
         holder.verificationTxt.text = orderList[position].deliverycode
 
         holder.statusTxt.text = orderList[position].bookingStatus
-        holder.verificationTxt.text = orderList[position].deliverycode
+
 
         val dateTime = orderList[position].pickupDatetime
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
