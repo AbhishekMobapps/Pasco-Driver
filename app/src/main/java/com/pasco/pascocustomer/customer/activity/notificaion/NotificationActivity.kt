@@ -124,7 +124,8 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
         position: Int,
         id: Int,
         pickupLatitude: Double?,
-        pickupLongitude: Double?
+        pickupLongitude: Double?,
+        verificationCode: String?
     ) {
 
     }

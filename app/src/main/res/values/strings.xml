@@ -327,5 +327,7 @@
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verify">Verify</string>
     <string name="update_your_status">Update Your Status</string>
+    <string name="verification">Verification</string>
+    <string name="code">Code</string>
 
 </resources>

@@ -52,6 +52,8 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsRes
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
+import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
+import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffResponse
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -181,8 +183,15 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         )
     }
 
-    fun verifyDeliveryProof(bookingid: String,delivery_code:String): Observable<DeliveryProofResponse> {
-        return apiService.verifyDeliveryCode(PascoApp.encryptedPrefs.bearerToken, bookingid,delivery_code)
+    fun verifyDeliveryProof(
+        bookingid: String,
+        delivery_code: String
+    ): Observable<DeliveryProofResponse> {
+        return apiService.verifyDeliveryCode(
+            PascoApp.encryptedPrefs.bearerToken,
+            bookingid,
+            delivery_code
+        )
     }
 
     fun getUserNotification(): Observable<NotificationResponse> {
@@ -288,5 +297,13 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getReminderDelete(Id: String): Observable<AcceptOrRejectResponse> {
         return apiService.reminderDelete(PascoApp.encryptedPrefs.bearerToken, Id)
+    }
+
+    fun notificationOnOff(body: NotificationOnOffBody): Observable<NotificationOnOffResponse> {
+        return apiService.allTypeNOtification(PascoApp.encryptedPrefs.bearerToken, body)
+    }
+
+    fun getNotificationOnOff(): Observable<NotificationOnOffResponse> {
+        return apiService.getAllTypeNotification(PascoApp.encryptedPrefs.bearerToken)
     }
 }
