@@ -78,6 +78,8 @@ import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsRes
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
+import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
+import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffResponse
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
@@ -362,7 +364,6 @@ interface ApiServices {
     ): Observable<DeliveryProofResponse>
 
 
-
     //put profile
     @Multipart
     @PUT("user-update-profile/")
@@ -413,7 +414,7 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Path("id") Id: String,
         @Body body: SendToAllBody
-    ):Observable<SendEmergercyHelpResponse>
+    ): Observable<SendEmergercyHelpResponse>
 
     //EmergencyList
     @GET("show-emergencydetail/")
@@ -596,4 +597,17 @@ interface ApiServices {
         @Path("id") bookingId: String
 
     ): Observable<AcceptOrRejectResponse>
+
+
+    @Headers("Accept:application/json")
+    @POST("set-typeof-notification/")
+    fun allTypeNOtification(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: NotificationOnOffBody
+    ): Observable<NotificationOnOffResponse>
+
+    @GET("set-typeof-notification/")
+    fun getAllTypeNotification(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ): Observable<NotificationOnOffResponse>
 }

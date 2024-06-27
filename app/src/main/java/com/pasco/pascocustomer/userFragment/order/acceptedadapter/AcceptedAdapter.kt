@@ -82,11 +82,13 @@ class AcceptedAdapter(
             val dropLatitude = orderList[position].dropLatitude
             val dropLongitude = orderList[position].dropLongitude
             val bookingId = orderList[position].id
+            val verificationCode = orderList[position].deliverycode
             intent.putExtra("pickupLatitude", pickupLatitude.toString())
             intent.putExtra("pickupLongitude", pickupLongitude.toString())
             intent.putExtra("dropLatitude", dropLatitude.toString())
             intent.putExtra("dropLongitude", dropLongitude.toString())
             intent.putExtra("bookingId", bookingId.toString())
+            intent.putExtra("verificationCode",verificationCode)
             required.startActivity(intent)
         }
     }

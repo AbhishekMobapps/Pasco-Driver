@@ -15,6 +15,7 @@
 
 
         <ImageView
+            android:id="@+id/backBtn"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginLeft="15dp"
@@ -64,10 +65,13 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/updateBidSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
@@ -88,7 +92,6 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-
                     android:id="@+id/statusConst"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -99,12 +102,14 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/statusUpdateSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                     <TextView
@@ -120,7 +125,8 @@
                         app:layout_constraintStart_toEndOf="@+id/statusUpdateSwitch"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout
+>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/adminConst"
@@ -133,12 +139,14 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/adminSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                     <TextView
@@ -168,11 +176,13 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/completeSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="parent"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -202,12 +212,14 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/emergencyhelpSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                     <TextView
@@ -236,10 +248,12 @@
                     app:layout_constraintWidth_percent="0.95">
 
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/loyaltyprogramSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:thumb="@drawable/thumb1"
+                        app:track="@drawable/track"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
