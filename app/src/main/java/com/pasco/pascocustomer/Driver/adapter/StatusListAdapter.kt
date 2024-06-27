@@ -4,16 +4,21 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.AddFeedbackOnClickListner
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.DriverStatusClickListner
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.R
 
 class StatusListAdapter(
     private val context: Context,
+    private val onItemClick: DriverStatusClickListner,
     private val statusList: List<GetRouteUpdateResponse.RouteResponseData>
 ) : RecyclerView.Adapter<StatusListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var driverStatusTextView: TextView = itemView.findViewById(R.id.driverStatusTextView)
 
     }
 
@@ -23,8 +28,13 @@ class StatusListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position in 0 until statusList.size) {
-            val position = (statusList[position])
+        val status = statusList[position]
+        holder.driverStatusTextView.text = status.status.toString()
+        holder.driverStatusTextView.setOnClickListener {
+            onItemClick.driverStatusUpdate(
+                position,
+                status.id!!,status.status.toString())
+            notifyDataSetChanged()
         }
     }
 

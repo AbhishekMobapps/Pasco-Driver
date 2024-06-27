@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:text="RATE YOUR RIDE"
                 android:textColor="@color/earth_yellow"
-                android:textSize="14sp"
+                android:textSize="@dimen/normal_txt_size"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,6 +91,7 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:gravity="start"
+                android:textSize="@dimen/normal_txt_size_12"
                 android:hint="Your feedback here.."
                 android:padding="10dp" />
 
@@ -112,7 +113,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feedbackConst"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

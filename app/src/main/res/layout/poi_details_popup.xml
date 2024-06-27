@@ -25,54 +25,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Coupon Type"
-        android:textSize="14sp" />
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Coupon Code"
-        android:textSize="14sp" />
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Date"
-        android:textSize="14sp" />
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="End Date"
-        android:textSize="14sp" />
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Limit"
-        android:textSize="14sp" />
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="POI Address"
-        android:textSize="14sp" />
+        android:text="Poi Address"
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="POI City"
-        android:textSize="14sp" />
+        android:text="Poi City"
+        android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="POI Description"
-        android:textSize="14sp" />
+        android:text="Poi Description"
+        android:textSize="@dimen/normal_txt_size_12" />
 </LinearLayout>

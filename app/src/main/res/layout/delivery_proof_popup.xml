@@ -123,7 +123,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.17" />
+                app:layout_constraintWidth_percent="0.15" />
 
             <EditText
                 android:id="@+id/box2Pop"
@@ -139,7 +139,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/box3Pop"
                 app:layout_constraintStart_toEndOf="@+id/box1Pop"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.17" />
+                app:layout_constraintWidth_percent="0.15" />
 
             <EditText
                 android:id="@+id/box3Pop"
@@ -156,7 +156,7 @@
                 app:layout_constraintStart_toEndOf="@+id/box2Pop"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintWidth_percent="0.17" />
+                app:layout_constraintWidth_percent="0.15" />
 
             <EditText
                 android:id="@+id/box4Pop"
@@ -170,7 +170,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.17" />
+                app:layout_constraintWidth_percent="0.15" />
 
 
 

@@ -62,7 +62,7 @@ class CancelledTripHistoryAdapter(
 
         holder.pickUpDetailsDriHisCan.text = cancelTripHis.pickupLocation
         holder.DropDetailsDriHisCan.text = cancelTripHis.dropLocation
-        holder.bookingstatusCan.text = "Cancelled"
+        holder.bookingstatusCan.text = dBookingStatus.toString()
         holder.cancelReasonTextView.text = cancelTripHis.cancelreason.toString()
 
         holder.invoiceTextViewcancelled.setOnClickListener {

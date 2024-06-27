@@ -251,7 +251,7 @@
     <string name="resend_otp">Resend OTP :</string>
     <string name="duration">duration</string>
     <string name="loyalty_program">Loyalty Program</string>
-    <string name="invoice">INVOICE</string>
+    <string name="invoice">Invoice</string>
     <string name="program_name">Program Name :</string>
     <string name="program_code">Program Code :</string>
     <string name="loyalty_percent">Loyalty Percent :</string>
@@ -327,7 +327,9 @@
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verify">Verify</string>
     <string name="update_your_status">Update Your Status</string>
+
     <string name="verification">Verification</string>
     <string name="code">Code</string>
+    <string name="no_data_has_been_found">No data has been found.</string>
 
 </resources>

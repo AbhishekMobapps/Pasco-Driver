@@ -50,12 +50,12 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
     private var city: String? = null
     private var pickUplatitude = 0.0
     private var pickUplongitude = 0.0
-    var formattedLatitudeSelect: String = ""
-    var formattedLongitudeSelect: String = ""
+    private var formattedLatitudeSelect: String = ""
+    private var formattedLongitudeSelect: String = ""
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
     private lateinit var activity: Activity
-    private var userId=""
-    private var bookingId=""
+    private var userId = ""
+    private var bookingId = ""
     private lateinit var updateLocationBody: UpdationLocationBody
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,9 +141,17 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
         binding.txtSelectLocationUpLoc.setOnClickListener(View.OnClickListener { view: View? ->
 
             if (formattedLatitudeSelect.isNullOrBlank()) {
-                Toast.makeText(this@UpdateLocationActivity, "Latitude is empty. Please select a valid latitude.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@UpdateLocationActivity,
+                    "Latitude is empty. Please select a valid latitude.",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else if (formattedLongitudeSelect.isNullOrBlank()) {
-                Toast.makeText(this@UpdateLocationActivity, "Longitude is empty. Please select a valid longitude.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@UpdateLocationActivity,
+                    "Longitude is empty. Please select a valid longitude.",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 // Your code for handling non-empty latitude and longitude
                 // call update Api
@@ -160,11 +168,12 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status.equals("False")) {
-                Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
+               Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
 
-                Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
-                val intent = Intent(this@UpdateLocationActivity, DriverDashboardActivity::class.java)
+             //   Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
+                val intent =
+                    Intent(this@UpdateLocationActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -179,11 +188,14 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect)
+            formattedLongitudeSelect
+        )
         updateLocationViewModel.updateLocationDriver(
             activity,
-            updateLocationBody)
+            updateLocationBody
+        )
     }
+
     private fun updateMarkers(latLng: LatLng) {
         // Check if the GoogleMap object is not null
         googleMap?.let {
@@ -201,11 +213,13 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
         googleMap?.setOnMapClickListener(this)
         showCurrentLocation()
     }
+
     private fun showCurrentLocation1(latLng: LatLng) {
         googleMap?.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
         zoomOnMap(latLng)
         getAddressFromLocation1(latLng)
     }
+
     private fun showCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -264,11 +278,13 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect= String.format("%.5f", pickUplatitude)
+        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
         formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
 
-        Log.e("TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
-                " formattedLongitudeSelect=$formattedLongitudeSelect")
+        Log.e(
+            "TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
+                    " formattedLongitudeSelect=$formattedLongitudeSelect"
+        )
 
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
@@ -300,11 +316,13 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect= String.format("%.5f", pickUplatitude)
+        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
         formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
 
-        Log.e("TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
-                " formattedLongitudeSelect=$formattedLongitudeSelect")
+        Log.e(
+            "TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
+                    " formattedLongitudeSelect=$formattedLongitudeSelect"
+        )
 
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
@@ -331,8 +349,8 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     companion object {
-        var REQUEST_LOCATION_PERMISSION: Int =1
-        var myPlace: String=""
+        var REQUEST_LOCATION_PERMISSION: Int = 1
+        var myPlace: String = ""
     }
 
     override fun onMapClick(p0: LatLng) {
