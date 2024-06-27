@@ -58,8 +58,8 @@ class DriverAllBiddsAdapter(
 
         holder.biddingStatusTextView.apply {
             background = when (biddingStatus) {
-                "confirmed" -> ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
-                "completed" -> ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
+                "Confirmed" -> ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
+                "Completed" -> ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
                 else -> ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
             }
             setTextColor(Color.parseColor("#FFFFFFFF"))
@@ -68,7 +68,7 @@ class DriverAllBiddsAdapter(
 
         holder.itemView.setOnClickListener {
             val intent = when (biddingStatus) {
-                "confirmed" -> Intent(context, DriverStartRidingActivity::class.java).apply {
+                "Confirmed" -> Intent(context, DriverStartRidingActivity::class.java).apply {
                     putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
                     putExtra("dropLoc", driverOrderHis.dropLocation.toString())
                     putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())

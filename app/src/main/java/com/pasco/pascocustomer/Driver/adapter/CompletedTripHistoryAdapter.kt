@@ -82,7 +82,7 @@ class CompletedTripHistoryAdapter(
 
             pickUpDetailsDriHis.text = driverTripHis.pickupLocation.toString()
             DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
-            bookingstatus.text = "Completed"
+            bookingstatus.text =  dBookingStatus.toString()
         }
         holder.invoiceTextView.setOnClickListener {
             val id = driverTripHistory[position].id

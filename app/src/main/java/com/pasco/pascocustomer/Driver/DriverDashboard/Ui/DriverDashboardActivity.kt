@@ -49,6 +49,8 @@ import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
 import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.application.PascoApp
@@ -64,6 +66,7 @@ import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Locale
 
@@ -91,6 +94,11 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var OnDutyStatus = ""
     private var one: Int = -1
     private var notificaion = ""
+    private lateinit var updateLocationBody: UpdationLocationBody
+    private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
+    private var formattedLatitudeSelect: String = ""
+    private var formattedLongitudeSelect: String = ""
+    private lateinit var runnable: Runnable
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -158,6 +166,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             markOnDuty()
         }
         markOnObserver()
+        updateLocationObserver()
         val homeFragment = HomeFragment()
         replace_fragment(homeFragment)
 
@@ -257,6 +266,23 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     }
 
+    private fun updateLocationObserver() {
+
+        updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            if (response.peekContent().status.equals("False")) {
+               // Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
+            } else {
+
+             //   Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
+            }
+        }
+        updateLocationViewModel.errorResponse.observe(this@DriverDashboardActivity) {
+            ErrorUtil.handlerGeneralError(this@DriverDashboardActivity, it)
+            // errorDialogs()
+        }
+    }
+
     private fun markOffDuty() {
         // Assuming similar logic for marking off duty
         val body = MarkDutyBody(mark_status = switchCheck)
@@ -333,9 +359,19 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
     private fun requestLocationUpdates() {
+
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
+                    runnable = object : Runnable {
+                        override fun run() {
+
+                            handler?.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
+                        }
+                    }
+
+                    // Start the periodic task
+                    handler?.post(runnable)
                     showAddress(it)
                 }
             }
@@ -351,20 +387,45 @@ class DriverDashboardActivity : AppCompatActivity() {
             val geocoder = Geocoder(this@DriverDashboardActivity, Locale.getDefault())
             try {
                 val addresses: List<Address> = geocoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
+                    latitude,
+                    longitude,
                     1
                 )!!
                 if (addresses.isNotEmpty()) {
-                    address = addresses[0].getAddressLine(0)
-                    city = addresses[0].locality
+                    val address = addresses[0].getAddressLine(0)
+                     city = addresses[0].locality
+                    binding.driverGreeting.text = city ?: ""
+                    Log.e("City", city ?: "City not found")
                     city?.let { updateUI(it) }
+                    if (address.isEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            requestLocationPermission()
+                            requestLocationUpdates()
+                        }
+                    }
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
+        if (!formattedLatitudeSelect.isNullOrBlank() &&!formattedLongitudeSelect.isNullOrBlank()
+            &&!city.isNullOrBlank()&&address.isNullOrBlank()) {
+            updateLocationDetails()
+        }
+
     }
+
+    private fun updateLocationDetails() {
+        updateLocationBody = UpdationLocationBody(
+            city.toString(),
+            address.toString(),
+            formattedLatitudeSelect,
+            formattedLongitudeSelect)
+        updateLocationViewModel.updateLocationDriver(
+            activity,
+            updateLocationBody)
+    }
+
 
     private fun updateUI(city: String) {
         handler.post {
@@ -387,14 +448,18 @@ class DriverDashboardActivity : AppCompatActivity() {
             val data = response.peekContent().data
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
-            city = response.peekContent().data!!.currentCity
+           var city = response.peekContent().data!!.currentCity
 
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
-                binding.driverGreeting.text = city.toString()
+                if (!city.isNullOrBlank())
+                {
+                    binding.driverGreeting.text = city.toString()
+                }
+
             } else {
                 binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
             }
