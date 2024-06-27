@@ -122,7 +122,7 @@ class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
             } else {
                 if (cancelledTrips.isEmpty()) {
                     binding.staticCTextview.visibility = View.VISIBLE
-                    binding.staticCTextview.text = "You have not cancelled any trips yet."
+                    binding.staticCTextview.text = "No cancellation data has been found."
                     binding.recycerHistoryDriverList.visibility = View.GONE
                 } else {
                     binding.staticCTextview.visibility = View.GONE
