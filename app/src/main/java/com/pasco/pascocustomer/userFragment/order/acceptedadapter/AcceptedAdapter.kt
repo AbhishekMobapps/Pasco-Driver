@@ -31,7 +31,6 @@ class AcceptedAdapter(
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
         val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
         val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
-        val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

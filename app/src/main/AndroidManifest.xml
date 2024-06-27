@@ -34,6 +34,10 @@
         <activity
             android:name=".notificationoffon.NotificationOnOffActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".activity.Driver.PrivacyPolicyActivity"
+            android:exported="false" />
         <activity
             android:name=".Driver.emergencyhelp.Ui.EmergencyMainActivity"
             android:exported="false" />
