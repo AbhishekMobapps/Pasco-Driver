@@ -179,7 +179,6 @@ class DriverMoreFragment : Fragment() {
             if (response.peekContent().status == "True") {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
-                PascoApp.encryptedPrefs.driverApprovedId = ""
                 PascoApp.encryptedPrefs.CheckedType = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)

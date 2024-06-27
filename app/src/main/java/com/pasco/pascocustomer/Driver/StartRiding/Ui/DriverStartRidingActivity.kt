@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.StartRiding.Ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,6 +29,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
@@ -38,6 +40,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.NetworkError
 import com.android.volley.NoConnectionError
@@ -69,15 +73,17 @@ import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.DriverStatusClickListner
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
-import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryVerifyViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.MarkerData
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
+import com.pasco.pascocustomer.Driver.adapter.DriverHistoryAdapter
 import com.pasco.pascocustomer.Driver.adapter.PoiInfoAdapter
+import com.pasco.pascocustomer.Driver.adapter.StatusListAdapter
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
@@ -92,11 +98,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import java.io.File
 import java.io.FileOutputStream
@@ -110,13 +112,17 @@ import kotlin.math.sqrt
 
 
 @AndroidEntryPoint
-class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
+class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
+    DriverStatusClickListner {
     private lateinit var binding: ActivityDriverStartRidingBinding
     private val editTextList = mutableListOf<EditText>()
-    private lateinit var box1:EditText
-    private lateinit var box2:EditText
-    private lateinit var box3:EditText
-    private lateinit var box4:EditText
+    private lateinit var recycler_StatusList: RecyclerView
+    private lateinit var staticTextViewEmptyData: TextView
+    private lateinit var dialog: BottomSheetDialog
+    private lateinit var box1: EditText
+    private lateinit var box2: EditText
+    private lateinit var box3: EditText
+    private lateinit var box4: EditText
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var activity: Activity
     private val startTripViewModel: StartTripViewModel by viewModels()
@@ -133,7 +139,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var poiLocation: LatLng
     private var spinnerDriverSId = ""
     private var isDestinationReached = false
-    private var routeType: List<GetRouteUpdateResponse.RouteResponseData>? = null
+    private var routeType: List<GetRouteUpdateResponse.RouteResponseData> = ArrayList()
     private val routeTypeStatic: MutableList<String> = mutableListOf()
     private var Bid = ""
     private var driStatus = ""
@@ -227,8 +233,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         requestLocationUpdates()
         //camera permission
         requestPermission()
-        driverStatusList()
-        driverStatusObserver()
+        //  driverStatusList()
+        //  driverStatusObserver()
+
+        if (driStatus.isEmpty()) {
+            binding.SelectstatusTextView.text = "Select Status"
+        } else {
+            binding.SelectstatusTextView.text = driStatus
+        }
 
         binding.textViewSeeDetailsSR.setOnClickListener {
 
@@ -266,11 +278,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
                         //call vehicleType
-                        if (!spinnerDriverSId.isNullOrBlank()) {
-                            val sId = spinnerDriverSId
-                            startTrip(sId)
-                            binding.finishTripTextView.visibility = View.VISIBLE
-                        }
+
                     }
                 }
 
@@ -307,23 +315,35 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             intent.putExtra("bookingIdForHelp", Bid)
             startActivity(intent)
         }
+        binding.SelectstatusTextView.setOnClickListener {
+            selectStatusPopUp()
+        }
         binding.finishTripTextView.setOnClickListener {
-            if (spinnerDriverSId.isNullOrBlank()) {
-                Toast.makeText(
-                    this@DriverStartRidingActivity,
-                    "Please select status",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
+          // Use else instead of else if for equality check
                 showDeliveryPopUp()
-
-            }
 
             completedRideObserver()
             //showFeedbackPopup()
         }
 
 
+
+    }
+
+    private fun selectStatusPopUp() {
+        val dialogView = layoutInflater.inflate(R.layout.select_status_popup, null)
+         dialog = BottomSheetDialog(this)
+        val backArrowCancelPopUp =
+            dialogView.findViewById<ImageView>(R.id.backArrowCancelPopUp)
+        recycler_StatusList = dialogView.findViewById(R.id.recycler_StatusList)
+        staticTextViewEmptyData = dialogView.findViewById(R.id.staticTextViewEmptyData)
+        dialog.setContentView(dialogView)
+        dialog.show()
+        driverStatusList()
+        backArrowCancelPopUp.setOnClickListener {
+            dialog.dismiss()
+        }
+        driverStatusObserver(dialog)
     }
 
     private fun requestPermission() {
@@ -348,12 +368,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         bottomSheetDialog!!.setContentView(view)
 
 
-        val consUploadDeliveryProof = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
-        val submitBtnDeliveryProof = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
-         box1 = bottomSheetDialog?.findViewById(R.id.box1Pop)!!
-         box2 = bottomSheetDialog?.findViewById(R.id.box2Pop)!!
+        val consUploadDeliveryProof =
+            bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
+        val submitBtnDeliveryProof =
+            bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
+        box1 = bottomSheetDialog?.findViewById(R.id.box1Pop)!!
+        box2 = bottomSheetDialog?.findViewById(R.id.box2Pop)!!
         box3 = bottomSheetDialog?.findViewById(R.id.box3Pop)!!
-         box4 = bottomSheetDialog?.findViewById(R.id.box4Pop)!!
+        box4 = bottomSheetDialog?.findViewById(R.id.box4Pop)!!
 
         submitBtnDeliveryProof?.setOnClickListener {
             bottomSheetDialog!!.dismiss()
@@ -443,12 +465,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         ) {
             val status = it.peekContent().status!!
             val message = it.peekContent().msg!!
-            if (status=="True")
-            {
+            if (status == "True") {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
                 completedRideApi()
-            }
-            else{
+            } else {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
             }
 
@@ -459,7 +479,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
         }
     }
-
 
 
     private fun openCamera() {
@@ -564,7 +583,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
-/*
                     runnable = object : Runnable {
                         override fun run() {
 
@@ -573,7 +591,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     // Start the periodic task
-                    handler?.post(runnable)*/
+                    handler?.post(runnable)
                     showAddress(it)
                 }
 
@@ -773,11 +791,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
     private fun completedRideApi() {
         completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
 
     }
-
 
 
     private fun showFeedbackPopup() {
@@ -813,8 +831,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         val displayMetrics = DisplayMetrics()
         (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
-        val halfScreenHeight = screenHeight * .6
-        val eightyPercentScreenHeight = screenHeight * .6
+        val halfScreenHeight = screenHeight * .58
+        val eightyPercentScreenHeight = screenHeight * .58
 
         // Set the initial height of the bottom sheet to 50% of the screen height
         val layoutParams = view.layoutParams
@@ -941,7 +959,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun driverStatusObserver() {
+    private fun driverStatusObserver(dialog: BottomSheetDialog) {
         getRouteUpdateViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -950,35 +968,25 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
             val content = response.peekContent()
             val message = content.msg ?: return@observe
             routeType = content.data!!
-            routeTypeStatic.clear()
 
-            for (element in routeType!!) {
-                element.status?.let { it1 -> routeTypeStatic.add(it1) }
-            }
-            val dAdapter = SpinnerAdapter(
-                this,
-                R.layout.custom_service_type_spinner,
-                routeTypeStatic
-            )
-            dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            dAdapter.add(getString(R.string.selectStatus))
-            binding.routeSpinnerSpinner.adapter = dAdapter
-            // Determine spinner selection based on orderStatusDriverR condition
-            if (orderStatusDriverR == "withoutSelected") {
-                val spinnerPosition = if (driStatus.isNotEmpty()) {
-                    dAdapter.getPosition(driStatus)
-                } else {
-                    dAdapter.getPosition(getString(R.string.selectStatus))
-                }
-                binding.routeSpinnerSpinner.setSelection(spinnerPosition)
 
-            } else {
-                val spinnerPosition = dAdapter.getPosition(getString(R.string.selectStatus))
-                binding.routeSpinnerSpinner.setSelection(spinnerPosition)
-            }
             if (response.peekContent().status == "False") {
             } else {
+                if (routeType.isEmpty()) {
+                    //hello
+                    staticTextViewEmptyData.visibility = View.VISIBLE
+                    recycler_StatusList.visibility = View.GONE
+                } else {
+                    staticTextViewEmptyData.visibility = View.GONE
+                    recycler_StatusList.visibility = View.VISIBLE
+                    recycler_StatusList.isVerticalScrollBarEnabled = true
+                    recycler_StatusList.isVerticalFadingEdgeEnabled = true
+                    recycler_StatusList.layoutManager =
+                        LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                    recycler_StatusList.adapter = StatusListAdapter(this, this, routeType)
+                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
+                }
             }
         }
         getRouteUpdateViewModel.errorResponse.observe(this) {
@@ -1287,6 +1295,23 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback {
         override fun getCount(): Int {
             val count = super.getCount()
             return if (count > 0) count - 1 else count
+        }
+    }
+
+    override fun driverStatusUpdate(position: Int, id: Int, status: String) {
+        driStatus = status
+        Log.e("der", "driverStatusUpdate:, $driStatus")
+        spinnerDriverSId = id.toString()
+        if (driStatus.isEmpty()) {
+            binding.SelectstatusTextView.text = "Select Status"
+        } else {
+            binding.SelectstatusTextView.text = driStatus
+            dialog.dismiss()
+        }
+        if (!spinnerDriverSId.isNullOrBlank()) {
+            val sId = spinnerDriverSId
+            startTrip(sId)
+            binding.finishTripTextView.visibility = View.VISIBLE
         }
     }
 
