@@ -113,6 +113,8 @@ class OtpVerifyActivity : AppCompatActivity() {
                 /*val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(verificationId, verificationCode)
                 signInWithPhoneAuthCredential(credential, deviceModel)*/
+
+
                 if (loginValue == "driver") {
                     getDriverSignupApi(deviceModel)
                 } else {
