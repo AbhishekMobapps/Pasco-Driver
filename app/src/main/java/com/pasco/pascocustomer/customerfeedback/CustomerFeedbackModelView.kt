@@ -28,26 +28,26 @@ class CustomerFeedbackModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun cancelBooking(acceptBody: CustomerFeedbackBody, activity: Activity, progressDialog: CustomProgressDialog) {
-        progressDialog.start(activity.getString(R.string.please_wait))
+    fun cancelBooking(acceptBody: CustomerFeedbackBody, activity: Activity) {
+       // progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
         repository.feedback(acceptBody).subscribeOn(Schedulers.io()).observeOn(
             AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AcceptOrRejectResponse>() {
                 override fun onNext(value: AcceptOrRejectResponse) {
                     progressIndicator.value = false
-                    progressDialog.stop()
+               //     progressDialog.stop()
                     mRejectResponse.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {
                     progressIndicator.value = false
-                    progressDialog.stop()
+                  //  progressDialog.stop()
                     errorResponse.value = e
                 }
 
                 override fun onComplete() {
-                    progressDialog.stop()
+                 //   progressDialog.stop()
                     progressIndicator.value = false
                 }
             })

@@ -7,23 +7,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripViewModel
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryViewModel
-import com.pasco.pascocustomer.Driver.adapter.CompletedTripHistoryAdapter
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.databinding.FragmentHistoryBinding
-import com.pasco.pascocustomer.databinding.FragmentMoreBinding
 import com.pasco.pascocustomer.userFragment.history.complete.CancelledAdapter
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteModelView
-import com.pasco.pascocustomer.userFragment.history.complete.CompletedHistoryAdapter
 import com.pasco.pascocustomer.userFragment.history.model.CustBookingCancelViewModel
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
@@ -115,7 +110,11 @@ class HistoryFragment : Fragment() {
                 binding.oderRecycler.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 binding.oderRecycler.adapter =
-                    CancelledAdapter(requireContext(), completeHistoryList)
+                    CancelledAdapter(
+                        requireContext(),
+                        completeHistoryList,
+                        activity as AppCompatActivity
+                    )
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
             }
@@ -155,7 +154,11 @@ class HistoryFragment : Fragment() {
                 binding.allBiddsRecycler.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 binding.allBiddsRecycler.adapter =
-                    CancelledAdapter(requireContext(), completeHistoryList)
+                    CancelledAdapter(
+                        requireContext(),
+                        completeHistoryList,
+                        activity as AppCompatActivity
+                    )
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
             }
