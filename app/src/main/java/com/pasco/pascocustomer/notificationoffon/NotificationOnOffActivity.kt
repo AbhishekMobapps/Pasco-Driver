@@ -40,42 +40,36 @@ class NotificationOnOffActivity : AppCompatActivity() {
         binding.updateBidSwitch.setOnCheckedChangeListener { _, isChecked ->
             updateSwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
-            Log.e("CheckStatusA", "updateSwitch....$updateSwitch")
+
         }
         binding.statusUpdateSwitch.setOnCheckedChangeListener { _, isChecked ->
             statusUpdateSwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
         }
         binding.adminSwitch.setOnCheckedChangeListener { _, isChecked ->
             adminSwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
+
         }
         binding.completeSwitch.setOnCheckedChangeListener { _, isChecked ->
             completeSwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
+
         }
         binding.emergencyhelpSwitch.setOnCheckedChangeListener { _, isChecked ->
             emergencySwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
+
         }
         binding.loyaltyprogramSwitch.setOnCheckedChangeListener { _, isChecked ->
             loyaltySwitch = isChecked
             allTypeNotificationApi()
-            allTypeNotificationObserver()
+
         }
 
         getAllOnOffNotiApi()
         getNotificationOnObserver()
-    }
-
-    private fun setupSwitchListeners() {
-
-
+        allTypeNotificationObserver()
     }
 
 
@@ -121,7 +115,20 @@ class NotificationOnOffActivity : AppCompatActivity() {
         getNotificationOnOffViewModel.mRejectResponse.observe(this) { response ->
 
             val updateBid = response.peekContent().data?.updatebid
+            val statusUpdateSwitch = response.peekContent().data?.statusupdate
+            val adminSwitch = response.peekContent().data?.adminnotification
+            val completeSwitch = response.peekContent().data?.completebooking
+            val emergencySwitch = response.peekContent().data?.emergencyhelp
+            val loyaltySwitch = response.peekContent().data?.loyaltyprogram
+
             binding.updateBidSwitch.isChecked = updateBid == true
+            binding.statusUpdateSwitch.isChecked = statusUpdateSwitch == true
+            binding.adminSwitch.isChecked = adminSwitch == true
+            binding.completeSwitch.isChecked = completeSwitch == true
+            binding.emergencyhelpSwitch.isChecked = emergencySwitch == true
+            binding.loyaltyprogramSwitch.isChecked = loyaltySwitch == true
+
+            Log.e("CheckStatusA", "updateSwitch....Api$updateBid")
 
         }
 
