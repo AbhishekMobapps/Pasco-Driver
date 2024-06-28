@@ -8,23 +8,35 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.WindowManager
+import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.invoice.InvoiceActivity
+import com.pasco.pascocustomer.utils.ErrorUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CancelledAdapter(
     private val context: Context,
-    private val driverTripHistory: List<CompleteHistoryResponse.Datum>
+    private val driverTripHistory: List<CompleteHistoryResponse.Datum>,
+    private val activity: AppCompatActivity
 ) :
     RecyclerView.Adapter<CancelledAdapter.ViewHolder>() {
+    var bottomSheetDialog: BottomSheetDialog? = null
+    private val feedbackModelView: CustomerFeedbackModelView by lazy {
+        ViewModelProvider(activity)[CustomerFeedbackModelView::class.java]
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -45,12 +57,14 @@ class CancelledAdapter(
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
 
-        Log.e("bookingStatusaa","bookingStatus.. " +driverTripHis.bookingStatus.toString())
+        Log.e("bookingStatusaa", "bookingStatus.. " + driverTripHis.bookingStatus.toString())
 
         if (driverTripHis.bookingStatus.toString() == "Completed") {
             holder.invoice.visibility = View.VISIBLE
+            holder.feedbackBtn.visibility = View.VISIBLE
         } else {
             holder.invoice.visibility = View.GONE
+            holder.feedbackBtn.visibility = View.GONE
         }
         val url = driverTripHis.userImage
         Glide.with(context).load(BuildConfig.IMAGE_KEY + url)
@@ -102,6 +116,11 @@ class CancelledAdapter(
             context.startActivity(intent)
         }
 
+        holder.feedbackBtn.setOnClickListener {
+            val id = driverTripHistory[position].id
+            showFeedbackPopup(id)
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -118,7 +137,65 @@ class CancelledAdapter(
         val driverProfileCth = itemView.findViewById<ImageView>(R.id.driverProfileCth)
         val bookingstatus = itemView.findViewById<TextView>(R.id.bookingstatus)
         val invoice = itemView.findViewById<TextView>(R.id.invoice)
+        val feedbackBtn = itemView.findViewById<TextView>(R.id.feedbackBtn)
 
 
+    }
+
+    private fun showFeedbackPopup(id: Int?) {
+        bottomSheetDialog = BottomSheetDialog(context, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(context).inflate(R.layout.feedback_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+        Log.e("SHowFeed", "AAAA")
+        val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+        val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+            feedbackApi(commentTxt?.text.toString(), ratingBars, id)
+            feedbackObserver()
+        }
+        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+
+        // Get the window of the dialog and set its height to match parent
+        val dialogWindow = bottomSheetDialog?.window
+        val layoutParams = dialogWindow?.attributes
+        layoutParams?.height = WindowManager.LayoutParams.MATCH_PARENT
+        dialogWindow?.attributes = layoutParams
+
+        bottomSheetDialog?.show()
+    }
+
+
+    private fun feedbackApi(commentTxt: String, ratingBars: String, id: Int?) {
+        //   val codePhone = strPhoneNo
+        val loinBody = CustomerFeedbackBody(
+            bookingconfirmation = id.toString(), rating = ratingBars, feedback = commentTxt
+        )
+        feedbackModelView.cancelBooking(loinBody, activity)
+    }
+
+    private fun feedbackObserver() {
+        feedbackModelView.progressIndicator.observe(activity) {}
+        feedbackModelView.mRejectResponse.observe(
+            activity
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(context, UserDashboardActivity::class.java)
+            context.startActivity(intent)
+        }
+        feedbackModelView.errorResponse.observe(activity) {
+            ErrorUtil.handlerGeneralError(context, it)
+            // errorDialogs()
+        }
     }
 }

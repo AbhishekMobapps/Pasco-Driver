@@ -335,7 +335,14 @@
 =======
     <string name="share">Share</string>
     <string name="download">Download</string>
+
     <string name="bid_price">Bid Price :</string>
+=======
+    <string name="oder_id">Oder Id</string>
+    <string name="booking_id">Booking Id :</string>
+    <string name="total_amounts">Total amount :</string>
+    <string name="payment_methods">Payment Method :</string>
+
 
 
 </resources>

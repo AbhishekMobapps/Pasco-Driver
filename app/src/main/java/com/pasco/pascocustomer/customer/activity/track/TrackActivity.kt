@@ -460,7 +460,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val loinBody = CustomerFeedbackBody(
             bookingconfirmation = bookingId, rating = ratingBars, feedback = commentTxt
         )
-        feedbackModelView.cancelBooking(loinBody, this, progressDialog)
+        feedbackModelView.cancelBooking(loinBody, this)
     }
 
     private fun feedbackObserver() {

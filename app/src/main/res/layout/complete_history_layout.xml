@@ -21,47 +21,29 @@
             android:id="@+id/bookingstatus"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:text="Hello"
             android:textColor="@color/green"
             android:textSize="@dimen/normal_txt_size"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/invoice"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/invoice"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/invoice"
-            android:layout_width="60dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/earth_yellow"
-            android:gravity="center"
-            android:text="Invoice"
-            android:textColor="@color/black"
-            android:textSize="@dimen/normal_txt_size"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/dateTimeDriHis"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:text="24 May 2024 8:10 PM"
             android:textColor="@color/logo_color"
             android:textSize="@dimen/normal_txt_size_12"
-            app:layout_constraintBottom_toBottomOf="@+id/invoice"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/invoice"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -199,8 +181,8 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:cardCornerRadius="5dp"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent=".12">
 
@@ -291,14 +273,46 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
+            android:id="@+id/invoice"
+            android:layout_width="90dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/history"
+            android:gravity="center"
+            android:text="Invoice"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_txt_size"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameAndPendingConst" />
 
+
+        <TextView
+            android:id="@+id/feedbackBtn"
+            android:layout_width="90dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/history"
+            android:gravity="center"
+            android:text="@string/feedback"
+            android:textColor="@color/white"
+            android:textSize="@dimen/normal_txt_size"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameAndPendingConst" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:textColor="@color/logo_color"
             android:textSize="@dimen/normal_txt_size"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/nameAndPendingConst" />
+            app:layout_constraintTop_toBottomOf="@+id/invoice" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
