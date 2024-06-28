@@ -162,11 +162,12 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         position: Int,
         id: Int,
         pickupLatitude: Double?,
-        pickupLongitude: Double?
+        pickupLongitude: Double?,
+        verificationCode: String?
     ) {
         bookingId = id.toString()
         acceptOrRejectApi(bookingId)
-        acceptOrRejectObserver(bookingId,pickupLatitude,pickupLongitude)
+        acceptOrRejectObserver(bookingId,pickupLatitude,pickupLongitude,verificationCode)
     }
 
     private fun acceptOrRejectApi(id: String) {
@@ -181,7 +182,8 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     private fun acceptOrRejectObserver(
         bookingId: String,
         pickupLatitude: Double?,
-        pickupLongitude: Double?
+        pickupLongitude: Double?,
+        verificationCode: String?
     ) {
         paymentAccept.progressIndicator.observe(this) {}
         paymentAccept.mRejectResponse.observe(
@@ -194,6 +196,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
             intent.putExtra("bookingId",bookingId)
             intent.putExtra("pickupLatitude",pickupLatitude.toString())
             intent.putExtra("pickupLongitude",pickupLongitude.toString())
+            intent.putExtra("verificationCode",verificationCode)
             startActivity(intent)
             finish()
         }

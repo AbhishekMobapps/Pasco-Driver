@@ -8,6 +8,13 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+
+import android.graphics.pdf.PdfDocument
+import android.net.Uri
+import android.os.Bundle
+import android.os.Environment
+import android.print.PrintAttributes
+import android.print.pdf.PrintedPdfDocument
 import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +24,9 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityInvoiceBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 @AndroidEntryPoint
 class InvoiceActivity : AppCompatActivity() {
@@ -28,11 +38,12 @@ class InvoiceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityInvoiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        checkPermissions()
         binding.backBtn.setOnClickListener { finish() }
         id = intent.getStringExtra("id").toString()
 
         val finalUrl = "http://69.49.235.253:8090/api/show-invoice-profile/$id/"
+
 
         //startWebView(finalUrl)
         setupWebView()
@@ -40,6 +51,13 @@ class InvoiceActivity : AppCompatActivity() {
         binding.webView.loadUrl(finalUrl)
       /*  binding.webView.webChromeClient = ChromeClient()
         binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)*/
+=======
+        startWebView(finalUrl)
+        binding.webView.webChromeClient = ChromeClient()
+        binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)
+
+        binding.downloadBtn.setOnClickListener {createWebViewPdf()  }
+
     }
 
 /*    class ChromeClient : WebChromeClient() {
@@ -55,6 +73,8 @@ class InvoiceActivity : AppCompatActivity() {
         ) {
             callback.invoke(origin, true, false)
         }
+
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -129,6 +149,31 @@ class InvoiceActivity : AppCompatActivity() {
             }
         })
     }
+    private fun createWebViewPdf() {
+        val printAttributes = PrintAttributes.Builder()
+            .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+            .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
+            .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+            .build()
+
+        val pdfDocument = PrintedPdfDocument(this, printAttributes)
+        val pageInfo = PdfDocument.PageInfo.Builder(binding.webView.width, binding.webView.height, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        binding.webView.draw(page.canvas)
+        pdfDocument.finishPage(page)
+
+        val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
+        val file = File(directoryPath, "webview_page.pdf")
+        try {
+            pdfDocument.writeTo(FileOutputStream(file))
+            Toast.makeText(this, "PDF Downloaded Successfully!", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        } finally {
+            pdfDocument.close()
+        }
+    }
 
     private fun downloadFile(url: String, contentDisposition: String?, mimeType: String?) {
         val request = DownloadManager.Request(Uri.parse(url))
@@ -145,6 +190,12 @@ class InvoiceActivity : AppCompatActivity() {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
         Toast.makeText(this, "Downloading File", Toast.LENGTH_LONG).show()
+=======
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+        }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -156,3 +207,19 @@ class InvoiceActivity : AppCompatActivity() {
         }
     }
 }
+=======
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission granted
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 1
+    }
+}
+

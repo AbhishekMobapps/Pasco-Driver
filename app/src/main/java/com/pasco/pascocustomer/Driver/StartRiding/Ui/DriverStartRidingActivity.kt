@@ -197,7 +197,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
         locationArrayList = ArrayList()
         Bid = intent.getStringExtra("BookId").toString()
-        driStatus = intent.getStringExtra("driStatus").toString()
+        //driStatus = intent.getStringExtra("driStatus").toString()
         driId = intent.getStringExtra("driverStatusId").toString()
         orderStatusDriverR = intent.getStringExtra("currentOrder").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -236,11 +236,16 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         //  driverStatusList()
         //  driverStatusObserver()
 
+
         if (driStatus.isEmpty()) {
             binding.SelectstatusTextView.text = ""
+=======
+       /* if (driStatus == null) {
+            binding.SelectstatusTextView.text = "Select Status"
+
         } else {
             binding.SelectstatusTextView.text = driStatus
-        }
+        }*/
 
         binding.textViewSeeDetailsSR.setOnClickListener {
 
@@ -609,10 +614,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         formattedLongitudeSelect = String.format("%.4f", longitude)
         formattedLatitudeLat = LatLng(latitude, longitude)
 
-        /*  Log.e(
-              "LocationDetails", "Formatted Latitude: $formattedLatitudeSelect," +
-                      " Formatted Longitude: $formattedLongitudeSelect"
-          )*/
 
         GlobalScope.launch(Dispatchers.IO) {
             val geocoder = Geocoder(this@DriverStartRidingActivity, Locale.getDefault())
@@ -1300,13 +1301,19 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
     override fun driverStatusUpdate(position: Int, id: Int, status: String) {
         driStatus = status
-        Log.e("der", "driverStatusUpdate:, $driStatus")
+        Log.e("derAAA", "driverStatusUpdate:$driStatus")
         spinnerDriverSId = id.toString()
+        
         if (driStatus.isEmpty()) {
             binding.SelectstatusTextView.text = ""
+=======
+        if (driStatus == null) {
+            binding.SelectstatusTextView.text = "Select Status"
+
         } else {
             binding.SelectstatusTextView.text = driStatus
             dialog.dismiss()
+            Log.e("derAAA", "driverStatusUpdate:aa$driStatus")
         }
         if (!spinnerDriverSId.isNullOrBlank()) {
             val sId = spinnerDriverSId

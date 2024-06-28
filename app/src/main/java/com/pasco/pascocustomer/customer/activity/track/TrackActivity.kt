@@ -93,6 +93,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private var bookingId = ""
     private var lat = ""
     private var long = ""
+    private var verificationCode = ""
     private var isClick = true
 
     private var handler: Handler? = null
@@ -111,6 +112,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLatitude = intent.getStringExtra("pickupLatitude").toString()
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
+        verificationCode = intent.getStringExtra("verificationCode").toString()
 
 
         binding.textViewSeeDetails.setOnClickListener {
@@ -178,6 +180,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 "%.1f".format(response.peekContent().data?.totalDistance ?: 0.0)
             binding.totalDistanceBidd.text = "$formattedTotalDistance km"
 
+            binding.verificationCode.text = verificationCode
+
             val url = response.peekContent().data!!.image
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.profileImgUserBid)
             Log.e("AAAAAA", "0001")
@@ -191,9 +195,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 val minutes = (durationInSeconds % 3600) / 60
                 val seconds = durationInSeconds % 60
                 if (hours > 0) {
-                    String.format("%d hr %02d min %02d sec", hours, minutes, seconds)
+                    String.format("%d hr %02d min", hours, minutes)
                 } else {
-                    String.format("%d min %02d sec", minutes, seconds)
+                    String.format("%d min ", minutes)
                 }
             }
 
@@ -322,7 +326,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
-                if (response.peekContent().data!!.bookingStatus == "completed") {
+                if (response.peekContent().data!!.bookingStatus == "Completed") {
                     handler?.removeCallbacks(runnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
                     showFeedbackPopup()
@@ -340,7 +344,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                         )
                     } else {
                         // Draw the first route from driver current location to pickup location
-                        drawRoute(LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()), LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble()))
+                        drawRoute(
+                            LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
+                            LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble())
+                        )
                     }
                 }
 
@@ -365,14 +372,14 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val directionsResult: DirectionsResult = DirectionsApi.newRequest(context).origin(
-                        com.google.maps.model.LatLng(
-                            currentLocation.latitude, currentLocation.longitude
-                        )
-                    ).destination(
-                        com.google.maps.model.LatLng(
-                            destination.latitude, destination.longitude
-                        )
-                    ).await()
+                    com.google.maps.model.LatLng(
+                        currentLocation.latitude, currentLocation.longitude
+                    )
+                ).destination(
+                    com.google.maps.model.LatLng(
+                        destination.latitude, destination.longitude
+                    )
+                ).await()
 
                 val path = directionsResult.routes[0].overviewPolyline.decodePath().map {
                     LatLng(it.lat, it.lng)

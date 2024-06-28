@@ -327,7 +327,14 @@
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verify">Verify</string>
     <string name="update_your_status">Update Your Status</string>
+
+    <string name="verification">Verification</string>
+    <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
     <string name="download_invoice">Download Invoice</string>
+=======
+    <string name="share">Share</string>
+    <string name="download">Download</string>
+
 
 </resources>

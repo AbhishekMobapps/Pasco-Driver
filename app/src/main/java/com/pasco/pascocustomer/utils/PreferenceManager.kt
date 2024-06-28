@@ -25,17 +25,17 @@ class PreferenceManager(context: Context) {
     )
 */
 
-     private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
-         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-         .build()
+    private var masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
 
-     private var prefs = EncryptedSharedPreferences.create(
-         context,
-         "PromotrEncryptedPrefere",
-         masterKey,
-         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-     )
+    private var prefs = EncryptedSharedPreferences.create(
+        context,
+        "PromotrEncryptedPrefere",
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 
     private val editor = prefs.edit()
 
@@ -154,6 +154,14 @@ class PreferenceManager(context: Context) {
             editor.putString(Code, code)
             editor.apply()
         }
+
+    var updateNotification: String
+        get() = prefs.getString(UpdateNotification.toString(), "") ?: ""
+        set(updateSwitch) {
+            editor.putString(UpdateNotification.toString(), updateSwitch)
+            editor.apply()
+        }
+
     companion object {
         // region "Tags"
         private const val IS_FIRST_TIME = "isFirstTime"
@@ -173,6 +181,7 @@ class PreferenceManager(context: Context) {
         private const val USER_ID = "USER_ID"
         private const val hostTypes = "hostType"
         private const val Code = "Code"
+        private const val UpdateNotification = true
         private const val hostTypeIds = "hostTypeIds"
         private const val status = "status"
         private const val country = "country"

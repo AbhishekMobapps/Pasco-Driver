@@ -31,6 +31,9 @@ class AcceptedAdapter(
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
         val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
         val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
+
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,7 +58,7 @@ class AcceptedAdapter(
         holder.verificationTxt.text = orderList[position].deliverycode
 
         holder.statusTxt.text = orderList[position].bookingStatus
-        holder.verificationTxt.text = orderList[position].deliverycode
+
 
         val dateTime = orderList[position].pickupDatetime
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
@@ -79,11 +82,13 @@ class AcceptedAdapter(
             val dropLatitude = orderList[position].dropLatitude
             val dropLongitude = orderList[position].dropLongitude
             val bookingId = orderList[position].id
+            val verificationCode = orderList[position].deliverycode
             intent.putExtra("pickupLatitude", pickupLatitude.toString())
             intent.putExtra("pickupLongitude", pickupLongitude.toString())
             intent.putExtra("dropLatitude", dropLatitude.toString())
             intent.putExtra("dropLongitude", dropLongitude.toString())
             intent.putExtra("bookingId", bookingId.toString())
+            intent.putExtra("verificationCode",verificationCode)
             required.startActivity(intent)
         }
     }
