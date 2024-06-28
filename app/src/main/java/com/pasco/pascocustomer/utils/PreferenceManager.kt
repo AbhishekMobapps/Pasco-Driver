@@ -91,6 +91,13 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
+    var driverStatus: String
+        get() = prefs.getString(DRIVERSTATUS, "") ?: ""
+        set(driverStatus) {
+            editor.putString(DRIVERSTATUS, driverStatus)
+            editor.apply()
+        }
+
     var userId: String
         get() = prefs.getString(USER_ID, "") ?: ""
         set(userId) {
@@ -105,10 +112,10 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
-    var DriverStatus: String
-        get() = prefs.getString(DRIVERSTATUS, "") ?: ""
-        set(driverStatus) {
-            editor.putString(DRIVERSTATUS, driverStatus)
+    var DriverStatuss: String
+        get() = prefs.getString(DRIVERSTATUSS, "") ?: ""
+        set(driverStatuss) {
+            editor.putString(DRIVERSTATUSS, driverStatuss)
             editor.apply()
         }
 
@@ -188,6 +195,7 @@ class PreferenceManager(context: Context) {
         private const val IS_NOTIFICATION = "IS_NOTIFICATION"
         private const val CHECKED_TYPE = "CHECKED_TYPE"
         private const val DRIVERSTATUS = "DRIVERSTATUS"
+        private const val DRIVERSTATUSS = "DRIVERSTATUSS"
     }
 
 }

@@ -237,7 +237,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         //  driverStatusObserver()
 
         if (driStatus.isEmpty()) {
-            binding.SelectstatusTextView.text = "Select Status"
+            binding.SelectstatusTextView.text = ""
         } else {
             binding.SelectstatusTextView.text = driStatus
         }
@@ -1303,7 +1303,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         Log.e("der", "driverStatusUpdate:, $driStatus")
         spinnerDriverSId = id.toString()
         if (driStatus.isEmpty()) {
-            binding.SelectstatusTextView.text = "Select Status"
+            binding.SelectstatusTextView.text = ""
         } else {
             binding.SelectstatusTextView.text = driStatus
             dialog.dismiss()

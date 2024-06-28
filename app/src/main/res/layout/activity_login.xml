@@ -82,8 +82,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/asClientConst"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/as_client_white_background"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -105,8 +105,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/asDriverConst"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_height="43dp"
+                    android:layout_marginEnd="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
