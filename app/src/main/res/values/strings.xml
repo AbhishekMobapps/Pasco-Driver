@@ -331,5 +331,7 @@
     <string name="verification">Verification</string>
     <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
+    <string name="share">Share</string>
+    <string name="download">Download</string>
 
 </resources>

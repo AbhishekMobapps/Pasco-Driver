@@ -195,9 +195,9 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 val minutes = (durationInSeconds % 3600) / 60
                 val seconds = durationInSeconds % 60
                 if (hours > 0) {
-                    String.format("%d hr %02d min %02d sec", hours, minutes, seconds)
+                    String.format("%d hr %02d min", hours, minutes)
                 } else {
-                    String.format("%d min %02d sec", minutes, seconds)
+                    String.format("%d min ", minutes)
                 }
             }
 
@@ -326,7 +326,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
-                if (response.peekContent().data!!.bookingStatus == "completed") {
+                if (response.peekContent().data!!.bookingStatus == "Completed") {
                     handler?.removeCallbacks(runnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
                     showFeedbackPopup()

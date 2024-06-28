@@ -47,7 +47,7 @@ class CancelledAdapter(
 
         Log.e("bookingStatusaa","bookingStatus.. " +driverTripHis.bookingStatus.toString())
 
-        if (driverTripHis.bookingStatus.toString() == "completed") {
+        if (driverTripHis.bookingStatus.toString() == "Completed") {
             holder.invoice.visibility = View.VISIBLE
         } else {
             holder.invoice.visibility = View.GONE
@@ -65,18 +65,30 @@ class CancelledAdapter(
             e.printStackTrace()
         }
         with(holder) {
-            clientNameDriHis.text = driverTripHis.user.toString()
+            clientNameDriHis.text = driverTripHis.driver.toString()
             totalCostDriverHis.text = price
-            val durationInMinutes = driverTripHis.duration
-            val hours = durationInMinutes!! / 60
-            val minutes = durationInMinutes % 60
-            val durationString = "$hours hours $minutes min"
-            arrivalTimeDriverHis.text = durationString
+            val durationInMinutes = driverTripHis.duration.toString()
+
+            val durationInSeconds = durationInMinutes.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min ", hours, minutes)
+                } else {
+                    String.format("%d min ", minutes)
+                }
+            }
+
+            arrivalTimeDriverHis.text = formattedDuration
 
             pickUpDetailsDriHis.text = driverTripHis.pickupLocation.toString()
             DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
             bookingstatus.text = dBookingStatus
-            if (dBookingStatus == "cancelled") {
+            if (dBookingStatus == "Cancelled") {
                 bookingstatus.setTextColor(Color.parseColor("#BC2A0A"))
             } else {
                 bookingstatus.setTextColor(Color.parseColor("#0ABC3C"))
