@@ -72,11 +72,12 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:background="@color/earth_yellow"
+            android:background="@drawable/button_background"
             android:gravity="center"
             android:text="@string/share"
             android:textColor="@color/white"
             android:textSize="16sp"
+
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -86,7 +87,7 @@
             android:id="@+id/downloadBtn"
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:background="@color/earth_yellow"
+            android:background="@drawable/button_background"
             android:gravity="center"
             android:text="@string/download"
             android:textColor="@color/white"
