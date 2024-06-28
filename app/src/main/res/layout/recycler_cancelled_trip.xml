@@ -312,7 +312,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="@string/invoice"
+                android:text="@string/download_invoice"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/normal_txt_size13"

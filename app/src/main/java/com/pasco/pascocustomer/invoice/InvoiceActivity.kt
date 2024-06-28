@@ -2,8 +2,13 @@ package com.pasco.pascocustomer.invoice
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Bundle
+import android.os.Environment
+
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +32,7 @@ import java.io.IOException
 class InvoiceActivity : AppCompatActivity() {
     private var id = ""
     private lateinit var binding: ActivityInvoiceBinding
+    private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
     private val progressDialog by lazy { CustomProgressDialog(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,18 +44,27 @@ class InvoiceActivity : AppCompatActivity() {
 
         val finalUrl = "http://69.49.235.253:8090/api/show-invoice-profile/$id/"
 
+
+        //startWebView(finalUrl)
+        setupWebView()
+        // Load the URL
+        binding.webView.loadUrl(finalUrl)
+      /*  binding.webView.webChromeClient = ChromeClient()
+        binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)*/
+=======
         startWebView(finalUrl)
         binding.webView.webChromeClient = ChromeClient()
         binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)
 
         binding.downloadBtn.setOnClickListener {createWebViewPdf()  }
+
     }
 
-    class ChromeClient : WebChromeClient() {
+/*    class ChromeClient : WebChromeClient() {
         // For Android 5.0
         override fun onProgressChanged(view: WebView, progress: Int) {
-            /* if (progress == 100)
-                getActivity().setTitle(R.string.app_name);*/
+            *//* if (progress == 100)
+                getActivity().setTitle(R.string.app_name);*//*
         }
 
         override fun onGeolocationPermissionsShowPrompt(
@@ -114,6 +129,25 @@ class InvoiceActivity : AppCompatActivity() {
             }
         }
         binding.webView.loadUrl(url)
+    }*/
+
+    private fun setupWebView() {
+        val webSettings: WebSettings =  binding.webView.settings
+        webSettings.javaScriptEnabled = true
+        webSettings.setSupportZoom(true)
+        webSettings.builtInZoomControls = true
+        webSettings.displayZoomControls = false
+
+        binding.webView.webViewClient = WebViewClient()
+
+        // Handle file downloads
+        binding.webView.setDownloadListener(DownloadListener { url, userAgent, contentDisposition, mimeType, contentLength ->
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
+            } else {
+                downloadFile(url, contentDisposition, mimeType)
+            }
+        })
     }
     private fun createWebViewPdf() {
         val printAttributes = PrintAttributes.Builder()
@@ -141,14 +175,39 @@ class InvoiceActivity : AppCompatActivity() {
         }
     }
 
+    private fun downloadFile(url: String, contentDisposition: String?, mimeType: String?) {
+        val request = DownloadManager.Request(Uri.parse(url))
+        request.setMimeType(mimeType)
+        val cookies = android.webkit.CookieManager.getInstance().getCookie(url)
+        request.addRequestHeader("cookie", cookies)
+        request.addRequestHeader("User-Agent",  binding.webView.settings.userAgentString)
+        request.setDescription("Downloading file...")
+        request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
+        request.allowScanningByMediaScanner()
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType))
+
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        downloadManager.enqueue(request)
+        Toast.makeText(this, "Downloading File", Toast.LENGTH_LONG).show()
+=======
     private fun checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
         }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_WRITE_EXTERNAL_STORAGE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted, retry the download
+        } else {
+            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+=======
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // Permission granted
@@ -163,3 +222,4 @@ class InvoiceActivity : AppCompatActivity() {
         private const val PERMISSION_REQUEST_CODE = 1
     }
 }
+

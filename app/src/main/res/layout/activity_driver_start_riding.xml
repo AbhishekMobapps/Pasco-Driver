@@ -174,7 +174,7 @@
                     android:backgroundTint="@color/red"
                     android:gravity="center"
                     android:padding="6dp"
-                    android:text="Emergency"
+                    android:text="Help"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size9"

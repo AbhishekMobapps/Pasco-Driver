@@ -26,6 +26,7 @@ import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
 import com.pasco.pascocustomer.loyalty.LoyaltyActivity
+import com.pasco.pascocustomer.notificationoffon.NotificationOnOffActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -71,6 +72,10 @@ class DriverMoreFragment : Fragment() {
         }
         binding.consMyWalletVehDetails.setOnClickListener {
             val intent = Intent(requireContext(), DriverWalletActivity::class.java)
+            startActivity(intent)
+        }
+        binding.notificationConstDriver.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationOnOffActivity::class.java)
             startActivity(intent)
         }
         binding.consTermsCondInside.setOnClickListener {
@@ -179,7 +184,7 @@ class DriverMoreFragment : Fragment() {
             if (response.peekContent().status == "True") {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
-                PascoApp.encryptedPrefs.CheckedType = ""
+                PascoApp.encryptedPrefs.driverApprovedId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)

@@ -58,6 +58,7 @@ import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsViewModel
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
@@ -74,11 +75,11 @@ import java.util.Locale
 class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDriverDashboardBinding
     private lateinit var naview: NavigationView
+    private val getVDetailsViewModel: GetVDetailsViewModel by viewModels()
     private var city: String? = null
     private var address: String? = null
-    private var dAdminApprovedId: String? = ""
+    private var dAdminApprovedStatus: String? = ""
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val handler = Handler(Looper.getMainLooper())
     private var lastBackPressTime = 0L
     private val backPressInterval = 2000
     private var shouldLoadHomeFragOnBackPress = true
@@ -89,6 +90,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var driverId = ""
     private var navItemIndex = 1
     private var refersh = ""
+    private var handler: Handler? = null
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
     private var switchCheck = ""
     private var OnDutyStatus = ""
@@ -105,15 +107,15 @@ class DriverDashboardActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.switchbtn.isChecked = false
 
-
         getNotificationPermission()
+        getVehicleDetails()
+        getVehicleDetailsObserver()
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
-        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
+        dAdminApprovedStatus = PascoApp.encryptedPrefs.DriverStatuss
         switchCheck = PascoApp.encryptedPrefs.CheckedType
-        Log.e("switchValue", "switchCheck: " + switchCheck)
+        Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
         refersh = PascoApp.encryptedPrefs.token
-
         requestLocationPermission()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -123,16 +125,18 @@ class DriverDashboardActivity : AppCompatActivity() {
         } else {
             requestLocationPermission()
         }
+
+        handler = Handler(Looper.getMainLooper())
         binding.firstConsLayouttt.visibility = View.VISIBLE
         getProfileApi()
         getUserProfileObserver()
-
-        if (dAdminApprovedId == "0") {
+        /*if (dAdminApprovedStatus != "Approved") {
             disableAllExceptMore()
             openPopUp()
-        } else if (dAdminApprovedId == "1") {
+        } else if (dAdminApprovedStatus == "Approved") {
             enableAll()
         }
+*/
 
         //Api and Observer
         getNotificationCountDApi()
@@ -175,7 +179,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             binding.firstConsLayouttt.visibility = View.VISIBLE
             val homeFragment = HomeFragment()
             replace_fragment(homeFragment)
-            getProfileApi()
             getUserProfileObserver()
             navItemIndex = 1
             binding.homeIconDri.setImageResource(R.drawable.home_1)
@@ -266,6 +269,26 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     }
 
+    private fun getVehicleDetails() {
+        getVDetailsViewModel.getVDetailsData(
+            progressDialog,
+            this
+        )
+    }
+
+    private fun getVehicleDetailsObserver() {
+        getVDetailsViewModel.progressIndicator.observe(this, Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        getVDetailsViewModel.mGetVDetails.observe(this) { response ->
+            val data = response.peekContent().data
+           PascoApp.encryptedPrefs.DriverStatuss = data?.approvalStatus!!
+            Log.e("status", "getVehicleDetailsObserver: "+dAdminApprovedStatus )
+
+        }
+    }
+
     private fun updateLocationObserver() {
 
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
@@ -321,8 +344,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         val okButtonAdminA = dialogView.findViewById<TextView>(R.id.okButtonAdminA)
         dialog.show()
         okButtonAdminA.setOnClickListener {
+            getVehicleDetails()
             dialog.dismiss()
         }
+
     }
 
     private fun requestLocationPermission() {
@@ -373,6 +398,7 @@ class DriverDashboardActivity : AppCompatActivity() {
                     // Start the periodic task
                     handler?.post(runnable)
                     showAddress(it)
+
                 }
             }
         } catch (e: SecurityException) {
@@ -413,6 +439,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             updateLocationDetails()
         }
 
+
     }
 
     private fun updateLocationDetails() {
@@ -428,7 +455,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
     private fun updateUI(city: String) {
-        handler.post {
+        handler!!.post {
             binding.driverGreeting.text = "$city"
         }
     }
@@ -518,14 +545,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             val countNotification = it.peekContent().count
-            if (countNotification == 0) {
-                binding.countNotificationDri.visibility = View.GONE
-            } else {
-                binding.countNotificationDri.visibility = View.VISIBLE
-                binding.countNotificationDri.text = countNotification.toString()
-            }
-
-
             if (countNotification == 0) {
                 binding.countNotificationDri.visibility = View.GONE
             } else {
