@@ -9,28 +9,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
+import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.invoice.InvoiceActivity
+import com.pasco.pascocustomer.utils.ErrorUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CancelledAdapter(
     private val context: Context,
-    private val driverTripHistory: List<CompleteHistoryResponse.Datum>
+    private val driverTripHistory: List<CompleteHistoryResponse.Datum>,
+    private val activity: AppCompatActivity
 ) :
     RecyclerView.Adapter<CancelledAdapter.ViewHolder>() {
     var bottomSheetDialog: BottomSheetDialog? = null
+    private val feedbackModelView: CustomerFeedbackModelView by lazy {
+        ViewModelProvider(activity)[CustomerFeedbackModelView::class.java]
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -110,7 +117,8 @@ class CancelledAdapter(
         }
 
         holder.feedbackBtn.setOnClickListener {
-
+            val id = driverTripHistory[position].id
+            showFeedbackPopup(id)
         }
 
     }
@@ -134,7 +142,7 @@ class CancelledAdapter(
 
     }
 
-    private fun showFeedbackPopup() {
+    private fun showFeedbackPopup(id: Int?) {
         bottomSheetDialog = BottomSheetDialog(context, R.style.TopCircleDialogStyle)
         val view = LayoutInflater.from(context).inflate(R.layout.feedback_popup, null)
         bottomSheetDialog!!.setContentView(view)
@@ -151,8 +159,8 @@ class CancelledAdapter(
         }
 
         submitBtn?.setOnClickListener {
-            //   feedbackApi(commentTxt?.text.toString(), ratingBars)
-            //  feedbackObserver()
+            feedbackApi(commentTxt?.text.toString(), ratingBars, id)
+            feedbackObserver()
         }
         skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
 
@@ -163,5 +171,31 @@ class CancelledAdapter(
         dialogWindow?.attributes = layoutParams
 
         bottomSheetDialog?.show()
+    }
+
+
+    private fun feedbackApi(commentTxt: String, ratingBars: String, id: Int?) {
+        //   val codePhone = strPhoneNo
+        val loinBody = CustomerFeedbackBody(
+            bookingconfirmation = id.toString(), rating = ratingBars, feedback = commentTxt
+        )
+        feedbackModelView.cancelBooking(loinBody, activity)
+    }
+
+    private fun feedbackObserver() {
+        feedbackModelView.progressIndicator.observe(activity) {}
+        feedbackModelView.mRejectResponse.observe(
+            activity
+        ) {
+            val msg = it.peekContent().msg
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(context, UserDashboardActivity::class.java)
+            context.startActivity(intent)
+        }
+        feedbackModelView.errorResponse.observe(activity) {
+            ErrorUtil.handlerGeneralError(context, it)
+            // errorDialogs()
+        }
     }
 }

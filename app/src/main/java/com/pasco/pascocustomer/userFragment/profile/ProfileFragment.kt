@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.FragmentProfileBinding
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.userFragment.profile.updatemodel.UpdateProfileModelView
@@ -343,6 +344,8 @@ class ProfileFragment : Fragment() {
             var message = it.peekContent().msg!!
             PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+            val intent = Intent(context, UserDashboardActivity::class.java)
+            startActivity(intent)
             getProfileApi()
         }
 
