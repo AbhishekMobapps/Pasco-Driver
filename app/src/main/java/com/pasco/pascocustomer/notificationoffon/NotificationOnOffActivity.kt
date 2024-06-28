@@ -40,11 +40,12 @@ class NotificationOnOffActivity : AppCompatActivity() {
         binding.updateBidSwitch.setOnCheckedChangeListener { _, isChecked ->
             updateSwitch = isChecked
             allTypeNotificationApi()
-
+            Log.e("CheckValueA", "updateSwitch..." + updateSwitch)
         }
         binding.statusUpdateSwitch.setOnCheckedChangeListener { _, isChecked ->
             statusUpdateSwitch = isChecked
             allTypeNotificationApi()
+
         }
         binding.adminSwitch.setOnCheckedChangeListener { _, isChecked ->
             adminSwitch = isChecked
@@ -74,7 +75,10 @@ class NotificationOnOffActivity : AppCompatActivity() {
 
 
     private fun allTypeNotificationApi() {
-
+        Log.e(
+            "CheckValueA",
+            "updateSwitch...$updateSwitch $statusUpdateSwitch  $adminSwitch  $completeSwitch $emergencySwitch  $loyaltySwitch"
+        )
         val loinBody = NotificationOnOffBody(
             ridebooking = false,
             updatebid = updateSwitch,
