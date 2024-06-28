@@ -15,14 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityInvoiceBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class InvoiceActivity : AppCompatActivity() {
-
     private var id = ""
+    private var userType = ""
     private lateinit var binding: ActivityInvoiceBinding
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -36,17 +37,34 @@ class InvoiceActivity : AppCompatActivity() {
 
         binding.backBtn.setOnClickListener { finish() }
         id = intent.getStringExtra("id").toString()
+        userType = PascoApp.encryptedPrefs.userType
+        if (userType.equals("driver"))
+        {
+            val finalUrlDriver = "http://69.49.235.253:8090/api/show-driverinvoice-profile/$id/"
+            val finalUrlDriver1 = "http://69.49.235.253:8090/api/download_driverinvoice/$id/"
+            binding.webView.loadUrl(finalUrlDriver)
 
-        val finalUrl = "http://69.49.235.253:8090/api/show-invoice-profile/$id/"
-        val finalUrl1 = "http://69.49.235.253:8090/api/download_invoice/$id/"
+            binding.buttonConst.setOnClickListener {
+                initiateDownload(finalUrlDriver1)
+            }
 
-        setupWebView()
-        binding.webView.loadUrl(finalUrl)
-
-        binding.downloadBtn.setOnClickListener {
-            initiateDownload(finalUrl1)
         }
+        else{
+            val finalUrl = "http://69.49.235.253:8090/api/show-invoice-profile/$id/"
+            val finalUrl1 = "http://69.49.235.253:8090/api/download_invoice/$id/"
+
+            binding.webView.loadUrl(finalUrl)
+
+            binding.buttonConst.setOnClickListener {
+                initiateDownload(finalUrl1)
+            }
+
+        }
+        setupWebView()
+
     }
+
+
 
     private fun setupWebView() {
         val webSettings: WebSettings = binding.webView.settings
