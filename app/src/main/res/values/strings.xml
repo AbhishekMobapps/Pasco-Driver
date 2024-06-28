@@ -335,6 +335,7 @@
 =======
     <string name="share">Share</string>
     <string name="download">Download</string>
+    <string name="bid_price">Bid Price :</string>
 
 
 </resources>
