@@ -609,7 +609,7 @@ interface ApiServices {
 
 
     @Headers("Accept:application/json")
-        @POST(" ")
+        @POST("set-typeof-notification/")
     fun allTypeNOtification(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: NotificationOnOffBody

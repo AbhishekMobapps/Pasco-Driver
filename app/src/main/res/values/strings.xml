@@ -37,7 +37,7 @@
     <string name="coupons">Coupons</string>
     <string name="submit">Submit</string>
     <string name="selectTransType">Select Transporter Type</string>
-    <string name="selectVehicleType">Select vehicle type</string>
+    <string name="selectVehicleType">Select vehicle</string>
     <string name="pick_start_point">Pickup Point</string>
     <string name="pick_destination_point">Destination Point</string>
     <string name="cargo_qty">Cargo Qty</string>
@@ -332,16 +332,21 @@
     <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
     <string name="download_invoice">Download Invoice</string>
-=======
+ 
     <string name="share">Share</string>
     <string name="download">Download</string>
 
     <string name="bid_price">Bid Price :</string>
-=======
     <string name="oder_id">Oder Id</string>
     <string name="booking_id">Booking Id :</string>
     <string name="total_amounts">Total amount :</string>
     <string name="payment_methods">Payment Method :</string>
+    <string name="complete_history">Complete History</string>
+    <string name="upfront_amount">Upfront Amount :</string>
+    <string name="payment_status">Payment Status</string>
+    <string name="booking_status">Booking Status</string>
+    <string name="number_of_vehicle_around_you">Number of vehicle around you</string>
+    <string name="number_of_vehicle_you_required">Number of vehicle you required</string>
     <string name="skip">Skip</string>
     <string name="rate_your_ride">RATE YOUR RIDE</string>
     <string name="what_aspects_of_our_app_do_you_think_need_improvement">What aspects of our app do you think need improvement?</string>

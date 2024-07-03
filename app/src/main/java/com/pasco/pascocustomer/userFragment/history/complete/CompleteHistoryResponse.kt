@@ -5,8 +5,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-
-
 class CompleteHistoryResponse {
 
     @SerializedName("status")
@@ -21,8 +19,7 @@ class CompleteHistoryResponse {
     @Expose
     var data: List<Datum>? = null
 
-    inner class Datum :java.io.Serializable
-    {
+    inner class Datum : java.io.Serializable {
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -45,7 +42,7 @@ class CompleteHistoryResponse {
 
         @SerializedName("driver_image")
         @Expose
-        var driverImage: Any? = null
+        var driverImage: String? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -139,6 +136,9 @@ class CompleteHistoryResponse {
         @Expose
         var bidPrice: Double? = null
 
+        @SerializedName("feedback")
+        @Expose
+        var feedback: Int? = null
     }
 
 

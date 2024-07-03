@@ -38,7 +38,7 @@ class InvoiceActivity : AppCompatActivity() {
         binding.backBtn.setOnClickListener { finish() }
         id = intent.getStringExtra("id").toString()
         userType = PascoApp.encryptedPrefs.userType
-        if (userType.equals("driver"))
+        if (userType == "driver")
         {
             val finalUrlDriver = "http://69.49.235.253:8090/api/show-driverinvoice-profile/$id/"
             val finalUrlDriver1 = "http://69.49.235.253:8090/api/download_driverinvoice/$id/"

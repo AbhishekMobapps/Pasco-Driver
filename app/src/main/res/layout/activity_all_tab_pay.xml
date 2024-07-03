@@ -206,7 +206,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="Number of cargo qty"
+                        android:text="@string/number_of_vehicle_you_required"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -267,16 +267,16 @@
 
                     <TextView
                         android:id="@+id/cargoQtyTxt"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:hint="@string/cargo_qty"
+                        android:hint="@string/number_of_vehicle_around_you"
                         android:textColorHint="@color/grey"
-                        android:textSize="17sp"
+                        android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.85" />
+                        app:layout_constraintWidth_percent="0.58" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
