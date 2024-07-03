@@ -807,7 +807,9 @@ class AllTabPayActivity : AppCompatActivity() {
             pickup_location = binding.pickStartPoint.text.toString(),
             drop_location = binding.pickDestinationPoint.text.toString(),
             pickup_city = cityNamePickUp.toString(),
-            drop_city = cityNameDrop.toString()
+            drop_city = cityNameDrop.toString(),
+            pickup_country = "",
+            drop_country = ""
         )
         cargoViewModel.otpCheck(bookingBody, this)
     }

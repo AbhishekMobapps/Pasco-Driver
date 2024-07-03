@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
-        android:layout_height="260dp"
-        android:layout_marginTop="@dimen/text_size_20"
+        android:layout_height="280dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -15,7 +15,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:layout_height="250dp"
+            android:layout_height="270dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,6 +36,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/status"
@@ -66,21 +67,34 @@
                         android:layout_height="40dp"
                         android:src="@drawable/man"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
                     <TextView
                         android:id="@+id/driverName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:text="Raj Sing"
                         android:textColor="@color/black"
-                        android:layout_marginLeft="10dp"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/driverProfile"
                         app:layout_constraintStart_toEndOf="@+id/driverProfile"
-                        app:layout_constraintTop_toTopOf="@+id/driverProfile"/>
+                        app:layout_constraintTop_toTopOf="@+id/driverProfile" />
+
+
+                    <TextView
+                        android:id="@+id/bookingDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="20-07-2024"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -99,12 +113,14 @@
                         android:layout_height="wrap_content"
                         android:text="@string/booking_id"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/bookingId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="PASCO4251WR44"
@@ -131,12 +147,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/distance"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="35 km"
@@ -163,12 +180,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/total_amounts"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/totalAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$350.00"
@@ -196,12 +214,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/payment_methods"
                         android:textColor="@color/black"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/paymentMode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="cash"
@@ -212,6 +231,17 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/next"
+                    android:tint="@color/earth_yellow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/totalPaymentsConst"
+                    tools:ignore="UseAppTint" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

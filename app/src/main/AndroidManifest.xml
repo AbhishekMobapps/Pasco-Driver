@@ -18,7 +18,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".application.PascoApp"
         android:allowBackup="true"
@@ -32,9 +33,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".historydetails.CompleteHistoryDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".notificationoffon.NotificationOnOffActivity"
             android:exported="false" />
-
         <activity
             android:name=".activity.Driver.PrivacyPolicyActivity"
             android:exported="false" />
@@ -173,7 +176,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCiSh4VnnI1jemtZTytDoj2X7Wl6evey30" />
+            android:value="AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" />
     </application>
 
 </manifest>

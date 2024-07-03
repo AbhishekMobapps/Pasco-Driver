@@ -138,13 +138,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         handler = Handler(Looper.getMainLooper())
 
 
-        runnable = object : Runnable {
-            override fun run() {
-                locationLatApi()
-                locationLatObserver()
-                handler?.postDelayed(this, 10000) // 2000 milliseconds = 2 seconds
-            }
-        }
+        handlerStart()
 
         // Start the periodic task
         handler?.post(runnable)
@@ -153,6 +147,21 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         locationDetailsObserver()
 
 
+    }
+
+    private fun handlerStart() {
+        handler = Handler(Looper.getMainLooper())
+        handler!!.postDelayed(mRunnable, 10000)
+    }
+
+    private val mRunnable = object : Runnable {
+        override fun run() {
+
+            Log.e("conversationClicked", "   true")
+            locationLatApi()
+            locationLatObserver()
+            handler?.postDelayed(this, 10000)
+        }
     }
 
     private fun locationDetailsApi() {
@@ -238,7 +247,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun drawRoute(startLatLng: LatLng, endLatLng: LatLng?) {
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val apiKey = "AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" // Replace with your actual API key
         val context = GeoApiContext.Builder().apiKey(apiKey).build()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -367,7 +376,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
         val context =
-            GeoApiContext.Builder().apiKey("AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ").build()
+            GeoApiContext.Builder().apiKey("AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM").build()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -473,6 +482,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val intent = Intent(this, UserDashboardActivity::class.java)
             startActivity(intent)
+            finish()
         }
         feedbackModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@TrackActivity, it)
