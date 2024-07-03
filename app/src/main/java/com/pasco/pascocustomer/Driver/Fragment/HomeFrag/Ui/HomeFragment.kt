@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -58,6 +59,7 @@ class HomeFragment : Fragment() {
     private var currentPage = 0
     private var isLastPage = false
     private val NUM_PAGES = 3
+    private var city:String = ""
     private val sliderViewModel: SliderHomeModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
     private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
@@ -65,7 +67,7 @@ class HomeFragment : Fragment() {
     @Inject
     lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
-    private lateinit var spinnerCityName: Spinner
+    private lateinit var dialog: AlertDialog
 
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -136,11 +138,12 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)
         }
+        sliderPageApi()
+        sliderPageObserver()
+
         binding.consFilter.setOnClickListener {
             openFilterPopUp()
         }
-        sliderPageApi()
-        sliderPageObserver()
         return binding.root
     }
 
@@ -149,21 +152,52 @@ class HomeFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.filter_popup, null)
         builder.setView(dialogView)
 
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        spinnerCityName = dialogView.findViewById<Spinner>(R.id.spinnerCityName)
+        val cityNameEditText = dialogView.findViewById<EditText>(R.id.CityNameEdiText)
         val submitButtonFilter = dialogView.findViewById<TextView>(R.id.submitButtonFilter)
-        val corssIconPasswordPop = dialogView.findViewById<ImageView>(R.id.corssIconPasswordPop)
-        dialog.show()
+        val crossIconPasswordPop = dialogView.findViewById<ImageView>(R.id.corssIconPasswordPop)
 
-        corssIconPasswordPop.setOnClickListener {
+        crossIconPasswordPop.setOnClickListener {
             dialog.dismiss() // Dismiss the dialog when the cross icon is clicked
         }
+
         submitButtonFilter.setOnClickListener {
-            dialog.dismiss()
+            val city = cityNameEditText.text.toString()
+            if (city.isNotBlank()) {
+                showRideRequestPopApi(city)
+            }
+            setupObserve(dialog)
         }
 
+        dialog.show()
+    }
+
+    private fun showRideRequestPopApi(city: String) {
+        showBookingReqViewModel.getShowBookingRequestsData(
+            activity,city)
+    }
+
+    private fun setupObserve(dialog: AlertDialog?) {
+        showBookingReqViewModel.mShowBookingReq.observe(viewLifecycleOwner) { response ->
+            val message = response.peekContent().msg
+            rideRequestList = response.peekContent().data ?: emptyList()
+
+            if (rideRequestList.isEmpty()) {
+                binding.orderBidsHomeFragTextView.visibility = View.VISIBLE
+                binding.recycerRideRequest.visibility = View.GONE
+            } else {
+                binding.orderBidsHomeFragTextView.visibility = View.GONE
+                binding.recycerRideRequest.visibility = View.VISIBLE
+                dialog!!.dismiss()
+                setupRecyclerView()
+            }
+
+            if (response.peekContent().status == "False") {
+                // Toast.makeText(requireContext(), "$message", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun checkLocationPermissionAndShare() {
@@ -285,8 +319,7 @@ class HomeFragment : Fragment() {
 
     private fun showRideRequestApi() {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity
-        )
+            activity,city)
     }
 
     private fun setupObservers() {

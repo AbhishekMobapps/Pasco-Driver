@@ -13,6 +13,7 @@ import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedRe
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
@@ -272,9 +273,11 @@ interface ApiServices {
     ): Observable<MarkDutyResponse>
 
     //showBooking request data
-    @GET("showbookingriderequests/")
+    @FormUrlEncoded
+    @POST("showbookingriderequests/")
     fun getBookingReq(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Field("city") city: String
     ): Observable<ShowBookingReqResponse>
 
     //get update BID details
@@ -297,6 +300,19 @@ interface ApiServices {
     fun getAllOrderDriver(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<DAllOrderResponse>
+
+    @GET("cancelreason/")
+    fun CancelReason(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+    ):Observable<CancelReasonResponse>
+    @FormUrlEncoded
+    @GET("UpdateCancelDriverBooking/{id}/")
+    fun cancelledData(
+        @Path("id") id: String,
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Field("reasonid") reasonid: String
+    ): Observable<GetDriverBidDetailsDataResponse>
+
 
     @GET("bookdriver-ongoing/")
     fun bookingDriverOnGoing(

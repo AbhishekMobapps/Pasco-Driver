@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
-        android:text="@string/select_country"
+        android:text="@string/city"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="@dimen/normal_txt_size"
@@ -64,10 +64,11 @@
         app:layout_constraintTop_toBottomOf="@+id/resultUploadConstraint"
         app:layout_constraintWidth_percent=".9" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/consStudentIDPopUp"
+        android:id="@+id/consCityNamePopUp"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/strokes_background"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,57 +76,16 @@
         app:layout_constraintTop_toBottomOf="@+id/countryNameTextView"
         app:layout_constraintWidth_percent=".9">
 
-        <Spinner
-            android:id="@+id/spinnerCountryName"
+        <EditText
+            android:id="@+id/CityNameEdiText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@null"
             android:gravity="center_vertical"
             android:textSize="@dimen/normal_txt_size"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="1" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/cityNameTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
-        android:text="@string/select_country"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="@dimen/normal_txt_size"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:foregroundGravity="center_vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/consStudentIDPopUp"
-        app:layout_constraintWidth_percent=".9" />
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/consCityNamePopUp"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/strokes_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityNameTextView"
-        app:layout_constraintWidth_percent=".9">
-
-        <Spinner
-            android:id="@+id/spinnerCityName"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/normal_txt_size"
+            android:inputType="textWebEditText"
+            android:hint="@string/city"
+            android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

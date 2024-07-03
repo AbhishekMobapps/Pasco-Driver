@@ -62,7 +62,7 @@
                 android:drawablePadding="5dp"
                 android:drawableTint="@color/logo_color"
                 android:foregroundGravity="center"
-                android:text="Good afternoon"
+                android:text="@string/city"
                 android:textColor="@color/black_dark"
                 android:textSize="@dimen/normal_txt_size13"
                 app:layout_constraintStart_toEndOf="@+id/userIconDashBoard"
