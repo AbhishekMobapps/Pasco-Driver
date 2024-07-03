@@ -230,7 +230,7 @@
     <string name="driving_doc">Driving Doc</string>
     <string name="vehicle_image">Vehicle Image</string>
     <string name="vehicle_rc">Vehicle RC</string>
-    <string name="change_language">Change Language</string>
+    <string name="change_language">Choose Language</string>
     <string name="contact_us">Contact Us</string>
     <string name="wallet">Wallet</string>
     <string name="biding_status">Biding Status</string>
@@ -332,9 +332,11 @@
     <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
     <string name="download_invoice">Download Invoice</string>
-    =======
+ 
     <string name="share">Share</string>
     <string name="download">Download</string>
+
+    <string name="bid_price">Bid Price :</string>
     <string name="oder_id">Oder Id</string>
     <string name="booking_id">Booking Id :</string>
     <string name="total_amounts">Total amount :</string>
@@ -345,6 +347,12 @@
     <string name="booking_status">Booking Status</string>
     <string name="number_of_vehicle_around_you">Number of vehicle around you</string>
     <string name="number_of_vehicle_you_required">Number of vehicle you required</string>
+    <string name="skip">Skip</string>
+    <string name="rate_your_ride">RATE YOUR RIDE</string>
+    <string name="what_aspects_of_our_app_do_you_think_need_improvement">What aspects of our app do you think need improvement?</string>
+    <string name="app_survey">App Survey</string>
+    <string name="filter">Filter</string>
+    <string name="my_bids">My Bids</string>
 
 
 </resources>

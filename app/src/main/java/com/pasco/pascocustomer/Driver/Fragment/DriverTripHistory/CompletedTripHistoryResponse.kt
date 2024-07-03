@@ -59,11 +59,11 @@ class CompletedTripHistoryResponse:Serializable {
 
         @SerializedName("pickup_latitude")
         @Expose
-        var pickupLatitude: Float? = null
+        var pickupLatitude: Double? = null
 
         @SerializedName("pickup_longitude")
         @Expose
-        var pickupLongitude: Float? = null
+        var pickupLongitude: Double? = null
 
         @SerializedName("drop_location")
         @Expose
@@ -71,15 +71,15 @@ class CompletedTripHistoryResponse:Serializable {
 
         @SerializedName("drop_latitude")
         @Expose
-        var dropLatitude: Float? = null
+        var dropLatitude: Double? = null
 
         @SerializedName("drop_longitude")
         @Expose
-        var dropLongitude: Float? = null
+        var dropLongitude: Double? = null
 
         @SerializedName("total_distance")
         @Expose
-        var totalDistance: Float? = null
+        var totalDistance: Double? = null
 
         @SerializedName("duration")
         @Expose
@@ -87,7 +87,7 @@ class CompletedTripHistoryResponse:Serializable {
 
         @SerializedName("basicprice")
         @Expose
-        var basicprice: Float? = null
+        var basicprice: Double? = null
 
         @SerializedName("booking_status")
         @Expose
@@ -103,7 +103,7 @@ class CompletedTripHistoryResponse:Serializable {
 
         @SerializedName("commision_price")
         @Expose
-        var commisionPrice: Float? = null
+        var commisionPrice: Double? = null
 
         @SerializedName("message")
         @Expose
@@ -135,7 +135,11 @@ class CompletedTripHistoryResponse:Serializable {
 
         @SerializedName("bid_price")
         @Expose
-        var bidPrice: Float? = null
+        var bidPrice: Double? = null
+
+        @SerializedName("feedback")
+        @Expose
+        var feedback: Int? = null
 
     }
 }

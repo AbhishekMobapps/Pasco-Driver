@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -66,7 +67,7 @@ class DriverAllBiddsAdapter(
             text = biddingStatus
         }
 
-        holder.itemView.setOnClickListener {
+        holder.linearDriverHis.setOnClickListener {
             val intent = when (biddingStatus) {
                 "Confirmed" -> Intent(context, DriverStartRidingActivity::class.java).apply {
                     putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
@@ -103,5 +104,6 @@ class DriverAllBiddsAdapter(
         val orderPriceTDriO: TextView = itemView.findViewById(R.id.orderPriceTDriO)
         val orderDateTimedO: TextView = itemView.findViewById(R.id.orderDateTimedO)
         val biddingStatusTextView: TextView = itemView.findViewById(R.id.biddingStatusTextView)
+        val linearDriverHis: LinearLayout = itemView.findViewById(R.id.linearDriverHis)
     }
 }

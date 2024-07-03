@@ -56,6 +56,7 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var activity: Activity
     private var userId = ""
     private var bookingId = ""
+    private var countryName: String? = null
     private lateinit var updateLocationBody: UpdationLocationBody
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -188,7 +189,7 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect
+            formattedLongitudeSelect,countryName.toString()
         )
         updateLocationViewModel.updateLocationDriver(
             activity,
@@ -298,6 +299,7 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
                 address = addresses[0].getAddressLine(0) ?: "Address not available"
                 //  binding.txtUserAddress.text = "Address: $address"
                 city = addresses[0].locality ?: "City not available"
+                countryName = addresses[0].countryName ?: "City not available"
                 binding?.txtUserAddressUpLoc?.setText(address)
             } else {
                 binding?.txtUserAddressUpLoc?.setText("Address not found")
@@ -336,6 +338,7 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
                 address = addresses[0].getAddressLine(0) ?: "Address not available"
                 //  binding.txtUserAddress.text = "Address: $address"
                 city = addresses[0].locality ?: "City not available"
+                countryName = addresses[0].countryName ?: "City not available"
                 binding?.txtUserAddressUpLoc?.setText(address)
             } else {
                 binding?.txtUserAddressUpLoc?.setText("Address not found")

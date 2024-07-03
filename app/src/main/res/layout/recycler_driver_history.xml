@@ -61,7 +61,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="2dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="10dp"
                         android:background="@drawable/cancel_button_color"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
@@ -151,8 +151,9 @@
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
                             android:layout_marginRight="10dp"
-                            android:text="Total Price :"
-                            android:textColor="@color/grey"
+                            android:text="@string/bid_price"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
                             android:textSize="@dimen/normal_txt_size" />
 
                         <TextView
@@ -166,7 +167,7 @@
                             android:drawableRight="@drawable/next"
                             android:drawableTint="@color/logo_color"
                             android:text="$780.00"
-                            android:textColor="@color/black"
+                            android:textColor="@color/green"
                             android:textSize="@dimen/normal_txt_size"
                             android:textStyle="bold" />
 

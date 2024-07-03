@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
+class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
     private lateinit var binding: FragmentTripHistoryBinding
     private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
         ArrayList()
@@ -83,11 +83,9 @@ class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
             val msg = it.peekContent().msg
             val status = it.peekContent().status
             Toast.makeText(requireActivity(), msg, Toast.LENGTH_SHORT).show()
-            if (status=="False")
-            {
+            if (status == "False") {
 
-            }
-            else{
+            } else {
                 val intent = Intent(requireActivity(), DriverDashboardActivity::class.java)
                 startActivity(intent)
             }
@@ -174,7 +172,7 @@ class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
                     binding.recycerHistoryDriverList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.recycerHistoryDriverList.adapter =
-                        CompletedTripHistoryAdapter(requireContext(),this,driverTripHistory)
+                        CompletedTripHistoryAdapter(requireContext(), this, driverTripHistory)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
@@ -200,7 +198,7 @@ class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
         ratingBars: String,
         bottomSheetDialog: BottomSheetDialog
     ) {
-        feedbackApi(id,comment, ratingBars)
+        feedbackApi(id, comment, ratingBars)
     }
 
     private fun feedbackApi(id: Int, comment: String, ratingBars: String) {
@@ -209,7 +207,7 @@ class TripHistoryFragment : Fragment(),AddFeedbackOnClickListner {
             rating = ratingBars,
             feedback = comment
         )
-        driverFeedbackModelView.cancelBooking(loinBody,requireActivity(), progressDialog)
+        driverFeedbackModelView.cancelBooking(loinBody, requireActivity(), progressDialog)
     }
 
 }
