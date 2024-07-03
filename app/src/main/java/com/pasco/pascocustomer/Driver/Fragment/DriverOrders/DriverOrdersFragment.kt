@@ -150,7 +150,7 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         }
     }
 
-
+//hello
     private fun allBiddsObserver() {
         dAllOrdersViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
