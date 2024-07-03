@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.Ui.DriverAllBiddsActivity
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelOnClick
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
 import com.pasco.pascocustomer.Driver.StartRiding.Ui.DriverStartRidingActivity
 import java.text.ParseException
@@ -23,6 +24,7 @@ import java.util.TimeZone
 
 class DriverAllBiddsAdapter(
     private val context: Context,
+    private val onItemClick:CancelOnClick,
     private val driverHistory: List<DAllOrderResponse.DAllOrderResponseData>
 ) : RecyclerView.Adapter<DriverAllBiddsAdapter.ViewHolder>() {
 
@@ -87,6 +89,16 @@ class DriverAllBiddsAdapter(
             context.startActivity(intent)
         }
 
+        if (biddingStatus.equals("Pending"))
+        {
+            holder.cancelButtonBid.visibility = View.VISIBLE
+            holder.cancelButtonBid.setOnClickListener {
+                onItemClick.cancelOrder(
+                    position)
+                notifyDataSetChanged()
+            }
+        }
+
         with(holder) {
             userNameDriO.text = driverOrderHis.user.toString()
             orderIDDriOrd.text = driverOrderHis.bookingNumber.toString()
@@ -105,5 +117,6 @@ class DriverAllBiddsAdapter(
         val orderDateTimedO: TextView = itemView.findViewById(R.id.orderDateTimedO)
         val biddingStatusTextView: TextView = itemView.findViewById(R.id.biddingStatusTextView)
         val linearDriverHis: LinearLayout = itemView.findViewById(R.id.linearDriverHis)
+        val cancelButtonBid: TextView = itemView.findViewById(R.id.cancelButtonBid)
     }
 }

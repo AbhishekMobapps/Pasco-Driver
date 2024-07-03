@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel
+package com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel
 
 import android.app.Activity
 import android.app.Application
@@ -6,52 +6,64 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import com.pasco.pascocustomer.utils.Event
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ShowBookingReqViewModel@Inject constructor(
+class CancelReasonViewModel@Inject constructor(
     application: Application,
-    private val showBookingReqRepository: ShowBookingReqRepository
+    private val repository: CancelReasonRepository
 ) : AndroidViewModel(application)  {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mShowBookingReq = MutableLiveData<Event<ShowBookingReqResponse>>()
+    val mCancelOrderResponse = MutableLiveData<Event<CancelReasonResponse>>()
     var context: Context? = null
 
-    fun getShowBookingRequestsData(
-        activity: Activity, city:String) =
+    fun getCancelReason(
+        progressDialog: CustomProgressDialog,
+        activity: Activity
+
+    ) =
         viewModelScope.launch {
-            getShowBookingRequests(
-                activity, city)
+            cancelReason( progressDialog,
+                activity)
         }
-    suspend fun getShowBookingRequests(
-        activity: Activity,city: String
+    suspend fun cancelReason(
+        progressDialog: CustomProgressDialog,
+        activity: Activity
     )
 
     {
-        showBookingReqRepository.getShowBookingRequests(city)
+        progressDialog.start(activity.getString(R.string.please_wait))
+        progressIndicator.value = true
+        repository.cancelReason()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<ShowBookingReqResponse>() {
-                override fun onNext(value: ShowBookingReqResponse) {
-                    mShowBookingReq.value = Event(value)
+            .subscribe(object : DisposableObserver<CancelReasonResponse>() {
+                override fun onNext(value: CancelReasonResponse) {
+                    progressIndicator.value = false
+                    progressDialog.stop()
+                    mCancelOrderResponse.value = Event(value)
                 }
 
                 override fun onError(e: Throwable) {
                     progressIndicator.value = false
+                    progressDialog.stop()
                     errorResponse.value = e
                 }
 
                 override fun onComplete() {
+                    progressDialog.stop()
                     progressIndicator.value = false
                 }
             })

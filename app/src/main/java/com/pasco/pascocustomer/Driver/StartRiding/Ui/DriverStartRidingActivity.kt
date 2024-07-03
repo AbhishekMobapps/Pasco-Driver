@@ -59,6 +59,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -238,10 +239,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         //  driverStatusList()
         //  driverStatusObserver()
 
- /*       if (driStatusRunning.isNullOrEmpty()) {
+        if (driStatusRunning.isNullOrEmpty()) {
         } else {
             binding.SelectstatusTextView.text = driStatusRunning
-        }*/
+        }
 
         binding.textViewSeeDetailsSR.setOnClickListener {
 
@@ -276,9 +277,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
-
-
-                        //call vehicleType
+                    //call vehicleType
 
                     }
                 }
@@ -295,7 +294,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         afterDetailsObserver()
         //get Api
         if (!Bid.isNullOrBlank()) {
-
             afterDetailsApi()
         }
         binding.cricleImgUserSR.setOnClickListener {
@@ -1064,9 +1062,22 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
             mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
         } else {
-            mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
+          /*  mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
             mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop-off Location"))
             // Move camera to the initial pickup location
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))*/
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(pickupLocation)
+                    .title("Pick-up Location")
+                    .icon(bitmapDescriptorFromVector(this, R.drawable.delivery_truck))
+            )
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(dropLocation)
+                    .title("Drop-off Location")
+                    .icon(bitmapDescriptorFromVector(this, R.drawable.delivery_truck))
+            )
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))
         }
 
@@ -1126,6 +1137,15 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
 
+    }
+
+    private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
+        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
     private fun getLastLocationAndDrawRoute() {
