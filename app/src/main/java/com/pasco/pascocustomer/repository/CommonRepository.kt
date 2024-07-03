@@ -3,6 +3,8 @@ package com.pasco.pascocustomer.repository
 import VehicleTypeResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.appsurvey.AppSurveyBody
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.appsurvey.AppSurveyResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
@@ -285,6 +287,12 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         courseBody: DriverFeedbackBody
     ): Observable<AcceptOrRejectResponse> {
         return apiService.driverFeedback(PascoApp.encryptedPrefs.bearerToken, courseBody)
+    }
+
+    fun appSurvey(
+        body: AppSurveyBody
+    ): Observable<AppSurveyResponse> {
+        return apiService.appSurvery(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
     fun getLoyalty(): Observable<LoyaltyProgramResponse> {

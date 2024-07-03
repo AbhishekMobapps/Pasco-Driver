@@ -141,5 +141,9 @@ class CancelledTripResponse:Serializable {
         @Expose
         var cancelreason: String? = null
 
+        @SerializedName("feedback")
+        @Expose
+        var feedback: Int? = null
+
     }
 }

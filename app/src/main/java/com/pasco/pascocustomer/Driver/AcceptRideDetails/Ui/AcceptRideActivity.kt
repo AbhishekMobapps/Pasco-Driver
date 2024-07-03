@@ -267,7 +267,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun drawRoute(latLng: LatLng) {
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val apiKey = "AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
             .build()

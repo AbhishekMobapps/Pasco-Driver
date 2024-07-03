@@ -9,6 +9,7 @@ class DriverBody(
     @SerializedName("current_city") var current_city: String,
     @SerializedName("current_location") var current_location: String,
     @SerializedName("current_latitude") var current_latitude: String,
+    @SerializedName("current_country") var current_country: String,
     @SerializedName("current_longitude") var current_longitude: String,
     @SerializedName("user_type") var user_type: String,
     @SerializedName("phone_verify") var phone_verify: String,
