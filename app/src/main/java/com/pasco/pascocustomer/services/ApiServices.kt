@@ -17,6 +17,8 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderR
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.appsurvey.AppSurveyBody
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.appsurvey.AppSurveyResponse
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripResponse
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideResponse
@@ -578,6 +580,13 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: DriverFeedbackBody
     ): Observable<AcceptOrRejectResponse>
+
+    @Headers("Accept:application/json")
+    @POST("add-app-survey/")
+    fun appSurvery(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: AppSurveyBody
+    ):Observable<AppSurveyResponse>
 
     @GET("loyaltyprogram-detail/")
     fun getLoyaltyProgram(

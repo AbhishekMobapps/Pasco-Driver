@@ -39,6 +39,7 @@ class OtpVerifyActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private var strPhoneNo = ""
     private var city = ""
+    private var countryName = ""
     private var email = ""
     private var address = ""
     private var userName = ""
@@ -69,6 +70,7 @@ class OtpVerifyActivity : AppCompatActivity() {
         strPhoneNo = intent.getStringExtra("phoneNumber").toString()
         strPhoneCCode = intent.getStringExtra("phoneCountryCode").toString()
 
+        countryName = intent.getStringExtra("conName").toString()
         city = intent.getStringExtra("city").toString()
         email = intent.getStringExtra("email").toString()
         address = intent.getStringExtra("address").toString()
@@ -239,6 +241,7 @@ class OtpVerifyActivity : AppCompatActivity() {
             current_city = city,
             current_location = address,
             current_latitude = formattedLatitudeSelect,
+            current_country = countryName,
             current_longitude = formattedLongitudeSelect,
             user_type = loginValue,
             phone_verify = deviceModel,

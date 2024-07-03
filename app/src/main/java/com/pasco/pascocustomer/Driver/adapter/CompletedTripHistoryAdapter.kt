@@ -82,7 +82,7 @@ class CompletedTripHistoryAdapter(
 
             pickUpDetailsDriHis.text = driverTripHis.pickupLocation.toString()
             DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
-            bookingstatus.text =  dBookingStatus.toString()
+            bookingstatus.text = dBookingStatus.toString()
         }
         holder.invoiceTextView.setOnClickListener {
             val id = driverTripHistory[position].id
@@ -90,69 +90,78 @@ class CompletedTripHistoryAdapter(
             intent.putExtra("id", id.toString())
             context.startActivity(intent)
         }
-        holder.addFeedbackTextView.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(context, R.style.TopCircleDialogStyle)
-            val view = LayoutInflater.from(context).inflate(R.layout.driver_feedback_popup, null)
-            bottomSheetDialog!!.setContentView(view)
+        val feedback = driverTripHis.feedback
+        if (feedback == 1) {
+            holder.addFeedbackTextView.visibility = View.GONE
+        } else {
+            holder.addFeedbackTextView.visibility = View.VISIBLE
+            holder.addFeedbackTextView.setOnClickListener {
+                val bottomSheetDialog = BottomSheetDialog(context, R.style.TopCircleDialogStyle)
+                val view =
+                    LayoutInflater.from(context).inflate(R.layout.driver_feedback_popup, null)
+                bottomSheetDialog!!.setContentView(view)
 
 
-            val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
-            val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
-            val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
-            val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+                val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+                val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+                val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+                val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
 
-            var ratingBars = ""
-            ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-                // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-                ratingBars = rating.toString()
-            }
-            submitBtn?.setOnClickListener {
-                val comment = commentTxt?.text.toString()
-                if (ratingBars.isEmpty()) {
-                    Toast.makeText(context, "Please add a rating", Toast.LENGTH_SHORT).show()
-                } else if (comment.isBlank()) {
-                    Toast.makeText(context, "Please add a comment", Toast.LENGTH_SHORT).show()
-                } else {
-                    onItemClick.addFeedbackItemClick(
-                        position,
-                        driverTripHis.id!!,
-                        comment,
-                        ratingBars,
-                        bottomSheetDialog
-                    )
-                    notifyDataSetChanged()
+                var ratingBars = ""
+                ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+                    // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+                    ratingBars = rating.toString()
                 }
-            }
-
-            skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
-
-            val displayMetrics = DisplayMetrics()
-            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-            val screenHeight = displayMetrics.heightPixels
-            val halfScreenHeight = (screenHeight * 0.6).toInt()
-            val eightyPercentScreenHeight = (screenHeight * 0.8).toInt()
-
-            // Set the initial height of the bottom sheet to 60% of the screen height
-            val layoutParams = view.layoutParams
-            layoutParams.height = halfScreenHeight
-            view.layoutParams = layoutParams
-
-            var isExpanded = false
-            view.setOnClickListener {
-                // Expand or collapse the bottom sheet when it is touched
-                layoutParams.height = if (isExpanded) {
-                    halfScreenHeight
-                } else {
-                    eightyPercentScreenHeight
+                submitBtn?.setOnClickListener {
+                    val comment = commentTxt?.text.toString()
+                    if (ratingBars.isEmpty()) {
+                        Toast.makeText(context, "Please add a rating", Toast.LENGTH_SHORT).show()
+                    } else if (comment.isBlank()) {
+                        Toast.makeText(context, "Please add a comment", Toast.LENGTH_SHORT).show()
+                    } else {
+                        onItemClick.addFeedbackItemClick(
+                            position,
+                            driverTripHis.id!!,
+                            comment,
+                            ratingBars,
+                            bottomSheetDialog
+                        )
+                        notifyDataSetChanged()
+                    }
                 }
+
+                skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+
+                val displayMetrics = DisplayMetrics()
+                val windowManager =
+                    context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+                val screenHeight = displayMetrics.heightPixels
+                val halfScreenHeight = (screenHeight * 0.6).toInt()
+                val eightyPercentScreenHeight = (screenHeight * 0.8).toInt()
+
+                // Set the initial height of the bottom sheet to 60% of the screen height
+                val layoutParams = view.layoutParams
+                layoutParams.height = halfScreenHeight
                 view.layoutParams = layoutParams
-                isExpanded = !isExpanded
-            }
 
-            bottomSheetDialog.show()
+                var isExpanded = false
+                view.setOnClickListener {
+                    // Expand or collapse the bottom sheet when it is touched
+                    layoutParams.height = if (isExpanded) {
+                        halfScreenHeight
+                    } else {
+                        eightyPercentScreenHeight
+                    }
+                    view.layoutParams = layoutParams
+                    isExpanded = !isExpanded
+                }
+
+                bottomSheetDialog.show()
+            }
         }
+
     }
 
     override fun getItemCount(): Int {

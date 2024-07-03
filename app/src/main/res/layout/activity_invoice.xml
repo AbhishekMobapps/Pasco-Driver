@@ -9,7 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainConst"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".06"
         android:background="@color/earth_yellow"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -46,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.85"
+        app:layout_constraintHeight_percent="0.86"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainConst"
         app:layout_constraintWidth_percent="0.95">
@@ -62,7 +63,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonConst"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".05"
         android:layout_marginTop="10dp"
         android:background="@drawable/button_background"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +72,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/webConst"
-        app:layout_constraintWidth_percent="0.5">
+        app:layout_constraintWidth_percent="0.4">
 
         <ImageView
             android:id="@+id/downloadImgstatic"

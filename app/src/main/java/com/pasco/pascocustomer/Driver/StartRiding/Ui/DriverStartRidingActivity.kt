@@ -143,8 +143,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     private val routeTypeStatic: MutableList<String> = mutableListOf()
     private var Bid = ""
     private var driStatus = ""
+    private var driStatusRunning = ""
     private var driId = ""
     private var orderStatusDriverR = ""
+    private var countryName: String? = null
     private var userId = ""
     private val afterStartTripViewModel: AfterStartTripViewModel by viewModels()
     private lateinit var updateLocationBody: UpdationLocationBody
@@ -197,7 +199,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
         locationArrayList = ArrayList()
         Bid = intent.getStringExtra("BookId").toString()
-        //driStatus = intent.getStringExtra("driStatus").toString()
+        driStatusRunning = intent.getStringExtra("driStatus").toString()
         driId = intent.getStringExtra("driverStatusId").toString()
         orderStatusDriverR = intent.getStringExtra("currentOrder").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -236,10 +238,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         //  driverStatusList()
         //  driverStatusObserver()
 
-       /* if (driStatus == null) {
-            binding.SelectstatusTextView.text = "Select Status"
+ /*       if (driStatusRunning.isNullOrEmpty()) {
         } else {
-            binding.SelectstatusTextView.text = driStatus
+            binding.SelectstatusTextView.text = driStatusRunning
         }*/
 
         binding.textViewSeeDetailsSR.setOnClickListener {
@@ -622,6 +623,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
                     val addressObj = addresses[0]
                     address = addressObj.getAddressLine(0)
                     city = addressObj.locality
+                    countryName = addressObj.countryName
                     city?.let { updateUI(it) }
                 }
             } catch (e: IOException) {
@@ -641,7 +643,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect
+            formattedLongitudeSelect,countryName.toString()
         )
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
@@ -822,7 +824,11 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
                 feedbackObserver()
             }
         }
-        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+        skipBtn?.setOnClickListener {
+            bottomSheetDialog?.dismiss()
+            val intent = Intent(this@DriverStartRidingActivity,DriverDashboardActivity::class.java)
+            startActivity(intent)
+        }
 
         val displayMetrics = DisplayMetrics()
         (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -1215,7 +1221,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun drawRoute(latLng: LatLng, routeType: Int) {
-        val apiKey = "AIzaSyA3KVnFOiaKNlhi4hJB8N2pB8tyoe_rRxQ" // Replace with your actual API key
+        val apiKey = "AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
             .build()
@@ -1296,15 +1302,17 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
     override fun driverStatusUpdate(position: Int, id: Int, status: String) {
         driStatus = status
-        Log.e("derAAA", "driverStatusUpdate:$driStatus")
+        Log.e("derAAA", "driverStatusUpdate: $driStatus")
         spinnerDriverSId = id.toString()
-        if (driStatus == null) {
-            binding.SelectstatusTextView.text = "Select Status"
+
+        if (driStatus.isNullOrEmpty()) {
+            binding.SelectstatusTextView.text = ""
         } else {
             binding.SelectstatusTextView.text = driStatus
             dialog.dismiss()
-            Log.e("derAAA", "driverStatusUpdate:aa$driStatus")
+            Log.e("derAAA", "driverStatusUpdate: aa$driStatus")
         }
+
         if (!spinnerDriverSId.isNullOrBlank()) {
             val sId = spinnerDriverSId
             startTrip(sId)

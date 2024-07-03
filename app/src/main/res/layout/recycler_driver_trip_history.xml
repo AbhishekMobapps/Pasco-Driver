@@ -311,6 +311,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:layout_marginTop="10dp"
+                android:visibility="gone"
                 app:layout_constraintWidth_percent=".2"
                 android:textSize="@dimen/normal_txt_size_12"
                 app:layout_constraintTop_toTopOf="parent"

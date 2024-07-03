@@ -19,7 +19,6 @@ class VehicleTypeResponse:Serializable {
     var data: List<VehicleTypeData>? = null
 
     inner class VehicleTypeData:Serializable{
-
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -30,7 +29,7 @@ class VehicleTypeResponse:Serializable {
 
         @SerializedName("capabilityname")
         @Expose
-        var capabilityname: List<Any>? = null
+        var capabilityname: List<String>? = null
 
         @SerializedName("vehiclename")
         @Expose
