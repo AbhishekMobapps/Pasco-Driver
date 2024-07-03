@@ -63,10 +63,11 @@ class AllTabPayActivity : AppCompatActivity() {
     private var lon2 = ""
     private var el1: Double = 0.0
     private var el2: Double = 0.0
-
     private var pickupLatitude = ""
     private var dropupLongitude: String = ""
     private var cityNamePickUp: String? = null
+    private var pickupCountry: String? = null
+    private var dropCountry: String? = null
     private var cityNameDrop: String? = null
     private var pickUpLatitude = 0.0
     private var pickUpLongitude = 0.0
@@ -184,15 +185,11 @@ class AllTabPayActivity : AppCompatActivity() {
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
 
                 val datePickerDialog = DatePickerDialog(
-                    this,
-                    { _, selectedDay, selectedMonth, selectedYear ->
+                    this, { _, selectedDay, selectedMonth, selectedYear ->
                         // Do something with the selected date
                         selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
                         binding.dateTxt.text = selectedDate
-                    },
-                    year,
-                    month,
-                    day
+                    }, year, month, day
                 )
                 datePickerDialog.datePicker.minDate = calendar.timeInMillis
                 datePickerDialog.show()
@@ -209,8 +206,7 @@ class AllTabPayActivity : AppCompatActivity() {
                 val minute = calendar.get(Calendar.MINUTE)
 
                 val timePickerDialog = TimePickerDialog(
-                    this,
-                    { _, selectedHour, selectedMinute ->
+                    this, { _, selectedHour, selectedMinute ->
                         // Do something with the selected time
                         val formattedHour = if (selectedHour % 12 == 0) 12 else selectedHour % 12
                         val amPm = if (selectedHour < 12) "AM" else "PM"
@@ -219,10 +215,7 @@ class AllTabPayActivity : AppCompatActivity() {
                         binding.timeTxt.text = selectedTime
 
                         Log.e("selectedTimesa", "selectedTime..." + selectedTime)
-                    },
-                    hour,
-                    minute,
-                    false // Set to false for 12-hour format with AM/PM
+                    }, hour, minute, false // Set to false for 12-hour format with AM/PM
                 )
                 timePickerDialog.show()
             }
@@ -267,10 +260,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.additionalSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    adapterView: AdapterView<*>?,
-                    view: View?,
-                    i: Int,
-                    l: Long
+                    adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
                 ) {
                     val item = binding.additionalSpinner.selectedItem.toString()
                     if (item != getString(R.string.additional_service)) {
@@ -287,10 +277,7 @@ class AllTabPayActivity : AppCompatActivity() {
         binding.vehicleTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    adapterView: AdapterView<*>?,
-                    view: View?,
-                    i: Int,
-                    l: Long
+                    adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
                 ) {
                     val item = binding.vehicleTypeSpinner.selectedItem.toString()
                     if (item != getString(R.string.selectVehicleType)) {
@@ -352,9 +339,7 @@ class AllTabPayActivity : AppCompatActivity() {
 
     private fun callVehicleType() {
         vehicleTypeViewModel.getVehicleTypeData(
-            progressDialog,
-            this,
-            vehicleId.toString()
+            progressDialog, this, vehicleId.toString()
         )
     }
 
@@ -369,9 +354,7 @@ class AllTabPayActivity : AppCompatActivity() {
                 element.vehiclename?.let { it1 -> vehicleTypeStatic.add(it1) }
             }
             val dAdapter = VehicleDetailsActivity.SpinnerAdapter(
-                this@AllTabPayActivity,
-                R.layout.custom_service_type_spinner,
-                vehicleTypeStatic
+                this@AllTabPayActivity, R.layout.custom_service_type_spinner, vehicleTypeStatic
             )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dAdapter.add(getString(R.string.selectVehicleType))
@@ -514,9 +497,7 @@ class AllTabPayActivity : AppCompatActivity() {
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
             val addresses: List<Address>? = geocoder.getFromLocation(
-                location.latitude,
-                location.longitude,
-                1
+                location.latitude, location.longitude, 1
             )
 
             if (addresses != null && addresses.isNotEmpty()) {
@@ -531,6 +512,7 @@ class AllTabPayActivity : AppCompatActivity() {
 
                 val address: String = addresses[0].getAddressLine(0) ?: "Address not available"
                 cityNamePickUp = currentAddress.locality
+                pickupCountry = currentAddress.countryName
 
                 binding.pickStartPoint.text = address
             } else {
@@ -547,9 +529,7 @@ class AllTabPayActivity : AppCompatActivity() {
         val geocoder = Geocoder(this, Locale.getDefault())
         try {
             val addresses: List<Address>? = geocoder.getFromLocation(
-                location.latitude,
-                location.longitude,
-                1
+                location.latitude, location.longitude, 1
             )
 
             if (addresses != null && addresses.isNotEmpty()) {
@@ -562,6 +542,7 @@ class AllTabPayActivity : AppCompatActivity() {
                 formattedLongitudeDropSelect = String.format("%.5f", destinationLongitude)
                 val address: String = addresses[0].getAddressLine(0) ?: "Address not available"
                 cityNameDrop = currentAddress.locality
+                dropCountry = currentAddress.countryName
                 binding.pickDestinationPoint.text = address
             } else {
                 binding.pickDestinationPoint.text = "Address not found"
@@ -712,7 +693,9 @@ class AllTabPayActivity : AppCompatActivity() {
             pickup_datetime = dateTime,
             message = binding.yourMsg.text.toString(),
             payment_method = selectedOption,
-            additional_service = spinnerTransportId
+            additional_service = spinnerTransportId,
+            pickup_country = pickupCountry.toString(),
+            drop_country = dropCountry.toString()
 
         )
         bookingRideViewModel.otpCheck(bookingBody, this, progressDialog)
@@ -799,7 +782,7 @@ class AllTabPayActivity : AppCompatActivity() {
     private fun cargoApi(spinnerVehicleTypeId: String) {
         Log.e(
             "CheckCity",
-            "city.." + cityNamePickUp.toString() + " drop_city " + cityNameDrop.toString() + " spinnerVehicleTypeId " + spinnerVehicleTypeId
+            "city.." + pickupCountry.toString() + " drop_city " + dropCountry.toString() + " spinnerVehicleTypeId " + spinnerVehicleTypeId
         )
 
         val bookingBody = CargoAvailableBody(
@@ -808,8 +791,8 @@ class AllTabPayActivity : AppCompatActivity() {
             drop_location = binding.pickDestinationPoint.text.toString(),
             pickup_city = cityNamePickUp.toString(),
             drop_city = cityNameDrop.toString(),
-            pickup_country = "",
-            drop_country = ""
+            pickup_country = pickupCountry.toString(),
+            drop_country = dropCountry.toString()
         )
         cargoViewModel.otpCheck(bookingBody, this)
     }
@@ -819,14 +802,13 @@ class AllTabPayActivity : AppCompatActivity() {
 
             cargoQty = response.peekContent().availableDriver
 
-            if (cargoQty == 0) {
-                binding.numberOfVehicleTxt.text = "Cargo is not available"
+            if (cargoQty == null) {
+                binding.numberOfVehicleTxt.text = "0"
             } else {
                 binding.numberOfVehicleTxt.text = response.peekContent().availableDriver.toString()
             }
             binding.numberOfVehicleConst.visibility = View.VISIBLE
         }
-
         cargoViewModel.errorResponse.observe(this@AllTabPayActivity) {
             ErrorUtil.handlerGeneralError(this@AllTabPayActivity, it)
         }
@@ -864,8 +846,7 @@ class AllTabPayActivity : AppCompatActivity() {
 
     private fun additionalServiceList() {
         additionalServiceViewModel.getServicesData(
-            progressDialog,
-            this
+            progressDialog, this
         )
     }
 
@@ -884,9 +865,7 @@ class AllTabPayActivity : AppCompatActivity() {
                 element.additionalType?.let { it1 -> servicesTypeStatic.add(it1) }
             }
             val dAdapter = SpinnerAdapter(
-                this@AllTabPayActivity,
-                R.layout.custom_service_type_spinner,
-                servicesTypeStatic
+                this@AllTabPayActivity, R.layout.custom_service_type_spinner, servicesTypeStatic
             )
             dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dAdapter.add(getString(R.string.additional_service))
@@ -908,8 +887,7 @@ class AllTabPayActivity : AppCompatActivity() {
 
     class SpinnerAdapter(
         context: Context, textViewResourceId: Int, smonking: List<String>
-    ) :
-        ArrayAdapter<String>(context, textViewResourceId, smonking) {
+    ) : ArrayAdapter<String>(context, textViewResourceId, smonking) {
 
         override fun getCount(): Int {
             val count = super.getCount()

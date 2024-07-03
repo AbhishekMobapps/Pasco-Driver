@@ -30,10 +30,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
@@ -96,8 +93,10 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private var verificationCode = ""
     private var isClick = true
 
-    private var handler: Handler? = null
+    // private var handler: Handler? = null
     private lateinit var runnable: Runnable
+
+    var mHandler: Handler? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -129,38 +128,43 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         // Los Angeles
+        //handler = Handler(Looper.getMainLooper())
 
+
+        /* runnable = object : Runnable {
+             override fun run() {
+                 locationLatApi()
+                 locationLatObserver()
+                 handler?.postDelayed(this, 10000) // 2000 milliseconds = 2 seconds
+             }
+         }
+ */
+        // Start the periodic task
+        // handler?.post(runnable)
 
         binding.chatBtn.setOnClickListener {
             val intent = Intent(this@TrackActivity, ChatActivity::class.java)
             startActivity(intent)
         }
-        handler = Handler(Looper.getMainLooper())
-
-
         handlerStart()
-
-        // Start the periodic task
-        handler?.post(runnable)
-
         locationDetailsApi()
         locationDetailsObserver()
 
 
     }
 
+
     private fun handlerStart() {
-        handler = Handler(Looper.getMainLooper())
-        handler!!.postDelayed(mRunnable, 10000)
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler!!.postDelayed(mRunnable, 10000)
     }
 
     private val mRunnable = object : Runnable {
         override fun run() {
 
-            Log.e("conversationClicked", "   true")
             locationLatApi()
             locationLatObserver()
-            handler?.postDelayed(this, 10000)
+            mHandler?.postDelayed(this, 10000)
         }
     }
 
@@ -239,75 +243,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
                 dropLocation?.let { it1 -> updateRoute(LatLng(it.latitude, it.longitude), it1) }
-                zoomMapToLocation(LatLng(it.latitude, it.longitude))
             }
         }
         mMap.isMyLocationEnabled = true
     }
 
-
-    private fun drawRoute(startLatLng: LatLng, endLatLng: LatLng?) {
-        val apiKey = "AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" // Replace with your actual API key
-        val context = GeoApiContext.Builder().apiKey(apiKey).build()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val result: DirectionsResult =
-                    DirectionsApi.newRequest(context).mode(TravelMode.DRIVING)
-                        .origin("${startLatLng.latitude},${startLatLng.longitude}")
-                        .destination("${endLatLng?.latitude},${endLatLng?.longitude}").await()
-
-                Log.e(
-                    "location",
-                    "location.." + endLatLng?.latitude + "longitude " + endLatLng?.longitude
-                )
-                // Decode polyline and draw on map
-                val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
-
-                withContext(Dispatchers.Main) {
-                    // Clear previous route
-                    mMap.clear()
-                    // Add polyline to map
-                    mMap.addPolyline(PolylineOptions().addAll(points).color(R.color.earth_yellow))
-                }
-            } catch (e: Exception) {
-                Log.e("DrawRoute", "Error drawing route: ${e.message}")
-            }
-        }
-    }
-
-    private fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = ArrayList<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
-            lat += dlat
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
-            lng += dlng
-            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(p)
-        }
-        return poly
-    }
 
     private fun locationLatApi() {
         val bookingBody = TrackLocationBody(
@@ -328,34 +268,82 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
             Log.e("ShowDetails", "API....Repeat...Details")
 
+            val driverLatLng = LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble())
+            val userPickUpLatLng = LatLng(userPickUpLat.toDouble(), driverCurrentLong.toDouble())
+            val userDropLatLng = LatLng(userDropLat.toDouble(), userDropLong.toDouble())
+
             drawRoute(
                 LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
                 LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble())
+            )
+
+            val driverMarker =
+                BitmapDescriptorFactory.fromResource(R.drawable.man) // replace with your image name
+            val pickUpMarker =
+                BitmapDescriptorFactory.fromResource(R.drawable.man) // replace with your image name
+
+
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(driverLatLng)
+                    .icon(driverMarker)
+                    .anchor(0.5f, 0.5f)
+                    .title("Driver Location")
+            )
+
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(userPickUpLatLng)
+                    .icon(pickUpMarker)
+                    .anchor(0.5f, 0.5f)
+                    .title("Pickup Location")
             )
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
                 if (response.peekContent().data!!.bookingStatus == "Completed") {
-                    handler?.removeCallbacks(runnable)
+                    mHandler?.removeCallbacks(runnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
                     showFeedbackPopup()
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
                     Log.e("ReachedAAA", "aa" + response.peekContent().data?.driverStatus)
 
-                    if (response.peekContent().data!!.driverStatus == "Reached at  PickUp Location") {
+                    if (response.peekContent().data!!.driverStatus == "Reached at PickUp Location") {
                         // Clear the first route
                         mMap.clear()
                         // Draw the second route from pickup to drop location
+
+                        mMap.addMarker(
+                            MarkerOptions()
+                                .position(driverLatLng)
+                                .icon(driverMarker)
+                                .title("Driver Location")
+                        )
+
+                        mMap.addMarker(
+                            MarkerOptions()
+                                .position(userDropLatLng)
+                                .icon(pickUpMarker)
+                                .title("Drop Location")
+                        )
+
+                        Log.e("ReachedAAA", "aa......." + response.peekContent().data?.driverStatus)
                         drawRoute(
                             LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
                             LatLng(userDropLat.toDouble(), userDropLong.toDouble())
+
+
                         )
                     } else {
                         // Draw the first route from driver current location to pickup location
                         drawRoute(
                             LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble()),
                             LatLng(userPickUpLat.toDouble(), userPickUpLong.toDouble())
+                        )
+                        Log.e(
+                            "ReachedAAA",
+                            "aa ELSE..." + response.peekContent().data?.driverStatus
                         )
                     }
                 }
@@ -371,7 +359,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onDestroy() {
         super.onDestroy()
         // Remove callbacks to prevent memory leaks
-        handler?.removeCallbacks(runnable)
+        mHandler?.removeCallbacks(runnable)
     }
 
     private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
@@ -490,9 +478,80 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun zoomMapToLocation(location: LatLng) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+
+    private fun drawRoute(mOrigin: LatLng, mDestination: LatLng) {
+        val apiKey = "AIzaSyBoVWvb66474EG6SEtITHAhgrKyVC9oLWo" // Replace with your actual API key
+        val context = GeoApiContext.Builder()
+            .apiKey(apiKey)
+            .build()
+
+        Log.e(
+            "locationAAA",
+            "location.." + mOrigin.latitude + "longitude " + mOrigin.longitude
+        )
+        val result: DirectionsResult = DirectionsApi.newRequest(context)
+            .mode(TravelMode.DRIVING)
+            .origin("${mOrigin.latitude},${mOrigin.longitude}")
+            .destination("${mDestination.latitude},${mDestination.longitude}")
+            .await()
+
+
+        //Decode polyline and draw on map
+        val points = decodePolyline(result.routes[0].overviewPolyline.encodedPath)
+
+        //Add polyline to map
+        val polyline =
+            mMap?.addPolyline(PolylineOptions().addAll(points).color(Color.BLUE).width(8.0F))
+        //mMap.clear() // Clear previous route
+
+        zoomToFitPolyline(polyline!!)
     }
 
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = java.util.ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
 
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else (result shr 1)
+            lng += dlng
+            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(p)
+        }
+        return poly
+    }
+
+    private fun zoomToFitPolyline(polyline: Polyline) {
+        val boundsBuilder = LatLngBounds.Builder()
+        for (latLng in polyline.points) {
+            boundsBuilder.include(latLng)
+        }
+        val bounds = boundsBuilder.build()
+
+        val padding = 100 // offset from edges of the map in pixels
+        // Move the camera to fit the polyline within the screen
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+        mMap?.animateCamera(cameraUpdate)
+
+
+    }
 }
