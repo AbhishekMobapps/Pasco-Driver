@@ -167,7 +167,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     ) {
         bookingId = id.toString()
         acceptOrRejectApi(bookingId)
-        acceptOrRejectObserver(bookingId,pickupLatitude,pickupLongitude,verificationCode)
+        acceptOrRejectObserver(bookingId, pickupLatitude, pickupLongitude, verificationCode)
     }
 
     private fun acceptOrRejectApi(id: String) {
@@ -190,15 +190,22 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
             this
         ) {
             val msg = it.peekContent().msg
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            val status = it.peekContent().status
 
-            val intent = Intent(this, TrackActivity::class.java)
-            intent.putExtra("bookingId",bookingId)
-            intent.putExtra("pickupLatitude",pickupLatitude.toString())
-            intent.putExtra("pickupLongitude",pickupLongitude.toString())
-            intent.putExtra("verificationCode",verificationCode)
-            startActivity(intent)
-            finish()
+            if (status == "False") {
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, TrackActivity::class.java)
+                intent.putExtra("bookingId", bookingId)
+                intent.putExtra("pickupLatitude", pickupLatitude.toString())
+                intent.putExtra("pickupLongitude", pickupLongitude.toString())
+                intent.putExtra("verificationCode", verificationCode)
+                startActivity(intent)
+                finish()
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            }
+
+
         }
         paymentAccept.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)

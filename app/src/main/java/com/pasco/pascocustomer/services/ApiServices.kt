@@ -222,6 +222,7 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<AllBiddsDetailResponse>
 
+
     @GET("user-update-profile/")
     fun getProfileDetails(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken

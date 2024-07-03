@@ -97,7 +97,7 @@
                 android:id="@+id/customerId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order ID     :"
+                android:text="Order ID :"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -153,17 +153,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/locationImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="3dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pickUp"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
+
 
             <TextView
                 android:id="@+id/pickUpLocation"
@@ -175,7 +165,7 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/locationImg"
+                app:layout_constraintStart_toEndOf="@+id/pickUp"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -195,24 +185,14 @@
                 android:id="@+id/drop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/drop"
+                android:text="@string/destination"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/dropImg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="17dp"
-                android:src="@drawable/pin"
-                android:tint="@color/earth_yellow"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/drop"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseAppTint" />
+
 
             <TextView
                 android:id="@+id/dropLocation"
@@ -224,7 +204,7 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/dropImg"
+                app:layout_constraintStart_toEndOf="@+id/drop"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -244,7 +224,7 @@
                 android:id="@+id/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dist.         :"
+                android:text="Distance:"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
