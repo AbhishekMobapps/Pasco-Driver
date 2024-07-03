@@ -37,6 +37,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.GetApprovalStatusDModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +76,7 @@ import java.util.Locale
 class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDriverDashboardBinding
     private lateinit var naview: NavigationView
-    private val getVDetailsViewModel: GetVDetailsViewModel by viewModels()
+    private val getVDetailsViewModel: GetApprovalStatusDModel by viewModels()
     private var city: String? = null
     private var address: String? = null
     private var dAdminApprovedStatus: String? = ""
@@ -96,6 +97,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var OnDutyStatus = ""
     private var one: Int = -1
     private var notificaion = ""
+    private var countryName: String? = null
     private lateinit var updateLocationBody: UpdationLocationBody
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
     private var formattedLatitudeSelect: String = ""
@@ -108,12 +110,25 @@ class DriverDashboardActivity : AppCompatActivity() {
         binding.switchbtn.isChecked = false
 
         getNotificationPermission()
-        getVehicleDetails()
-        getVehicleDetailsObserver()
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
         dAdminApprovedStatus = PascoApp.encryptedPrefs.DriverStatuss
+
         switchCheck = PascoApp.encryptedPrefs.CheckedType
+        runnable = object : Runnable {
+            override fun run() {
+                getVehicleDetails()
+                getVehicleDetailsObserver()
+                // Schedule the next execution
+                handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
+            }
+        }
+        if (dAdminApprovedStatus != "Approved") {
+            disableAllExceptMore()
+            openPopUp()
+        } else if (dAdminApprovedStatus == "Approved") {
+            enableAll()
+        }
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()
@@ -130,13 +145,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         binding.firstConsLayouttt.visibility = View.VISIBLE
         getProfileApi()
         getUserProfileObserver()
-        /*if (dAdminApprovedStatus != "Approved") {
-            disableAllExceptMore()
-            openPopUp()
-        } else if (dAdminApprovedStatus == "Approved") {
-            enableAll()
-        }
-*/
 
         //Api and Observer
         getNotificationCountDApi()
@@ -229,7 +237,6 @@ class DriverDashboardActivity : AppCompatActivity() {
             binding.orderTextDri.setTextColor(application.resources.getColor(R.color.logo_color))
 
         }
-
         binding.tripHistoryFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
             val tripHistoryFragment = TripHistoryFragment()
@@ -269,22 +276,20 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun getVehicleDetails() {
-        getVDetailsViewModel.getVDetailsData(
-            progressDialog,
+        getVDetailsViewModel.getApprovalDModeData(
             this
         )
     }
 
     private fun getVehicleDetailsObserver() {
-        getVDetailsViewModel.progressIndicator.observe(this, Observer {
-            // Handle progress indicator changes if needed
-        })
 
         getVDetailsViewModel.mGetVDetails.observe(this) { response ->
             val data = response.peekContent().data
-           PascoApp.encryptedPrefs.DriverStatuss = data?.approvalStatus!!
-            Log.e("status", "getVehicleDetailsObserver: "+dAdminApprovedStatus )
+            PascoApp.encryptedPrefs.DriverStatuss = data?.approvalStatus!!
+            Log.e("status", "getVehicleDetailsObserver: " + dAdminApprovedStatus)
 
         }
     }
@@ -294,10 +299,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status.equals("False")) {
-               // Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
+                // Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
 
-             //   Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
+                //   Toast.makeText(this@DriverDashboardActivity, "$message", Toast.LENGTH_LONG).show()
             }
         }
         updateLocationViewModel.errorResponse.observe(this@DriverDashboardActivity) {
@@ -333,8 +338,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
     private fun openPopUp() {
-        val builder =
-            AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.admin_approval_status, null)
         builder.setView(dialogView)
 
@@ -344,7 +348,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         val okButtonAdminA = dialogView.findViewById<TextView>(R.id.okButtonAdminA)
         dialog.show()
         okButtonAdminA.setOnClickListener {
-            getVehicleDetails()
             dialog.dismiss()
         }
 
@@ -418,9 +421,13 @@ class DriverDashboardActivity : AppCompatActivity() {
                     1
                 )!!
                 if (addresses.isNotEmpty()) {
+                    val addressObj = addresses[0]
+                    address = addressObj.getAddressLine(0)
+                    city = addressObj.locality
+                    val countryCode = addressObj.countryCode
+                    countryName = addressObj.countryName.toString()
                     val address = addresses[0].getAddressLine(0)
-                     city = addresses[0].locality
-                    binding.driverGreeting.text = city ?: ""
+                    //  binding.driverGreeting.text = city ?: ""
                     Log.e("City", city ?: "City not found")
                     city?.let { updateUI(it) }
                     if (address.isEmpty()) {
@@ -434,8 +441,9 @@ class DriverDashboardActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        if (!formattedLatitudeSelect.isNullOrBlank() &&!formattedLongitudeSelect.isNullOrBlank()
-            &&!city.isNullOrBlank()&&address.isNullOrBlank()) {
+        if (!formattedLatitudeSelect.isNullOrBlank() && !formattedLongitudeSelect.isNullOrBlank()
+            && !city.isNullOrBlank() && address.isNullOrBlank()
+        ) {
             updateLocationDetails()
         }
 
@@ -447,10 +455,12 @@ class DriverDashboardActivity : AppCompatActivity() {
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect)
+            formattedLongitudeSelect, countryName.toString()
+        )
         updateLocationViewModel.updateLocationDriver(
             activity,
-            updateLocationBody)
+            updateLocationBody
+        )
     }
 
 
@@ -475,26 +485,24 @@ class DriverDashboardActivity : AppCompatActivity() {
             val data = response.peekContent().data
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
-           var city = response.peekContent().data!!.currentCity
+            var city = response.peekContent().data!!.currentCity
 
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
-                if (!city.isNullOrBlank())
-                {
-                    binding.driverGreeting.text = city.toString()
-                }
-
+            }
+            if (!city.isNullOrBlank()) {
+                binding.driverGreeting.text = city.toString()
             } else {
                 binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
             }
 
             Log.e("getDetails", "ObservergetUserProfile: ")
-            val helloName = data?.fullName?.split(" ")?.firstOrNull().orEmpty()
-            val hName = "Hello $helloName"
-            binding.driverNameDash.text = hName
+            // val helloName = data?.fullName?.split(" ")?.firstOrNull().orEmpty()
+            //val hName = "Hello $helloName"
+            binding.driverNameDash.text = response.peekContent().data!!.fullName
 
         }
 
@@ -687,5 +695,21 @@ class DriverDashboardActivity : AppCompatActivity() {
                 101
             )
         }
+    }
+    fun startRepeatingTask() {
+        runnable.run()
+    }
+
+    fun stopRepeatingTask() {
+        handler!!.removeCallbacks(runnable)
+    }
+    override fun onStart() {
+        super.onStart()
+        startRepeatingTask()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopRepeatingTask()
     }
 }

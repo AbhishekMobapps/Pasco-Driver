@@ -71,6 +71,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     private var formattedLongitudeSelect: String = ""
     private var city: String? = null
     private var address: String? = null
+    private var countryName: String? = null
 
     private val checkNumberModelView: CheckNumberModelView by viewModels()
     private val updateCityViewModel: UpdateCityViewModel by viewModels()
@@ -140,7 +141,6 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strUserName = binding.userName.text.toString()
             strEmail = binding.driverEmail.text.toString()
             address = binding.addressTxt.text.toString()
-
             strPhoneNo = binding.phoneNumber.text.toString()
             strUserPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
@@ -187,7 +187,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     address = addressObj.getAddressLine(0)
                     city = addressObj.locality
                     val countryCode = addressObj.countryCode
-                    val countryName = addressObj.countryName
+                    countryName = addressObj.countryName
 
                     // Get the phone country code using libphonenumber
                     val phoneUtil = PhoneNumberUtil.getInstance()
@@ -439,6 +439,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
                     intent.putExtra("loginValue", loginValue)
                     intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
                     intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
+                    intent.putExtra("conName", countryName)
                     startActivity(intent)
                     finish()
                     progressDialog.start("Loading....")

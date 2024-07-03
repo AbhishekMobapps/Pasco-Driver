@@ -60,7 +60,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="2dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="10dp"
                         android:background="@drawable/cancel_button_color"
                         android:gravity="center"
                         android:padding="5dp"
@@ -87,7 +87,8 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
@@ -105,27 +106,56 @@
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
                             android:layout_marginRight="10dp"
-                            android:layout_weight="4"
+                            android:layout_weight="6"
                             android:gravity="left"
                             android:text="Pasco1223243"
                             android:textColor="@color/grey"
                             android:textSize="@dimen/normal_txt_size13" />
 
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginRight="10dp"
+                            android:text="@string/date"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/normal_txt_size" />
                         <TextView
                             android:id="@+id/orderDateTimedO"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="2"
-                            android:gravity="right"
+                            android:layout_weight="6"
+                            android:gravity="center_vertical"
                             android:text="24-04-2024 3:55 PM"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/normal_txt_size9" />
-
+                            android:textColor="@color/grey"
+                            android:textSize="@dimen/normal_txt_size13" />
                     </LinearLayout>
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -145,13 +175,15 @@
 
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
                             android:layout_marginRight="10dp"
                             android:text="@string/bid_price"
                             android:textColor="@color/black"
+                            android:textStyle="bold"
                             android:textSize="@dimen/normal_txt_size" />
 
                         <TextView
@@ -160,12 +192,12 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="7"
+                            android:layout_weight="6"
                             android:gravity="left"
                             android:drawableRight="@drawable/next"
                             android:text="$780.00"
                             android:drawableTint="@color/logo_color"
-                            android:textColor="@color/black"
+                            android:textColor="@color/green"
                             android:textSize="@dimen/normal_txt_size"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -173,21 +205,20 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/feedbackBtnD"
+                android:id="@+id/cancelButtonBid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/new_btn_background"
+                android:layout_marginBottom="10dp"
                 android:gravity="center"
-                android:padding="8dp"
-                android:text="Feedback"
+                android:text="@string/cancel"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/red"
+                android:textStyle="bold"
                 android:textSize="@dimen/text_size_16"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints" />
 

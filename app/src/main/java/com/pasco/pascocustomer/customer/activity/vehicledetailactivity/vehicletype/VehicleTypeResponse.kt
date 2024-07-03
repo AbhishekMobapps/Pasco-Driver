@@ -19,7 +19,6 @@ class VehicleTypeResponse:Serializable {
     var data: List<VehicleTypeData>? = null
 
     inner class VehicleTypeData:Serializable{
-
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -30,7 +29,7 @@ class VehicleTypeResponse:Serializable {
 
         @SerializedName("capabilityname")
         @Expose
-        var capabilityname: String? = null
+        var capabilityname: List<String>? = null
 
         @SerializedName("vehiclename")
         @Expose
@@ -50,7 +49,7 @@ class VehicleTypeResponse:Serializable {
 
         @SerializedName("vehicleweight")
         @Expose
-        var vehicleweight: Float? = null
+        var vehicleweight: Double? = null
 
         @SerializedName("vehicledistance")
         @Expose
@@ -58,15 +57,14 @@ class VehicleTypeResponse:Serializable {
 
         @SerializedName("vehiclefixcharge")
         @Expose
-        var vehiclefixcharge: Float? = null
+        var vehiclefixcharge: Double? = null
 
         @SerializedName("vehicleperkmcharges")
         @Expose
-        var vehicleperkmcharges: Float? = null
+        var vehicleperkmcharges: Double? = null
 
         @SerializedName("upfront_payment")
         @Expose
-        var upfrontPayment: Float? = null
-
+        var upfrontPayment: Double? = null
     }
 }
