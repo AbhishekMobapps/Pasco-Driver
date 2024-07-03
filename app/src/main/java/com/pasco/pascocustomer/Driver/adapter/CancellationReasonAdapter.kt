@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelOnClick
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
 import com.pasco.pascocustomer.R
 
 class CancellationReasonAdapter(
     private val context: Context,
-   // private val onItemClick: CancelOnClick,
+    private val onItemClick: CancelOnClick,
     private val cancelList: List<CancelReasonResponse.CancellationList>
 ) : RecyclerView.Adapter<CancellationReasonAdapter.StatusViewHolder>() {
 
@@ -28,8 +29,10 @@ class CancellationReasonAdapter(
     override fun onBindViewHolder(holder: StatusViewHolder, position: Int) {
         val status = cancelList[position]
         holder.driverStatusTextView.text = status.reason.toString()
+        val id = status.reasonid
         holder.driverStatusTextView.setOnClickListener {
-       //     onItemClick.cancelList(position)
+           onItemClick.cancelList(position,id!!.toInt())
+
             notifyDataSetChanged()  // Optional: only call this if the dataset has changed
         }
     }

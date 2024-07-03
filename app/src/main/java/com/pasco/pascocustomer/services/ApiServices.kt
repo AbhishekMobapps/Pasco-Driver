@@ -15,6 +15,7 @@ import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DriverCancelResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
@@ -306,12 +307,12 @@ interface ApiServices {
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ):Observable<CancelReasonResponse>
     @FormUrlEncoded
-    @GET("UpdateCancelDriverBooking/{id}/")
+    @POST("UpdateCancelDriverBooking/{id}/")
     fun cancelledData(
         @Path("id") id: String,
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Field("reasonid") reasonid: String
-    ): Observable<GetDriverBidDetailsDataResponse>
+    ): Observable<DriverCancelResponse>
 
 
     @GET("bookdriver-ongoing/")

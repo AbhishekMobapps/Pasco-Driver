@@ -1,7 +1,6 @@
 package com.pasco.pascocustomer.Driver.Fragment.DriverOrders
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,6 +23,7 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReas
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CurrentOrdersViewModel
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrderResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DAllOrdersViewModel
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.DriverCancelViewModel
 import com.pasco.pascocustomer.Driver.adapter.CancellationReasonAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
@@ -41,8 +41,10 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
     private val dAllOrdersViewModel: DAllOrdersViewModel by viewModels()
     private val currentOrdersViewModel: CurrentOrdersViewModel by viewModels()
     private val cancelReasonViewModel: CancelReasonViewModel by viewModels()
+    private val driveCancelReasonViewModel: DriverCancelViewModel by viewModels()
     private lateinit var dialog: BottomSheetDialog
     private lateinit var recycler_StatusList: RecyclerView
+    private lateinit var bookingID: String
     private lateinit var staticTextViewEmptyData: TextView
     private val progressDialog by lazy { CustomProgressDialog(requireActivity()) }
 
@@ -72,7 +74,31 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
             currentOrdersApi()
             currentOrdersObserver()
         }
+        driverCancelReasonObserver()
         return binding.root
+    }
+
+    private fun driverCancelReasonObserver() {
+        driveCancelReasonViewModel.progressIndicator.observe(requireActivity(), Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        driveCancelReasonViewModel.mUrDriverResponse.observe(requireActivity()) { response ->
+            val content = response.peekContent()
+            val message = content.msg ?: return@observe
+
+
+            if (response.peekContent().status == "False") {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+        driveCancelReasonViewModel.errorResponse.observe(requireActivity()) {
+            // Handle general errors using ErrorUtil
+            ErrorUtil.handlerGeneralError(requireActivity(), it)
+        }
     }
 
     private fun currentOrdersApi() {
@@ -177,14 +203,24 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         currentOrdersApi()
     }
 
-    override fun cancelOrder(position: Int) {
+    override fun cancelOrder(position: Int, Id: Int) {
        //call api
+        bookingID = id.toString()
         selectStatusPopUp()
     }
 
-    override fun cancelList(position: Int) {
-        TODO("Not yet implemented")
+    override fun cancelList(position: Int, Id: Int) {
+        val ids = id.toString()
+        cancelReason(ids)
     }
+
+    private fun cancelReason(ids: String) {
+        driveCancelReasonViewModel.getUpdateDdStatusData(
+            progressDialog,
+            requireActivity(),ids,bookingID
+        )
+    }
+
 
     private fun selectStatusPopUp() {
         val dialogView = layoutInflater.inflate(R.layout.select_status_popup, null)
@@ -226,7 +262,7 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
                     recycler_StatusList.isVerticalFadingEdgeEnabled = true
                     recycler_StatusList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    recycler_StatusList.adapter = CancellationReasonAdapter(requireContext(), cancelList)
+                    recycler_StatusList.adapter = CancellationReasonAdapter(requireContext(),this, cancelList)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
