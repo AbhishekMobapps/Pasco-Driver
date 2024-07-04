@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
@@ -16,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -23,7 +25,9 @@ import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.AddFeedbackOnClickListner
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.historydetails.CompleteHistoryDetailsActivity
 import com.pasco.pascocustomer.invoice.InvoiceActivity
+import de.hdodenhof.circleimageview.CircleImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,7 +35,6 @@ import java.util.TimeZone
 
 class CompletedTripHistoryAdapter(
     private val context: Context,
-    private val onItemClick: AddFeedbackOnClickListner,
     private val driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData>
 ) :
     RecyclerView.Adapter<CompletedTripHistoryAdapter.ViewHolder>() {
@@ -41,7 +44,7 @@ class CompletedTripHistoryAdapter(
         viewType: Int
     ): CompletedTripHistoryAdapter.ViewHolder {
         val view = LayoutInflater.from(context)
-            .inflate(R.layout.recycler_driver_trip_history, parent, false)
+            .inflate(R.layout.complete_or_cancel_history, parent, false)
         return ViewHolder(view)
     }
 
@@ -52,115 +55,100 @@ class CompletedTripHistoryAdapter(
         val dBookingStatus = driverTripHis.bookingStatus.toString()
         val dateTime = driverTripHis.availabilityDatetime.toString()
 
-        Log.e("dateTimeDriHis", "dateTimeDriHis.." + dateTime)
+        holder.bookingId.text = driverTripHistory[position].bookingNumber
+        holder.paymentMode.text = driverTripHistory[position].paymentMethod
+
+
+
+        val formattedTotalDistance =
+            "%.1f".format(driverTripHistory[position].totalDistance ?: 0.0)
+        holder.distance.text = "$formattedTotalDistance km"
+
 
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
 
+        Log.e("bookingStatusaa", "bookingStatus.. " + driverTripHis.bookingStatus.toString())
+
         val url = driverTripHis.userImage
+        Log.e("driverImageAA", "driverImage...$url")
         Glide.with(context).load(BuildConfig.IMAGE_KEY + url)
-            .placeholder(R.drawable.home_bg).into(holder.driverProfileCth)
+            .placeholder(R.drawable.man).into(holder.driverProfile)
 
         try {
             val parsedDate = inputDateFormat.parse(dateTime)
             outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
             val formattedDateTime = outputDateFormat.format(parsedDate)
-            holder.dateTimeDriHis.text = formattedDateTime
+            holder.bookingDate.text = formattedDateTime
         } catch (e: ParseException) {
             e.printStackTrace()
         }
         with(holder) {
-            clientNameDriHis.text = driverTripHis.user.toString()
-            totalCostDriverHis.text = price
-            val durationInSeconds = driverTripHis.duration
-            val durationInMinutes = durationInSeconds!! / 60
-            val hours = durationInMinutes / 60
-            val minutes = durationInMinutes % 60
-            val durationString = "$hours hours $minutes min"
-            arrivalTimeDriverHis.text = durationString
+            driverName.text = driverTripHis.user.toString()
+            totalAmount.text = price
+            val durationInMinutes = driverTripHis.duration.toString()
 
-            pickUpDetailsDriHis.text = driverTripHis.pickupLocation.toString()
-            DropDetailsDriHis.text = driverTripHis.dropLocation.toString()
-            bookingstatus.text = dBookingStatus.toString()
-        }
-        holder.invoiceTextView.setOnClickListener {
-            val id = driverTripHistory[position].id
-            val intent = Intent(context, InvoiceActivity::class.java)
-            intent.putExtra("id", id.toString())
-            context.startActivity(intent)
-        }
-        val feedback = driverTripHis.feedback
-        if (feedback == 1) {
-            holder.addFeedbackTextView.visibility = View.GONE
-        } else {
-            holder.addFeedbackTextView.visibility = View.VISIBLE
-            holder.addFeedbackTextView.setOnClickListener {
-                val bottomSheetDialog = BottomSheetDialog(context, R.style.TopCircleDialogStyle)
-                val view =
-                    LayoutInflater.from(context).inflate(R.layout.driver_feedback_popup, null)
-                bottomSheetDialog!!.setContentView(view)
-
-
-                val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
-                val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
-                val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
-                val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
-
-                var ratingBars = ""
-                ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-                    // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
-                    ratingBars = rating.toString()
+            val durationInSeconds = durationInMinutes.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min ", hours, minutes)
+                } else {
+                    String.format("%d min ", minutes)
                 }
-                submitBtn?.setOnClickListener {
-                    val comment = commentTxt?.text.toString()
-                    if (ratingBars.isEmpty()) {
-                        Toast.makeText(context, "Please add a rating", Toast.LENGTH_SHORT).show()
-                    } else if (comment.isBlank()) {
-                        Toast.makeText(context, "Please add a comment", Toast.LENGTH_SHORT).show()
-                    } else {
-                        onItemClick.addFeedbackItemClick(
-                            position,
-                            driverTripHis.id!!,
-                            comment,
-                            ratingBars,
-                            bottomSheetDialog
-                        )
-                        notifyDataSetChanged()
-                    }
-                }
+            }
 
-                skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
 
-                val displayMetrics = DisplayMetrics()
-                val windowManager =
-                    context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                windowManager.defaultDisplay.getMetrics(displayMetrics)
+            status.text = dBookingStatus
+            if (dBookingStatus == "Cancelled") {
+                status.setTextColor(Color.parseColor("#BC2A0A"))
+                statusConst.setBackgroundResource(R.drawable.cancel_back)
+            } else {
+                statusConst.setBackgroundResource(R.drawable.complete_back)
 
-                val screenHeight = displayMetrics.heightPixels
-                val halfScreenHeight = (screenHeight * 0.6).toInt()
-                val eightyPercentScreenHeight = (screenHeight * 0.8).toInt()
+                holder.itemView.setOnClickListener {
+                    val id = driverTripHistory[position].id
+                    val bookingNumber = driverTripHistory[position].bookingNumber
+                    val userNamee = driverTripHistory[position].user
+                    val completedDate = driverTripHistory[position].pickupDatetime
+                    val pick = driverTripHistory[position].pickupLocation
+                    val drop = driverTripHistory[position].dropLocation
+                    val bookingStatus = driverTripHistory[position].bookingStatus
+                    val paymentMethod = driverTripHistory[position].paymentMethod
+                    val distance = driverTripHistory[position].totalDistance
+                    val feedback = driverTripHistory[position].feedback
+                    val totalAmount = driverTripHistory[position].bidPrice
+                    val commissionPrice = driverTripHistory[position].commisionPrice
+                    val userImagee = driverTripHistory[position].userImage
+                    Log.e("CompleteHistoryA", "feedback...$feedback  $totalAmount")
+                    val intent = Intent(context, CompleteHistoryDetailsActivity::class.java)
 
-                // Set the initial height of the bottom sheet to 60% of the screen height
-                val layoutParams = view.layoutParams
-                layoutParams.height = halfScreenHeight
-                view.layoutParams = layoutParams
-
-                var isExpanded = false
-                view.setOnClickListener {
-                    // Expand or collapse the bottom sheet when it is touched
-                    layoutParams.height = if (isExpanded) {
-                        halfScreenHeight
-                    } else {
-                        eightyPercentScreenHeight
-                    }
-                    view.layoutParams = layoutParams
-                    isExpanded = !isExpanded
+                    intent.putExtra("id", id.toString())
+                    intent.putExtra("bookingNumber", bookingNumber)
+                    intent.putExtra("userNamee", userNamee)
+                    intent.putExtra("completedDate", completedDate)
+                    intent.putExtra("pick", pick)
+                    intent.putExtra("drop", drop)
+                    intent.putExtra("bookingStatus", bookingStatus)
+                    intent.putExtra("paymentMethod", paymentMethod)
+                    intent.putExtra("distance", distance.toString())
+                    intent.putExtra("feedback", feedback.toString())
+                    intent.putExtra("totalAmount", totalAmount.toString())
+                    intent.putExtra("commissionPrice", commissionPrice.toString())
+                    intent.putExtra("userImagee", url)
+                    intent.putExtra("paymentStatus", driverTripHistory[position].paymentStatus)
+                    context.startActivity(intent)
                 }
 
-                bottomSheetDialog.show()
             }
         }
+
+
 
     }
 
@@ -169,17 +157,15 @@ class CompletedTripHistoryAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val clientNameDriHis = itemView.findViewById<TextView>(R.id.clientNameDriHis)
-        val totalCostDriverHis: TextView = itemView.findViewById<TextView>(R.id.totalCostDriverHis)
-        val arrivalTimeDriverHis: TextView =
-            itemView.findViewById<TextView>(R.id.arrivalTimeDriverHis)
-        val pickUpDetailsDriHis = itemView.findViewById<TextView>(R.id.pickUpDetailsDriHis)
-        val DropDetailsDriHis = itemView.findViewById<TextView>(R.id.DropDetailsDriHis)
-        val dateTimeDriHis = itemView.findViewById<TextView>(R.id.dateTimeDriHis)
-        val driverProfileCth = itemView.findViewById<ImageView>(R.id.driverProfileCth)
-        val bookingstatus = itemView.findViewById<TextView>(R.id.bookingstatus)
-        val invoiceTextView = itemView.findViewById<TextView>(R.id.invoiceTextView)
-        val addFeedbackTextView = itemView.findViewById<TextView>(R.id.addFeedbackTextView)
+        val status = itemView.findViewById<TextView>(R.id.status)
+        val driverName = itemView.findViewById<TextView>(R.id.driverName)
+        val bookingId = itemView.findViewById<TextView>(R.id.bookingId)
+        val distance = itemView.findViewById<TextView>(R.id.distance)
+        val paymentMode = itemView.findViewById<TextView>(R.id.paymentMode)
+        val totalAmount = itemView.findViewById<TextView>(R.id.totalAmount)
+        val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
+        val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
+        val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
 
 
     }

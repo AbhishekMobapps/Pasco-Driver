@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -33,6 +34,7 @@ class AcceptRideAdapter(
         val userNameBD: TextView = itemView.findViewById(R.id.userNameBD)
         val biddReqDateTime: TextView = itemView.findViewById(R.id.biddReqDateTime)
         val imgUserOrderD: ImageView = itemView.findViewById(R.id.imgUserOrderD)
+        val bidsStatus: TextView = itemView.findViewById(R.id.bidsStatus)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -63,6 +65,16 @@ class AcceptRideAdapter(
         }
         val baseUrl = "http://69.49.235.253:8090"
         val imagePath = bookingReq?.userImage.orEmpty()
+        val bStatus = bookingReq.bidStatus
+        if (!bStatus!!)
+        {
+            holder.bidsStatus.visibility = View.GONE
+        }
+        else
+        {
+            holder.bidsStatus.visibility = View.VISIBLE
+            holder.bidsStatus.text = " The bids are already done"
+        }
 
         val imageUrl = "$baseUrl$imagePath"
         Glide.with(context)
@@ -77,20 +89,36 @@ class AcceptRideAdapter(
             userNameBD.text = bookingReq.user
             orderIdDynamicReq.text = truncateBookingNumber(bookingReq.bookingNumber.toString())
 
-            // Set click listener for the accept button
-            itemView.setOnClickListener {
-                val id = bookingReq.id.toString()
-                val bookingId = bookingReq.bookingNumber.toString()
-                val intent = Intent(context, AcceptRideActivity::class.java)
-                intent.putExtra("rideReqId", id)
-                intent.putExtra("bookingNumb", bookingId)
-                intent.putExtra("pickuplatitudea", bookingReq.pickupLatitude.toString())
-                intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
-                intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
-                intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
-                intent.putExtra("one",1)
-                context.startActivity(intent)
+            if (!bStatus)
+            {
+                holder.bidsStatus.visibility = View.GONE
+                itemView.setOnClickListener {
+                    val id = bookingReq.id.toString()
+                    val bookingId = bookingReq.bookingNumber.toString()
+                    val intent = Intent(context, AcceptRideActivity::class.java)
+                    intent.putExtra("rideReqId", id)
+                    intent.putExtra("bookingNumb", bookingId)
+                    intent.putExtra("pickuplatitudea", bookingReq.pickupLatitude.toString())
+                    intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
+                    intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
+                    intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
+                    intent.putExtra("one",1)
+                    context.startActivity(intent)
+                }
             }
+            else {
+                itemView.setOnClickListener {
+                    Toast.makeText(
+                        context,
+                        "You cannot place another bid. If you can, please cancel the current bids before placing new ones",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                }
+            }
+
+            // Set click listener for the accept button
+
             orderIdDynamicReq.setOnClickListener {
                 showFullAddressDialog(bookingReq.bookingNumber.toString())
             }

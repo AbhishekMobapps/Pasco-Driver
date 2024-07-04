@@ -1,73 +1,94 @@
 package com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.TextView
+import android.view.Window
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.Driver.DriverMessageActivity
-import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyCallActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.Ui.UpdateLocationActivity
 import com.pasco.pascocustomer.Driver.adapter.AcceptRideAdapter
-import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyHelpActivity
-import com.pasco.pascocustomer.Driver.emergencyhelp.Ui.EmergencyMainActivity
+import com.pasco.pascocustomer.Driver.adapter.UpdateAddressAdapter
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
+import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityViewModel
+import com.pasco.pascocustomer.customer.activity.SignUpCityName
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
 import com.pasco.pascocustomer.utils.ErrorUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 
 import java.util.ArrayList
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SignUpCityName {
     private lateinit var binding: FragmentHomeDriverBinding
     private var dAdminApprovedId: String? = ""
     private var userType = ""
     private var currentPage = 0
     private var isLastPage = false
     private val NUM_PAGES = 3
-    private var city:String = ""
+    private var currentCityName:String? = ""
+    private var address: String? = null
     private val sliderViewModel: SliderHomeModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
     private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
+    private var formattedCountryCode = ""
+    private var selectCityName = ""
+    private var countryName: String? = ""
+    private var alertDialog: Dialog? = null
     private var rideRequestList: List<ShowBookingReqResponse.ShowBookingReqData> = ArrayList()
     @Inject
     lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
     private lateinit var dialog: AlertDialog
+    private var dialogRecyclerView: RecyclerView? = null
+    private val updateCityViewModel: UpdateCityViewModel by viewModels()
+    private var updateCityList: List<UpdateCityResponse.updateCityList> = ArrayList()
+    private var updateAddressAdapter: UpdateAddressAdapter? = null
 
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -79,8 +100,8 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
         userType = PascoApp.encryptedPrefs.userType
 
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        requestLocationPermission()
+        setupLocationClient()
 
         binding.viewPagerDriver.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -119,7 +140,7 @@ class HomeFragment : Fragment() {
         } else if (dAdminApprovedId == "1") {
            // enableAll()
         }
-        showRideRequestApi()
+        showRideRequestApi(currentCityName)
         setupObservers()
         binding.LinearShareLocation.setOnClickListener {
             checkLocationPermissionAndShare()
@@ -142,60 +163,168 @@ class HomeFragment : Fragment() {
         sliderPageObserver()
 
         binding.consFilter.setOnClickListener {
+            formattedCountryCode
             openFilterPopUp()
         }
         return binding.root
     }
 
+    private fun setupLocationClient() {
+        requestLocationPermission()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                updateLocation(it)
+            }
+        }
+        }
+
+    private fun updateLocation(location: Location) {
+        val latitude = location.latitude
+        val longitude = location.longitude
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            try {
+                val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)!!
+                if (addresses.isNotEmpty()) {
+                    val addressObj = addresses[0]
+                    address = addressObj.getAddressLine(0)
+                    currentCityName = addressObj.locality
+                    val countryCode = addressObj.countryCode
+                    countryName = addressObj.countryName
+
+                    // Get the phone country code using libphonenumber
+                    val phoneUtil = PhoneNumberUtil.getInstance()
+                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
+
+                    // Log the country code and country name
+                    Log.e("Country Code", countryCode ?: "No country code found")
+                    Log.e("Country Name", countryName ?: "No country name found")
+                    Log.e("Phone Country Code", "+$phoneCountryCode")
+
+                    formattedCountryCode = "+$phoneCountryCode"
+
+                    PascoApp.encryptedPrefs.countryCode = formattedCountryCode
+                    Log.e("hello", "city: $currentCityName")
+                    if (address.isNullOrEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            requestLocationPermission()
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        showRideRequestApi(currentCityName)
+    }
+
     private fun openFilterPopUp() {
-        val builder = AlertDialog.Builder(requireContext(), R.style.Style_Dialog_Rounded_Corner)
-        val dialogView = layoutInflater.inflate(R.layout.filter_popup, null)
-        builder.setView(dialogView)
+        alertDialog = Dialog(requireActivity())
+        alertDialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        alertDialog?.setCancelable(true)
+        alertDialog?.setContentView(R.layout.filter_popup)
+        alertDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog?.getWindow()!!.setLayout(750, 1200);
+        // Show dialog
 
-        dialog = builder.create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val searchCountryName =
+            alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchCityNameFilter)
+        dialogRecyclerView =
+            alertDialog?.findViewById(R.id.searchableSpinnerRecycleViewFilter)!!
 
-        val cityNameEditText = dialogView.findViewById<EditText>(R.id.CityNameEdiText)
-        val submitButtonFilter = dialogView.findViewById<TextView>(R.id.submitButtonFilter)
-        val crossIconPasswordPop = dialogView.findViewById<ImageView>(R.id.corssIconPasswordPop)
 
-        crossIconPasswordPop.setOnClickListener {
-            dialog.dismiss() // Dismiss the dialog when the cross icon is clicked
-        }
 
-        submitButtonFilter.setOnClickListener {
-            val city = cityNameEditText.text.toString()
-            if (city.isNotBlank()) {
-                showRideRequestPopApi(city)
+        searchCountryName?.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
             }
-            setupObserve(dialog)
-        }
 
-        dialog.show()
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+        })
+
+
+
+        getCityList()
+        getCityListObserver(dialogRecyclerView!!)
+        alertDialog?.show()
     }
 
-    private fun showRideRequestPopApi(city: String) {
-        showBookingReqViewModel.getShowBookingRequestsData(
-            activity,city)
+    private fun getCityList() {
+        Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
+
+        val cityBody = UpdateCityBody(
+            countrycode = formattedCountryCode
+        )
+        updateCityViewModel.cityListData(cityBody, requireActivity(), progressDialog)
     }
 
-    private fun setupObserve(dialog: AlertDialog?) {
-        showBookingReqViewModel.mShowBookingReq.observe(viewLifecycleOwner) { response ->
+    private fun getCityListObserver(dialogRecyclerView: RecyclerView) {
+        updateCityViewModel.progressIndicator.observe(requireActivity(), Observer {
+            // Handle progress indicator changes if needed
+        })
+
+        updateCityViewModel.mgetCityListResponse.observe(requireActivity()) { response ->
             val message = response.peekContent().msg
-            rideRequestList = response.peekContent().data ?: emptyList()
-
-            if (rideRequestList.isEmpty()) {
-                binding.orderBidsHomeFragTextView.visibility = View.VISIBLE
-                binding.recycerRideRequest.visibility = View.GONE
-            } else {
-                binding.orderBidsHomeFragTextView.visibility = View.GONE
-                binding.recycerRideRequest.visibility = View.VISIBLE
-                dialog!!.dismiss()
-                setupRecyclerView()
-            }
+            updateCityList = response.peekContent().data ?: emptyList()
 
             if (response.peekContent().status == "False") {
-                // Toast.makeText(requireContext(), "$message", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            } else {
+                dialogRecyclerView.isVerticalScrollBarEnabled = true
+                dialogRecyclerView.isVerticalFadingEdgeEnabled = true
+                dialogRecyclerView.layoutManager =
+                    LinearLayoutManager(
+                        requireActivity(),
+                        LinearLayoutManager.VERTICAL,
+                        false
+                    )
+                updateAddressAdapter =
+                    UpdateAddressAdapter(requireActivity(), updateCityList, this)
+                dialogRecyclerView.adapter = updateAddressAdapter
+
+                updateCityViewModel.errorResponse.observe(requireActivity()) {
+                    ErrorUtil.handlerGeneralError(requireActivity(), it)
+                }
+            }
+        }
+    }
+
+    private fun filterList(query: String?) {
+        if (query != null) {
+            val lowercaseQuery = query.lowercase(Locale.ROOT)
+            val uppercaseQuery = query.uppercase(Locale.ROOT)
+            val filterList = ArrayList<UpdateCityResponse.updateCityList>()
+            for (i in updateCityList) {
+                if (i.cityname?.lowercase(Locale.ROOT)?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)?.contains(uppercaseQuery) == true) {
+                    filterList.add(i)
+                }
+            }
+            if (filterList.isEmpty()) {
+                Toast.makeText(requireActivity(), "No Data found", Toast.LENGTH_LONG).show()
+            } else {
+                updateAddressAdapter?.setFilteredList(filterList)
             }
         }
     }
@@ -257,6 +386,30 @@ class HomeFragment : Fragment() {
             }
     }
 
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                  requireActivity(),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            }
+        }
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -317,9 +470,9 @@ class HomeFragment : Fragment() {
         binding.linearDriHEmergency.isEnabled = false
     }
 
-    private fun showRideRequestApi() {
+    private fun showRideRequestApi(currentCityNames: String?) {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity,city)
+            activity,currentCityNames.toString())
     }
 
     private fun setupObservers() {
@@ -355,7 +508,19 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         //call api
-        showRideRequestApi()
+        showRideRequestApi(currentCityName)
+    }
+
+    override fun itemCity(id: Int, cityName: String) {
+        selectCityName = cityName
+        showRideRequestStatusApi(selectCityName)
+        alertDialog?.dismiss()
+
+    }
+
+    private fun showRideRequestStatusApi(selectCityName: String) {
+        showBookingReqViewModel.getShowBookingRequestsData(
+            activity,selectCityName)
     }
 
 

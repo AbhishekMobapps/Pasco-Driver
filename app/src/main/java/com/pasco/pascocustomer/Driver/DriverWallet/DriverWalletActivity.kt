@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.DriverWallet
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
+import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -26,6 +28,7 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
+    private  var walletC: String= ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
     private var amountP = ""
@@ -33,6 +36,8 @@ class DriverWalletActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        walletC  = intent.getStringExtra("wallet").toString()
 
         binding.recycerEarningList.isVerticalScrollBarEnabled = true
         binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
@@ -56,7 +61,11 @@ class DriverWalletActivity : AppCompatActivity() {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
-                // Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                if (walletC.equals("amount"))
+                {
+                    val intent = Intent(this@DriverWalletActivity,AcceptRideActivity::class.java)
+                    startActivity(intent)
+                }
             }
         }
         addAmountViewModel.errorResponse.observe(this) {

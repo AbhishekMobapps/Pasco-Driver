@@ -819,8 +819,8 @@ class AllTabPayActivity : AppCompatActivity() {
 
             cargoQty = response.peekContent().availableDriver
 
-            if (cargoQty == 0) {
-                binding.numberOfVehicleTxt.text = "Cargo is not available"
+            if (cargoQty == null) {
+                binding.numberOfVehicleTxt.text = ""
             } else {
                 binding.numberOfVehicleTxt.text = response.peekContent().availableDriver.toString()
             }

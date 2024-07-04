@@ -41,6 +41,7 @@ import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AcceptRideView
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBiddingBody
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBidingViewModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
+import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.databinding.ActivityAcceptRideBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.time.ZonedDateTime
@@ -402,7 +403,8 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             val message = response.peekContent().msg!!
 
             if (response.peekContent().status.equals("False")) {
-                Toast.makeText(this, "failed: $message", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+                showWalletRequirementPopup()
             } else {
                 Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@AcceptRideActivity, DriverDashboardActivity::class.java)
@@ -422,6 +424,32 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
         }
+    }
+
+    private fun showWalletRequirementPopup() {
+        val message = "To place a bid, you need to have at least 20% of the bid amount in your wallet. "
+
+        val builder = AlertDialog.Builder(this@AcceptRideActivity)
+        builder.setTitle("Insufficient Wallet Balance")
+        builder.setMessage(message)
+        builder.setPositiveButton("Add Funds") { dialog, _ ->
+            // Navigate to wallet page
+         navigateToWalletPage()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Skip") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun navigateToWalletPage() {
+      val intent = Intent(this@AcceptRideActivity,DriverWalletActivity::class.java)
+        intent.putExtra("wallet","amount")
+        startActivity(intent)
     }
 
     private fun addBiding() {

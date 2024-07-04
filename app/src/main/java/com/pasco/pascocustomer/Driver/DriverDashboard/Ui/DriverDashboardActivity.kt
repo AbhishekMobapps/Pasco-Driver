@@ -123,12 +123,12 @@ class DriverDashboardActivity : AppCompatActivity() {
                 handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
         }
-        if (dAdminApprovedStatus != "Approved") {
+    /*    if (dAdminApprovedStatus != "Approved") {
             disableAllExceptMore()
             openPopUp()
         } else if (dAdminApprovedStatus == "Approved") {
             enableAll()
-        }
+        }*/
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()
@@ -427,7 +427,6 @@ class DriverDashboardActivity : AppCompatActivity() {
                     val countryCode = addressObj.countryCode
                     countryName = addressObj.countryName.toString()
                     val address = addresses[0].getAddressLine(0)
-                    //  binding.driverGreeting.text = city ?: ""
                     Log.e("City", city ?: "City not found")
                     city?.let { updateUI(it) }
                     if (address.isEmpty()) {
@@ -466,7 +465,6 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     private fun updateUI(city: String) {
         handler!!.post {
-            binding.driverGreeting.text = "$city"
         }
     }
 
@@ -486,16 +484,15 @@ class DriverDashboardActivity : AppCompatActivity() {
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
             var city = response.peekContent().data!!.currentCity
-
+            binding.driverGreeting.text = city
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
             }
-            if (!city.isNullOrBlank()) {
-                binding.driverGreeting.text = city.toString()
-            } else {
+
+            else {
                 binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
             }
 

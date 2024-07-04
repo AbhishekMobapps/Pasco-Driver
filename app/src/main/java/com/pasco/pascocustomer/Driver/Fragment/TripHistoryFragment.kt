@@ -172,7 +172,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
                     binding.recycerHistoryDriverList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.recycerHistoryDriverList.adapter =
-                        CompletedTripHistoryAdapter(requireContext(), this, driverTripHistory)
+                        CompletedTripHistoryAdapter(requireContext(),  driverTripHistory)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }

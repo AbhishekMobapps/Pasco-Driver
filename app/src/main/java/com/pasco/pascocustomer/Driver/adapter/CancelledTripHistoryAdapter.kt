@@ -1,19 +1,24 @@
 package com.pasco.pascocustomer.Driver.adapter
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CancelledTripResponse.CancelledData
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.historydetails.CompleteHistoryDetailsActivity
 import com.pasco.pascocustomer.invoice.InvoiceActivity
+import de.hdodenhof.circleimageview.CircleImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -27,79 +32,126 @@ class CancelledTripHistoryAdapter(
     RecyclerView.Adapter<CancelledTripHistoryAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.recycler_cancelled_trip, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.complete_or_cancel_history, parent, false)
         return ViewHolder(view)
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cancelTripHis = cancelTripHistory[position]
-        val price = "$" + cancelTripHis.bidPrice
-        val dBookingStatus = cancelTripHis.bookingStatus
-        val dateTime = cancelTripHis.availabilityDatetime
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onBindViewHolder(holder: CancelledTripHistoryAdapter.ViewHolder, position: Int) {
+        val driverTripHis = cancelTripHistory[position]
+        val price = "$${driverTripHis.bidPrice}"
+        val dBookingStatus = driverTripHis.bookingStatus.toString()
+        val dateTime = driverTripHis.availabilityDatetime.toString()
+
+        holder.bookingId.text = cancelTripHistory[position].bookingNumber
+        holder.paymentMode.text = cancelTripHistory[position].paymentMethod
+
+
+        val formattedTotalDistance =
+            "%.1f".format(cancelTripHistory[position].totalDistance ?: 0.0)
+        holder.distance.text = "$formattedTotalDistance km"
+
+
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
-        val url = cancelTripHis.userImage
+
+        Log.e("bookingStatusaa", "bookingStatus.. " + driverTripHis.bookingStatus.toString())
+
+        val url = driverTripHis.userImage
+        Log.e("driverImageAA", "driverImage...$url")
         Glide.with(context).load(BuildConfig.IMAGE_KEY + url)
-            .placeholder(R.drawable.home_bg).into(holder.driverProfileCthCan)
+            .placeholder(R.drawable.man).into(holder.driverProfile)
+
         try {
             val parsedDate = inputDateFormat.parse(dateTime)
-            outputDateFormat.timeZone = TimeZone.getDefault()
+            outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
             val formattedDateTime = outputDateFormat.format(parsedDate)
-            holder.dateTimeDriHisCan.text = formattedDateTime
+            holder.bookingDate.text = formattedDateTime
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-        holder.clientNameDriHisCan.text = cancelTripHis.user
-        holder.totalCostDriverHisCan.text = price
-        val durationInSeconds = cancelTripHis.duration!!
-        val durationInMinutes = durationInSeconds / 60
-        val hours = durationInMinutes / 60
-        val minutes = durationInMinutes % 60
-        val durationString = "$hours hours $minutes min"
-        holder.arrivalTimeDriverHisCan.text = durationString
+        with(holder) {
+            driverName.text = driverTripHis.user.toString()
+            totalAmount.text = price
+            val durationInMinutes = driverTripHis.duration.toString()
 
-        holder.pickUpDetailsDriHisCan.text = cancelTripHis.pickupLocation
-        holder.DropDetailsDriHisCan.text = cancelTripHis.dropLocation
-        holder.bookingstatusCan.text = dBookingStatus.toString()
-        holder.cancelReasonTextView.text = cancelTripHis.cancelreason.toString()
+            val durationInSeconds = durationInMinutes.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min ", hours, minutes)
+                } else {
+                    String.format("%d min ", minutes)
+                }
+            }
 
-        holder.invoiceTextViewcancelled.setOnClickListener {
-            val id = cancelTripHistory[position].id
-            val intent = Intent(context, InvoiceActivity::class.java)
-            intent.putExtra("id", id.toString())
-            context.startActivity(intent)
+
+            status.text = dBookingStatus
+            if (dBookingStatus == "Cancelled") {
+                status.setTextColor(Color.parseColor("#FFFFFFFF"))
+                statusConst.setBackgroundResource(R.drawable.cancel_back)
+            } else {
+                statusConst.setBackgroundResource(R.drawable.complete_back)
+
+                holder.itemView.setOnClickListener {
+                    val id = cancelTripHistory[position].id
+                    val bookingNumber = cancelTripHistory[position].bookingNumber
+                    val userNamee = cancelTripHistory[position].user
+                    val completedDate = cancelTripHistory[position].pickupDatetime
+                    val pick = cancelTripHistory[position].pickupLocation
+                    val drop = cancelTripHistory[position].dropLocation
+                    val bookingStatus = cancelTripHistory[position].bookingStatus
+                    val paymentMethod = cancelTripHistory[position].paymentMethod
+                    val distance = cancelTripHistory[position].totalDistance
+                    val feedback = cancelTripHistory[position].feedback
+                    val totalAmount = cancelTripHistory[position].bidPrice
+                    val commissionPrice = cancelTripHistory[position].commisionPrice
+                    val userImagee = cancelTripHistory[position].userImage
+                    Log.e("CompleteHistoryA", "feedback...$feedback  $totalAmount")
+                    val intent = Intent(context, CompleteHistoryDetailsActivity::class.java)
+
+                    intent.putExtra("id", id.toString())
+                    intent.putExtra("bookingNumber", bookingNumber)
+                    intent.putExtra("userNamee", userNamee)
+                    intent.putExtra("completedDate", completedDate)
+                    intent.putExtra("pick", pick)
+                    intent.putExtra("drop", drop)
+                    intent.putExtra("bookingStatus", bookingStatus)
+                    intent.putExtra("paymentMethod", paymentMethod)
+                    intent.putExtra("distance", distance.toString())
+                    intent.putExtra("feedback", feedback.toString())
+                    intent.putExtra("totalAmount", totalAmount.toString())
+                    intent.putExtra("commissionPrice", commissionPrice.toString())
+                    intent.putExtra("userImagee", url)
+                    intent.putExtra("paymentStatus", cancelTripHistory[position].paymentStatus)
+                    context.startActivity(intent)
+                }
+
+            }
         }
+
+
     }
+
 
     override fun getItemCount(): Int {
         return cancelTripHistory.size
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var clientNameDriHisCan: TextView
-        var totalCostDriverHisCan: TextView
-        var arrivalTimeDriverHisCan: TextView
-        var pickUpDetailsDriHisCan: TextView
-        var DropDetailsDriHisCan: TextView
-        var dateTimeDriHisCan: TextView
-        var bookingstatusCan: TextView
-        var cancelReasonTextView: TextView
-        var driverProfileCthCan: ImageView
-        var invoiceTextViewcancelled: TextView
-
-        init {
-            clientNameDriHisCan = itemView.findViewById(R.id.clientNameDriHisCan)
-            totalCostDriverHisCan = itemView.findViewById(R.id.totalCostDriverHisCan)
-            arrivalTimeDriverHisCan = itemView.findViewById(R.id.arrivalTimeDriverHisCan)
-            pickUpDetailsDriHisCan = itemView.findViewById(R.id.pickUpDetailsDriHisCan)
-            DropDetailsDriHisCan = itemView.findViewById(R.id.DropDetailsDriHisCan)
-            dateTimeDriHisCan = itemView.findViewById(R.id.dateTimeDriHisCan)
-            driverProfileCthCan = itemView.findViewById(R.id.driverProfileCthCan)
-            bookingstatusCan = itemView.findViewById(R.id.bookingstatusCan)
-            cancelReasonTextView = itemView.findViewById(R.id.cancelReasonTextView)
-            invoiceTextViewcancelled = itemView.findViewById(R.id.invoiceTextViewcancelled)
-        }
+        val status = itemView.findViewById<TextView>(R.id.status)
+        val driverName = itemView.findViewById<TextView>(R.id.driverName)
+        val bookingId = itemView.findViewById<TextView>(R.id.bookingId)
+        val distance = itemView.findViewById<TextView>(R.id.distance)
+        val paymentMode = itemView.findViewById<TextView>(R.id.paymentMode)
+        val totalAmount = itemView.findViewById<TextView>(R.id.totalAmount)
+        val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
+        val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
+        val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
     }
 }

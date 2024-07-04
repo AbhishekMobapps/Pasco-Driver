@@ -353,6 +353,8 @@
     <string name="app_survey">App Survey</string>
     <string name="filter">Filter</string>
     <string name="my_bids">My Bids</string>
+    <string name="filters">Filters</string>
+    <string name="add_amount">Add Amount</string>
 
 
 </resources>

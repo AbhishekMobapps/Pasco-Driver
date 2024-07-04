@@ -10,7 +10,7 @@ class DriverCancelRepository @Inject constructor(private val apiService: ApiServ
         id: String,
         reasonid: String
     ): Observable<DriverCancelResponse> {
-        return apiService.cancelledData(
-            PascoApp.encryptedPrefs.bearerToken,id,reasonid)
+        return apiService.cancelledData(id,
+            PascoApp.encryptedPrefs.bearerToken,reasonid)
     }
 }

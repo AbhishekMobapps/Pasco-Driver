@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.historydetails
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +15,13 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
@@ -43,14 +49,20 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
     private var pick = ""
     private var drop = ""
     private var driverImage = ""
+    private var userName = ""
+    private var userImage = ""
     private var paymentStatus = ""
-
+    private var userType = ""
+    private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
+    private val progressDialog by lazy { CustomProgressDialog(this) }
     var bottomSheetDialog: BottomSheetDialog? = null
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCompleteHistoryDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        userType = PascoApp.encryptedPrefs.userType
 
         binding.backBtn.setOnClickListener { finish() }
 
@@ -66,16 +78,26 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         feedback = intent.getStringExtra("feedback").toString()
         totalAmount = intent.getStringExtra("totalAmount").toString()
         commissionPrice = intent.getStringExtra("commissionPrice").toString()
-        driverImage = intent.getStringExtra("driverImage").toString()
+        userImage = intent.getStringExtra("driverImage").toString()
         paymentStatus = intent.getStringExtra("paymentStatus").toString()
+        userName = intent.getStringExtra("userNamee").toString()
+        userImage = intent.getStringExtra("userImagee").toString()
+        if (userType.equals("driver")) {
+            Glide.with(this).load(BuildConfig.IMAGE_KEY + userImage)
+                .placeholder(R.drawable.man).into(binding.driverProfile)
+
+            binding.driverName.text = userName
+        } else {
+            Glide.with(this).load(BuildConfig.IMAGE_KEY + driverImage).placeholder(R.drawable.man)
+                .into(binding.driverProfile)
+
+            binding.driverName.text = driverName
+        }
 
 
         Log.e("CompleteHistoryA", "feedback...$feedback  $totalAmount $driverImage")
 
-        Glide.with(this).load(BuildConfig.IMAGE_KEY + driverImage).placeholder(R.drawable.man)
-            .into(binding.driverProfile)
 
-        binding.driverName.text = driverName
         binding.bookingId.text = bookingNumber
         binding.pickupTxt.text = pick
         binding.dropTxt.text = drop
@@ -95,7 +117,15 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
             binding.feedbackBtn.visibility = View.VISIBLE
         }
 
-        binding.feedbackBtn.setOnClickListener { showFeedbackPopup(id) }
+        if (userType.equals("user"))
+        {
+            binding.feedbackBtn.setOnClickListener { showFeedbackPopup(id) }
+        }
+        else{
+            binding.feedbackBtn.setOnClickListener { showFeedbackDriverPopup(id) }
+        }
+
+
 
 
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
@@ -119,6 +149,74 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    private fun showFeedbackDriverPopup(id: String) {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.driver_feedback_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+
+        val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+        val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+            val comment = commentTxt?.text.toString()
+            if (ratingBars.isEmpty()) {
+                Toast.makeText(this, "Please add a rating", Toast.LENGTH_SHORT).show()
+            } else if (comment.isBlank()) {
+                Toast.makeText(this, "Please add a comment", Toast.LENGTH_SHORT).show()
+            } else {
+                feedbackApiDriver(comment, ratingBars)
+                feedbackObserver()
+            }
+        }
+        skipBtn?.setOnClickListener {
+            bottomSheetDialog?.dismiss()
+        }
+
+        val displayMetrics = DisplayMetrics()
+        (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenHeight = displayMetrics.heightPixels
+        val halfScreenHeight = screenHeight * .58
+        val eightyPercentScreenHeight = screenHeight * .58
+
+        // Set the initial height of the bottom sheet to 50% of the screen height
+        val layoutParams = view.layoutParams
+        layoutParams.height = halfScreenHeight.toInt()
+        view.layoutParams = layoutParams
+
+        var isExpanded = false
+        view.setOnClickListener {
+            // Expand or collapse the bottom sheet when it is touched
+            if (isExpanded) {
+                layoutParams.height = halfScreenHeight.toInt()
+            } else {
+                layoutParams.height = eightyPercentScreenHeight.toInt()
+            }
+            view.layoutParams = layoutParams
+            isExpanded = !isExpanded
+        }
+
+        bottomSheetDialog!!.show()
+
+    }
+
+    private fun feedbackApiDriver(comment: String, ratingBars: String) {
+        val loinBody = DriverFeedbackBody(
+            bookingconfirmation = id,
+            rating = ratingBars,
+            feedback = comment
+        )
+        driverFeedbackModelView.cancelBooking(loinBody, this, progressDialog)
     }
 
     private fun showFeedbackPopup(id: String) {
@@ -167,8 +265,15 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
             val msg = it.peekContent().msg
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            startActivity(intent)
+            if (userType.equals("driver")) {
+                val intent = Intent(this, DriverDashboardActivity::class.java)
+                startActivity(intent)
+            } else {
+                val intent = Intent(this, UserDashboardActivity::class.java)
+                startActivity(intent)
+            }
+
+
             finish()
         }
         feedbackModelView.errorResponse.observe(this) {
