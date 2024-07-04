@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pasco</string>
+    <string name="app_name">Pasco Customer</string>
     <string name="english">English</string>
     <string name="continues">Continue</string>
     <string name="log_in">Log in</string>
@@ -8,7 +8,6 @@
     <string name="signin"> Sign In</string>
     <string name="unable_to_connect">Unable to connect to the internet please try again</string>
     <string name="server_error">Server Error</string>
-
     <string name="please_wait">Please Wait...\n</string>
     <string name="login_error">Login error</string>
     <string name="OK">Ok</string>
@@ -32,7 +31,7 @@
     <string name="profile">Profile</string>
     <string name="your_information_is_under_review_we_ll_contact_you_soon">Your information is under review. We\'ll contact you soon.</string>
     <string name="ok">Ok</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <!--  TODO: Remove or change this placeholder text  -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="coupons">Coupons</string>
     <string name="submit">Submit</string>
@@ -83,10 +82,7 @@
     <string name="delete_account">Delete Account</string>
     <string name="bidding_details">Biding Details</string>
     <string name="loyalty_program_list">Loyalty Program List</string>
-
-
     // Driver
-
     <string name="mobile_number">Mobile Number</string>
     <string name="_1234567890">+ 1234567890</string>
     <string name="password">Password</string>
@@ -121,7 +117,7 @@
     <string name="update">Update</string>
     <string name="approval_status">Approval Status</string>
     <string name="change_password">Change Password</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <!--  TODO: Remove or change this placeholder text  -->
     <string name="are_you_sure_you_want_to_log_out">Are you sure you want to Log out?</string>
     <string name="are_you_sure_you_want_to_accept_this_ride">Are you sure you want to accept this ride?</string>
     <string name="order_sent_successfully_please_wait_for_the_customer_to_accept_the_ride">Order sent successfully. Please wait for the customer to accept the ride.</string>
@@ -138,7 +134,9 @@
     <string name="selectCity">Select City\n</string>
     <string name="pickup_details">Pickup Point</string>
     <string name="dropping_point">Dropping Point</string>
-    <string name="confirm_pickup_drop"><![CDATA[Confirm Pickup & Drop]]></string>
+    <string name="confirm_pickup_drop">
+<![CDATA[ Confirm Pickup & Drop ]]>
+</string>
     <string name="pickup_addressnotsame">Pickup address and Delivery address should not be same.</string>
     <string name="pickup_point">PickUp Point</string>
     <string name="search_location">Search Location</string>
@@ -149,11 +147,12 @@
     <string name="terms_and_conditionss">Terms and Conditions</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
-    <!-- Strings used for fragments for navigation -->
+    <!--  Strings used for fragments for navigation  -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -191,6 +190,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+=======
+    <string name="lorem_ipsum"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a, ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae, molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor bibendum, vel congue leo egestas.\n\n Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel, molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula, in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque est.\n\n Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh. Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc, quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus convallis.\n\n Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper, libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim. </string>
+
     <string name="my_profile">My Profile</string>
     <string name="truck">Truck</string>
     <string name="distance">Distance :</string>
@@ -217,7 +219,9 @@
     <string name="order">Order</string>
     <string name="submit_driver_profile">Submit</string>
     <string name="confirm">Confirm</string>
-    <string name="bidding_date_time"><![CDATA[Biding Date&Time]]></string>
+    <string name="bidding_date_time">
+<![CDATA[ Biding Date&Time ]]>
+</string>
     <string name="start_point">Start Point</string>
     <string name="end_point_req">End Point</string>
     <string name="thank_you_for_your_order">Thank you for your Order !</string>
@@ -257,11 +261,12 @@
     <string name="loyalty_percent">Loyalty Percent :</string>
     <string name="program_limit">Program Limit :</string>
     <string name="loyalty_end_dat">Loyalty End Dat :</string>
-    <string name="notes_amp_reminder"><![CDATA[Notes & Reminder]]></string>
+    <string name="notes_amp_reminder">
+<![CDATA[ Notes & Reminder ]]>
+</string>
     <string name="voice_message">Voice message</string>
     <string name="chat">Chat</string>
     <string name="currently_no_data_are_found">Currently, no data are found.</string>
-
     <string name="select_start_date_and_time">Select Start Date and Time</string>
     <string name="status">Status</string>
     <string name="are_you_sure_you_want_to_clear_all_notifications">Are you sure you want to clear all notifications?</string>
@@ -286,20 +291,17 @@
     <string name="select_all">Select All</string>
     <string name="need_help">Need Help</string>
     <string name="Send">Send</string>
-
     <string name="select_time">Select Time</string>
     <string name="select_date">Select Date</string>
     <string name="all_bids_details">All Bids Details</string>
     <string name="save">Save</string>
     <string name="add_subject">Add Subject</string>
-    <string name="title">Title            :</string>
-    <string name="date">Date             :</string>
-
+    <string name="title">Title :</string>
+    <string name="date">Date :</string>
     <string name="pickup_location">PickUp Location</string>
     <string name="your_delivery_time">Your Delivery Time</string>
     <string name="drop_location">Drop Location</string>
     <string name="show_details">Show Details</string>
-
     <string name="please_rate_the_pasco">Please rate the pasco</string>
     <string name="cancle">Cancel</string>
     <string name="an_accident">An accident</string>
@@ -327,7 +329,6 @@
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verify">Verify</string>
     <string name="update_your_status">Update Your Status</string>
-
     <string name="verification">Verification</string>
     <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
@@ -335,6 +336,7 @@
  
     <string name="share">Share</string>
     <string name="download">Download</string>
+
 
     <string name="bid_price">Bid Price :</string>
     <string name="oder_id">Oder Id</string>
