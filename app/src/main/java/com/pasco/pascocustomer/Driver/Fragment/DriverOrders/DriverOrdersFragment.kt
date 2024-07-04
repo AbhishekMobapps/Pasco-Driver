@@ -40,11 +40,11 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
     private var cancelList:List<CancelReasonResponse.CancellationList> = ArrayList()
     private val dAllOrdersViewModel: DAllOrdersViewModel by viewModels()
     private val currentOrdersViewModel: CurrentOrdersViewModel by viewModels()
-    private val cancelReasonViewModel: CancelReasonViewModel by viewModels()
+    private val cReasonViewModel: CancelReasonViewModel by viewModels()
     private val driveCancelReasonViewModel: DriverCancelViewModel by viewModels()
     private lateinit var dialog: BottomSheetDialog
     private lateinit var recycler_StatusList: RecyclerView
-    private lateinit var bookingID: String
+    private  var bID: String= ""
     private lateinit var staticTextViewEmptyData: TextView
     private val progressDialog by lazy { CustomProgressDialog(requireActivity()) }
 
@@ -74,7 +74,7 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
             currentOrdersApi()
             currentOrdersObserver()
         }
-        driverCancelReasonObserver()
+
         return binding.root
     }
 
@@ -92,6 +92,7 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                allOrdersApi()
                 dialog.dismiss()
             }
         }
@@ -203,21 +204,22 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         currentOrdersApi()
     }
 
-    override fun cancelOrder(position: Int, Id: Int) {
+    override fun cancelOrder(position: Int, bookID: String) {
        //call api
-        bookingID = id.toString()
+        bID = bookID
         selectStatusPopUp()
     }
 
-    override fun cancelList(position: Int, Id: Int) {
-        val ids = id.toString()
-        cancelReason(ids)
+    override fun cancelList(position: Int, ids: Int) {
+        val ids = ids.toString()
+        cancelReasonnn(ids)
+        driverCancelReasonObserver()
     }
 
-    private fun cancelReason(ids: String) {
+    private fun cancelReasonnn(ids: String) {
         driveCancelReasonViewModel.getUpdateDdStatusData(
             progressDialog,
-            requireActivity(),ids,bookingID
+            requireActivity(),bID,ids
         )
     }
 
@@ -239,11 +241,11 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
     }
 
     private fun cancelApiObsever(dialog: BottomSheetDialog) {
-        cancelReasonViewModel.progressIndicator.observe(this, Observer {
+        cReasonViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
 
-        cancelReasonViewModel.mCancelOrderResponse.observe(this) { response ->
+        cReasonViewModel.mCancelOrderResponse.observe(this) { response ->
             val content = response.peekContent()
             val message = content.msg ?: return@observe
             cancelList = content.data!!
@@ -268,14 +270,14 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
                 }
             }
         }
-        cancelReasonViewModel.errorResponse.observe(requireActivity()) {
+        cReasonViewModel.errorResponse.observe(requireActivity()) {
             // Handle general errors using ErrorUtil
             ErrorUtil.handlerGeneralError(requireActivity(), it)
         }
     }
 
     private fun cancelApi() {
-        cancelReasonViewModel.getCancelReason(
+        cReasonViewModel.getCancelReason(
             progressDialog,
             requireActivity()
         )

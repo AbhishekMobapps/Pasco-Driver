@@ -32,7 +32,6 @@ class CancellationReasonAdapter(
         val id = status.reasonid
         holder.driverStatusTextView.setOnClickListener {
            onItemClick.cancelList(position,id!!.toInt())
-
             notifyDataSetChanged()  // Optional: only call this if the dataset has changed
         }
     }

@@ -21,6 +21,7 @@ class ShowBookingReqResponse:Serializable{
 
     inner class ShowBookingReqData:Serializable{
 
+
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -43,7 +44,7 @@ class ShowBookingReqResponse:Serializable{
 
         @SerializedName("driver_image")
         @Expose
-        var driverImage: String? = null
+        var driverImage: Any? = null
 
         @SerializedName("shipmentname")
         @Expose
@@ -59,11 +60,11 @@ class ShowBookingReqResponse:Serializable{
 
         @SerializedName("pickup_latitude")
         @Expose
-        var pickupLatitude: Float? = null
+        var pickupLatitude: Double? = null
 
         @SerializedName("pickup_longitude")
         @Expose
-        var pickupLongitude: Float? = null
+        var pickupLongitude: Double? = null
 
         @SerializedName("drop_location")
         @Expose
@@ -71,31 +72,31 @@ class ShowBookingReqResponse:Serializable{
 
         @SerializedName("drop_latitude")
         @Expose
-        var dropLatitude: Float? = null
+        var dropLatitude: Double? = null
 
         @SerializedName("drop_longitude")
         @Expose
-        var dropLongitude: Float? = null
+        var dropLongitude: Double? = null
 
         @SerializedName("total_distance")
         @Expose
-        var totalDistance: Float? = null
+        var totalDistance: Double? = null
 
         @SerializedName("basicprice")
         @Expose
-        var basicprice: Float? = null
+        var basicprice: Double? = null
 
         @SerializedName("commision_price")
         @Expose
-        var commisionPrice: Float? = null
+        var commisionPrice: Double? = null
 
         @SerializedName("message")
         @Expose
-        var message: Any? = null
+        var message: String? = null
 
         @SerializedName("payment_method")
         @Expose
-        var paymentMethod: Any? = null
+        var paymentMethod: String? = null
 
         @SerializedName("customer_status")
         @Expose
@@ -105,6 +106,14 @@ class ShowBookingReqResponse:Serializable{
         @Expose
         var paymentStatus: String? = null
 
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
+
         @SerializedName("pickup_datetime")
         @Expose
         var pickupDatetime: String? = null
@@ -112,6 +121,10 @@ class ShowBookingReqResponse:Serializable{
         @SerializedName("created_at")
         @Expose
         var createdAt: String? = null
+
+        @SerializedName("bid_status")
+        @Expose
+        var bidStatus: Boolean? = null
 
     }
 }

@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -84,17 +86,19 @@ class DriverAllBiddsAdapter(
                 }
                 else -> Intent(context, DriverAllBiddsActivity::class.java).apply {
                     putExtra("id", driverOrderHis.id.toString())
+
                 }
             }
             context.startActivity(intent)
         }
+        val id = driverOrderHis.id!!.toString()
 
         if (biddingStatus.equals("Pending"))
         {
             holder.cancelButtonBid.visibility = View.VISIBLE
             holder.cancelButtonBid.setOnClickListener {
                 onItemClick.cancelOrder(
-                    position,driverOrderHis.id!!.toInt())
+                    position,id)
                 notifyDataSetChanged()
             }
         }
