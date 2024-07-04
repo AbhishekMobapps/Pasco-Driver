@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectModelView
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
@@ -163,17 +164,20 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         id: Int,
         pickupLatitude: Double?,
         pickupLongitude: Double?,
-        verificationCode: String?
+        verificationCode: String?,
+        upFrontPrice: Double?
     ) {
         bookingId = id.toString()
-        acceptOrRejectApi(bookingId)
+        acceptOrRejectApi(bookingId, upFrontPrice)
         acceptOrRejectObserver(bookingId, pickupLatitude, pickupLongitude, verificationCode)
     }
 
-    private fun acceptOrRejectApi(id: String) {
+    private fun acceptOrRejectApi(id: String, upFrontPrice: Double?) {
         //   val codePhone = strPhoneNo
+
+        Log.e("upFrontPriceAA", "upFrontPrice..$upFrontPrice")
         val loinBody = AcceptOrRejectBidBody(
-            payment_amount = "15.0",
+            payment_amount = upFrontPrice.toString(),
             payment_type = "wallet"
         )
         paymentAccept.otpCheck(id, loinBody, this, progressDialog)
@@ -193,7 +197,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
             val status = it.peekContent().status
 
             if (status == "False") {
-                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                showWalletRequirementPopup()
             } else {
                 val intent = Intent(this, TrackActivity::class.java)
                 intent.putExtra("bookingId", bookingId)
@@ -213,5 +217,25 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         }
     }
 
+    private fun showWalletRequirementPopup() {
+        val message = "Please add amount in your wallet!"
 
+        val builder = AlertDialog.Builder(this@AllBiddsDetailsActivity)
+        builder.setTitle("Insufficient Wallet amount")
+        builder.setMessage(message)
+        builder.setPositiveButton("Add Funds") { dialog, _ ->
+            val intent = Intent(this, DriverWalletActivity::class.java)
+            intent.putExtra("addWallet", "wallet")
+            startActivity(intent)
+            finish()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Skip") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
 }

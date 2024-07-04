@@ -2,10 +2,12 @@ package com.pasco.pascocustomer.Driver.DriverWallet
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
+import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -22,18 +25,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DriverWalletActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityDriverWalletBinding
+    private lateinit var binding: ActivityDriverWalletBinding
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
     private var amountP = ""
+    private var addWallet = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        addWallet = intent.getStringExtra("addWallet").toString()
         binding.recycerEarningList.isVerticalScrollBarEnabled = true
         binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
         binding.recycerEarningList.layoutManager =
@@ -46,23 +51,6 @@ class DriverWalletActivity : AppCompatActivity() {
         getTotalAmountObserver()
     }
 
-    private fun getTotalAmountObserver() {
-        getAmountViewModel.mGetAmounttt.observe(this) { response ->
-            val message = response.peekContent().msg!!
-            val data = response.peekContent().data
-            amountP = data?.walletAmount.toString()
-            binding.accountBalanceDri.text = "$amountP USD"
-
-            if (response.peekContent().status == "False") {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            } else {
-                // Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-            }
-        }
-        addAmountViewModel.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this, it)
-        }
-    }
 
     @SuppressLint("MissingInflatedId")
     private fun openWithDrawPopUp() {
@@ -97,6 +85,9 @@ class DriverWalletActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(this,ComlpleteStatusActivity::class.java)
+                intent.putExtra("addWallet",addWallet)
+                startActivity(intent)
                 dialog.dismiss()
                 getTotalAmount()
 
@@ -108,6 +99,29 @@ class DriverWalletActivity : AppCompatActivity() {
     }
 
     private fun getTotalAmount() {
-        getAmountViewModel.getAmountData(progressDialog,this)
+        getAmountViewModel.getAmountData(progressDialog, this)
+    }
+
+    private fun getTotalAmountObserver() {
+        getAmountViewModel.mGetAmounttt.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            val status = response.peekContent().status!!
+            val data = response.peekContent().data
+
+
+            if (status == "False") {
+                Log.e("WalletAmt", "aaa")
+                val value = "0"
+                binding.accountBalanceDri.text = "$value USD"
+            } else {
+                amountP = data?.walletAmount.toString()
+                binding.accountBalanceDri.text = "$amountP USD"
+
+
+            }
+        }
+        addAmountViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+        }
     }
 }
