@@ -1,9 +1,6 @@
 package com.pasco.pascocustomer.customer.activity.hometabactivity
 
-import android.app.ActionBar
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.location.Address
@@ -36,6 +33,8 @@ import com.pasco.pascocustomer.databinding.ActivityAllTabPayBinding
 import com.pasco.pascocustomer.location.LocationsActivity
 import com.pasco.pascocustomer.utils.ErrorUtil
 import androidx.lifecycle.Observer
+import com.google.android.gms.wallet.Wallet
+import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.application.PascoApp
@@ -705,9 +704,6 @@ class AllTabPayActivity : AppCompatActivity() {
         bookingRideViewModel.mRejectResponse.observe(this@AllTabPayActivity) { response ->
             val message = response.peekContent().msg
             val status = response.peekContent().status
-
-
-
             if (status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
@@ -734,6 +730,8 @@ class AllTabPayActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this@AllTabPayActivity, it)
         }
     }
+
+
 
     private fun checkChargeApi() {
 

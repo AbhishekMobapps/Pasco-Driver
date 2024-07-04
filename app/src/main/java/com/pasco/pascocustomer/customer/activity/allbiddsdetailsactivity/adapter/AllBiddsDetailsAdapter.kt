@@ -102,11 +102,12 @@ class AllBiddsDetailsAdapter(
             required.startActivity(intent)
         }
         holder.acceptBtn.setOnClickListener {
+            val upFrontPrice = orderList[position].upfrontPayment
             val id = orderList[position].id
             val verificationCode = orderList[position].deliverycode
             val pickupLatitude = orderList[position].pickupLatitude
             val pickupLongitude = orderList[position].pickupLongitude
-            onItemClick.allBids(position, id!!,pickupLatitude,pickupLongitude,verificationCode)
+            onItemClick.allBids(position, id!!,pickupLatitude,pickupLongitude,verificationCode,upFrontPrice)
         }
     }
 

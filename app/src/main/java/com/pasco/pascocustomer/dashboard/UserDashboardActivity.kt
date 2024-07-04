@@ -333,7 +333,8 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         id: Int,
         pickupLatitude: Double?,
         pickupLongitude: Double?,
-        verificationCode: String?
+        verificationCode: String?,
+        upFrontPrice: Double?
     ) {
 
     }

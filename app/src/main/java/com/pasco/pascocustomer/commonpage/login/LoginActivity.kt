@@ -84,7 +84,6 @@ class LoginActivity : AppCompatActivity() {
             }
             // Get new FCM registration token
             token = task.result
-
         }
 
         binding.asDriverConst.setOnClickListener {

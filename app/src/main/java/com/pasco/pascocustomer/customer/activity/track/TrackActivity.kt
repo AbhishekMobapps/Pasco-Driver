@@ -2,12 +2,16 @@ package com.pasco.pascocustomer.customer.activity.track
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActionBar
-import android.app.Dialog
+import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
+import android.icu.util.Calendar
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +26,7 @@ import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,6 +37,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
@@ -64,7 +70,6 @@ import kotlin.math.sqrt
 @AndroidEntryPoint
 class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
-    private lateinit var pickupLocation: LatLng // Define your pickup location
     private var dropLocation: LatLng? = null// Define your drop location
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -72,31 +77,28 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val trackModelView: TrackLocationModelView by viewModels()
     private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
-    private val progressDialog by lazy { CustomProgressDialog(this) }
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
     var bottomSheetDialog: BottomSheetDialog? = null
-    private var dialog: Dialog? = null
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 
-    private var isDestinationReached = false
-
     private var pickupLatitude = ""
     private var pickupLongitude = ""
-    private var dropLatitude = ""
-    private var dropLongitude = ""
     private var bookingId = ""
     private var lat = ""
     private var long = ""
     private var verificationCode = ""
     private var isClick = true
+    private var mMarkerOptions: Marker? = null
 
     // private var handler: Handler? = null
     private lateinit var runnable: Runnable
+    private var completeStatus = true
 
     var mHandler: Handler? = null
+    private var cars: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
@@ -146,10 +148,20 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this@TrackActivity, ChatActivity::class.java)
             startActivity(intent)
         }
+
+        val dcar = ResourcesCompat.getDrawable(resources, R.drawable.man, null)
+        val widthcar = 95
+        val heightcar = 95
+        dcar!!.level = 1234
+        val bdcar = dcar.current as BitmapDrawable
+        val bcar = bdcar.bitmap
+        cars = Bitmap.createScaledBitmap(bcar, widthcar, heightcar, false)
+
         handlerStart()
         locationDetailsApi()
         locationDetailsObserver()
-
+        locationLatApi()
+        locationLatObserver()
 
     }
 
@@ -269,7 +281,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.e("ShowDetails", "API....Repeat...Details")
 
             val driverLatLng = LatLng(driverCurrentLat.toDouble(), driverCurrentLong.toDouble())
-            val userPickUpLatLng = LatLng(userPickUpLat.toDouble(), driverCurrentLong.toDouble())
             val userDropLatLng = LatLng(userDropLat.toDouble(), userDropLong.toDouble())
 
             drawRoute(
@@ -283,31 +294,31 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                 BitmapDescriptorFactory.fromResource(R.drawable.man) // replace with your image name
 
 
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(driverLatLng)
-                    .icon(driverMarker)
-                    .anchor(0.5f, 0.5f)
-                    .title("Driver Location")
-            )
+            mMarkerOptions =
+                mMap?.addMarker(
+                    MarkerOptions().position(driverLatLng!!)
+                        .anchor(0.5f, 0.5f)
+                        .title("Driver Location").icon(
+                            BitmapDescriptorFactory.fromBitmap(cars!!)
+                        )
+                )
 
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(userPickUpLatLng)
-                    .icon(pickUpMarker)
-                    .anchor(0.5f, 0.5f)
-                    .title("Pickup Location")
-            )
             if (response.peekContent().data?.driverStatus == null) {
 
             } else {
+                Log.e("ReachedAAA", "Statusss.." + response.peekContent().data?.bookingStatus)
                 if (response.peekContent().data!!.bookingStatus == "Completed") {
-                    mHandler?.removeCallbacks(runnable)
+                    mHandler?.removeCallbacks(mRunnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
-                    showFeedbackPopup()
+                    if (completeStatus) {
+                        showFeedbackPopup()
+                    } else {
+
+                    }
+
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
-                    Log.e("ReachedAAA", "aa" + response.peekContent().data?.driverStatus)
+
 
                     if (response.peekContent().data!!.driverStatus == "Reached at PickUp Location") {
                         // Clear the first route
@@ -356,11 +367,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Remove callbacks to prevent memory leaks
-        mHandler?.removeCallbacks(runnable)
-    }
 
     private fun updateRoute(currentLocation: LatLng, destination: LatLng) {
         val context =
@@ -440,7 +446,12 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
             feedbackApi(commentTxt?.text.toString(), ratingBars)
             feedbackObserver()
         }
-        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+        skipBtn?.setOnClickListener {
+            val intent = Intent(this, UserDashboardActivity::class.java)
+            startActivity(intent)
+            finish()
+            bottomSheetDialog?.dismiss()
+        }
 
         // Get the window of the dialog and set its height to match parent
         val dialogWindow = bottomSheetDialog?.window
@@ -501,7 +512,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Add polyline to map
         val polyline =
-            mMap?.addPolyline(PolylineOptions().addAll(points).color(Color.BLUE).width(8.0F))
+            mMap?.addPolyline(PolylineOptions().addAll(points).color(Color.YELLOW).width(8.0F))
         //mMap.clear() // Clear previous route
 
         zoomToFitPolyline(polyline!!)
@@ -552,6 +563,19 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
         mMap?.animateCamera(cameraUpdate)
 
+
+    }
+
+    private fun multipleEventAddPopup() {
+        val dialogView = layoutInflater.inflate(R.layout.wallet_not_amount, null)
+        val builder = AlertDialog.Builder(this).setView(dialogView)
+        val dialog = builder.create()
+        //venueTitlePopUp = dialogView.findViewById(R.id.venueTitlePopUp)
+
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+        //venueTitlePopUp.setText(StEventTitlepopup)
 
     }
 }
