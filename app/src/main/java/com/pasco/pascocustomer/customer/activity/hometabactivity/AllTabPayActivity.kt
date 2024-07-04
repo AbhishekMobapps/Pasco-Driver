@@ -63,10 +63,11 @@ class AllTabPayActivity : AppCompatActivity() {
     private var lon2 = ""
     private var el1: Double = 0.0
     private var el2: Double = 0.0
-
     private var pickupLatitude = ""
     private var dropupLongitude: String = ""
     private var cityNamePickUp: String? = null
+    private var pickupCountry: String? = null
+    private var dropCountry: String? = null
     private var cityNameDrop: String? = null
     private var pickUpLatitude = 0.0
     private var pickUpLongitude = 0.0
@@ -819,8 +820,8 @@ class AllTabPayActivity : AppCompatActivity() {
 
             cargoQty = response.peekContent().availableDriver
 
-            if (cargoQty == null) {
-                binding.numberOfVehicleTxt.text = ""
+            if (cargoQty == 0) {
+                binding.numberOfVehicleTxt.text = "Cargo is not available"
             } else {
                 binding.numberOfVehicleTxt.text = response.peekContent().availableDriver.toString()
             }

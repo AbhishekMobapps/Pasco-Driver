@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pasco Customer</string>
+    <string name="app_name">Pasco</string>
     <string name="english">English</string>
     <string name="continues">Continue</string>
     <string name="log_in">Log in</string>
@@ -353,8 +353,6 @@
     <string name="app_survey">App Survey</string>
     <string name="filter">Filter</string>
     <string name="my_bids">My Bids</string>
-    <string name="filters">Filters</string>
-    <string name="add_amount">Add Amount</string>
 
 
 </resources>
