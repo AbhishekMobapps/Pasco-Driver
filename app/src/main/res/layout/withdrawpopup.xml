@@ -11,19 +11,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/addAmStaticTextview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:text=""
+            android:text="@string/add_amount"
             android:textColor="@color/black_dark"
             android:textSize="@dimen/text_size"
             android:textStyle="bold" />
@@ -40,15 +38,7 @@
             android:src="@drawable/baseline_close_24"
             android:textColor="@color/black" />
 
-
-
-
-
     </RelativeLayout>
-
-
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
@@ -76,7 +66,7 @@
         </LinearLayout>
 
 
-        <androidx.appcompat.widget.AppCompatButton
+        <Button
             android:id="@+id/submit_WithDrawBtn"
             android:layout_width="match_parent"
             android:layout_height="38dp"
@@ -88,7 +78,7 @@
             android:text="Submit"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_16"></androidx.appcompat.widget.AppCompatButton>
+            android:textSize="@dimen/text_size_16"></Button>
 
     </LinearLayout>
 

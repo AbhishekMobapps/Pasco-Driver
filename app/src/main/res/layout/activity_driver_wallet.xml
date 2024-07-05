@@ -6,6 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".Driver.DriverWallet.DriverWalletActivity">
 
+    <RelativeLayout
+        android:id="@+id/relativeHeadindfdg"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/earth_yellow">
+
+
+        <ImageView
+            android:id="@+id/backArrowImgBhdDetails"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/back"
+            app:tint="@color/white" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="70dp"
+            android:text="@string/my_wallet_driver"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/MainLinearHis"
@@ -14,7 +47,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/button_background"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/relativeHeadindfdg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,52 +79,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/log_in_txt_size"
             android:textStyle="bold" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-
-            <Button
-                android:id="@+id/addAmountBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_below="@+id/accountBalance"
-                android:layout_gravity="left"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/button_background_color"
-                android:gravity="center"
-                android:text="Add"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/normal_txt_size_12"
-                android:textStyle="bold"/>
-
-
-
-            <Button
-                android:id="@+id/withDrawBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_below="@+id/accountBalance"
-                android:layout_gravity="left"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/strokes_background"
-                android:gravity="center"
-                android:text="Add"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/normal_txt_size_12"
-                android:textStyle="bold"/>
-
-
-        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -99,7 +86,7 @@
             android:layout_below="@+id/accountBalance">
 
             <Button
-                android:id="@+id/withDrawBtn"
+                android:id="@+id/addBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_gravity="left"
@@ -127,6 +114,7 @@
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/cancel"
                 android:gravity="center"
+                android:visibility="gone"
                 android:text="Withdraw"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
@@ -144,6 +132,7 @@
         android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/text_size_16"
         android:layout_marginRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -166,6 +155,77 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearTransactionLimitMyTransaction"
+        android:layout_width="220dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/text_size_16"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MainLinearHis"
+        app:layout_constraintWidth_percent=".7">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/my_transactions"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/consTopDesign"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent=".95"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitMyTransaction"
+        android:background="@drawable/order_background"
+        android:backgroundTint="@color/whitedarkDcolor">
+
+
+        <TextView
+            android:id="@+id/transactionHisTextview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/transaction_history"
+            app:layout_constraintWidth_percent=".5"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_16"
+            android:background="@drawable/order_bidding_yellow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/withdrawHisTextview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/withdraw_history"
+            app:layout_constraintWidth_percent=".5"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_16"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/black"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycerEarningList"
@@ -177,6 +237,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitt" />
+        app:layout_constraintTop_toBottomOf="@+id/consTopDesign" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

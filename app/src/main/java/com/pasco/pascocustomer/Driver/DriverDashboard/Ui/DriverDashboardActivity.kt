@@ -124,13 +124,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             }
         }
 
-    /*    if (dAdminApprovedStatus != "Approved") {
-            disableAllExceptMore()
-            openPopUp()
-        } else if (dAdminApprovedStatus == "Approved") {
-            enableAll()
-        }*/
-=======
+
         /*    if (dAdminApprovedStatus != "Approved") {
                 disableAllExceptMore()
                 openPopUp()

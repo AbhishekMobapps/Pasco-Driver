@@ -12,34 +12,31 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
-import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.ComlpleteStatusActivity
-import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
-import com.pasco.pascocustomer.userFragment.order.adapter.OrderAdapter
-import com.pasco.pascocustomer.userFragment.order.odermodel.OrderResponse
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DriverWalletActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityDriverWalletBinding
+    private lateinit var binding: ActivityDriverWalletBinding
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
     private var walletC: String = ""
+    private var userType: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
-
 
     private var amountP = ""
     private var addWallet = ""
@@ -51,12 +48,30 @@ class DriverWalletActivity : AppCompatActivity() {
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        walletC  = intent.getStringExtra("wallet").toString()
-=======
-
-
         walletC = intent.getStringExtra("wallet").toString()
+
+        userType = PascoApp.encryptedPrefs.userType
+
+        binding.backArrowImgBhdDetails.setOnClickListener {
+            finish()
+        }
+        if (userType == "driver")
+        {
+           binding.withdrawAmountBtn.visibility = View.VISIBLE
+           binding.linearTransactionLimitt.visibility = View.GONE
+           binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
+           binding.consTopDesign.visibility = View.VISIBLE
+
+            binding.withdrawAmountBtn.setOnClickListener {
+               addWithPop()
+            }
+        }
+        else{
+            binding.withdrawAmountBtn.visibility = View.GONE
+            binding.linearTransactionLimitt.visibility = View.VISIBLE
+            binding.linearTransactionLimitMyTransaction.visibility = View.GONE
+            binding.consTopDesign.visibility = View.GONE
+        }
 
 
         binding.recycerEarningList.isVerticalScrollBarEnabled = true
@@ -64,7 +79,7 @@ class DriverWalletActivity : AppCompatActivity() {
         binding.recycerEarningList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        binding.addAmountBtn.setOnClickListener {
+        binding.addBtn.setOnClickListener {
             openWithDrawPopUp()
         }
         getTotalAmount()
@@ -72,38 +87,24 @@ class DriverWalletActivity : AppCompatActivity() {
         // getTotalDriverAmountObserver()
     }
 
+    @SuppressLint("MissingInflatedId")
+    private fun addWithPop() {
+        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
+        builder.setView(dialogView)
 
-    private fun getTotalAmountObserver() {
+        dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        val waCrossImage = dialogView.findViewById<ImageView>(R.id.waCrossImage)
+        val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
+        val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
+        val addAmStaticTextview = dialogView.findViewById<TextView>(R.id.addAmStaticTextview)
+        addAmStaticTextview.text = "Withdraw Amount"
+        dialog.show()
+        waCrossImage.setOnClickListener { dialog.dismiss() }
 
-    private fun getTotalDriverAmountObserver() {
-
-        getAmountViewModel.mGetAmounttt.observe(this) { response ->
-            val message = response.peekContent().msg!!
-            val data = response.peekContent().data
-            val amountP = data?.walletAmount?.toString() ?: "0"
-            binding.accountBalanceDri.text = "$amountP USD"
-
-            if (response.peekContent().status == "False") {
-               // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            } else {
-
-             /*   if (walletC.equals("amount"))
-                {
-                    val intent = Intent(this@DriverWalletActivity,AcceptRideActivity::class.java)
-
-                if (walletC == "amount") {
-                    val intent = Intent(this@DriverWalletActivity, AcceptRideActivity::class.java)
-
-                    startActivity(intent)
-                }*/
-            }
-        }
-        addAmountViewModel.errorResponse.observe(this) {
-            ErrorUtil.handlerGeneralError(this, it)
-        }
     }
-
 
     @SuppressLint("MissingInflatedId")
     private fun openWithDrawPopUp() {
@@ -156,7 +157,7 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private fun getTotalAmount() {
 
-        getAmountViewModel.getAmountData(progressDialog,this)
+        getAmountViewModel.getAmountData(progressDialog, this)
 
         getAmountViewModel.getAmountData(progressDialog, this)
     }
@@ -192,6 +193,6 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
     }
-
-
 }
+
+
