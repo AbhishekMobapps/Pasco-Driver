@@ -315,10 +315,16 @@
     <string name="app_survey">App Survey</string>
     <string name="filter">Filter</string>
     <string name="my_bids">My Bids</string>
+
+    <string name="debit_amount">Debit Amount : -</string>
+    <string name="dateSpace">Date : -</string>
+    <string name="payment_mode_space">Payment Mode :-</string>
+
     <string name="add_amount">Add Amount</string>
     <string name="all_transactions">All Transactions</string>
     <string name="trip_id">Trip ID</string>
     <string name="amount">Amount :</string>
+
 
 
 </resources>

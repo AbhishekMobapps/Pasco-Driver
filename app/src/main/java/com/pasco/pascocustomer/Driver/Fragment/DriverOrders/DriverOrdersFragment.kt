@@ -200,8 +200,9 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
 
     override fun onResume() {
         super.onResume()
-        allOrdersApi()
         currentOrdersApi()
+      //  allOrdersApi()
+
     }
 
     override fun cancelOrder(position: Int, bookID: String) {

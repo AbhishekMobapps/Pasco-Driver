@@ -34,6 +34,36 @@
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintNC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/consDynamicSEPoint">
+
+            <TextView
+                android:id="@+id/bidsStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="dasdasdasd"
+                android:textAllCaps="false"
+                android:textColor="@color/red"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="MissingConstraints" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/consFirstAcceptRide"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -320,34 +350,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintNC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/consDynamicSEPoint">
-
-            <TextView
-                android:id="@+id/bidsStatus"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="dasdasdasd"
-                android:textAllCaps="false"
-                android:textColor="@color/red"
-                android:textSize="@dimen/normal_txt_size_12"
-                android:textStyle="bold"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:ignore="MissingConstraints" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
