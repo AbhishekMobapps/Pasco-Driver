@@ -8,7 +8,6 @@ class CancelReasonRepository @Inject constructor(private val apiService: ApiServ
     suspend fun cancelReason(
 
     ): Observable<CancelReasonResponse> {
-        return apiService.CancelReason(
-        )
+        return apiService.CancelReason()
     }
 }

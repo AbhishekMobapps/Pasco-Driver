@@ -10,13 +10,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelOnClick
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonViewModel
+import com.pasco.pascocustomer.Driver.adapter.CancellationReasonAdapter
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
@@ -34,7 +39,7 @@ import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OrderFragment : Fragment(), ReminderItemClick {
+class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
     private var _binding: FragmentOrderBinding? = null
     private val binding get() = _binding!!
     private lateinit var activity: Activity
@@ -51,6 +56,13 @@ class OrderFragment : Fragment(), ReminderItemClick {
     private var allBiddsList: List<OrderResponse.Datum> = ArrayList()
     private var acceptedList: List<AllBiddsDetailResponse.Datum> = ArrayList()
     private val cancelBookingModelView: CancelBookingModelView by viewModels()
+
+    private val cReasonViewModel: CancelReasonViewModel by viewModels()//
+    private var cancelListA: List<CancelReasonResponse.CancellationList> = ArrayList()
+    private lateinit var recycler_StatusList: RecyclerView
+    private var orderId: String = ""
+    private lateinit var staticTextViewEmptyData: TextView
+    private var dialog: Dialog? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -109,6 +121,52 @@ class OrderFragment : Fragment(), ReminderItemClick {
         allBiddsObserver()
         acceptedObserver()
         return view
+    }
+
+
+    private fun cancelApi() {
+        cReasonViewModel.getCancelReason(
+            progressDialog,
+            requireActivity()
+        )
+    }
+
+
+    private fun cancelApiObserver() {
+        cReasonViewModel.progressIndicator.observe(this, Observer {
+
+        })
+
+        cReasonViewModel.mCancelOrderResponse.observe(this) { response ->
+            val content = response.peekContent()
+            val message = content.msg ?: return@observe
+            cancelListA = content.data!!
+
+
+            if (response.peekContent().status == "False") {
+            } else {
+                if (cancelListA.isEmpty()) {
+                    //hello
+                    staticTextViewEmptyData.visibility = View.VISIBLE
+                    recycler_StatusList.visibility = View.GONE
+                } else {
+                    staticTextViewEmptyData.visibility = View.GONE
+                    recycler_StatusList.visibility = View.VISIBLE
+                    recycler_StatusList.isVerticalScrollBarEnabled = true
+                    recycler_StatusList.isVerticalFadingEdgeEnabled = true
+                    recycler_StatusList.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    recycler_StatusList.adapter =
+                        CancellationReasonAdapter(requireContext(), this, cancelListA)
+                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        }
+        cReasonViewModel.errorResponse.observe(requireActivity()) {
+            // Handle general errors using ErrorUtil
+            ErrorUtil.handlerGeneralError(requireActivity(), it)
+        }
     }
 
 
@@ -218,31 +276,32 @@ class OrderFragment : Fragment(), ReminderItemClick {
     }
 
     override fun reminderItemClick(position: Int, id: Int) {
-        showCancelPopup(id)
+        orderId = id.toString()
+        showCancelPopup()
+    }
+
+
+    override fun cancelOrder(position: Int, bookingID: String) {
+
+    }
+
+    override fun cancelList(position: Int, id: Int) {
+        cancelBooking(id)
+        cancelBookingObserver()
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun showCancelPopup(id: Int) {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.cancel_booking)
-
-        val bookingCancelBtn = dialog.findViewById<TextView>(R.id.bookingCancelBtn)
-        val bookingYesBtn = dialog.findViewById<TextView>(R.id.bookingYesBtn)
+    private fun showCancelPopup() {
+        dialog = Dialog(requireContext())
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.setCancelable(true)
+        dialog?.setContentView(R.layout.cancel_booking)
 
 
-        bookingYesBtn.setOnClickListener {
-            acceptOrRejectApi("", id)
-            acceptOrRejectObserver()
-        }
+        recycler_StatusList = dialog?.findViewById(R.id.recycler_StatusList)!!
+        staticTextViewEmptyData = dialog?.findViewById(R.id.staticTextViewEmptyData)!!
 
-        bookingCancelBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-
-        val window = dialog.window
+        val window =  dialog?.window
         val lp = window?.attributes
         if (lp != null) {
             lp.width = ActionBar.LayoutParams.MATCH_PARENT
@@ -253,26 +312,36 @@ class OrderFragment : Fragment(), ReminderItemClick {
         if (window != null) {
             window.attributes = lp
         }
-
-
-        dialog.show()
+        cancelApi()
+        cancelApiObserver()
+        dialog?.show()
     }
 
-    private fun acceptOrRejectApi(cancelReasonTxt: String, id: Int) {
+    private fun cancelBooking(id: Int) {
         val loinBody = CancelBookingBody(
-            cancelreason = "aa"
+            reasonid = id.toString()
         )
-        cancelBookingModelView.cancelBooking(id.toString(), loinBody, activity, progressDialog)
+        cancelBookingModelView.cancelBooking(orderId, loinBody, activity, progressDialog)
     }
 
-    private fun acceptOrRejectObserver() {
+    private fun cancelBookingObserver() {
         cancelBookingModelView.progressIndicator.observe(this) {}
         cancelBookingModelView.mRejectResponse.observe(
             this
         ) {
             val msg = it.peekContent().msg
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-            getOrderApi()
+            val status = it.peekContent().status
+
+            if (status =="True")
+            {
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                getOrderApi()
+                dialog?.dismiss()
+            }else
+            {
+
+            }
+
         }
         cancelBookingModelView.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(requireContext(), it)
