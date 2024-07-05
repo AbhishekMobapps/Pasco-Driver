@@ -44,25 +44,54 @@
             android:textColor="@color/white"
             android:textSize="@dimen/log_in_txt_size"
             android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/addAmountBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/accountBalance"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/button_background_color"
+                android:gravity="center"
+                android:text="Add"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold"/>
 
 
-        <Button
-            android:id="@+id/withDrawBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_below="@+id/accountBalance"
-            android:layout_gravity="left"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/button_background_color"
-            android:gravity="center"
-            android:text="Add"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/normal_txt_size_12"
-            android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/withDrawBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/accountBalance"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/strokes_background"
+                android:gravity="center"
+                android:text="Add"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold"/>
+
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

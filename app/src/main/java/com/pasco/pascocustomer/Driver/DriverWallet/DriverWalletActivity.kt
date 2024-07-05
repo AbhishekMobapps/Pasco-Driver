@@ -30,8 +30,6 @@ class DriverWalletActivity : AppCompatActivity() {
     private val getAmountViewModel: GetAmountViewModel by viewModels()
     private  var walletC: String= ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
-
-    private var amountP = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
@@ -44,7 +42,7 @@ class DriverWalletActivity : AppCompatActivity() {
         binding.recycerEarningList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        binding.withDrawBtn.setOnClickListener {
+        binding.addAmountBtn.setOnClickListener {
             openWithDrawPopUp()
         }
         getTotalAmount()
@@ -55,17 +53,17 @@ class DriverWalletActivity : AppCompatActivity() {
         getAmountViewModel.mGetAmounttt.observe(this) { response ->
             val message = response.peekContent().msg!!
             val data = response.peekContent().data
-            amountP = data?.walletAmount.toString()
+            val amountP = data?.walletAmount?.toString() ?: "0"
             binding.accountBalanceDri.text = "$amountP USD"
 
             if (response.peekContent().status == "False") {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+               // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
-                if (walletC.equals("amount"))
+             /*   if (walletC.equals("amount"))
                 {
                     val intent = Intent(this@DriverWalletActivity,AcceptRideActivity::class.java)
                     startActivity(intent)
-                }
+                }*/
             }
         }
         addAmountViewModel.errorResponse.observe(this) {

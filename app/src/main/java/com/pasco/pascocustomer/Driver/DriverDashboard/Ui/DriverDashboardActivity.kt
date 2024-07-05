@@ -171,9 +171,9 @@ class DriverDashboardActivity : AppCompatActivity() {
         // Set up listener for switch button changes
         binding.switchbtn.setOnCheckedChangeListener { _, isChecked ->
             switchCheck = if (isChecked) {
-                "1"
+                "ON"
             } else {
-                "0"
+                "OFF"
             }
             markOnDuty()
         }
@@ -524,7 +524,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 OnDutyStatus = response.peekContent().duty.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
                 val homeFragment = HomeFragment()

@@ -353,6 +353,9 @@
     <string name="app_survey">App Survey</string>
     <string name="filter">Filter</string>
     <string name="my_bids">My Bids</string>
+    <string name="debit_amount">Debit Amount : -</string>
+    <string name="dateSpace">Date : -</string>
+    <string name="payment_mode_space">Payment Mode :-</string>
 
 
 </resources>
