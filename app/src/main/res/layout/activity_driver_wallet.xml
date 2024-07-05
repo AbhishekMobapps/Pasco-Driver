@@ -11,18 +11,19 @@
         android:id="@+id/MainLinearHis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="vertical"
         android:layout_margin="10dp"
-        android:background="@drawable/button_background">
+        android:background="@drawable/button_background"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp">
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/totalbalance"
                 android:layout_width="wrap_content"
@@ -33,14 +34,15 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
         <TextView
             android:id="@+id/accountBalanceDri"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="USD"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
+            android:text="USD"
             android:textColor="@color/white"
             android:textSize="@dimen/log_in_txt_size"
             android:textStyle="bold" />
@@ -91,6 +93,46 @@
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/accountBalance">
+
+            <Button
+                android:id="@+id/withDrawBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/cancel"
+                android:gravity="center"
+                android:text="Add"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/withdrawAmountBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/cancel"
+                android:gravity="center"
+                android:text="Withdraw"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
 
     </LinearLayout>
@@ -98,31 +140,16 @@
 
     <LinearLayout
         android:id="@+id/linearTransactionLimitt"
-        android:layout_width="0dp"
+        android:layout_width="220dp"
         android:layout_height="45dp"
-        app:layout_constraintWidth_percent=".7"
-        android:background="@drawable/transaction_devit"
-        android:layout_marginLeft="10dp"
         android:layout_gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MainLinearHis"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="@dimen/text_size_16"
-        android:weightSum="2">
-
-        <TextView
-            android:id="@+id/historyText"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:textSize="16dp"
-            android:background="@drawable/debit_background"
-            android:layout_weight="1"
-            android:text="History"/>
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MainLinearHis"
+        app:layout_constraintWidth_percent=".7">
 
 
         <TextView
@@ -130,13 +157,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/black_dark"
-            android:background="@drawable/creditback"
-            android:textSize="16dp"
             android:layout_weight="1"
-            android:text="Transactions"/>
+            android:background="@drawable/creditback"
+            android:gravity="center"
+            android:text="@string/all_transactions"
+            android:textColor="@color/black_dark"
+            android:textSize="16dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -145,6 +172,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

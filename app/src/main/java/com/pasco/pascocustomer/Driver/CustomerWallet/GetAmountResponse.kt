@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-class GetAmountResponse:Serializable {
+class GetAmountResponse : Serializable {
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -19,8 +19,7 @@ class GetAmountResponse:Serializable {
     @Expose
     var data: GetAmountResponseData? = null
 
-    inner class GetAmountResponseData:Serializable
-    {
+    inner class GetAmountResponseData : Serializable {
         @SerializedName("id")
         @Expose
         var id: Int? = null
@@ -31,8 +30,42 @@ class GetAmountResponse:Serializable {
 
         @SerializedName("wallet_amount")
         @Expose
-        var walletAmount: Float? = null
+        var walletAmount: Double? = null
 
+        @SerializedName("transactions")
+        @Expose
+        var transactions: List<Transaction>? = null
+    }
+
+    inner class Transaction : Serializable {
+
+        @SerializedName("id")
+        @Expose
+        var id: Int? = null
+
+        @SerializedName("amount")
+        @Expose
+        var amount: Double? = null
+
+        @SerializedName("transaction_type")
+        @Expose
+        var transactionType: String? = null
+
+        @SerializedName("orderid")
+        @Expose
+        var orderid: Any? = null
+
+        @SerializedName("pickup_location")
+        @Expose
+        var pickupLocation: Any? = null
+
+        @SerializedName("drop_location")
+        @Expose
+        var dropLocation: Any? = null
+
+        @SerializedName("created_at")
+        @Expose
+        var createdAt: String? = null
     }
 
 }

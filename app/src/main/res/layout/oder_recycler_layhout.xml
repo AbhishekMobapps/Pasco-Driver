@@ -143,7 +143,7 @@
                     android:id="@+id/cancelBookingBtn"
                     android:layout_width="60dp"
                     android:layout_height="30dp"
-                    android:background="@color/earth_yellow"
+                    android:background="@drawable/cancel"
                     android:gravity="center"
                     android:text="@string/cancle"
                     android:textColor="@color/white"

@@ -37,10 +37,10 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
     private lateinit var binding:FragmentDriverOrdersBinding
     private lateinit var activity: Activity
     private var driverHistory:List<DAllOrderResponse.DAllOrderResponseData> = ArrayList()
-    private var cancelList:List<CancelReasonResponse.CancellationList> = ArrayList()
+    private var cancelListA:List<CancelReasonResponse.CancellationList> = ArrayList()
     private val dAllOrdersViewModel: DAllOrdersViewModel by viewModels()
     private val currentOrdersViewModel: CurrentOrdersViewModel by viewModels()
-    private val cReasonViewModel: CancelReasonViewModel by viewModels()
+    private val cReasonViewModel: CancelReasonViewModel by viewModels()//
     private val driveCancelReasonViewModel: DriverCancelViewModel by viewModels()
     private lateinit var dialog: BottomSheetDialog
     private lateinit var recycler_StatusList: RecyclerView
@@ -238,10 +238,16 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         backArrowCancelPopUp.setOnClickListener {
             dialog.dismiss()
         }
-        cancelApiObsever(dialog)
+        cancelApiObsever()
+    }
+    private fun cancelApi() {
+        cReasonViewModel.getCancelReason(
+            progressDialog,
+            requireActivity()
+        )
     }
 
-    private fun cancelApiObsever(dialog: BottomSheetDialog) {
+    private fun cancelApiObsever() {
         cReasonViewModel.progressIndicator.observe(this, Observer {
             // Handle progress indicator changes if needed
         })
@@ -249,12 +255,12 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         cReasonViewModel.mCancelOrderResponse.observe(this) { response ->
             val content = response.peekContent()
             val message = content.msg ?: return@observe
-            cancelList = content.data!!
+            cancelListA = content.data!!
 
 
             if (response.peekContent().status == "False") {
             } else {
-                if (cancelList.isEmpty()) {
+                if (cancelListA.isEmpty()) {
                     //hello
                     staticTextViewEmptyData.visibility = View.VISIBLE
                     recycler_StatusList.visibility = View.GONE
@@ -265,7 +271,7 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
                     recycler_StatusList.isVerticalFadingEdgeEnabled = true
                     recycler_StatusList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    recycler_StatusList.adapter = CancellationReasonAdapter(requireContext(),this, cancelList)
+                    recycler_StatusList.adapter = CancellationReasonAdapter(requireContext(),this, cancelListA)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
@@ -277,12 +283,6 @@ class DriverOrdersFragment : Fragment(),CancelOnClick{
         }
     }
 
-    private fun cancelApi() {
-        cReasonViewModel.getCancelReason(
-            progressDialog,
-            requireActivity()
-        )
-    }
 
 
 }
