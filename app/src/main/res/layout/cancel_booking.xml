@@ -5,61 +5,73 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
-        android:layout_height="130dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.85">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/left_right_corner"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/pleaseTxt"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/are_you_sure_you_want_to_cancel_booking"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            app:layout_constraintHeight_percent=".06"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".95">
+
+            <ImageView
+                android:id="@+id/backArrowCancelPopUp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="5dp"
+                android:src="@drawable/back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/enteramounttxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="10dp"
+                android:text="@string/update_your_status"
+                android:textColor="@color/black"
+                android:textSize="@dimen/normal_txt_size"
+                android:visibility="gone"
+                android:textStyle="bold"
+                app:layout_constraintWidth_percent=".8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/backArrowCancelPopUp"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/staticTextViewEmptyData"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/no_data_has_been_found"
+            android:textColor="@color/black"
+            android:textSize="@dimen/normal_txt_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintWidth_percent=".9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/bookingYesBtn"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="40dp"
-            android:background="@color/earth_yellow"
-            android:gravity="center"
-            android:text="@string/yes"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_StatusList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.707"
+            app:layout_constraintHeight_percent=".94"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pleaseTxt"
-            app:layout_constraintWidth_percent="0.8" />
-
-        <TextView
-            android:id="@+id/bookingCancelBtn"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="40dp"
-            android:background="@color/earth_yellow"
-            android:gravity="center"
-            android:text="@string/no"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/bookingYesBtn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pleaseTxt"
-            app:layout_constraintWidth_percent="0.8" />
-
-
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

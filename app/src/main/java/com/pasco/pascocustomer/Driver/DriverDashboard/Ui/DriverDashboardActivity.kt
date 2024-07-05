@@ -123,16 +123,12 @@ class DriverDashboardActivity : AppCompatActivity() {
                 handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
         }
-
-    /*    if (dAdminApprovedStatus != "Approved") {
-=======
-     /*   if (dAdminApprovedStatus != "Approved") {
-
-            disableAllExceptMore()
-            openPopUp()
-        } else if (dAdminApprovedStatus == "Approved") {
-            enableAll()
-        }*/
+        /*    if (dAdminApprovedStatus != "Approved") {
+                disableAllExceptMore()
+                openPopUp()
+            } else if (dAdminApprovedStatus == "Approved") {
+                enableAll()
+            }*/
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()

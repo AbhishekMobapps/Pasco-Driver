@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -16,11 +17,16 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
+import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
+import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
+import com.pasco.pascocustomer.userFragment.order.adapter.OrderAdapter
+import com.pasco.pascocustomer.userFragment.order.odermodel.OrderResponse
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,18 +36,21 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
-    private  var walletC: String= ""
+    private var walletC: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
     private var amountP = ""
     private var addWallet = ""
+    private var transactionHistoryAdapter: TransactionHistoryAdapter? = null
+    private var transactionList: List<GetAmountResponse.Transaction> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
-        walletC  = intent.getStringExtra("wallet").toString()
+
+        walletC = intent.getStringExtra("wallet").toString()
 
         addWallet = intent.getStringExtra("addWallet").toString()
 
@@ -55,10 +64,11 @@ class DriverWalletActivity : AppCompatActivity() {
         }
         getTotalAmount()
         getTotalAmountObserver()
+        // getTotalDriverAmountObserver()
     }
 
 
-    private fun getTotalAmountObserver() {
+    private fun getTotalDriverAmountObserver() {
         getAmountViewModel.mGetAmounttt.observe(this) { response ->
             val message = response.peekContent().msg!!
             val data = response.peekContent().data
@@ -68,9 +78,8 @@ class DriverWalletActivity : AppCompatActivity() {
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
-                if (walletC.equals("amount"))
-                {
-                    val intent = Intent(this@DriverWalletActivity,AcceptRideActivity::class.java)
+                if (walletC == "amount") {
+                    val intent = Intent(this@DriverWalletActivity, AcceptRideActivity::class.java)
                     startActivity(intent)
                 }
             }
@@ -79,7 +88,6 @@ class DriverWalletActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
-
 
 
     @SuppressLint("MissingInflatedId")
@@ -115,9 +123,11 @@ class DriverWalletActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent = Intent(this,ComlpleteStatusActivity::class.java)
-                intent.putExtra("addWallet",addWallet)
+                val intent = Intent(this, ComlpleteStatusActivity::class.java)
+                intent.putExtra("addWallet", addWallet)
+                intent.putExtra("walletC", walletC)
                 startActivity(intent)
+                finish()
                 dialog.dismiss()
                 getTotalAmount()
 
@@ -137,6 +147,7 @@ class DriverWalletActivity : AppCompatActivity() {
             val message = response.peekContent().msg!!
             val status = response.peekContent().status!!
             val data = response.peekContent().data
+            transactionList = response.peekContent().data?.transactions!!
 
 
             if (status == "False") {
@@ -147,6 +158,13 @@ class DriverWalletActivity : AppCompatActivity() {
                 amountP = data?.walletAmount.toString()
                 binding.accountBalanceDri.text = "$amountP USD"
 
+                binding.recycerEarningList.visibility = View.VISIBLE
+                binding.recycerEarningList.isVerticalScrollBarEnabled = true
+                binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
+                binding.recycerEarningList.layoutManager =
+                    LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                transactionHistoryAdapter = TransactionHistoryAdapter(this, transactionList)
+                binding.recycerEarningList.adapter = transactionHistoryAdapter
 
             }
         }
@@ -154,4 +172,6 @@ class DriverWalletActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
+
 }
