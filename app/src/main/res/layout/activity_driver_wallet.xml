@@ -15,11 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/earth_yellow">
-
 
         <ImageView
             android:id="@+id/backArrowImgBhdDetails"
@@ -37,8 +32,6 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="70dp"
             android:gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="70dp"
             android:text="@string/my_wallet_driver"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_16"
@@ -121,7 +114,6 @@
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/cancel"
                 android:gravity="center"
-                android:visibility="gone"
                 android:text="Withdraw"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
@@ -137,12 +129,13 @@
     <LinearLayout
         android:id="@+id/linearTransactionLimitt"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="@dimen/text_size_16"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         android:weightSum="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -151,13 +144,13 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1.2">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/crediText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
                 android:background="@drawable/creditback"
                 android:gravity="center"
@@ -171,19 +164,21 @@
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:layout_marginLeft="10dp"
-            android:layout_weight=".7"
+            android:layout_weight="1"
             android:background="@drawable/creditback">
 
             <Spinner
                 android:id="@+id/spinnerFilter"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
                 android:background="@null"
                 android:gravity="center"
                 android:text="@string/english"
+                android:textAlignment="center"
                 android:textColor="@color/grey"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -195,7 +190,6 @@
                 android:layout_centerInParent="true"
                 android:layout_marginRight="15dp"
                 android:src="@drawable/filter"
-
                 app:tint="@color/black" />
         </RelativeLayout>
 
@@ -207,7 +201,6 @@
         android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
-        android:visibility="gone"
         android:layout_marginTop="@dimen/text_size_16"
         android:layout_marginRight="10dp"
         android:visibility="gone"
@@ -229,77 +222,6 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/linearTransactionLimitMyTransaction"
-        android:layout_width="220dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="@dimen/text_size_16"
-        android:layout_marginRight="10dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitt"
-        app:layout_constraintWidth_percent=".7">
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/my_transactions"
-            android:textColor="@color/black"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/consTopDesign"
-        android:layout_width="0dp"
-        app:layout_constraintWidth_percent=".95"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.06"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="15dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitMyTransaction"
-        android:background="@drawable/order_background"
-        android:backgroundTint="@color/whitedarkDcolor">
-
-
-        <TextView
-            android:id="@+id/transactionHisTextview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/transaction_history"
-            app:layout_constraintWidth_percent=".5"
-            android:gravity="center"
-            android:textSize="@dimen/text_size_16"
-            android:background="@drawable/order_bidding_yellow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/white"/>
-
-        <TextView
-            android:id="@+id/withdrawHisTextview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/withdraw_history"
-            app:layout_constraintWidth_percent=".5"
-            android:gravity="center"
-            android:textSize="@dimen/text_size_16"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/black"/>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/consTopDesign"
@@ -359,8 +281,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/consTopDesign"
         app:layout_constraintVertical_bias="0.0" />
-
-  app:layout_constraintTop_toBottomOf="@+id/consTopDesign" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

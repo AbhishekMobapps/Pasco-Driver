@@ -76,9 +76,11 @@ class TransactionHistoryAdapter(
                 showFullAddressDialog(
                     orderList[position].pickupLocation!!,
                     orderList[position].dropLocation!!
-                  }
-       
+                )
+            }
 
+
+        }
     }
 
     override fun getItemCount(): Int {

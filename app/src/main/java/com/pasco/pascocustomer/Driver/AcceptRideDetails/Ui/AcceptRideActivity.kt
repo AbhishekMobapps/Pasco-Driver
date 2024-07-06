@@ -96,9 +96,10 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
         activity = this
 
-        reqId = intent.getStringExtra("rideReqId").orEmpty()
-        PascoApp.encryptedPrefs.requestOrderId = reqId
+       // reqId = intent.getStringExtra("rideReqId").orEmpty()
+
         orderID = PascoApp.encryptedPrefs.requestOrderId
+        Log.e("orderID", "onCreate: "+orderID )
 
         one = intent.getIntExtra("one", -1) // Default value set to -1
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
@@ -124,6 +125,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         getBidObserver()
         binding.imageBackReqRide.setOnClickListener {
+            PascoApp.encryptedPrefs.requestOrderId = ""
             finish()
         }
         /*  pickupLocation = LatLng(28.6076, 77.3683) // New York City
@@ -421,7 +423,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
                 intent.putExtra("totalPriceLoc", totalPriceLoc)
                 intent.putExtra("onee", one)
                 startActivity(intent)
-
+                PascoApp.encryptedPrefs.requestOrderId = ""
             }
 
         }
@@ -465,7 +467,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         addBidingViewModel.addBidingData(
             progressDialog,
             activity,
-            reqId,
+            orderID,
             addBiddingBody
         )
     }
@@ -488,7 +490,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun getBidDetailsApi() {
         acceptRideViewModel.getAcceptRideData(
             activity,
-            reqId
+            orderID
         )
     }
 
