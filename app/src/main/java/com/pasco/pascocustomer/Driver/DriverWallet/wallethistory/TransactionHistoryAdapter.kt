@@ -75,13 +75,14 @@ class TransactionHistoryAdapter(
             } else {
                 showFullAddressDialog(
                     orderList[position].pickupLocation!!,
-                    orderList[position].dropLocation!!)
-                  }
-       
+                    orderList[position].dropLocation!!
+                )
+            }
+
 
         }
     }
-    }
+
 
     override fun getItemCount(): Int {
         return orderList.size

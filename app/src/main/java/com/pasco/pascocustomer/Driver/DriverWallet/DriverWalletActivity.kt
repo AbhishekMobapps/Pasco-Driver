@@ -20,6 +20,8 @@ import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -32,6 +34,7 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
+    private val withdrawAmountViewModel: WithdrawAmountViewModel by viewModels()
     private var walletC: String = ""
     private var userType: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -52,6 +55,7 @@ class DriverWalletActivity : AppCompatActivity() {
         walletC = intent.getStringExtra("wallet").toString()
 
         userType = PascoApp.encryptedPrefs.userType
+        withdrawMoneyObserver()
 
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
@@ -128,7 +132,7 @@ class DriverWalletActivity : AppCompatActivity() {
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
         submit_WithDrawBtn.setOnClickListener {
-            withdrawAmountBody = WithdrawAmountBody(
+           val  withdrawAmountBody = WithdrawAmountBody(
                 amountWithdrawEditD.text.toString()
             )
             //call api()
@@ -138,7 +142,7 @@ class DriverWalletActivity : AppCompatActivity() {
                 withdrawAmountBody
             )
             //observer
-            addMoneyObserver()
+            withdrawMoneyObserver()
         }
 
     }
