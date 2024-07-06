@@ -489,7 +489,8 @@ interface ApiServices {
     ): Observable<GetAmountResponse>
 
     //withdraw amount
-    @GET("withdraw-wallet/")
+    @Headers("Accept:application/json")
+    @POST("withdraw-wallet/")
     fun withdrawAmount(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: WithdrawAmountBody

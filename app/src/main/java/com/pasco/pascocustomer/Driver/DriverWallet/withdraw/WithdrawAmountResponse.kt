@@ -14,5 +14,5 @@ class WithdrawAmountResponse {
 
     @SerializedName("amount")
     @Expose
-    var amount: String? = null
+    var amount: Double? = null
 }
