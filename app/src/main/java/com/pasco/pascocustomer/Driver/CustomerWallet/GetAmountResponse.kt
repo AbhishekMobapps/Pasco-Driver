@@ -53,15 +53,19 @@ class GetAmountResponse : Serializable {
 
         @SerializedName("orderid")
         @Expose
-        var orderid: Any? = null
+        var orderid: Int? = null
 
         @SerializedName("pickup_location")
         @Expose
-        var pickupLocation: Any? = null
+        var pickupLocation: String? = null
 
         @SerializedName("drop_location")
         @Expose
-        var dropLocation: Any? = null
+        var dropLocation: String? = null
+
+        @SerializedName("payment_status")
+        @Expose
+        var paymentStatus: String? = null
 
         @SerializedName("created_at")
         @Expose

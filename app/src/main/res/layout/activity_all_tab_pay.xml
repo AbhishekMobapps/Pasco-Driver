@@ -240,7 +240,7 @@
 
                     <TextView
                         android:id="@+id/subtractBtn"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/subract_button"
                         android:gravity="center"
@@ -253,7 +253,7 @@
 
                     <TextView
                         android:id="@+id/addBtn"
-                        android:layout_width="80dp"
+                        android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/add_button"
                         android:gravity="center"

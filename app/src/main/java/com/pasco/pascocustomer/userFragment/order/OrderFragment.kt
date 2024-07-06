@@ -175,9 +175,9 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
     }
 
     private fun orderObserver() {
-        orderModelView.progressIndicator.observe(this) {
+        orderModelView.progressIndicator.observe(requireActivity()) {
         }
-        orderModelView.mRejectResponse.observe(this) {
+        orderModelView.mRejectResponse.observe(requireActivity()) {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             if (success == "True") {
@@ -199,7 +199,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
             }
         }
 
-        orderModelView.errorResponse.observe(this) {
+        orderModelView.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
             //errorDialogs()
         }
@@ -211,9 +211,9 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
     }
 
     private fun allBiddsObserver() {
-        allBiddsModelView.progressIndicator.observe(this) {
+        allBiddsModelView.progressIndicator.observe(requireActivity()) {
         }
-        allBiddsModelView.mRejectResponse.observe(this) {
+        allBiddsModelView.mRejectResponse.observe(requireActivity()) {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             if (success == "True") {
@@ -234,7 +234,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
             }
         }
 
-        allBiddsModelView.errorResponse.observe(this) {
+        allBiddsModelView.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
             //errorDialogs()
         }
@@ -246,9 +246,9 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
     }
 
     private fun acceptedObserver() {
-        acceptedModelView.progressIndicator.observe(this) {
+        acceptedModelView.progressIndicator.observe(requireActivity()) {
         }
-        acceptedModelView.mRejectResponse.observe(this) {
+        acceptedModelView.mRejectResponse.observe(requireActivity()) {
             val message = it.peekContent().msg
             val success = it.peekContent().status
             if (success == "True") {
@@ -269,7 +269,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
             }
         }
 
-        acceptedModelView.errorResponse.observe(this) {
+        acceptedModelView.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
             //errorDialogs()
         }

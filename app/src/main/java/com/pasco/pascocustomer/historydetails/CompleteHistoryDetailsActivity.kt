@@ -53,6 +53,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
     private var userImage = ""
     private var paymentStatus = ""
     private var userType = ""
+    private var upfrontPayment = ""
     private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     var bottomSheetDialog: BottomSheetDialog? = null
@@ -82,16 +83,19 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         paymentStatus = intent.getStringExtra("paymentStatus").toString()
         userName = intent.getStringExtra("userNamee").toString()
         userImage = intent.getStringExtra("userImagee").toString()
-        if (userType.equals("driver")) {
+        upfrontPayment = intent.getStringExtra("upfrontPayment").toString()
+        if (userType == "driver") {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + userImage)
                 .placeholder(R.drawable.man).into(binding.driverProfile)
 
             binding.driverName.text = userName
+            binding.upfrontAmountConst.visibility = View.GONE
         } else {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + driverImage).placeholder(R.drawable.man)
                 .into(binding.driverProfile)
 
             binding.driverName.text = driverName
+            binding.upfrontAmountConst.visibility = View.VISIBLE
         }
 
 
@@ -105,6 +109,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         binding.paymentStatusMode.text = paymentStatus
         binding.totalAmount.text = totalAmount
         binding.bookingStatus.text = bookingStatus
+        binding.upfrontAmount.text = upfrontPayment
 
 
         val formattedTotalDistance =
