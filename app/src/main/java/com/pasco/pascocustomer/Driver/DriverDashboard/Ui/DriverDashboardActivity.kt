@@ -75,7 +75,6 @@ import java.util.Locale
 @AndroidEntryPoint
 class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDriverDashboardBinding
-    private lateinit var naview: NavigationView
     private val getVDetailsViewModel: GetApprovalStatusDModel by viewModels()
     private var city: String? = null
     private var address: String? = null
@@ -125,6 +124,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
 
 
+
         /*    if (dAdminApprovedStatus != "Approved") {
                 disableAllExceptMore()
                 openPopUp()
@@ -133,6 +133,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             }*/
 
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
+
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()
 
@@ -529,7 +530,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
+
+                //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
                 OnDutyStatus = response.peekContent().duty.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
                 val homeFragment = HomeFragment()
