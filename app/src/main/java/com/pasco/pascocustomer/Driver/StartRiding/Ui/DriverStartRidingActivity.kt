@@ -239,7 +239,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         //  driverStatusList()
         //  driverStatusObserver()
 
-        if (!driStatusRunning.isNullOrEmpty() && (!driStatus.isNullOrEmpty())) {
+        if (!driStatusRunning.isNullOrEmpty()) {
             binding.SelectstatusTextView.text = driStatusRunning
         } else {
             binding.SelectstatusTextView.text = "Select Status"

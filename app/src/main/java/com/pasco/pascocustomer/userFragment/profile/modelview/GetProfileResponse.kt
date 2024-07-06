@@ -16,6 +16,10 @@ class GetProfileResponse {
     @SerializedName("data")
     @Expose
     var data: Data? = null
+
+    @SerializedName("Duty")
+    @Expose
+    var duty: Int? = null
     inner class Data : java.io.Serializable
     {
         @SerializedName("id")

@@ -128,6 +128,10 @@ class CompleteHistoryResponse {
         @Expose
         var createdAt: String? = null
 
+        @SerializedName("upfront_payment")
+        @Expose
+        var upfrontPayment: Double? = null
+
         @SerializedName("availability_datetime")
         @Expose
         var availabilityDatetime: String? = null
@@ -139,6 +143,7 @@ class CompleteHistoryResponse {
         @SerializedName("feedback")
         @Expose
         var feedback: Int? = null
+
     }
 
 
