@@ -11,11 +11,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
@@ -25,8 +20,6 @@ import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
-import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
-import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -39,8 +32,6 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
-    private val withdrawAmountViewModel: WithdrawAmountViewModel by viewModels()
-    private lateinit var withdrawAmountBody: WithdrawAmountBody
     private var walletC: String = ""
     private var userType: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -50,7 +41,6 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private var transactionHistoryAdapter: TransactionHistoryAdapter? = null
     private var transactionList: List<GetAmountResponse.Transaction> = ArrayList()
-
 
     private val chooseLanguageList = ArrayList<String>()
     private val strLangList = java.util.ArrayList<String>()
@@ -66,9 +56,6 @@ class DriverWalletActivity : AppCompatActivity() {
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
         }
-
-
-
         if (userType == "driver") {
             binding.withdrawAmountBtn.visibility = View.VISIBLE
             binding.linearTransactionLimitt.visibility = View.GONE
@@ -79,19 +66,15 @@ class DriverWalletActivity : AppCompatActivity() {
                 addWithPop()
             }
         } else {
-
             binding.withdrawAmountBtn.visibility = View.GONE
             binding.linearTransactionLimitt.visibility = View.VISIBLE
             binding.linearTransactionLimitMyTransaction.visibility = View.GONE
             binding.consTopDesign.visibility = View.GONE
         }
 
-
-
         binding.addBtn.setOnClickListener {
             openWithDrawPopUp()
         }
-
 
         chooseLanguageList.add("Credit")
         chooseLanguageList.add("Debit")
@@ -157,6 +140,7 @@ class DriverWalletActivity : AppCompatActivity() {
             //observer
             addMoneyObserver()
         }
+
     }
 
 
@@ -182,7 +166,6 @@ class DriverWalletActivity : AppCompatActivity() {
                 amountWithdrawEditD.text.toString()
             )
             //observer
-            withdrawMoneyObserver()
             addMoneyObserver()
         }
     }
@@ -203,6 +186,7 @@ class DriverWalletActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
 
     private fun addMoneyObserver() {
         addAmountViewModel.mAddAmountResponse.observe(this) { response ->
@@ -267,7 +251,6 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
     }
-
 
     class spinnerAdapter constructor(
         context: Context, textViewResourceId: Int, strInterestedList: List<String>
