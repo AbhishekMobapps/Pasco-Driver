@@ -13,12 +13,14 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -244,7 +246,15 @@ class HomeFragment : Fragment(), SignUpCityName {
         alertDialog?.setCancelable(true)
         alertDialog?.setContentView(R.layout.filter_popup)
         alertDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        alertDialog?.getWindow()!!.setLayout(750, 1200);
+      //  alertDialog?.window?.setLayout(750, 1200)
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        // Calculate the width and height based on screen percentage
+        val dialogWidth = (screenWidth * 0.75).toInt() // 75% of screen width
+        val dialogHeight = (screenHeight * 0.75).toInt() //
         // Show dialog
 
         val searchCountryName =

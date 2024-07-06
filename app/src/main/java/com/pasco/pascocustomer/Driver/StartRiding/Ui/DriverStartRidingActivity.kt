@@ -53,6 +53,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.example.transportapp.DriverApp.MarkDuty.MarkDutyViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -72,6 +73,8 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
+import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
+import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.DriverStatusClickListner
@@ -138,6 +141,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var pickupLocation: LatLng
     private lateinit var dropLocation: LatLng
     private lateinit var poiLocation: LatLng
+    private val markDutyViewModel: MarkDutyViewModel by viewModels()
     private var spinnerDriverSId = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData> = ArrayList()
@@ -329,6 +333,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     }
+
+
 
     private fun selectStatusPopUp() {
         val dialogView = layoutInflater.inflate(R.layout.select_status_popup, null)
@@ -1011,6 +1017,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 binding.finishTripTextView.visibility = View.GONE
+
+
             }
         }
 
@@ -1019,6 +1027,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
+
 
     private fun startTrip(sId: String) {
         val Iddd = sId
