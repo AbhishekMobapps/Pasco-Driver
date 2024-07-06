@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -97,6 +98,7 @@ class AcceptRideAdapter(
                 itemView.setOnClickListener {
                     val id = bookingReq.id.toString()
                     val bookingId = bookingReq.bookingNumber.toString()
+                    PascoApp.encryptedPrefs.requestOrderId = id
                     val intent = Intent(context, AcceptRideActivity::class.java)
                     intent.putExtra("rideReqId", id)
                     intent.putExtra("bookingNumb", bookingId)

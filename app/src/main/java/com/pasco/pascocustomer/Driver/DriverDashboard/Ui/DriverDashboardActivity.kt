@@ -203,6 +203,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         binding.HomeFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
+            requestLocationUpdates()
             val homeFragment = HomeFragment()
             replace_fragment(homeFragment)
             getUserProfileObserver()
@@ -222,6 +223,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         binding.OrderFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
+            requestLocationUpdates()
             val driverOrdersFragment = DriverOrdersFragment()
             replace_fragment(driverOrdersFragment)
             navItemIndex = 2
@@ -239,6 +241,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         binding.LinearMoreIcon.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
+            requestLocationUpdates()
             val driverMoreFragment = DriverMoreFragment()
             replace_fragment(driverMoreFragment)
             navItemIndex = 3
@@ -257,6 +260,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         binding.tripHistoryFragmentDri.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.VISIBLE
+            requestLocationUpdates()
             val tripHistoryFragment = TripHistoryFragment()
             replace_fragment(tripHistoryFragment)
             navItemIndex = 4
@@ -275,6 +279,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         binding.PrfileDfragment.setOnClickListener {
             binding.firstConsLayouttt.visibility = View.GONE
+            requestLocationUpdates()
             val driverProfileFragment = DriverProfileFragment()
             replace_fragment(driverProfileFragment)
             navItemIndex = 5
@@ -443,6 +448,7 @@ class DriverDashboardActivity : AppCompatActivity() {
                     val addressObj = addresses[0]
                     address = addressObj.getAddressLine(0)
                     city = addressObj.locality
+                    binding.driverGreeting.text = city
                     val countryCode = addressObj.countryCode
                     countryName = addressObj.countryName.toString()
                     val address = addresses[0].getAddressLine(0)
@@ -503,7 +509,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
             var city = response.peekContent().data!!.currentCity
-            binding.driverGreeting.text = city
+          //  binding.driverGreeting.text = city
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
@@ -699,6 +705,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             getNotificationCountDApi()
         }
         getProfileApi()
+        requestLocationUpdates()
     }
 
     private fun getNotificationPermission() {
