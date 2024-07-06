@@ -7,10 +7,7 @@ import retrofit2.http.Body
 import javax.inject.Inject
 
 class UpdateLocationRepository @Inject constructor(private val apiService: ApiServices) {
-    suspend fun updateLocationRepository(
-        @Body body: UpdationLocationBody
-
-
+    suspend fun updateLocationRepository(@Body body: UpdationLocationBody
     ): Observable<UpdateLocationResponse> {
         return apiService.updateGeolocation(PascoApp.encryptedPrefs.bearerToken, body)
     }

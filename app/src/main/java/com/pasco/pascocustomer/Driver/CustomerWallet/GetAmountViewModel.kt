@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountRepository
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
+import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +27,7 @@ import javax.inject.Inject
 class GetAmountViewModel @Inject constructor(
     application: Application,
     private val getAmountRepository: GetAmountRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
@@ -34,22 +36,26 @@ class GetAmountViewModel @Inject constructor(
 
     fun getAmountData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: GetAddWalletDataBody
 
     ) =
         viewModelScope.launch {
-            getAmountDatas( progressDialog,
-                activity)
+            getAmountDatas(
+                progressDialog,
+                activity,
+                body
+            )
         }
+
     suspend fun getAmountDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
-    )
-
-    {
+        activity: Activity,
+        body: GetAddWalletDataBody
+    ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        getAmountRepository.getAmountRepository()
+        getAmountRepository.getAmountRepository(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetAmountResponse>() {
@@ -64,6 +70,7 @@ class GetAmountViewModel @Inject constructor(
                     progressDialog.stop()
                     errorResponse.value = e
                 }
+
                 override fun onComplete() {
                     progressDialog.stop()
                     progressIndicator.value = false

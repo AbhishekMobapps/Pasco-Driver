@@ -91,7 +91,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="20-07-2024"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:text="PASCO4251WR44"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -162,7 +162,7 @@
                 android:gravity="start"
                 android:layout_marginLeft="2dp"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView4"
                 app:layout_constraintTop_toTopOf="parent"
@@ -235,7 +235,7 @@
                 android:layout_height="wrap_content"
                 android:text="35 km"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -270,7 +270,7 @@
                 android:layout_height="wrap_content"
                 android:text="cash"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -304,7 +304,7 @@
                 android:layout_height="wrap_content"
                 android:text="cash"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

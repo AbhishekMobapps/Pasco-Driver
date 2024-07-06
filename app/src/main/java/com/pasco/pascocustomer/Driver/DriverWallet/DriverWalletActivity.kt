@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.Driver.DriverWallet
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -21,6 +23,7 @@ import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountV
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
 import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
+import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
 import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
 import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewModel
@@ -44,9 +47,13 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private var amountP = ""
     private var addWallet = ""
+    private var itemValue = ""
     private var transactionHistoryAdapter: TransactionHistoryAdapter? = null
     private var transactionList: List<GetAmountResponse.Transaction> = ArrayList()
 
+
+    private val chooseLanguageList = ArrayList<String>()
+    private val strLangList = java.util.ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
@@ -59,6 +66,9 @@ class DriverWalletActivity : AppCompatActivity() {
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
         }
+
+      
+
         if (userType == "driver")
         {
            binding.withdrawAmountBtn.visibility = View.VISIBLE
@@ -71,6 +81,7 @@ class DriverWalletActivity : AppCompatActivity() {
             }
         }
         else{
+ 
             binding.withdrawAmountBtn.visibility = View.GONE
             binding.linearTransactionLimitt.visibility = View.VISIBLE
             binding.linearTransactionLimitMyTransaction.visibility = View.GONE
@@ -78,14 +89,42 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
 
-        binding.recycerEarningList.isVerticalScrollBarEnabled = true
-        binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
-        binding.recycerEarningList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
+ 
         binding.addBtn.setOnClickListener {
             openWithDrawPopUp()
         }
+
+
+        chooseLanguageList.add("Credit")
+        chooseLanguageList.add("Debit")
+
+        //Spinner Adapter
+        val dAdapter = spinnerAdapter(this, R.layout.custom_spinner_two, strLangList)
+        dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        dAdapter.add("Filter")
+        dAdapter.addAll(chooseLanguageList)
+        binding.spinnerFilter.adapter = dAdapter
+
+
+
+        binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
+            ) {
+                //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
+                itemValue = binding.spinnerFilter.selectedItem.toString()
+
+                if (itemValue == getString(R.string.select_event)) {
+
+                } else {
+                    getTotalAmount()
+                }
+            }
+
+            override fun onNothingSelected(adapterView: AdapterView<*>?) {
+            }
+        }
+
         getTotalAmount()
         getTotalAmountObserver()
         // getTotalDriverAmountObserver()
@@ -120,6 +159,24 @@ class DriverWalletActivity : AppCompatActivity() {
             //observer
             addMoneyObserver()
         }
+
+
+    @SuppressLint("MissingInflatedId")
+    private fun addWithPop() {
+        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
+        builder.setView(dialogView)
+
+        dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val waCrossImage = dialogView.findViewById<ImageView>(R.id.waCrossImage)
+        val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
+        val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
+        val addAmStaticTextview = dialogView.findViewById<TextView>(R.id.addAmStaticTextview)
+        addAmStaticTextview.text = "Withdraw Amount"
+        dialog.show()
+        waCrossImage.setOnClickListener { dialog.dismiss() }
 
     }
 
@@ -191,10 +248,13 @@ class DriverWalletActivity : AppCompatActivity() {
     }
 
     private fun getTotalAmount() {
+        val body = GetAddWalletDataBody(
 
-        getAmountViewModel.getAmountData(progressDialog, this)
+            transaction_type = itemValue
+        )
 
-        getAmountViewModel.getAmountData(progressDialog, this)
+        getAmountViewModel.getAmountData(progressDialog, this, body)
+
     }
 
     private fun getTotalAmountObserver() {
@@ -228,6 +288,12 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
     }
+}
+
+    class spinnerAdapter constructor(
+        context: Context, textViewResourceId: Int, strInterestedList: List<String>
+    ) : ArrayAdapter<String?>(context, textViewResourceId)
+
 }
 
 

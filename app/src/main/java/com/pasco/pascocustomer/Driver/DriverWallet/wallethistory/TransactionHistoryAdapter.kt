@@ -69,11 +69,15 @@ class TransactionHistoryAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            showFullAddressDialog(
-                orderList[position].pickupLocation!!,
-                orderList[position].dropLocation!!
-            )
-        }
+            val statusCheck = orderList[position].paymentStatus
+            if (statusCheck == "Add Amount") {
+
+            } else {
+                showFullAddressDialog(
+                    orderList[position].pickupLocation!!,
+                    orderList[position].dropLocation!!
+                  }
+       
 
     }
 

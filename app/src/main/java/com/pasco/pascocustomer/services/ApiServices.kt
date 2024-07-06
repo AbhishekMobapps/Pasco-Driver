@@ -11,8 +11,12 @@ import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusRes
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedResponse
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
+
 import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
 import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountResponse
+
+import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
+
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
@@ -229,10 +233,7 @@ interface ApiServices {
     ): Observable<AllBiddsDetailResponse>
 
 
-    @GET("user-update-profile/")
-    fun getProfileDetails(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
-    ): Observable<GetProfileResponse>
+
 
     @Multipart
     @Headers("Accept:application/json")
@@ -469,22 +470,7 @@ interface ApiServices {
     ): Observable<UpdateLocationResponse>
 
     //user Api
-    @FormUrlEncoded
-    @POST("ride-booking/")
-    fun bookRideServices(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
-        @Field("cargo") cargo: String,
-        @Field("cargo_quantity") cargo_quantity: String,
-        @Field("pickup_location") pickup_location: String,
-        @Field("drop_location") drop_location: String,
-        @Field("pickup_city") pickup_city: String,
-        @Field("drop_city") drop_city: String,
-        @Field("pickup_latitude") pickup_latitude: String,
-        @Field("pickup_longitude") pickup_longitude: String,
-        @Field("drop_latitude") drop_latitude: String,
-        @Field("drop_longitude") drop_longitude: String,
-        @Field("pickup_datetime") pickup_datetime: String
-    ): Observable<BookingRideResponse>
+
 
 
     //add wallet Money
@@ -496,9 +482,10 @@ interface ApiServices {
     ): Observable<AddAmountResponse>
 
     //get User wallet balance
-    @GET("addUserWallet/")
+    @POST("userwallet-detail/")
     fun getUserWallet(
-        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: GetAddWalletDataBody
     ): Observable<GetAmountResponse>
 
     //withdraw amount

@@ -63,6 +63,19 @@ class GetAmountResponse : Serializable {
         @Expose
         var dropLocation: String? = null
 
+        @SerializedName("upfront_amount")
+        @Expose
+        var upfrontAmount: Double? = null
+
+        @SerializedName("upfront_status")
+        @Expose
+        var upfrontStatus: String? = null
+
+        @SerializedName("left_price")
+        @Expose
+        var leftPrice: Any? = null
+
+
         @SerializedName("payment_status")
         @Expose
         var paymentStatus: String? = null
