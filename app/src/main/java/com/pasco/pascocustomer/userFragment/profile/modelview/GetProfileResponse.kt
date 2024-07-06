@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.userFragment.profile.modelview
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class GetProfileResponse {
     @SerializedName("status")
@@ -16,7 +17,12 @@ class GetProfileResponse {
     @SerializedName("data")
     @Expose
     var data: Data? = null
-    inner class Data : java.io.Serializable
+
+    @SerializedName("Duty")
+    @Expose
+    var duty: Int? = null
+
+    inner class Data : Serializable
     {
         @SerializedName("id")
         @Expose

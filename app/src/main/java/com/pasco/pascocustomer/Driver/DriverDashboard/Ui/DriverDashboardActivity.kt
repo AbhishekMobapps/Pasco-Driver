@@ -75,7 +75,6 @@ import java.util.Locale
 @AndroidEntryPoint
 class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDriverDashboardBinding
-    private lateinit var naview: NavigationView
     private val getVDetailsViewModel: GetApprovalStatusDModel by viewModels()
     private var city: String? = null
     private var address: String? = null
@@ -123,13 +122,8 @@ class DriverDashboardActivity : AppCompatActivity() {
                 handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
         }
-        /*    if (dAdminApprovedStatus != "Approved") {
-                disableAllExceptMore()
-                openPopUp()
-            } else if (dAdminApprovedStatus == "Approved") {
-                enableAll()
-            }*/
-        Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
+
+
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()
 
@@ -146,6 +140,9 @@ class DriverDashboardActivity : AppCompatActivity() {
         getProfileApi()
         getUserProfileObserver()
 
+        val homeFragment = HomeFragment()
+        replace_fragment(homeFragment)
+
         //Api and Observer
         getNotificationCountDApi()
         notificationCountDObserver()
@@ -160,27 +157,26 @@ class DriverDashboardActivity : AppCompatActivity() {
         // Conditional logic to check the switch button state
         if (switchCheck == "1" || one == 1) {
             binding.switchbtn.isChecked = true
-            switchCheck = "1"
+            switchCheck = "ON"
             markOnDuty()
         } else {
             binding.switchbtn.isChecked = false
-            switchCheck = "0"
+            switchCheck = "OFF"
             markOffDuty()
         }
 
         // Set up listener for switch button changes
         binding.switchbtn.setOnCheckedChangeListener { _, isChecked ->
             switchCheck = if (isChecked) {
-                "1"
+                "ON"
             } else {
-                "0"
+                "OFF"
             }
             markOnDuty()
         }
         markOnObserver()
         updateLocationObserver()
-        val homeFragment = HomeFragment()
-        replace_fragment(homeFragment)
+
 
 
         binding.HomeFragmentDri.setOnClickListener {
@@ -524,7 +520,7 @@ class DriverDashboardActivity : AppCompatActivity() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
-                // Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 OnDutyStatus = response.peekContent().duty.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
                 val homeFragment = HomeFragment()

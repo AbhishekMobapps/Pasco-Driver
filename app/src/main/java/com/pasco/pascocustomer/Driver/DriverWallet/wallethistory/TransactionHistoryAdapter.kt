@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,8 +21,10 @@ class TransactionHistoryAdapter(
     private val required: Context,
     private var orderList: List<GetAmountResponse.Transaction>
 
+
 ) :
     RecyclerView.Adapter<TransactionHistoryAdapter.ViewHolder>() {
+    private var userType: String = PascoApp.encryptedPrefs.userType
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val amountStatus: TextView = itemView.findViewById(R.id.amountStatus)
@@ -43,8 +46,13 @@ class TransactionHistoryAdapter(
         // holder.userName.text = orderList[position].user
         holder.statusTxt.text = orderList[position].transactionType
         holder.amountTxtC.text = orderList[position].amount.toString()
+        if (userType == "driver") {
+            holder.amountStatus.text = "Total Amount"
+        } else {
+            holder.amountStatus.text = orderList[position].paymentStatus
+        }
 
-
+        holder.tripIdTxt.text = orderList[position].orderid.toString()
         val dateTime = orderList[position].createdAt
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -60,13 +68,25 @@ class TransactionHistoryAdapter(
             e.printStackTrace()
         }
 
+        holder.itemView.setOnClickListener {
+
+            val statusCheck = orderList[position].paymentStatus
+            if (statusCheck == "Add Amount") {
+
+            } else {
+                showFullAddressDialog(
+                    orderList[position].pickupLocation!!,
+                    orderList[position].dropLocation!!
+                )
+            }
+
+        }
 
     }
 
     override fun getItemCount(): Int {
         return orderList.size
     }
-
 
 
     private fun showFullAddressDialog(
@@ -76,7 +96,7 @@ class TransactionHistoryAdapter(
         val dialog = Dialog(required)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
-        dialog.setContentView(R.layout.show_details)
+        dialog.setContentView(R.layout.show_details_final)
 
 
         val pickUpLocation = dialog.findViewById<TextView>(R.id.pickUpLocation)

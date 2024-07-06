@@ -124,7 +124,7 @@ class CancelledAdapter(
                     val totalAmount = driverTripHistory[position].bidPrice
                     val commissionPrice = driverTripHistory[position].commisionPrice
                     val driverImage = driverTripHistory[position].driverImage
-                    Log.e("CompleteHistoryA", "feedback...$feedback  $totalAmount")
+
                     val intent = Intent(context, CompleteHistoryDetailsActivity::class.java)
 
                     intent.putExtra("id", id.toString())
@@ -141,6 +141,7 @@ class CancelledAdapter(
                     intent.putExtra("commissionPrice", commissionPrice.toString())
                     intent.putExtra("driverImage", driverImage)
                     intent.putExtra("paymentStatus", driverTripHistory[position].paymentStatus)
+                    intent.putExtra("upfrontPayment", driverTripHistory[position].upfrontPayment.toString())
                     context.startActivity(intent)
                 }
 

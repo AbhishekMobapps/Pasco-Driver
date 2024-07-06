@@ -53,6 +53,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
     private var userImage = ""
     private var paymentStatus = ""
     private var userType = ""
+    private var upfrontPayment = ""
     private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     var bottomSheetDialog: BottomSheetDialog? = null
@@ -78,21 +79,29 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         feedback = intent.getStringExtra("feedback").toString()
         totalAmount = intent.getStringExtra("totalAmount").toString()
         commissionPrice = intent.getStringExtra("commissionPrice").toString()
-        userImage = intent.getStringExtra("driverImage").toString()
+        driverImage = intent.getStringExtra("driverImage").toString()
         paymentStatus = intent.getStringExtra("paymentStatus").toString()
         userName = intent.getStringExtra("userNamee").toString()
         userImage = intent.getStringExtra("userImagee").toString()
-        if (userType.equals("driver")) {
+        upfrontPayment = intent.getStringExtra("upfrontPayment").toString()
+
+        Log.e("CompleteHistoryA", "feedback... A $feedback  $userImage")
+        if (userType == "driver") {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + userImage)
                 .placeholder(R.drawable.man).into(binding.driverProfile)
 
             binding.driverName.text = userName
+            binding.upfrontAmountConst.visibility = View.GONE
+
         } else {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + driverImage).placeholder(R.drawable.man)
                 .into(binding.driverProfile)
 
             binding.driverName.text = driverName
+            binding.upfrontAmountConst.visibility = View.VISIBLE
+            binding.upfrontAmount.text = upfrontPayment
         }
+
 
 
         Log.e("CompleteHistoryA", "feedback...$feedback  $totalAmount $driverImage")
@@ -117,15 +126,11 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
             binding.feedbackBtn.visibility = View.VISIBLE
         }
 
-        if (userType.equals("user"))
-        {
+        if (userType.equals("user")) {
             binding.feedbackBtn.setOnClickListener { showFeedbackPopup(id) }
-        }
-        else{
+        } else {
             binding.feedbackBtn.setOnClickListener { showFeedbackDriverPopup(id) }
         }
-
-
 
 
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())

@@ -6,6 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".Driver.DriverWallet.DriverWalletActivity">
 
+    <RelativeLayout
+        android:id="@+id/relativeHeadindfdg"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/earth_yellow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/backArrowImgBhdDetails"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/back"
+            app:tint="@color/white" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="70dp"
+            android:gravity="center_vertical"
+            android:text="@string/my_wallet_driver"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/MainLinearHis"
@@ -14,7 +47,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/button_background"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/relativeHeadindfdg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +86,7 @@
             android:layout_below="@+id/accountBalance">
 
             <Button
-                android:id="@+id/withDrawBtn"
+                android:id="@+id/addBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_gravity="left"
@@ -85,7 +118,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/normal_txt_size_12"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
         </RelativeLayout>
 
 
@@ -94,43 +128,156 @@
 
     <LinearLayout
         android:id="@+id/linearTransactionLimitt"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/text_size_16"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MainLinearHis"
+        app:layout_constraintWidth_percent=".7">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1.2">
+
+            <TextView
+                android:id="@+id/crediText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/creditback"
+                android:gravity="center"
+                android:text="@string/all_transactions"
+                android:textColor="@color/black_dark"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight=".7"
+            android:background="@drawable/creditback">
+
+            <Spinner
+                android:id="@+id/spinnerFilter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:gravity="center"
+                android:text="@string/english"
+                android:textColor="@color/grey"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/see_more_icon"
+                android:layout_width="22dp"
+                android:layout_height="17dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/filter"
+
+                app:tint="@color/black" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearTransactionLimitMyTransaction"
         android:layout_width="220dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="@dimen/text_size_16"
         android:layout_marginRight="10dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MainLinearHis"
+        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitt"
         app:layout_constraintWidth_percent=".7">
 
 
         <TextView
-            android:id="@+id/crediText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/creditback"
             android:gravity="center"
-            android:text="@string/all_transactions"
-            android:textColor="@color/black_dark"
+            android:text="@string/my_transactions"
+            android:textColor="@color/black"
             android:textSize="16dp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/consTopDesign"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/order_background"
+        android:backgroundTint="@color/whitedarkDcolor"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitMyTransaction"
+        app:layout_constraintWidth_percent=".95">
+
+
+        <TextView
+            android:id="@+id/transactionHisTextview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/order_bidding_yellow"
+            android:gravity="center"
+            android:text="@string/transaction_history"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".5" />
+
+        <TextView
+            android:id="@+id/withdrawHisTextview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/withdraw_history"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".5" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycerEarningList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearTransactionLimitt" />
+        app:layout_constraintTop_toBottomOf="@+id/consTopDesign"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

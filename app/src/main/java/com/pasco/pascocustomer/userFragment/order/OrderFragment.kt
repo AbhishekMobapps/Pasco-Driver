@@ -339,7 +339,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 dialog?.dismiss()
             }else
             {
-
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
             }
 
         }
