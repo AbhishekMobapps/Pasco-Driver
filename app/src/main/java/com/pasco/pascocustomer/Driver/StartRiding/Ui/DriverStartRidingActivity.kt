@@ -204,7 +204,9 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
         locationArrayList = ArrayList()
         Bid = intent.getStringExtra("BookId").toString()
+
         driStatusRunning = intent.getStringExtra("driStatus").toString()
+
         driId = intent.getStringExtra("driverStatusId").toString()
         orderStatusDriverR = intent.getStringExtra("currentOrder").toString()
         Plat = intent.getStringExtra("latitudePickUp")?.toDoubleOrNull() ?: 0.0
@@ -215,18 +217,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         val image = intent.getStringExtra("image").toString()
 
 
-        // Log the values for checking
-        Log.e("IntentValues", "BookId: $Bid")
-        Log.e("IntentValues", "latitudePickUp: $Plat")
-        Log.e("IntentValues", "longitudePickUp: $Plon")
-        Log.e("IntentValues", "latitudeDrop: $Dlan")
-        Log.e("IntentValues", "longitudeDrop: $Dlon")
-        Log.e("IntentValues", "deltime: $deliveryTime")
-        Log.e("IntentValues", "image: $image")
-        Log.e("driverStatus", "driverStatus: $driStatus,driverId: $driId")
 
-        Log.d("PickupLocation", "Latitude: $Plat, Longitude: $Plon")
-        Log.d("DropLocation", "Latitude: $Dlan, Longitude: $Dlon")
+        Log.d("driStatusRunningAAA", "driStatusRunning..... $driStatusRunning")
 
         activity = this
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -236,17 +228,14 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
         pickupLocation = LatLng(Plat, Plon)
         dropLocation = LatLng(Dlan, Dlon)
-        // Request location updates
-        requestLocationUpdates()
-        //camera permission
-        requestPermission()
-        //  driverStatusList()
-        //  driverStatusObserver()
 
-        if (!driStatusRunning.isNullOrEmpty()) {
-            binding.SelectstatusTextView.text = driStatusRunning
-        } else {
+        requestLocationUpdates()
+        requestPermission()
+
+        if (driStatusRunning == "null") {
             binding.SelectstatusTextView.text = "Select Status"
+        } else {
+            binding.SelectstatusTextView.text = driStatusRunning
         }
 
         binding.textViewSeeDetailsSR.setOnClickListener {
@@ -282,7 +271,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
                     } else {
                         spinnerDriverSId = routeType?.get(i)?.id.toString()
-                    //call vehicleType
+                        //call vehicleType
 
                     }
                 }
@@ -323,22 +312,20 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             selectStatusPopUp()
         }
         binding.finishTripTextView.setOnClickListener {
-          // Use else instead of else if for equality check
-                showDeliveryPopUp()
+            // Use else instead of else if for equality check
+            showDeliveryPopUp()
 
             completedRideObserver()
             //showFeedbackPopup()
         }
 
 
-
     }
-
 
 
     private fun selectStatusPopUp() {
         val dialogView = layoutInflater.inflate(R.layout.select_status_popup, null)
-         dialog = BottomSheetDialog(this)
+        dialog = BottomSheetDialog(this)
         val backArrowCancelPopUp =
             dialogView.findViewById<ImageView>(R.id.backArrowCancelPopUp)
         recycler_StatusList = dialogView.findViewById(R.id.recycler_StatusList)
@@ -648,7 +635,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect,countryName.toString()
+            formattedLongitudeSelect, countryName.toString()
         )
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
@@ -831,7 +818,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         }
         skipBtn?.setOnClickListener {
             bottomSheetDialog?.dismiss()
-            val intent = Intent(this@DriverStartRidingActivity,DriverDashboardActivity::class.java)
+            val intent = Intent(this@DriverStartRidingActivity, DriverDashboardActivity::class.java)
             startActivity(intent)
         }
 
@@ -1029,7 +1016,6 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
-
     private fun startTrip(sId: String) {
         val Iddd = sId
         startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd)
@@ -1073,10 +1059,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
             mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
         } else {
-          /*  mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
-            mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop-off Location"))
-            // Move camera to the initial pickup location
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))*/
+            /*  mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
+              mMap.addMarker(MarkerOptions().position(dropLocation).title("Drop-off Location"))
+              // Move camera to the initial pickup location
+              mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pickupLocation, 14f))*/
             mMap.addMarker(
                 MarkerOptions()
                     .position(pickupLocation)
@@ -1152,8 +1138,17 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor {
         val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+        val bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
@@ -1336,7 +1331,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         Log.e("derAAA", "driverStatusUpdate: $driStatus")
         spinnerDriverSId = id.toString()
 
-        if  (driStatusRunning.isNullOrEmpty()||(driStatus.isNullOrEmpty())) {
+        if (driStatus.isNullOrEmpty()) {
             binding.SelectstatusTextView.text = "Select Status"
         } else {
             binding.SelectstatusTextView.text = driStatus
