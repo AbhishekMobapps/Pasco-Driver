@@ -55,7 +55,7 @@ class DriverWalletActivity : AppCompatActivity() {
         walletC = intent.getStringExtra("wallet").toString()
 
         userType = PascoApp.encryptedPrefs.userType
-        withdrawMoneyObserver()
+      //  withdrawMoneyObserver()
 
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
@@ -90,6 +90,28 @@ class DriverWalletActivity : AppCompatActivity() {
         dAdapter.addAll(chooseLanguageList)
 
         binding.spinnerFilter.adapter = dAdapter
+        if (binding.consTopDesign.visibility == View.VISIBLE)
+        {
+            binding.spinnerFilter1.adapter = dAdapter
+            binding.spinnerFilter1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
+                ) {
+                    //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
+                    val itemValue = binding.spinnerFilter1.selectedItem.toString()
+                    if (itemValue == getString(R.string.select_event)) {
+                        getTotalAmount("")
+                    } else {
+                        getTotalAmount(itemValue)
+                    }
+                }
+
+                override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                }
+            }
+
+        }
+
 
         binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -107,6 +129,7 @@ class DriverWalletActivity : AppCompatActivity() {
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
             }
         }
+
 
 
 
