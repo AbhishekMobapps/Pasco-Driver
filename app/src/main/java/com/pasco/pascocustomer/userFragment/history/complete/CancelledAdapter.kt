@@ -140,6 +140,7 @@ class CancelledAdapter(
                     intent.putExtra("totalAmount", totalAmount.toString())
                     intent.putExtra("commissionPrice", commissionPrice.toString())
                     intent.putExtra("driverImage", driverImage)
+                    intent.putExtra("upfrontPayment", driverTripHistory[position].upfrontPayment.toString())
                     intent.putExtra("paymentStatus", driverTripHistory[position].paymentStatus)
                     intent.putExtra("upfrontPayment", driverTripHistory[position].upfrontPayment.toString())
                     context.startActivity(intent)

@@ -75,6 +75,7 @@ class GetAmountResponse : Serializable {
         @Expose
         var leftPrice: Any? = null
 
+
         @SerializedName("payment_status")
         @Expose
         var paymentStatus: String? = null

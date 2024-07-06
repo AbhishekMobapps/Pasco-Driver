@@ -85,6 +85,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         userImage = intent.getStringExtra("userImagee").toString()
         upfrontPayment = intent.getStringExtra("upfrontPayment").toString()
 
+
         Log.e("CompleteHistoryA", "feedback... A $feedback  $userImage")
         if (userType == "driver") {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + userImage)
@@ -92,7 +93,6 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
 
             binding.driverName.text = userName
             binding.upfrontAmountConst.visibility = View.GONE
-
         } else {
             Glide.with(this).load(BuildConfig.IMAGE_KEY + driverImage).placeholder(R.drawable.man)
                 .into(binding.driverProfile)
@@ -100,6 +100,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
             binding.driverName.text = driverName
             binding.upfrontAmountConst.visibility = View.VISIBLE
             binding.upfrontAmount.text = upfrontPayment
+
         }
 
 
@@ -114,6 +115,7 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         binding.paymentStatusMode.text = paymentStatus
         binding.totalAmount.text = totalAmount
         binding.bookingStatus.text = bookingStatus
+        binding.upfrontAmount.text = upfrontPayment
 
 
         val formattedTotalDistance =

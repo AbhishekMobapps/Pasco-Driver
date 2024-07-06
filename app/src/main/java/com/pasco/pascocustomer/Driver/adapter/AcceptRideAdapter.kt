@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
@@ -35,6 +36,7 @@ class AcceptRideAdapter(
         val biddReqDateTime: TextView = itemView.findViewById(R.id.biddReqDateTime)
         val imgUserOrderD: ImageView = itemView.findViewById(R.id.imgUserOrderD)
         val bidsStatus: TextView = itemView.findViewById(R.id.bidsStatus)
+        val constraintNC: ConstraintLayout = itemView.findViewById(R.id.constraintNC)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -73,7 +75,7 @@ class AcceptRideAdapter(
         else
         {
             holder.bidsStatus.visibility = View.VISIBLE
-            holder.bidsStatus.text = " The bids are already done"
+            holder.bidsStatus.text = "A bid has already been placed"
         }
 
         val imageUrl = "$baseUrl$imagePath"

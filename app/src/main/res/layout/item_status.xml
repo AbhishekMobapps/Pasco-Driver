@@ -20,9 +20,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="dasda"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/normal_txt_size"
         android:padding="5dp"
+        android:background="@drawable/button_background_color"
         android:gravity="center"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,4 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constT" />
+
+ 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,7 +69,6 @@ class TransactionHistoryAdapter(
         }
 
         holder.itemView.setOnClickListener {
-
             val statusCheck = orderList[position].paymentStatus
             if (statusCheck == "Add Amount") {
 
@@ -77,10 +76,8 @@ class TransactionHistoryAdapter(
                 showFullAddressDialog(
                     orderList[position].pickupLocation!!,
                     orderList[position].dropLocation!!
-                )
-            }
-
-        }
+                  }
+       
 
     }
 

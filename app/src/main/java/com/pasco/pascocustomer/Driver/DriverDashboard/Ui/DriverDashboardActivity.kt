@@ -124,6 +124,16 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
 
 
+
+        /*    if (dAdminApprovedStatus != "Approved") {
+                disableAllExceptMore()
+                openPopUp()
+            } else if (dAdminApprovedStatus == "Approved") {
+                enableAll()
+            }*/
+
+        Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
+
         refersh = PascoApp.encryptedPrefs.token
         requestLocationPermission()
 
@@ -520,7 +530,10 @@ class DriverDashboardActivity : AppCompatActivity() {
         markDutyViewModel.mmarkDutyResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status == "True") {
+
                 //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+               //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
                 OnDutyStatus = response.peekContent().duty.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
                 val homeFragment = HomeFragment()

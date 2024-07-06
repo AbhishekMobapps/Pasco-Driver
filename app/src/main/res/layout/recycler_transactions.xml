@@ -1,0 +1,127 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/customer_profile_back1">
+
+        <ImageView
+            android:id="@+id/imgDebit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/salaryimg" />
+
+        <TextView
+            android:id="@+id/CnameTrans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/imgDebit"
+            android:gravity="center"
+            android:text="@string/username"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/debitAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CnameTrans"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/imgDebit"
+            android:gravity="center"
+            android:text="@string/debit_amount"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/priceDebit1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CnameTrans"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/debitAmount"
+            android:gravity="center"
+            android:text="$"
+            android:textColor="@color/green"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/priceDebit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CnameTrans"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/priceDebit1"
+            android:gravity="center"
+            android:text="200"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/paymentModeStatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/debitAmount"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"
+            android:layout_toRightOf="@+id/imgDebit"
+            android:gravity="center"
+            android:text="@string/payment_mode_space"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/paymentModeDynamic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/priceDebit"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/paymentModeStatic"
+            android:gravity="center"
+            android:text="Cash"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/dateTrans"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/paymentModeStatic"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/imgDebit"
+            android:gravity="center"
+            android:text="@string/dateSpace"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/dateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/paymentModeDynamic"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/dateTrans"
+            android:gravity="center"
+            android:text="23-11-2023"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+    </RelativeLayout>
+</LinearLayout>

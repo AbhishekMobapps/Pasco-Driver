@@ -11,6 +11,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
@@ -42,6 +47,7 @@ class DriverWalletActivity : AppCompatActivity() {
     private var transactionHistoryAdapter: TransactionHistoryAdapter? = null
     private var transactionList: List<GetAmountResponse.Transaction> = ArrayList()
 
+
     private val chooseLanguageList = ArrayList<String>()
     private val strLangList = java.util.ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,16 +62,22 @@ class DriverWalletActivity : AppCompatActivity() {
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
         }
-        if (userType == "driver") {
-            binding.withdrawAmountBtn.visibility = View.VISIBLE
-            binding.linearTransactionLimitt.visibility = View.GONE
-            binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
-            binding.consTopDesign.visibility = View.VISIBLE
+
+      
+
+        if (userType == "driver")
+        {
+           binding.withdrawAmountBtn.visibility = View.VISIBLE
+           binding.linearTransactionLimitt.visibility = View.GONE
+           binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
+           binding.consTopDesign.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
-                addWithPop()
+               addWithPop()
             }
-        } else {
+        }
+        else{
+ 
             binding.withdrawAmountBtn.visibility = View.GONE
             binding.linearTransactionLimitt.visibility = View.VISIBLE
             binding.linearTransactionLimitMyTransaction.visibility = View.GONE
@@ -73,14 +85,11 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
 
-        binding.recycerEarningList.isVerticalScrollBarEnabled = true
-        binding.recycerEarningList.isVerticalFadingEdgeEnabled = true
-        binding.recycerEarningList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
+ 
         binding.addBtn.setOnClickListener {
             openWithDrawPopUp()
         }
+
 
         chooseLanguageList.add("Credit")
         chooseLanguageList.add("Debit")
@@ -116,6 +125,24 @@ class DriverWalletActivity : AppCompatActivity() {
         getTotalAmountObserver()
         // getTotalDriverAmountObserver()
     }
+
+    @SuppressLint("MissingInflatedId")
+    private fun addWithPop() {
+        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
+        val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
+        builder.setView(dialogView)
+
+        dialog = builder.create()
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val waCrossImage = dialogView.findViewById<ImageView>(R.id.waCrossImage)
+        val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
+        val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
+        val addAmStaticTextview = dialogView.findViewById<TextView>(R.id.addAmStaticTextview)
+        addAmStaticTextview.text = "Withdraw Amount"
+        dialog.show()
+        waCrossImage.setOnClickListener { dialog.dismiss() }
+
 
     @SuppressLint("MissingInflatedId")
     private fun addWithPop() {
@@ -226,6 +253,7 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
     }
+}
 
     class spinnerAdapter constructor(
         context: Context, textViewResourceId: Int, strInterestedList: List<String>

@@ -140,7 +140,7 @@ class HomeFragment : Fragment(), SignUpCityName {
         } else if (dAdminApprovedId == "1") {
            // enableAll()
         }
-        showRideRequestApi(currentCityName)
+     //   showRideRequestApi(currentCityName)
         setupObservers()
         binding.LinearShareLocation.setOnClickListener {
             checkLocationPermissionAndShare()
@@ -215,7 +215,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                     val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
 
                     // Log the country code and country name
-                    Log.e("Country Code", countryCode ?: "No country code found")
+                    Log.e("cityName", "$currentCityName: No country code found")
                     Log.e("Country Name", countryName ?: "No country name found")
                     Log.e("Phone Country Code", "+$phoneCountryCode")
 
@@ -228,12 +228,14 @@ class HomeFragment : Fragment(), SignUpCityName {
                             requestLocationPermission()
                         }
                     }
+                    showRideRequestApi(currentCityName)
+
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
-        showRideRequestApi(currentCityName)
+
     }
 
     private fun openFilterPopUp() {
