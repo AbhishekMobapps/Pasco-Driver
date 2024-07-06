@@ -103,6 +103,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private lateinit var runnable: Runnable
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
@@ -129,12 +130,12 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
 
-        /*    if (dAdminApprovedStatus != "Approved") {
+            if (dAdminApprovedStatus != "Approved") {
                 disableAllExceptMore()
                 openPopUp()
             } else if (dAdminApprovedStatus == "Approved") {
                 enableAll()
-            }*/
+            }
 
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
 

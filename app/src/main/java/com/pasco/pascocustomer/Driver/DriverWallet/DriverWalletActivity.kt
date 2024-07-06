@@ -47,7 +47,7 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private var amountP = ""
     private var addWallet = ""
-    private var itemValue = ""
+
     private var transactionHistoryAdapter: TransactionHistoryAdapter? = null
     private var transactionList: List<GetAmountResponse.Transaction> = ArrayList()
 
@@ -67,21 +67,19 @@ class DriverWalletActivity : AppCompatActivity() {
             finish()
         }
 
-      
 
-        if (userType == "driver")
-        {
-           binding.withdrawAmountBtn.visibility = View.VISIBLE
-           binding.linearTransactionLimitt.visibility = View.GONE
-           binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
-           binding.consTopDesign.visibility = View.VISIBLE
+
+        if (userType == "driver") {
+            binding.withdrawAmountBtn.visibility = View.VISIBLE
+            binding.linearTransactionLimitt.visibility = View.GONE
+            binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
+            binding.consTopDesign.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
-               addWithPop()
+                addWithPop()
             }
-        }
-        else{
- 
+        } else {
+
             binding.withdrawAmountBtn.visibility = View.GONE
             binding.linearTransactionLimitt.visibility = View.VISIBLE
             binding.linearTransactionLimitMyTransaction.visibility = View.GONE
@@ -89,7 +87,7 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
 
- 
+
         binding.addBtn.setOnClickListener {
             openWithDrawPopUp()
         }
@@ -99,25 +97,23 @@ class DriverWalletActivity : AppCompatActivity() {
         chooseLanguageList.add("Debit")
 
         //Spinner Adapter
-        val dAdapter = spinnerAdapter(this, R.layout.custom_spinner_two, strLangList)
+        val dAdapter = spinnerAdapter(this, R.layout.custom_spinner_two, chooseLanguageList)
         dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         dAdapter.add("Filter")
         dAdapter.addAll(chooseLanguageList)
+
         binding.spinnerFilter.adapter = dAdapter
-
-
 
         binding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
             ) {
                 //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
-                itemValue = binding.spinnerFilter.selectedItem.toString()
-
+                val itemValue = binding.spinnerFilter.selectedItem.toString()
                 if (itemValue == getString(R.string.select_event)) {
-
+                    getTotalAmount("")
                 } else {
-                    getTotalAmount()
+                    getTotalAmount(itemValue)
                 }
             }
 
@@ -125,7 +121,9 @@ class DriverWalletActivity : AppCompatActivity() {
             }
         }
 
-        getTotalAmount()
+
+
+        getTotalAmount("")
         getTotalAmountObserver()
         // getTotalDriverAmountObserver()
     }
@@ -159,26 +157,8 @@ class DriverWalletActivity : AppCompatActivity() {
             //observer
             addMoneyObserver()
         }
-
-
-    @SuppressLint("MissingInflatedId")
-    private fun addWithPop() {
-        val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
-        val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
-        builder.setView(dialogView)
-
-        dialog = builder.create()
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val waCrossImage = dialogView.findViewById<ImageView>(R.id.waCrossImage)
-        val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
-        val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
-        val addAmStaticTextview = dialogView.findViewById<TextView>(R.id.addAmStaticTextview)
-        addAmStaticTextview.text = "Withdraw Amount"
-        dialog.show()
-        waCrossImage.setOnClickListener { dialog.dismiss() }
-
     }
+
 
     @SuppressLint("MissingInflatedId")
     private fun openWithDrawPopUp() {
@@ -215,7 +195,7 @@ class DriverWalletActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
-                getTotalAmount()
+                getTotalAmount("")
 
             }
         }
@@ -238,7 +218,7 @@ class DriverWalletActivity : AppCompatActivity() {
                 startActivity(intent)
 
                 dialog.dismiss()
-                getTotalAmount()
+                getTotalAmount("")
 
             }
         }
@@ -247,9 +227,8 @@ class DriverWalletActivity : AppCompatActivity() {
         }
     }
 
-    private fun getTotalAmount() {
+    private fun getTotalAmount(itemValue: String) {
         val body = GetAddWalletDataBody(
-
             transaction_type = itemValue
         )
 
@@ -288,7 +267,7 @@ class DriverWalletActivity : AppCompatActivity() {
         }
 
     }
-}
+
 
     class spinnerAdapter constructor(
         context: Context, textViewResourceId: Int, strInterestedList: List<String>
