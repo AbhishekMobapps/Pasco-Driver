@@ -90,6 +90,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var activity: Activity
     private var driverId = ""
     private var navItemIndex = 1
+    private var dutyOccupied :Int = 0
     private var refersh = ""
     private var handler: Handler? = null
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
@@ -113,6 +114,9 @@ class DriverDashboardActivity : AppCompatActivity() {
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
         dAdminApprovedStatus = PascoApp.encryptedPrefs.DriverStatuss
+
+        getProfileApi()
+        getUserProfileObserver()
 
         switchCheck = PascoApp.encryptedPrefs.CheckedType
         runnable = object : Runnable {
@@ -146,8 +150,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         handler = Handler(Looper.getMainLooper())
         binding.firstConsLayouttt.visibility = View.VISIBLE
-        getProfileApi()
-        getUserProfileObserver()
+
 
         val homeFragment = HomeFragment()
         replace_fragment(homeFragment)
@@ -163,6 +166,15 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         one = intent.getIntExtra("onee", -1)
 
+        if (dutyOccupied==2)
+        {
+          binding.switchbtn.isEnabled = false
+            Toast.makeText(this@DriverDashboardActivity, " You cannot go on duty for a new ride before completing the current ride.", Toast.LENGTH_SHORT).show()
+
+        }
+        else{
+            binding.switchbtn.isEnabled = true
+        }
         // Conditional logic to check the switch button state
         if (switchCheck == "1" || one == 1) {
             binding.switchbtn.isChecked = true
@@ -280,6 +292,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
     }
+
 
 
 
@@ -496,12 +509,11 @@ class DriverDashboardActivity : AppCompatActivity() {
                     .load(imageUrl)
                     .into(binding.userIconDashBoard)
             }
+            dutyOccupied = response.peekContent().duty!!.toInt()
 
-            else {
-                binding.userIconDashBoard.setImageResource(R.drawable.ic_launcher_background)
-            }
 
-            Log.e("getDetails", "ObservergetUserProfile: ")
+
+            Log.e("getDetails", "ObservergetUserProfile: "+dutyOccupied)
             // val helloName = data?.fullName?.split(" ")?.firstOrNull().orEmpty()
             //val hName = "Hello $helloName"
             binding.driverNameDash.text = response.peekContent().data!!.fullName

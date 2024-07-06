@@ -162,6 +162,13 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
+    var requestOrderId: String
+        get() = prefs.getString(ORDERID, "") ?: ""
+        set(requestOrderId) {
+            editor.putString(ORDERID, requestOrderId)
+            editor.apply()
+        }
+
     companion object {
         // region "Tags"
         private const val IS_FIRST_TIME = "isFirstTime"
@@ -205,6 +212,7 @@ class PreferenceManager(context: Context) {
         private const val CHECKED_TYPE = "CHECKED_TYPE"
         private const val DRIVERSTATUS = "DRIVERSTATUS"
         private const val DRIVERSTATUSS = "DRIVERSTATUSS"
+        private const val ORDERID = "ORDERID"
     }
 
 }

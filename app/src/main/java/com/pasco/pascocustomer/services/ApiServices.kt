@@ -11,6 +11,8 @@ import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusRes
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponUsedResponse
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataResponse
 import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.ViewModel.CancelReasonResponse
@@ -493,12 +495,18 @@ interface ApiServices {
         @Field("amount") amount: String
     ): Observable<AddAmountResponse>
 
-
     //get User wallet balance
     @GET("addUserWallet/")
     fun getUserWallet(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<GetAmountResponse>
+
+    //withdraw amount
+    @GET("withdraw-wallet/")
+    fun withdrawAmount(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Body body: WithdrawAmountBody
+    ):Observable<WithdrawAmountResponse>
 
 
     //get  additional Service

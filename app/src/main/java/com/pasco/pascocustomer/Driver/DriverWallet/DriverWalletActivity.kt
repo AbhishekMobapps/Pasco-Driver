@@ -22,6 +22,8 @@ import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountR
 import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -34,6 +36,8 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
+    private val withdrawAmountViewModel: WithdrawAmountViewModel by viewModels()
+    private lateinit var withdrawAmountBody: WithdrawAmountBody
     private var walletC: String = ""
     private var userType: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -103,6 +107,19 @@ class DriverWalletActivity : AppCompatActivity() {
         addAmStaticTextview.text = "Withdraw Amount"
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
+        submit_WithDrawBtn.setOnClickListener {
+            withdrawAmountBody = WithdrawAmountBody(
+                amountWithdrawEditD.text.toString()
+            )
+            //call api()
+            withdrawAmountViewModel.getWithdrawData(
+                progressDialog,
+                this,
+                withdrawAmountBody
+            )
+            //observer
+            addMoneyObserver()
+        }
 
     }
 
@@ -128,7 +145,25 @@ class DriverWalletActivity : AppCompatActivity() {
                 amountWithdrawEditD.text.toString()
             )
             //observer
+            withdrawMoneyObserver()
             addMoneyObserver()
+        }
+    }
+
+    private fun withdrawMoneyObserver() {
+        withdrawAmountViewModel.mGetWithdrawList.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            if (response.peekContent().status == "False") {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                getTotalAmount()
+
+            }
+        }
+        addAmountViewModel.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
         }
     }
 

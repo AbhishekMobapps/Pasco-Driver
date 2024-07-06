@@ -42,6 +42,7 @@ import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBiddingBody
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBidingViewModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityAcceptRideBinding
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.time.ZonedDateTime
@@ -72,6 +73,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     private var totalPriceLoc = ""
     private var commissionP = ""
     private var bookingID = ""
+    private var orderID = ""
     private lateinit var pickupLocation: LatLng
     private lateinit var dropLocation: LatLng
     private lateinit var mMap: GoogleMap
@@ -95,6 +97,9 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         activity = this
 
         reqId = intent.getStringExtra("rideReqId").orEmpty()
+        PascoApp.encryptedPrefs.requestOrderId = reqId
+        orderID = PascoApp.encryptedPrefs.requestOrderId
+
         one = intent.getIntExtra("one", -1) // Default value set to -1
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
         currentLatitudePickup = intent.getStringExtra("pickuplatitudea")?.toDoubleOrNull() ?: 0.0
@@ -114,7 +119,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         dropLocation = LatLng(currentLatitudeDrop, currentLongitudeDrop)
 
 
-        if (!reqId.isNullOrBlank()) {
+        if (!orderID.isNullOrBlank()) {
             getBidDetailsApi()
         }
         getBidObserver()
@@ -570,6 +575,13 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!orderID.isNullOrBlank()) {
+            getBidDetailsApi()
+        }
     }
 
 }
