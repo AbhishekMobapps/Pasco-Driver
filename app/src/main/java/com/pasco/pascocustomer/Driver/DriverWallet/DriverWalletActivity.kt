@@ -20,6 +20,8 @@ import com.pasco.pascocustomer.ComlpleteStatusActivity
 import com.pasco.pascocustomer.Driver.Customer.Fragment.CustomerWallet.GetAmountViewModel
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.GetAddWalletDataBody
 import com.pasco.pascocustomer.Driver.DriverWallet.wallethistory.TransactionHistoryAdapter
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountBody
+import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewModel
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
@@ -32,6 +34,7 @@ class DriverWalletActivity : AppCompatActivity() {
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
     private val getAmountViewModel: GetAmountViewModel by viewModels()
+    private val withdrawAmountViewModel: WithdrawAmountViewModel by viewModels()
     private var walletC: String = ""
     private var userType: String = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
@@ -50,6 +53,7 @@ class DriverWalletActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         walletC = intent.getStringExtra("wallet").toString()
+        addWallet = intent.getStringExtra("addWallet").toString()
 
         userType = PascoApp.encryptedPrefs.userType
 
@@ -63,7 +67,7 @@ class DriverWalletActivity : AppCompatActivity() {
             binding.consTopDesign.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
-                addWithPop()
+            //    addWithPop()
             }
         } else {
             binding.withdrawAmountBtn.visibility = View.GONE
@@ -111,7 +115,7 @@ class DriverWalletActivity : AppCompatActivity() {
         // getTotalDriverAmountObserver()
     }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     private fun addWithPop() {
         val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
@@ -128,7 +132,7 @@ class DriverWalletActivity : AppCompatActivity() {
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
         submit_WithDrawBtn.setOnClickListener {
-            withdrawAmountBody = WithdrawAmountBody(
+          val  withdrawAmountBody = WithdrawAmountBody(
                 amountWithdrawEditD.text.toString()
             )
             //call api()

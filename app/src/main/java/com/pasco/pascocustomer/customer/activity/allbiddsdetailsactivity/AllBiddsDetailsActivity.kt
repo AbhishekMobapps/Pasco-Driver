@@ -221,7 +221,7 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         val message = "Please add amount in your wallet!"
 
         val builder = AlertDialog.Builder(this@AllBiddsDetailsActivity)
-        builder.setTitle("Insufficient Wallet amount")
+        builder.setTitle("Insufficient wallet amount to accept the bid. Your wallet amount should be equal to the bid price")
         builder.setMessage(message)
         builder.setPositiveButton("Add Funds") { dialog, _ ->
             val intent = Intent(this, DriverWalletActivity::class.java)

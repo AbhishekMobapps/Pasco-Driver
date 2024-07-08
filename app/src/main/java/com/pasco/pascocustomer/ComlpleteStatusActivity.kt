@@ -33,7 +33,6 @@ class ComlpleteStatusActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val intent = Intent(this, AllTabPayActivity::class.java)
                     startActivity(intent)
-                    finish()
                 }, 2000) // 2000 milliseconds = 2 seconds
 
 
@@ -42,7 +41,7 @@ class ComlpleteStatusActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val intent = Intent(this, DriverWalletActivity::class.java)
                     startActivity(intent)
-                    finish()
+
                 }, 2000) // 2000 milliseconds = 2 seconds
             }
         } else {
@@ -52,7 +51,7 @@ class ComlpleteStatusActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val intent = Intent(this, AcceptRideActivity::class.java)
                     startActivity(intent)
-                    finish()
+
                 }, 2000) // 2000 milliseconds = 2 seconds
 
 
@@ -61,7 +60,6 @@ class ComlpleteStatusActivity : AppCompatActivity() {
                 handler.postDelayed({
                     val intent = Intent(this, DriverWalletActivity::class.java)
                     startActivity(intent)
-                    finish()
                 }, 2000) // 2000 milliseconds = 2 seconds
             }
         }

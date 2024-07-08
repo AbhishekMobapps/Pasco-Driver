@@ -9,6 +9,7 @@ import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripRespon
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryProofResponse
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsResponse
 import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergercyHelpResponse
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginBody
 import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginResponse
@@ -46,6 +47,7 @@ import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.C
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
+import com.pasco.pascocustomer.customer.activity.track.completededuct.CompletedDeductAmountBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
@@ -313,5 +315,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getNotificationOnOff(): Observable<NotificationOnOffResponse> {
         return apiService.getAllTypeNotification(PascoApp.encryptedPrefs.bearerToken)
+    }
+
+    fun deductAmount(
+        courseBody: CompletedDeductAmountBody, id: String
+    ): Observable<SendEmergercyHelpResponse> {
+        return apiService.deductAmount(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
 }
