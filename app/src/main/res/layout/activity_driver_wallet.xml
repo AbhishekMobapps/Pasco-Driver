@@ -252,13 +252,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent=".5" />
 
-        <TextView
-            android:id="@+id/withdrawHisTextview"
+        <Spinner
+            android:id="@+id/spinnerFilter1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/withdraw_history"
+            android:text="@string/english"
             android:textColor="@color/black"
+            android:textAlignment="center"
             android:textSize="@dimen/text_size_16"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -329,5 +329,6 @@
     <string name="withdraw_history">Withdraw History</string>
     <string name="please_select_reason">Please Select reason!</string>
     <string name="select_event">Filter</string>
+    <string name="cancellation_reason">Cancellation Reason :</string>
 
 </resources>
