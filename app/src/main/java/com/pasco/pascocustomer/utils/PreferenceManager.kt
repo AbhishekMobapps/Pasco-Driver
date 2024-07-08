@@ -112,7 +112,7 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
-    var DriverStatuss: String
+    var driverStatuss: String
         get() = prefs.getString(DRIVERSTATUSS, "") ?: ""
         set(driverStatuss) {
             editor.putString(DRIVERSTATUSS, driverStatuss)
@@ -172,6 +172,7 @@ class PreferenceManager(context: Context) {
     companion object {
         // region "Tags"
         private const val IS_FIRST_TIME = "isFirstTime"
+        private const val DRIVERSTATUSS = "DRIVERSTATUSS"
 
         private const val RefreshToken = "RefreshToken"
         private const val Profile = "Profile"
@@ -211,7 +212,6 @@ class PreferenceManager(context: Context) {
         private const val IS_NOTIFICATION = "IS_NOTIFICATION"
         private const val CHECKED_TYPE = "CHECKED_TYPE"
         private const val DRIVERSTATUS = "DRIVERSTATUS"
-        private const val DRIVERSTATUSS = "DRIVERSTATUSS"
         private const val ORDERID = "ORDERID"
     }
 

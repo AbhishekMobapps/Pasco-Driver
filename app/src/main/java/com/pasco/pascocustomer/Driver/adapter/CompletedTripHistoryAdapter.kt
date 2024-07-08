@@ -55,6 +55,9 @@ class CompletedTripHistoryAdapter(
         val dBookingStatus = driverTripHis.bookingStatus.toString()
         val dateTime = driverTripHis.availabilityDatetime.toString()
 
+        holder.consCancellationReason.visibility = View.GONE
+        holder.hisArow.visibility = View.VISIBLE
+
         holder.bookingId.text = driverTripHistory[position].bookingNumber
         holder.paymentMode.text = driverTripHistory[position].paymentMethod
 
@@ -165,7 +168,9 @@ class CompletedTripHistoryAdapter(
         val totalAmount = itemView.findViewById<TextView>(R.id.totalAmount)
         val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
         val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
+        val hisArow = itemView.findViewById<ImageView>(R.id.hisArow)
         val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
+        val consCancellationReason = itemView.findViewById<ConstraintLayout>(R.id.consCancellationReason)
 
 
     }

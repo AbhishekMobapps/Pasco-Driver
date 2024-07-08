@@ -2,10 +2,8 @@ package com.pasco.pascocustomer.Driver.DriverDashboard.Ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -18,10 +16,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.Button
-import android.widget.EditText
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -29,13 +24,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.transportapp.DriverApp.MarkDuty.MarkDutyViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.navigation.NavigationView
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.GetApprovalStatusDModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
@@ -48,24 +41,13 @@ import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
 import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.DriverMoreFragment
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
 import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
-import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
-import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
-import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
-import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
-import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsViewModel
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
-import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
-import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
-import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.withContext
@@ -89,7 +71,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private lateinit var activity: Activity
     private var driverId = ""
     private var navItemIndex = 1
-    private var dutyOccupied :Int = 0
+    private var dutyOccupied: Int = 0
     private var refersh = ""
     private var handler: Handler? = null
     private val notificationCountViewModel: NotificationCountViewModel by viewModels()
@@ -103,6 +85,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private lateinit var runnable: Runnable
+
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,7 +96,11 @@ class DriverDashboardActivity : AppCompatActivity() {
         getNotificationPermission()
         activity = this
         driverId = PascoApp.encryptedPrefs.userId
-        dAdminApprovedStatus = PascoApp.encryptedPrefs.DriverStatuss
+        getVehicleDetailsObserver()
+        getVehicleDetails()
+        dAdminApprovedStatus = PascoApp.encryptedPrefs.driverStatuss
+
+
 
         getProfileApi()
         getUserProfileObserver()
@@ -127,12 +114,6 @@ class DriverDashboardActivity : AppCompatActivity() {
                 handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
         }
-        /*     if (dAdminApprovedStatus != "Approved") {
-                disableAllExceptMore()
-                openPopUp()
-            } else if (dAdminApprovedStatus == "Approved") {
-                enableAll()
-            }*/
 
         Log.e("switchValue", "switchCheck: " + dAdminApprovedStatus)
 
@@ -165,15 +146,6 @@ class DriverDashboardActivity : AppCompatActivity() {
         }
         one = intent.getIntExtra("onee", -1)
 
-        if (dutyOccupied==2)
-        {
-          binding.switchbtn.isEnabled = false
-            Toast.makeText(this@DriverDashboardActivity, " You cannot go on duty for a new ride before completing the current ride.", Toast.LENGTH_SHORT).show()
-
-        }
-        else{
-            binding.switchbtn.isEnabled = true
-        }
         // Conditional logic to check the switch button state
         if (switchCheck == "1" || one == 1) {
             binding.switchbtn.isChecked = true
@@ -298,8 +270,6 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun getVehicleDetails() {
         getVDetailsViewModel.getApprovalDModeData(
             this
@@ -310,8 +280,14 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         getVDetailsViewModel.mGetVDetails.observe(this) { response ->
             val data = response.peekContent().data
-            PascoApp.encryptedPrefs.DriverStatuss = data?.approvalStatus!!
-            Log.e("status", "getVehicleDetailsObserver: " + dAdminApprovedStatus)
+            val status = data?.approvalStatus
+            PascoApp.encryptedPrefs.driverStatuss = status.toString()
+            if (data!!.approvalStatus != "Approved") {
+                disableAllExceptMore()
+            } else if (data!!.approvalStatus == "Approved") {
+                enableAll()
+            }
+            Log.e("status", "getVehicleDetailsObserver: " + PascoApp.encryptedPrefs.driverStatuss)
 
         }
     }
@@ -446,7 +422,6 @@ class DriverDashboardActivity : AppCompatActivity() {
                     val addressObj = addresses[0]
                     address = addressObj.getAddressLine(0)
                     city = addressObj.locality
-                    binding.driverGreeting.text = city
                     val countryCode = addressObj.countryCode
                     countryName = addressObj.countryName.toString()
                     val address = addresses[0].getAddressLine(0)
@@ -506,8 +481,12 @@ class DriverDashboardActivity : AppCompatActivity() {
             val data = response.peekContent().data
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
-            var city = response.peekContent().data!!.currentCity
-          //  binding.driverGreeting.text = city
+            city = response.peekContent().data!!.currentCity
+            if (city == "null") {
+                binding.driverGreeting.text = "City"
+            } else {
+                binding.driverGreeting.text = city
+            }
             val imageUrl = "$baseUrl$imagePath"
             if (imageUrl.isNotEmpty()) {
                 Glide.with(this)
@@ -515,10 +494,21 @@ class DriverDashboardActivity : AppCompatActivity() {
                     .into(binding.userIconDashBoard)
             }
             dutyOccupied = response.peekContent().duty!!.toInt()
+            if (dutyOccupied == 2) {
+                binding.switchbtn.isEnabled = false
+                Toast.makeText(
+                    this@DriverDashboardActivity,
+                    " You cannot go on duty for a new ride before completing the current ride.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } else {
+                binding.switchbtn.isEnabled = true
+            }
 
 
 
-            Log.e("getDetails", "ObservergetUserProfile: "+dutyOccupied)
+            Log.e("getDetails", "ObservergetUserProfile: " + dutyOccupied)
             // val helloName = data?.fullName?.split(" ")?.firstOrNull().orEmpty()
             //val hName = "Hello $helloName"
             binding.driverNameDash.text = response.peekContent().data!!.fullName
@@ -548,7 +538,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             if (response.peekContent().status == "True") {
 
                 //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-               //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                //  Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
                 OnDutyStatus = response.peekContent().duty.toString()
                 PascoApp.encryptedPrefs.CheckedType = OnDutyStatus
@@ -719,6 +709,7 @@ class DriverDashboardActivity : AppCompatActivity() {
             )
         }
     }
+
     fun startRepeatingTask() {
         runnable.run()
     }
@@ -726,6 +717,7 @@ class DriverDashboardActivity : AppCompatActivity() {
     fun stopRepeatingTask() {
         handler!!.removeCallbacks(runnable)
     }
+
     override fun onStart() {
         super.onStart()
         startRepeatingTask()
