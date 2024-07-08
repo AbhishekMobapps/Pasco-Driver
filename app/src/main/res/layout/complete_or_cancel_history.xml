@@ -7,18 +7,20 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
-        android:layout_height="280dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintWidth_percent="0.97">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:layout_height="270dp"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.96">
@@ -232,15 +234,60 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:id="@+id/hisArow"
+                    android:layout_width="19dp"
+                    android:layout_height="22dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="15dp"
                     android:src="@drawable/next"
                     android:tint="@color/earth_yellow"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toTopOf="@+id/consCancellationReason"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalPaymentsConst"
                     tools:ignore="UseAppTint" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/consCancellationReason"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hisArow"
+                    app:layout_constraintWidth_percent=".95">
+
+                    <TextView
+                        android:id="@+id/avail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cancellation_reason"
+                        android:textColor="@color/black"
+                        app:layout_constraintWidth_percent=".5"
+                        android:textSize="@dimen/normal_txt_size"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/cancelReasonTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/red"
+                        android:textSize="@dimen/normal_txt_size"
+                        app:layout_constraintWidth_percent=".47"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -31,10 +31,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.GetApprovalStatusDModel
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqResponse
 import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.ViewModel.ShowBookingReqViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +55,7 @@ import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,9 +76,11 @@ class HomeFragment : Fragment(), SignUpCityName {
     private var currentPage = 0
     private var isLastPage = false
     private val NUM_PAGES = 3
-    private var currentCityName:String? = ""
+    private var currentCityName: String? = ""
     private var address: String? = null
     private val sliderViewModel: SliderHomeModelView by viewModels()
+    private val getVDetailsViewModel: GetApprovalStatusDModel by viewModels()
+    private val getProfileModelView: GetProfileModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
     private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
     private var formattedCountryCode = ""
@@ -83,6 +88,7 @@ class HomeFragment : Fragment(), SignUpCityName {
     private var countryName: String? = ""
     private var alertDialog: Dialog? = null
     private var rideRequestList: List<ShowBookingReqResponse.ShowBookingReqData> = ArrayList()
+
     @Inject
     lateinit var activity: Activity // Injecting activity
     private val showBookingReqViewModel: ShowBookingReqViewModel by viewModels()
@@ -101,9 +107,12 @@ class HomeFragment : Fragment(), SignUpCityName {
     ): View {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
         userType = PascoApp.encryptedPrefs.userType
-
-        requestLocationPermission()
+        getProfileApi()
+        getUserProfileObserver()
         setupLocationClient()
+        requestLocationPermission()
+        getVehicleDetailsObserver()
+        getVehicleDetails()
 
         binding.viewPagerDriver.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -136,13 +145,8 @@ class HomeFragment : Fragment(), SignUpCityName {
                 handler.post(update)
             }
         }, 2000, 2000)
-        dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
-        if (dAdminApprovedId == "0") {
-          //  disableAll()
-        } else if (dAdminApprovedId == "1") {
-           // enableAll()
-        }
-     //   showRideRequestApi(currentCityName)
+        dAdminApprovedId = PascoApp.encryptedPrefs.driverStatuss
+        //   showRideRequestApi(currentCityName)
         setupObservers()
         binding.LinearShareLocation.setOnClickListener {
             checkLocationPermissionAndShare()
@@ -171,6 +175,61 @@ class HomeFragment : Fragment(), SignUpCityName {
         return binding.root
     }
 
+
+    private fun getProfileApi() {
+        getProfileModelView.getProfile(
+            activity,
+            progressDialog
+
+        )
+    }
+
+    private fun getUserProfileObserver() {
+        getProfileModelView.progressIndicator.observe(requireActivity(), Observer {
+        })
+        getProfileModelView.mRejectResponse.observe(requireActivity()) { response ->
+            val data = response.peekContent().data
+            val baseUrl = "http://69.49.235.253:8090"
+            val imagePath = data?.image.orEmpty()
+            currentCityName = response.peekContent().data!!.currentCity
+            if (currentCityName == "null") {
+                currentCityName = "City"
+            } else {
+                currentCityName = response.peekContent().data!!.currentCity
+                showRideRequestApi(currentCityName)
+            }
+
+        }
+
+        getProfileModelView.errorResponse.observe(requireActivity()) {
+            // Handle general errors
+            ErrorUtil.handlerGeneralError(requireContext(), it)
+
+        }
+    }
+
+    private fun getVehicleDetails() {
+        getVDetailsViewModel.getApprovalDModeData(
+            requireActivity()
+        )
+    }
+
+    private fun getVehicleDetailsObserver() {
+
+        getVDetailsViewModel.mGetVDetails.observe(requireActivity()) { response ->
+            val data = response.peekContent().data
+            val status = data?.approvalStatus
+            PascoApp.encryptedPrefs.driverStatuss = status.toString()
+            if (data!!.approvalStatus != "Approved") {
+                disableAll()
+            } else if (data!!.approvalStatus == "Approved") {
+                enableAll()
+            }
+            Log.e("status", "getVehicleDetailsObserver: " + PascoApp.encryptedPrefs.driverStatuss)
+
+        }
+    }
+
     private fun setupLocationClient() {
         requestLocationPermission()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -196,7 +255,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                 updateLocation(it)
             }
         }
-        }
+    }
 
     private fun updateLocation(location: Location) {
         val latitude = location.latitude
@@ -208,7 +267,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                 if (addresses.isNotEmpty()) {
                     val addressObj = addresses[0]
                     address = addressObj.getAddressLine(0)
-                    currentCityName = addressObj.locality
+                   // currentCityName = addressObj.locality
                     val countryCode = addressObj.countryCode
                     countryName = addressObj.countryName
 
@@ -230,7 +289,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                             requestLocationPermission()
                         }
                     }
-                    showRideRequestApi(currentCityName)
+
 
                 }
             } catch (e: IOException) {
@@ -246,7 +305,7 @@ class HomeFragment : Fragment(), SignUpCityName {
         alertDialog?.setCancelable(true)
         alertDialog?.setContentView(R.layout.filter_popup)
         alertDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-      //  alertDialog?.window?.setLayout(750, 1200)
+        //  alertDialog?.window?.setLayout(750, 1200)
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenWidth = displayMetrics.widthPixels
@@ -329,7 +388,10 @@ class HomeFragment : Fragment(), SignUpCityName {
             val uppercaseQuery = query.uppercase(Locale.ROOT)
             val filterList = ArrayList<UpdateCityResponse.updateCityList>()
             for (i in updateCityList) {
-                if (i.cityname?.lowercase(Locale.ROOT)?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)?.contains(uppercaseQuery) == true) {
+                if (i.cityname?.lowercase(Locale.ROOT)
+                        ?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)
+                        ?.contains(uppercaseQuery) == true
+                ) {
                     filterList.add(i)
                 }
             }
@@ -399,7 +461,8 @@ class HomeFragment : Fragment(), SignUpCityName {
     }
 
     private fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(),
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -415,13 +478,14 @@ class HomeFragment : Fragment(), SignUpCityName {
                 )
             } else {
                 ActivityCompat.requestPermissions(
-                  requireActivity(),
+                    requireActivity(),
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     1
                 )
             }
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -484,7 +548,8 @@ class HomeFragment : Fragment(), SignUpCityName {
 
     private fun showRideRequestApi(currentCityNames: String?) {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity,currentCityNames.toString())
+            activity, currentCityNames.toString()
+        )
     }
 
     private fun setupObservers() {
@@ -520,7 +585,7 @@ class HomeFragment : Fragment(), SignUpCityName {
     override fun onResume() {
         super.onResume()
         //call api
-        showRideRequestApi(currentCityName)
+        getProfileApi()
     }
 
     override fun itemCity(id: Int, cityName: String) {
@@ -532,7 +597,8 @@ class HomeFragment : Fragment(), SignUpCityName {
 
     private fun showRideRequestStatusApi(selectCityName: String) {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity,selectCityName)
+            activity, selectCityName
+        )
     }
 
 
