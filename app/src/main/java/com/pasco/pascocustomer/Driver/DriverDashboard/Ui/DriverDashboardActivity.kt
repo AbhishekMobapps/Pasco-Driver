@@ -91,6 +91,16 @@ class DriverDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        getVehicleDetails()
+        getVehicleDetailsObserver()
+
+        if (dAdminApprovedStatus != "Approved") {
+            disableAllExceptMore()
+            openPopUp()
+        } else if (dAdminApprovedStatus == "Approved") {
+            enableAll()
+        }
         binding.switchbtn.isChecked = false
 
         getNotificationPermission()
@@ -104,6 +114,7 @@ class DriverDashboardActivity : AppCompatActivity() {
 
         getProfileApi()
         getUserProfileObserver()
+
 
         switchCheck = PascoApp.encryptedPrefs.CheckedType
         runnable = object : Runnable {

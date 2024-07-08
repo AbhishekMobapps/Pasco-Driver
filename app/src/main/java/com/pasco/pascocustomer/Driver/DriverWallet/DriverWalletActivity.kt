@@ -53,6 +53,7 @@ class DriverWalletActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         walletC = intent.getStringExtra("wallet").toString()
+        addWallet = intent.getStringExtra("addWallet").toString()
 
         userType = PascoApp.encryptedPrefs.userType
       //  withdrawMoneyObserver()
@@ -67,7 +68,7 @@ class DriverWalletActivity : AppCompatActivity() {
             binding.consTopDesign.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
-                addWithPop()
+            //    addWithPop()
             }
         } else {
             binding.withdrawAmountBtn.visibility = View.GONE
@@ -138,7 +139,7 @@ class DriverWalletActivity : AppCompatActivity() {
         // getTotalDriverAmountObserver()
     }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     private fun addWithPop() {
         val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.withdrawpopup, null)
@@ -155,6 +156,7 @@ class DriverWalletActivity : AppCompatActivity() {
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
         submit_WithDrawBtn.setOnClickListener {
+
            val  withdrawAmountBody = WithdrawAmountBody(
                 amountWithdrawEditD.text.toString()
             )

@@ -1,7 +1,6 @@
 package com.pasco.pascocustomer.customer.activity.track
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,25 +8,19 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
-import android.icu.util.Calendar
 import android.location.Location
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -37,17 +30,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.gson.Gson
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
-import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.chat.ChatActivity
-import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
-import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingModelView
+import com.pasco.pascocustomer.customer.activity.track.completededuct.CompletedDeductAmountBody
+import com.pasco.pascocustomer.customer.activity.track.completededuct.CompletedDeductAmtModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationDetailsModelView
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationModelView
@@ -61,10 +53,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
@@ -78,6 +66,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private val trackModelView: TrackLocationModelView by viewModels()
     private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
+    private val completeDeduct: CompletedDeductAmtModelView by viewModels()
     var bottomSheetDialog: BottomSheetDialog? = null
 
     companion object {
@@ -93,8 +82,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isClick = true
     private var mMarkerOptions: Marker? = null
 
-    // private var handler: Handler? = null
-    private lateinit var runnable: Runnable
+
     private var completeStatus = true
 
     var mHandler: Handler? = null
@@ -114,6 +102,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         pickupLongitude = intent.getStringExtra("pickupLongitude").toString()
         bookingId = intent.getStringExtra("bookingId").toString()
         verificationCode = intent.getStringExtra("verificationCode").toString()
+
+        Log.e("bookingIdAAA", "bookingId..$bookingId")
 
 
         binding.textViewSeeDetails.setOnClickListener {
@@ -175,7 +165,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         override fun run() {
 
             locationLatApi()
-            locationLatObserver()
+
             mHandler?.postDelayed(this, 10000)
         }
     }
@@ -302,24 +292,23 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                             BitmapDescriptorFactory.fromBitmap(cars!!)
                         )
                 )
+            Log.e("ReachedAAS", "Statusss..Out")
 
-            if (response.peekContent().data?.driverStatus == null) {
 
-            } else {
-                Log.e("ReachedAAA", "Statusss.." + response.peekContent().data?.bookingStatus)
+            if (response.peekContent().data?.driverStatus != null) {
                 if (response.peekContent().data!!.bookingStatus == "Completed") {
                     mHandler?.removeCallbacks(mRunnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
-                    if (completeStatus) {
-                        showFeedbackPopup()
-                    } else {
 
+                    if (completeStatus) {
+                        Log.e("ReachedAAS", "Statusss..in")
+                        deductAmountApi(response.peekContent().data!!.leftoverAmount)
+                        deductAmountObserver()
+                        completeStatus = false
                     }
 
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
-
-
                     if (response.peekContent().data!!.driverStatus == "Reached at PickUp Location") {
                         // Clear the first route
                         mMap.clear()
@@ -358,7 +347,6 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                         )
                     }
                 }
-
             }
         }
 
@@ -578,4 +566,59 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         //venueTitlePopUp.setText(StEventTitlepopup)
 
     }
+
+    private fun deductAmountApi(leftoverAmount: String?) {
+        val loinBody = CompletedDeductAmountBody(
+            payment_amount = leftoverAmount!!,
+            payment_type = "wallet"
+        )
+        completeDeduct.deductAmount(bookingId, loinBody, this@TrackActivity)
+    }
+
+    private fun deductAmountObserver() {
+        completeDeduct.progressIndicator.observe(this) {}
+        completeDeduct.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            val status = it.peekContent().status
+
+            if (status == "True") {
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                showFeedbackPopup()
+
+            } else {
+                showWalletRequirementPopup()
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        completeDeduct.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this, it)
+            // errorDialogs()
+        }
+    }
+
+    private fun showWalletRequirementPopup() {
+        val message = "Please add amount in your wallet!"
+
+        val builder = AlertDialog.Builder(this@TrackActivity)
+        builder.setTitle("Insufficient wallet amount to accept the bid. Your wallet amount should be equal to the bid price")
+        builder.setMessage(message)
+        builder.setPositiveButton("Add Funds") { dialog, _ ->
+            val intent = Intent(this, DriverWalletActivity::class.java)
+            intent.putExtra("addWallet", "wallet")
+            startActivity(intent)
+            finish()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Skip") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
 }

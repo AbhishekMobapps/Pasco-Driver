@@ -80,6 +80,10 @@ class TrackLocationResponse {
         @Expose
         var bidPrice: Double? = null
 
+        @SerializedName("leftover_amount")
+        @Expose
+        var leftoverAmount: String? = null
+
         @SerializedName("payment_method")
         @Expose
         var paymentMethod: String? = null
@@ -99,5 +103,6 @@ class TrackLocationResponse {
         @SerializedName("driver_status")
         @Expose
         var driverStatus: String? = null
+
     }
 }

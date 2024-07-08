@@ -83,7 +83,6 @@ class TransactionHistoryAdapter(
         }
     }
 
-
     override fun getItemCount(): Int {
         return orderList.size
     }

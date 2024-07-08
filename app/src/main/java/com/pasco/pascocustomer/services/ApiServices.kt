@@ -80,6 +80,7 @@ import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.C
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
 import com.pasco.pascocustomer.customer.activity.track.cancelbooking.CancelBookingBody
+import com.pasco.pascocustomer.customer.activity.track.completededuct.CompletedDeductAmountBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
@@ -633,4 +634,12 @@ interface ApiServices {
     fun getAllTypeNotification(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken
     ): Observable<NotificationOnOffResponse>
+
+    @Headers("Accept: application/json")
+    @POST("UpdateCompleteClientWallet/{id}/")
+    fun deductAmount(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") Id: String,
+        @Body body: CompletedDeductAmountBody
+    ): Observable<SendEmergercyHelpResponse>
 }
