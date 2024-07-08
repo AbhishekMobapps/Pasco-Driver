@@ -119,7 +119,6 @@ class PreferenceManager(context: Context) {
             editor.apply()
         }
 
-
     var FCMToken: String
         get() = prefs.getString(FCM_TOKEN, "") ?: ""
         set(userToken) {
