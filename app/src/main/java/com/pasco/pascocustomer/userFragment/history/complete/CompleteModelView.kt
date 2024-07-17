@@ -10,6 +10,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,23 +34,26 @@ class CompleteModelView @Inject constructor(
 
     fun driverTripCancelData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body :CustomerOrderBody
 
     ) =
         viewModelScope.launch {
             getServicesDatas(
                 progressDialog,
-                activity
+                activity,
+                body
             )
         }
 
     suspend fun getServicesDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body :CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        driverCancelledHistory.getCustomerCompletedHistory()
+        driverCancelledHistory.getCustomerCompletedHistory(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<CompleteHistoryResponse>() {

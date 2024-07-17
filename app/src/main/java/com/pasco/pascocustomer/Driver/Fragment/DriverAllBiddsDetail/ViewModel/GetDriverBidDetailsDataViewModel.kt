@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import javax.inject.Inject
 
@@ -31,20 +32,22 @@ class GetDriverBidDetailsDataViewModel@Inject constructor(
     fun getDriverBidingData(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        bookingId: String
+        bookingId: String,
+        body:CustomerOrderBody
     ) =
         viewModelScope.launch {
-            driverBidingDatas(progressDialog,activity,bookingId)
+            driverBidingDatas(progressDialog,activity,bookingId,body)
         }
 
     suspend fun driverBidingDatas(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        bookingId: String
+        bookingId: String,
+        body:CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        getDriverBidDetailsDataRepository.getDriverBDataRepo(bookingId)
+        getDriverBidDetailsDataRepository.getDriverBDataRepo(bookingId,body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetDriverBidDetailsDataResponse>() {

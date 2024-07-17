@@ -2,29 +2,44 @@ package com.pasco.pascocustomer.Driver
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.webkit.GeolocationPermissions
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityContactWithUsBinding
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+
 @AndroidEntryPoint
-class ContactWithUsActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityContactWithUsBinding
+class ContactWithUsActivity : Originator() {
+    private lateinit var binding: ActivityContactWithUsBinding
     private val progressDialog by lazy { CustomProgressDialog(this) }
+
+    private var language = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityContactWithUsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backImageCwithUs.setImageResource(R.drawable.next)
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageCwithUs.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        } else {
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageCwithUs.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            binding.backImageCwithUs.setImageResource(R.drawable.back)
+        }
 
         binding.backImageCwithUs.setOnClickListener {
             finish()
@@ -34,6 +49,13 @@ class ContactWithUsActivity : AppCompatActivity() {
         startWebView(finalUrl)
         binding.webView.webChromeClient = ChromeClient()
         binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backImageCwithUs.setImageResource(R.drawable.next)
+        }
     }
 
     class ChromeClient : WebChromeClient() {

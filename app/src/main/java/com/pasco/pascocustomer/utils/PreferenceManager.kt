@@ -177,35 +177,14 @@ class PreferenceManager(context: Context) {
         private const val Profile = "Profile"
 
         private const val BEARER_USER_TOKEN = "BEARER_USER_TOKEN"
-        private const val firstLogins = "firstLogin"
-        private const val exploreSyn = "exploreSyn"
-        private const val myPlaceSyn = "myPlaceSyn"
-        private const val bookingSyn = "bookingSyn"
         private const val UserType = "UserType"
         private const val DRIVERAPPROVEDID = "DRIVERAPPROVEDID"
 
 
         private const val USER_ID = "USER_ID"
-        private const val hostTypes = "hostType"
         private const val Code = "Code"
         private const val UpdateNotification = true
-        private const val hostTypeIds = "hostTypeIds"
-        private const val status = "status"
-        private const val country = "country"
-        private const val browse = "browse"
-        private const val state = "state"
-        private const val email = "email"
-        private const val documentUploadeds = "documentUploadeds"
-        private const val isVerifieds = "isVerifieds"
-        private const val officialDocs = "officialDocs"
-
-        private const val USER_PREFS = "USER_PREFS"
-
         private const val USER_LANG = "USER_LANG"
-
-        private const val DEVICE_ID = "DEVICE_ID"
-
-
         private const val FCM_TOKEN = "FCM_TOKEN"
         private const val APPROVEDID = "APPROVEDID"
         private const val IS_NOTIFICATION = "IS_NOTIFICATION"

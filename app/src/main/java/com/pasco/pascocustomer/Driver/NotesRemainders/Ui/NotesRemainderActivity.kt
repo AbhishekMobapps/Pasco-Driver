@@ -2,39 +2,36 @@ package com.pasco.pascocustomer.Driver.NotesRemainders.Ui
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.NotesRemainders.ViewModel.NotesRViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityNotesRemainderBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.reminder.ReminderAdapter
 import com.pasco.pascocustomer.reminder.ReminderItemClick
 import com.pasco.pascocustomer.reminder.ReminderModelView
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.reminder.delete.DeleteReminderModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
+import java.util.*
 
 @AndroidEntryPoint
-class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
+class NotesRemainderActivity : Originator(), ReminderItemClick {
     private lateinit var binding: ActivityNotesRemainderBinding
     private lateinit var activity: Activity
     private val notesRViewModel: NotesRViewModel by viewModels()
@@ -53,7 +50,8 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
     private var reminderAdapter: ReminderAdapter? = null
     private var reminderList: List<ReminderResponse.Datum>? = ArrayList()
     var dialog: Dialog? = null
-
+    private var language = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +64,16 @@ class NotesRemainderActivity : AppCompatActivity(), ReminderItemClick {
 
         binding.addReminderBtn.setOnClickListener { showAddReminderPopup() }
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backArrowAddNotes.setImageResource(R.drawable.next)
+        }
+        else
+        {
+            binding.backArrowAddNotes.setImageResource(R.drawable.back)
+        }
         getReminderApi()
         reminderObserver()
 

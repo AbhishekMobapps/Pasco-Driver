@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
@@ -20,15 +21,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.FragmentProfileBinding
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.userFragment.profile.updatemodel.UpdateProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
@@ -41,6 +45,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.Objects
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -90,6 +95,9 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,6 +106,12 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val view = binding.root
         activity = requireActivity()
+
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
 
         binding.editProfileBtn.setOnClickListener {
             requestCameraPermission()
@@ -124,15 +138,30 @@ class ProfileFragment : Fragment() {
     }
 
     private fun selectImage() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+        val options = arrayOf<CharSequence>(
+            getString(R.string.take_photo),
+            getString(R.string.gallery),
+            getString(R.string.cancel)
+        )
         val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle("Select Image")
+        builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
 
+            /*   if (Objects.equals(language, "ar")) {
+                   if (options[item] == getString(R.string.take_photo)) {
+                       openCamera()
+                   } else if (options[item] == getString(R.string.gallery)) {
+                       openGallery()
+                   } else if (options[item] == getString(R.string.cancel)) {
+                       dialog.dismiss()
+                   }
+               }*/
+
             when {
-                options[item] == "Take Photo" -> openCamera()
-                options[item] == "Choose from Gallery" -> openGallery()
-                options[item] == "Cancel" -> dialog.dismiss()
+
+                options[item] == getString(R.string.take_photo) -> openCamera()
+                options[item] == getString(R.string.gallery) -> openGallery()
+                options[item] == getString(R.string.cancel) -> dialog.dismiss()
             }
         }
         builder.show()
@@ -252,7 +281,10 @@ class ProfileFragment : Fragment() {
 
 
     private fun getProfileApi() {
-        getProfileModelView.getProfile(activity, progressDialog)
+        val loinBody = GetProfileBody(
+            language = languageId
+        )
+        getProfileModelView.getProfile(activity, progressDialog, loinBody)
     }
 
     private fun getProfileObserver() {
@@ -304,6 +336,7 @@ class ProfileFragment : Fragment() {
         val userName = binding.userName.text.toString().toRequestBody(MultipartBody.FORM)
         val email = binding.emailTxtA.text.toString().toRequestBody(MultipartBody.FORM)
         val currentCity = binding.currentCityTxt.text.toString().toRequestBody(MultipartBody.FORM)
+        val languageId = languageId.toRequestBody(MultipartBody.FORM)
 
 
         var profileImage: MultipartBody.Part? = null
@@ -329,7 +362,8 @@ class ProfileFragment : Fragment() {
             userName,
             email,
             currentCity,
-            profileImage
+            profileImage,
+            languageId
 
         )
     }

@@ -1,8 +1,10 @@
 package com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -32,6 +34,8 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.activity.Driver.PrivacyPolicyActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.customer.activity.ChooseLanguageActivity
+import com.pasco.pascocustomer.customer.activity.LanguageActivity
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.UpdateVehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.FragmentDriverMoreBinding
 import com.pasco.pascocustomer.loyalty.LoyaltyActivity
@@ -39,6 +43,7 @@ import com.pasco.pascocustomer.notificationoffon.NotificationOnOffActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
+import java.util.Objects
 
 
 @AndroidEntryPoint
@@ -50,6 +55,11 @@ class DriverMoreFragment : Fragment() {
     private val progressDialog by lazy { CustomProgressDialog(requireContext()) }
     var bottomSheetDialog: BottomSheetDialog? = null
     private var refersh = ""
+    private lateinit var activity: Activity
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
 
     //hello
     override fun onCreateView(
@@ -60,6 +70,33 @@ class DriverMoreFragment : Fragment() {
 
         refersh = PascoApp.encryptedPrefs.token
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
+        activity = requireActivity()
+
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+
+        if (Objects.equals(language, "ar")) {
+            binding.seeNotificationA.setImageResource(R.drawable.back_left)
+            binding.forwardArrowSAddress.setImageResource(R.drawable.back_left)
+            binding.myWalletrightAr.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContactSupport.setImageResource(R.drawable.back_left)
+            binding.forwardArrowTc.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContacUs.setImageResource(R.drawable.back_left)
+            binding.forwardArrowTc.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContacUs.setImageResource(R.drawable.back_left)
+            binding.forwardArrowNotes.setImageResource(R.drawable.back_left)
+            binding.loyaltyImgForward.setImageResource(R.drawable.back_left)
+            binding.forwardArrowShareApp.setImageResource(R.drawable.back_left)
+            binding.forwardArrowDRT.setImageResource(R.drawable.back_left)
+            binding.appSerA.setImageResource(R.drawable.back_left)
+            binding.languageA.setImageResource(R.drawable.back_left)
+            binding.logoutA.setImageResource(R.drawable.back_left)
+        }
 
         if (dAdminApprovedId == "0") {
             disableAllExceptFour()
@@ -100,6 +137,11 @@ class DriverMoreFragment : Fragment() {
         }
         binding.consNotesReminderDri.setOnClickListener {
             val intent = Intent(requireContext(), NotesRemainderActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.consUpdateLanguage.setOnClickListener {
+            val intent = Intent(requireContext(), LanguageActivity::class.java)
             startActivity(intent)
         }
         binding.consShareAppDriver.setOnClickListener { shareApp() }
@@ -151,7 +193,9 @@ class DriverMoreFragment : Fragment() {
         }
 
         val displayMetrics = DisplayMetrics()
-        (requireActivity() as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        (requireActivity() as AppCompatActivity).windowManager.defaultDisplay.getMetrics(
+            displayMetrics
+        )
         val screenHeight = displayMetrics.heightPixels
         val halfScreenHeight = screenHeight * .58
         val eightyPercentScreenHeight = screenHeight * .58
@@ -271,7 +315,8 @@ class DriverMoreFragment : Fragment() {
 
     private fun logOutApi() {
         val bookingBody = LogoutBody(
-            refresh = refersh
+            refresh = refersh,
+            language = languageId
         )
         logoutViewModel.otpCheck(bookingBody, requireActivity())
     }
@@ -286,7 +331,7 @@ class DriverMoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.driverApprovedId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
-                val intent = Intent(requireActivity(), LoginActivity::class.java)
+                val intent = Intent(requireActivity(), ChooseLanguageActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
             }

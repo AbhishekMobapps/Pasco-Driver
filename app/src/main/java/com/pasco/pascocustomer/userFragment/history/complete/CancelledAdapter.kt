@@ -8,23 +8,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
-import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
-import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.historydetails.CompleteHistoryDetailsActivity
-import com.pasco.pascocustomer.invoice.InvoiceActivity
-import com.pasco.pascocustomer.utils.ErrorUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -33,7 +25,8 @@ import java.util.*
 class CancelledAdapter(
     private val context: Context,
     private val driverTripHistory: List<CompleteHistoryResponse.Datum>,
-    private val activity: AppCompatActivity
+    private val activity: AppCompatActivity,
+   private var language: String
 ) :
     RecyclerView.Adapter<CancelledAdapter.ViewHolder>() {
 
@@ -53,7 +46,7 @@ class CancelledAdapter(
         val price = "$${driverTripHis.bidPrice}"
         val dBookingStatus = driverTripHis.bookingStatus.toString()
         val dateTime = driverTripHis.availabilityDatetime.toString()
-
+        Log.e("dateTimeAAA", "dateTime..Ca$dateTime")
         holder.bookingId.text = driverTripHistory[position].bookingNumber
         holder.paymentMode.text = driverTripHistory[position].paymentMethod
 
@@ -63,6 +56,10 @@ class CancelledAdapter(
             "%.1f".format(driverTripHistory[position].totalDistance ?: 0.0)
         holder.distance.text = "$formattedTotalDistance km"
 
+        if (Objects.equals(language,"ar"))
+        {
+            holder.hisArrow.setImageResource(R.drawable.back)
+        }
 
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -168,6 +165,7 @@ class CancelledAdapter(
         val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
         val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
         val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
+        val hisArrow = itemView.findViewById<ImageView>(R.id.hisArrow)
 
 
     }

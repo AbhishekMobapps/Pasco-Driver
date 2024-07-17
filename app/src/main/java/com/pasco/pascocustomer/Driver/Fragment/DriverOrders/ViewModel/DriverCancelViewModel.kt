@@ -32,10 +32,11 @@ class DriverCancelViewModel@Inject constructor(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         id: String,
-        reasonid:String
+        reasonid:String,
+        language:String
     ) =
         viewModelScope.launch {
-            getStartTripDatas(progressDialog,activity, id,reasonid)
+            getStartTripDatas(progressDialog,activity, id,reasonid,language)
         }
 
     suspend fun getStartTripDatas(
@@ -43,10 +44,11 @@ class DriverCancelViewModel@Inject constructor(
         activity: Activity,
         id: String,
         reasonid: String,
+        language: String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.updateDriverSRepository(id,reasonid)
+        repository.updateDriverSRepository(id,reasonid,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<DriverCancelResponse>() {

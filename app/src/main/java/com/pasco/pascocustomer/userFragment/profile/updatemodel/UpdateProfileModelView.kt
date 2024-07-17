@@ -36,8 +36,8 @@ class UpdateProfileModelView @Inject constructor(
         full_name: RequestBody,
         email: RequestBody,
         currentCity: RequestBody,
-        identify_document: MultipartBody.Part
-
+        identify_document: MultipartBody.Part,
+        language: RequestBody,
     ) = viewModelScope.launch {
         updateProfiles(
             progressDialog,
@@ -45,7 +45,8 @@ class UpdateProfileModelView @Inject constructor(
             full_name,
             email,
             currentCity,
-            identify_document
+            identify_document,
+            language
 
         )
     }
@@ -56,7 +57,8 @@ class UpdateProfileModelView @Inject constructor(
         full_name: RequestBody,
         email: RequestBody,
         currentCity: RequestBody,
-        identify_document: MultipartBody.Part
+        identify_document: MultipartBody.Part,
+        language: RequestBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
@@ -65,6 +67,7 @@ class UpdateProfileModelView @Inject constructor(
             email,
             currentCity,
             identify_document,
+            language
 
             ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<UpdateProfileResponse>() {

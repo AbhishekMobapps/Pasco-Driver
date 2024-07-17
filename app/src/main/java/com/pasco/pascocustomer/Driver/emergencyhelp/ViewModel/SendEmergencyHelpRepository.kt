@@ -10,11 +10,12 @@ class SendEmergencyHelpRepository@Inject constructor(private val apiService: Api
         id: String,
         driver_id: String,
         current_location :String,
-        reason :String
+        reason :String,
+        language :String,
     ): Observable<SendEmergercyHelpResponse>
     {
         return apiService.sendEmergencyHelp(
             PascoApp.encryptedPrefs.bearerToken,
-            id,driver_id,current_location,reason)
+            id,driver_id,current_location,reason,language)
     }
 }

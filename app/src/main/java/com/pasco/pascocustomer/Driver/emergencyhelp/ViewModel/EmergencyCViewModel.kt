@@ -14,15 +14,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.Event
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EmergencyCViewModel@Inject constructor(
+class EmergencyCViewModel @Inject constructor(
     application: Application,
     private val emergencyCReposiotory: EmergencyCReposiotory
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
@@ -31,22 +32,26 @@ class EmergencyCViewModel@Inject constructor(
 
     fun getEmeergencyListData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: GetProfileBody
 
     ) =
         viewModelScope.launch {
-            getCouponListDatas( progressDialog,
-                activity)
+            getCouponListDatas(
+                progressDialog,
+                activity,
+                body
+            )
         }
+
     suspend fun getCouponListDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
-    )
-
-    {
+        activity: Activity,
+        body: GetProfileBody
+    ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        emergencyCReposiotory.getEmregencyRepo()
+        emergencyCReposiotory.getEmregencyRepo(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<EmergencyCResponse>() {

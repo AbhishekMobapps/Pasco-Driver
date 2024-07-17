@@ -5,13 +5,15 @@ import com.pasco.pascocustomer.services.ApiServices
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class AddAmountRepository@Inject constructor(private val apiService: ApiServices) {
+class AddAmountRepository @Inject constructor(private val apiService: ApiServices) {
     suspend fun addUserWalletRepo(
-        amount: String
+        amount: String,
+        language: String
 
     ): Observable<AddAmountResponse> {
         return apiService.addUserWallet(
             PascoApp.encryptedPrefs.bearerToken,
-        amount)
+            amount,language
+        )
     }
 }

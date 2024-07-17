@@ -1,14 +1,13 @@
 package com.pasco.pascocustomer.Driver.emergencyhelp.Ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityEmergencyMainBinding
+import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EmergencyMainActivity : AppCompatActivity() {
+class EmergencyMainActivity : Originator() {
     private lateinit var binding:ActivityEmergencyMainBinding
     private var bookingId = ""
     override fun onCreate(savedInstanceState: Bundle?) {

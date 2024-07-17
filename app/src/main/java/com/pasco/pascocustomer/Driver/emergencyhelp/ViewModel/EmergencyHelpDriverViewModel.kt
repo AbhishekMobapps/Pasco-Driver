@@ -32,21 +32,23 @@ class EmergencyHelpDriverViewModel@Inject constructor(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         driver_latitude: String,
-        driver_longitude: String
+        driver_longitude: String,
+        language: String
     ) =
         viewModelScope.launch {
-            getNotesReminderDatas(progressDialog,activity,driver_latitude,driver_longitude)
+            getNotesReminderDatas(progressDialog,activity,driver_latitude,driver_longitude,language)
         }
 
     private suspend fun getNotesReminderDatas(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         driver_latitude: String,
-        driver_longitude: String
+        driver_longitude: String,
+        language: String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getDriverHelpRepo(driver_latitude, driver_longitude)
+        repository.getDriverHelpRepo(driver_latitude, driver_longitude,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<EmergencyHelpDriverResponse>() {

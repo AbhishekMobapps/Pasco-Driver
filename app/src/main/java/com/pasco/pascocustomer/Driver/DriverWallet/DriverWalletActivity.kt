@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.AddAmountViewModel
@@ -25,11 +27,13 @@ import com.pasco.pascocustomer.Driver.DriverWallet.withdraw.WithdrawAmountViewMo
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityDriverWalletBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 @AndroidEntryPoint
-class DriverWalletActivity : AppCompatActivity() {
+class DriverWalletActivity : Originator() {
     private lateinit var binding: ActivityDriverWalletBinding
     private lateinit var dialog: AlertDialog
     private val addAmountViewModel: AddAmountViewModel by viewModels()
@@ -47,6 +51,10 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private val chooseLanguageList = ArrayList<String>()
     private val strLangList = java.util.ArrayList<String>()
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverWalletBinding.inflate(layoutInflater)
@@ -56,24 +64,35 @@ class DriverWalletActivity : AppCompatActivity() {
         addWallet = intent.getStringExtra("addWallet").toString()
 
         userType = PascoApp.encryptedPrefs.userType
-      //  withdrawMoneyObserver()
+        //  withdrawMoneyObserver()
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            chooseLanguageList.add("ائتمان")
+            chooseLanguageList.add("دَين")
+        } else {
+            chooseLanguageList.add("Credit")
+            chooseLanguageList.add("Debit")
+        }
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
         }
         if (userType == "driver") {
             binding.withdrawAmountBtn.visibility = View.VISIBLE
             binding.linearTransactionLimitt.visibility = View.GONE
-            binding.linearTransactionLimitMyTransaction.visibility = View.VISIBLE
+
             binding.consTopDesign.visibility = View.VISIBLE
+            binding.filterDriverConst.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
-            //    addWithPop()
+                addWithPop()
             }
         } else {
             binding.withdrawAmountBtn.visibility = View.GONE
             binding.linearTransactionLimitt.visibility = View.VISIBLE
-            binding.linearTransactionLimitMyTransaction.visibility = View.GONE
             binding.consTopDesign.visibility = View.GONE
         }
 
@@ -81,35 +100,49 @@ class DriverWalletActivity : AppCompatActivity() {
             openWithDrawPopUp()
         }
 
-        chooseLanguageList.add("Credit")
-        chooseLanguageList.add("Debit")
+        binding.asDriverConst.setOnClickListener {
+            binding.asDriverConst.setBackgroundResource(R.drawable.as_client_white_background)
+            binding.driverTxt.setTextColor(ContextCompat.getColor(this, R.color.grey_dark))
+            binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.asClientConst.setBackgroundResource(0)
+            binding.recycerEarningList.visibility = View.GONE
+        }
+
+        binding.asClientConst.setOnClickListener {
+            binding.asClientConst.setBackgroundResource(R.drawable.as_client_white_background)
+            binding.driverTxt.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.clientTxt.setTextColor(ContextCompat.getColor(this, R.color.grey_dark))
+            binding.asDriverConst.setBackgroundResource(0)
+            getTotalAmount("")
+        }
+
 
         //Spinner Adapter
         val dAdapter = spinnerAdapter(this, R.layout.custom_spinner_two, chooseLanguageList)
         dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dAdapter.add("Filter")
+        dAdapter.add(getString(R.string.filter))
         dAdapter.addAll(chooseLanguageList)
 
         binding.spinnerFilter.adapter = dAdapter
-        if (binding.consTopDesign.visibility == View.VISIBLE)
-        {
+        if (binding.consTopDesign.visibility == View.VISIBLE) {
             binding.spinnerFilter1.adapter = dAdapter
-            binding.spinnerFilter1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
-                ) {
-                    //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
-                    val itemValue = binding.spinnerFilter1.selectedItem.toString()
-                    if (itemValue == getString(R.string.select_event)) {
-                        getTotalAmount("")
-                    } else {
-                        getTotalAmount(itemValue)
+            binding.spinnerFilter1.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
+                    ) {
+                        //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
+                        val itemValue = binding.spinnerFilter1.selectedItem.toString()
+                        if (itemValue == getString(R.string.select_event)) {
+                            getTotalAmount("")
+                        } else {
+                            getTotalAmount(itemValue)
+                        }
+                    }
+
+                    override fun onNothingSelected(adapterView: AdapterView<*>?) {
                     }
                 }
-
-                override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                }
-            }
 
         }
 
@@ -157,8 +190,9 @@ class DriverWalletActivity : AppCompatActivity() {
         waCrossImage.setOnClickListener { dialog.dismiss() }
         submit_WithDrawBtn.setOnClickListener {
 
-           val  withdrawAmountBody = WithdrawAmountBody(
-                amountWithdrawEditD.text.toString()
+            val withdrawAmountBody = WithdrawAmountBody(
+                amountWithdrawEditD.text.toString(),
+                language = languageId
             )
             //call api()
             withdrawAmountViewModel.getWithdrawData(
@@ -192,7 +226,8 @@ class DriverWalletActivity : AppCompatActivity() {
             addAmountViewModel.getAddAmountData(
                 progressDialog,
                 this,
-                amountWithdrawEditD.text.toString()
+                amountWithdrawEditD.text.toString(),
+                languageId
             )
             //observer
             addMoneyObserver()
@@ -242,7 +277,8 @@ class DriverWalletActivity : AppCompatActivity() {
 
     private fun getTotalAmount(itemValue: String) {
         val body = GetAddWalletDataBody(
-            transaction_type = itemValue
+            transaction_type = itemValue,
+            language = languageId
         )
 
         getAmountViewModel.getAmountData(progressDialog, this, body)

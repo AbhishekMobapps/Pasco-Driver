@@ -3,7 +3,7 @@ package com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectModelView
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
@@ -19,15 +20,16 @@ import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.B
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.track.TrackActivity
 import com.pasco.pascocustomer.databinding.ActivityAllBiddsDetailsBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
+class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
     private lateinit var binding: ActivityAllBiddsDetailsBinding
     private val progressDialog by lazy { CustomProgressDialog(this@AllBiddsDetailsActivity) }
     private var biddsDetailsList: List<AllBiddsDetailResponse.Datum> = ArrayList()
@@ -42,6 +44,9 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
     private var id = ""
     private var totalPrice = ""
     private var bookingId = ""
+    private var language = ""
+    private var languageId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var biddsDetailsAdapter: AllBiddsDetailsAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,15 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         setContentView(binding.root)
 
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+
+        if (Objects.equals(language, "ar")) {
+            binding.backBtn.setImageResource(R.drawable.next)
+
+        }
         userName = intent.getStringExtra("userName").toString()
         orderId = intent.getStringExtra("orderId").toString()
         dateTime = intent.getStringExtra("dateTime").toString()
@@ -96,7 +110,10 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
 
 
     private fun getBiddsDetailsList() {
-        detailsModel.getBidds(id, this, progressDialog)
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        detailsModel.getBidds(id, body, this, progressDialog)
     }
 
     @SuppressLint("SetTextI18n")
@@ -178,7 +195,8 @@ class AllBiddsDetailsActivity : AppCompatActivity(), NotificationClickListener {
         Log.e("upFrontPriceAA", "upFrontPrice..$upFrontPrice")
         val loinBody = AcceptOrRejectBidBody(
             payment_amount = upFrontPrice.toString(),
-            payment_type = "wallet"
+            payment_type = "wallet",
+            language = languageId
         )
         paymentAccept.otpCheck(id, loinBody, this, progressDialog)
     }

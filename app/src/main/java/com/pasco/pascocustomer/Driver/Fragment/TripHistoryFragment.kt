@@ -1,12 +1,15 @@
 package com.pasco.pascocustomer.Driver.Fragment
 
+import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,12 +30,16 @@ import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackModelView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentTripHistoryBinding
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
 class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
+    private lateinit var activity: Activity
     private lateinit var binding: FragmentTripHistoryBinding
     private var driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData> =
         ArrayList()
@@ -43,6 +50,10 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
     private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
     var bottomSheetDialog1: BottomSheetDialog? = null
     private val progressDialog by lazy { CustomProgressDialog(requireActivity()) }
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,28 +61,66 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
         binding = FragmentTripHistoryBinding.inflate(inflater, container, false)
         refersh = PascoApp.encryptedPrefs.token
 
+        activity = requireActivity()
         completedApi()
         completedObserver()
         feedbackObserver()
-        binding.completedHisTextview.setOnClickListener {
+
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.completedHisTextview.background =
+                ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
+
+            binding.completedHisTextview.setOnClickListener {
+                binding.completedHisTextview.background =
+                    ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
+                binding.cancelledHisTextview.background = null
+                binding.completedHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
+                binding.cancelledHisTextview.setTextColor(Color.parseColor("#FF000000"))
+                completedApi()
+                completedObserver()
+
+            }
+
+            binding.cancelledHisTextview.setOnClickListener {
+                binding.completedHisTextview.background = null
+                binding.cancelledHisTextview.background =
+                    ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
+                binding.completedHisTextview.setTextColor(Color.parseColor("#FF000000"))
+                binding.cancelledHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
+                cancelledApi()
+                cancelledObserver()
+            }
+        } else {
             binding.completedHisTextview.background =
                 ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
-            binding.cancelledHisTextview.background = null
-            binding.completedHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
-            binding.cancelledHisTextview.setTextColor(Color.parseColor("#FF000000"))
-            completedApi()
-            completedObserver()
+            binding.completedHisTextview.setOnClickListener {
+                binding.completedHisTextview.background =
+                    ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
+                binding.cancelledHisTextview.background = null
+                binding.completedHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
+                binding.cancelledHisTextview.setTextColor(Color.parseColor("#FF000000"))
+                completedApi()
+                completedObserver()
 
+            }
+            binding.cancelledHisTextview.setOnClickListener {
+                binding.completedHisTextview.background = null
+                binding.cancelledHisTextview.background =
+                    ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
+                binding.completedHisTextview.setTextColor(Color.parseColor("#FF000000"))
+                binding.cancelledHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
+                cancelledApi()
+                cancelledObserver()
+            }
         }
-        binding.cancelledHisTextview.setOnClickListener {
-            binding.completedHisTextview.background = null
-            binding.cancelledHisTextview.background =
-                ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
-            binding.completedHisTextview.setTextColor(Color.parseColor("#FF000000"))
-            binding.cancelledHisTextview.setTextColor(Color.parseColor("#FFFFFFFF"))
-            cancelledApi()
-            cancelledObserver()
-        }
+
         return binding.root
     }
 
@@ -100,9 +149,14 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
 
 
     private fun cancelledApi() {
+        val body = CustomerOrderBody(
+            language = language
+        )
+
         cancelledTripViewModel.driverTripCancelData(
             progressDialog,
-            requireActivity()
+            requireActivity(),
+            body
         )
     }
 
@@ -172,7 +226,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
                     binding.recycerHistoryDriverList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.recycerHistoryDriverList.adapter =
-                        CompletedTripHistoryAdapter(requireContext(),  driverTripHistory)
+                        CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }

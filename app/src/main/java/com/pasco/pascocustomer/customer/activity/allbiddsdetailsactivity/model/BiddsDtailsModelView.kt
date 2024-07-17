@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,10 +28,10 @@ class BiddsDtailsModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun getBidds(Id: String, activity: Activity, progressDialog: CustomProgressDialog) {
+    fun getBidds(Id: String, body :CustomerOrderBody, activity: Activity, progressDialog: CustomProgressDialog) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getAllBiddsDetails(Id).subscribeOn(Schedulers.io())
+        repository.getAllBiddsDetails(Id,body).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AllBiddsDetailResponse>() {
                 override fun onNext(value: AllBiddsDetailResponse) {

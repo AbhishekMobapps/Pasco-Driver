@@ -8,19 +8,19 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintWidth_percent="0.97">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.96">
@@ -76,6 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         android:text="Raj Sing"
                         android:textColor="@color/black"
                         android:textSize="15sp"
@@ -234,14 +235,15 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
-                    android:id="@+id/hisArow"
+                    android:id="@+id/hisArrow"
                     android:layout_width="19dp"
                     android:layout_height="22dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
                     android:src="@drawable/next"
                     android:tint="@color/earth_yellow"
-                    android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toTopOf="@+id/consCancellationReason"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/totalPaymentsConst"
@@ -250,14 +252,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/consCancellationReason"
                     android:layout_width="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/hisArow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hisArrow"
                     app:layout_constraintWidth_percent=".95">
 
                     <TextView
@@ -266,26 +268,26 @@
                         android:layout_height="wrap_content"
                         android:text="@string/cancellation_reason"
                         android:textColor="@color/black"
-                        app:layout_constraintWidth_percent=".5"
                         android:textSize="@dimen/normal_txt_size"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent=".5" />
 
                     <TextView
                         android:id="@+id/cancelReasonTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textStyle="bold"
                         android:gravity="center_vertical"
+                        android:text=""
                         android:textColor="@color/red"
                         android:textSize="@dimen/normal_txt_size"
-                        app:layout_constraintWidth_percent=".47"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent=".47" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

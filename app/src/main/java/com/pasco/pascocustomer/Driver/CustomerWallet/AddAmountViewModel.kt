@@ -31,21 +31,23 @@ class AddAmountViewModel @Inject constructor(
     fun getAddAmountData(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        amount: String
+        amount: String,
+        language: String
 
     ) =
         viewModelScope.launch {
-            getAddAmountDatas(progressDialog,activity,amount)
+            getAddAmountDatas(progressDialog,activity,amount,language)
         }
 
     private suspend fun getAddAmountDatas(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        amount: String
+        amount: String,
+        language: String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        addAmountRepository.addUserWalletRepo(amount)
+        addAmountRepository.addUserWalletRepo(amount,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AddAmountResponse>() {

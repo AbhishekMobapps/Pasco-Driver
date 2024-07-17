@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,22 +32,24 @@ class CancelReasonViewModel@Inject constructor(
 
     fun getCancelReason(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: CustomerOrderBody
 
     ) =
         viewModelScope.launch {
             cancelReason( progressDialog,
-                activity)
+                activity,body)
         }
     suspend fun cancelReason(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: CustomerOrderBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.cancelReason()
+        repository.cancelReason(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<CancelReasonResponse>() {

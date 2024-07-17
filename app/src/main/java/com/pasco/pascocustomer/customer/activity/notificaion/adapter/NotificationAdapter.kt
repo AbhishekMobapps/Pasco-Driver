@@ -5,17 +5,21 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationResponse
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class NotificationAdapter(
@@ -43,6 +47,7 @@ class NotificationAdapter(
         return ViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: NotificationAdapter.ViewHolder, position: Int) {
         val notificationItem = notificationData[position]
 
@@ -52,20 +57,12 @@ class NotificationAdapter(
         holder.notificationTitle.text = notificationData[position].notificationDescription
 
         val dateTime = notificationData[position].createdAt
-        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
 
-        try {
-            val parsedDate = inputDateFormat.parse(dateTime)
-            outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
-            val formattedDateTime = outputDateFormat.format(parsedDate)
+        val zonedDateTime = ZonedDateTime.parse(dateTime)
+        val outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")
+        val formattedDate = zonedDateTime.format(outputFormat)
 
-            holder.notificationDateTime.text = formattedDateTime
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
-
+        holder.notificationDateTime.text = formattedDate
         holder.deleteIConNotification.setOnClickListener {
             openDeleteDialog(position, id!!)
         }
@@ -75,7 +72,8 @@ class NotificationAdapter(
     @SuppressLint("MissingInflatedId")
     private fun openDeleteDialog(position: Int, id: Int) {
         val builder = AlertDialog.Builder(context, R.style.Style_Dialog_Rounded_Corner)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.delete_notification_popup, null)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.delete_notification_popup, null)
         builder.setView(dialogView)
 
         val dialog = builder.create()

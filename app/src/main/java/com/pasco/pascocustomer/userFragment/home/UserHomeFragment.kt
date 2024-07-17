@@ -1,11 +1,13 @@
 package com.pasco.pascocustomer.userFragment.home
 
 import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,6 +19,7 @@ import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesVi
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehicletype.GetVehicleTypeBody
 import com.pasco.pascocustomer.databinding.FragmentUserHomeBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
@@ -45,6 +48,8 @@ class UserHomeFragment : Fragment() {
     private var sliderList: ArrayList<SliderHomeResponse.Datum>? = null
 
     private var userType = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +60,11 @@ class UserHomeFragment : Fragment() {
 
         activity = requireActivity()
         userType = PascoApp.encryptedPrefs.userType
-
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
@@ -99,9 +108,13 @@ class UserHomeFragment : Fragment() {
     }
 
     private fun servicesList() {
+        val getVehicleTypeBody = GetVehicleTypeBody(
+            language = languageId
+        )
         servicesViewModel.getServicesData(
             progressDialog,
-            activity
+            activity,
+            getVehicleTypeBody
         )
     }
 
@@ -137,7 +150,8 @@ class UserHomeFragment : Fragment() {
     private fun sliderPageApi() {
 
         val bookingBody = SliderHomeBody(
-            user_type = userType
+            user_type = userType,
+            language = languageId
         )
         sliderViewModel.otpCheck(bookingBody, requireActivity())
     }
@@ -146,7 +160,7 @@ class UserHomeFragment : Fragment() {
 
         sliderViewModel.mRejectResponse.observe(requireActivity()) { response ->
             sliderList = response.peekContent().data
-                binding.viewPager.adapter = ViewPagerAdapter(requireContext(), sliderList!!)
+            binding.viewPager.adapter = ViewPagerAdapter(requireContext(), sliderList!!)
             binding.indicator.setViewPager(binding.viewPager)
 
             binding.indicator.setOnPageChangeListener(object : OnPageChangeListener {

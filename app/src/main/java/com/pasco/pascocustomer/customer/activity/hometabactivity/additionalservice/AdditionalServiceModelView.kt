@@ -33,22 +33,24 @@ class AdditionalServiceModelView @Inject constructor(
 
     fun getServicesData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: AdditionalServiceBody
 
     ) =
         viewModelScope.launch {
             getServicesDatas( progressDialog,
-                activity)
+                activity,body)
         }
     suspend fun getServicesDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: AdditionalServiceBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        servicesRepository.getAdditionalService()
+        servicesRepository.getAdditionalService(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AdditionalServiceResponse>() {

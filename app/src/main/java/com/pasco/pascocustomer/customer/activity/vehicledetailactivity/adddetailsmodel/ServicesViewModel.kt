@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehicletype.GetVehicleTypeBody
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,22 +35,23 @@ class ServicesViewModel@Inject constructor(
 
     fun getServicesData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        getVehicleTypeBody: GetVehicleTypeBody
 
     ) =
         viewModelScope.launch {
-            getServicesDatas( progressDialog,
-                activity)
+            getServicesDatas( progressDialog, activity,getVehicleTypeBody)
         }
     suspend fun getServicesDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        getVehicleTypeBody: GetVehicleTypeBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        servicesRepository.getServicesRepo()
+        servicesRepository.getServicesRepo(getVehicleTypeBody)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ServicesResponse>() {

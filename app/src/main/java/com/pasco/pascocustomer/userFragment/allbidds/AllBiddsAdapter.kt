@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +20,11 @@ import java.util.*
 
 class AllBiddsAdapter(
     private val required: Context,
-    private var orderList: List<OrderResponse.Datum>
+    private var orderList: List<OrderResponse.Datum>,
+    private var language: String
 ) :
     RecyclerView.Adapter<AllBiddsAdapter.ViewHolder>() {
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userName: TextView = itemView.findViewById(R.id.userName)
@@ -45,6 +46,11 @@ class AllBiddsAdapter(
         holder.userName.text = orderList[position].user
         val price = orderList[position].basicprice
         holder.totalPriceTxt.text = "$ $price"
+
+        if (language == "ar")
+        {
+            holder.showDetailsBtn.setImageResource(R.drawable.back)
+        }
 
 
         holder.oderIdTxt.text = truncateBookingNumber(orderList[position].bookingNumber.toString())

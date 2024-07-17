@@ -4,5 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 
 class NotificationBody (
-    @SerializedName("id") var id: String
+    @SerializedName("id") var id: String,
+    @SerializedName("language") var language: String,
 )

@@ -4,13 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -24,33 +24,29 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.DriversListAdapter
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverResponse
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyHelpDriverViewModel
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendEmergencyHelpViewModel
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendHelpClickListner
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendToAllBody
-import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.SendToAllViewModel
+import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.*
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityEmergencyHelpBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.util.ArrayList
-import java.util.Locale
+import java.util.*
 
 @AndroidEntryPoint
-class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
-    private lateinit var binding:ActivityEmergencyHelpBinding
+class EmergencyHelpActivity : Originator(), SendHelpClickListner {
+    private lateinit var binding: ActivityEmergencyHelpBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var activity: Activity
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private var bookingId = ""
-    private var emergencyDriNumbers: List<EmergencyHelpDriverResponse.EmergencyHelpDriverResponseData> = ArrayList()
+    private var emergencyDriNumbers: List<EmergencyHelpDriverResponse.EmergencyHelpDriverResponseData> =
+        ArrayList()
     private val emergencyHelpDriverModel: EmergencyHelpDriverViewModel by viewModels()
     private val sendEmergencyHelpViewModel: SendEmergencyHelpViewModel by viewModels()
     private val sendToAllViewModel: SendToAllViewModel by viewModels()
@@ -59,11 +55,16 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
     private lateinit var body: SendToAllBody
     private var address: String? = null
     private var driverId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyHelpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activity = this
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         bookingId = intent.getStringExtra("bookingIdH").toString()
         driverId = PascoApp.encryptedPrefs.userId
@@ -84,6 +85,7 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         getEmergencyObserver()
         sendHelpObserver()
     }
+
     @SuppressLint("MissingInflatedId")
     private fun sendHelpAlertPopup() {
         val builder = AlertDialog.Builder(this, R.style.Style_Dialog_Rounded_Corner)
@@ -124,11 +126,12 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
 
     private fun sendToAllApi() {
         body = SendToAllBody(
-            address.toString(),
-            formattedLatitudeSelect,
-            formattedLongitudeSelect
+            current_location = address.toString(),
+            driver_latitude = formattedLatitudeSelect,
+            driver_longitude = formattedLongitudeSelect,
+            language = languageId
         )
-        sendToAllViewModel.sendHelpToAllData(bookingId,body, activity, progressDialog)
+        sendToAllViewModel.sendHelpToAllData(bookingId, body, activity, progressDialog)
     }
 
     private fun sendHelpObserver() {
@@ -250,23 +253,37 @@ class EmergencyHelpActivity : AppCompatActivity(),SendHelpClickListner {
         binding.recyclerAllDriverList.isVerticalFadingEdgeEnabled = true
         binding.recyclerAllDriverList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        driversListAdapter = DriversListAdapter(this, this, emergencyDriNumbers,bookingId)
+        driversListAdapter = DriversListAdapter(this, this, emergencyDriNumbers, bookingId)
         binding.recyclerAllDriverList.adapter = driversListAdapter
     }
 
     private fun getEmergency() {
-        emergencyHelpDriverModel.getEmergencyHelpDriverList(progressDialog, activity, formattedLatitudeSelect, formattedLongitudeSelect)
+        emergencyHelpDriverModel.getEmergencyHelpDriverList(
+            progressDialog,
+            activity,
+            formattedLatitudeSelect,
+            formattedLongitudeSelect,
+            languageId
+        )
     }
 
     override fun sendHelp(position: Int, id: Int, comment: String) {
 
-        sendHelpApi(id,comment)
+        sendHelpApi(id, comment)
     }
 
     private fun sendHelpApi(id: Int, comment: String) {
-           val reason = comment
-        sendEmergencyHelpViewModel.sendEmergencyData(progressDialog,activity,bookingId,driverId,address.toString(),reason)
-
-        }
+        val reason = comment
+        sendEmergencyHelpViewModel.sendEmergencyData(
+            progressDialog,
+            activity,
+            bookingId,
+            driverId,
+            address.toString(),
+            reason,
+            languageId
+        )
 
     }
+
+}

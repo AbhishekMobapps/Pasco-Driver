@@ -1,12 +1,13 @@
 package com.pasco.pascocustomer.customer.activity.hometabactivity
 
+import VehicleTypeResponse
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -21,6 +23,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
+import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceBody
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceModelView
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import com.pasco.pascocustomer.customer.activity.hometabactivity.cargoavailable.CargoAvailableBody
 import com.pasco.pascocustomer.customer.activity.hometabactivity.cargoavailable.CargoAvailableModelView
 import com.pasco.pascocustomer.customer.activity.hometabactivity.checkservicemodel.CheckChargeModelView
@@ -30,22 +37,16 @@ import com.pasco.pascocustomer.customer.activity.hometabactivity.modelview.Booki
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityAllTabPayBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.location.LocationsActivity
 import com.pasco.pascocustomer.utils.ErrorUtil
-import androidx.lifecycle.Observer
-import com.google.android.gms.wallet.Wallet
-import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import dagger.hilt.android.AndroidEntryPoint
-import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
-import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceModelView
-import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
 import java.io.IOException
 import java.util.*
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class AllTabPayActivity : AppCompatActivity() {
+class AllTabPayActivity : Originator() {
     private lateinit var binding: ActivityAllTabPayBinding
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var lightTrans = ""
@@ -81,6 +82,7 @@ class AllTabPayActivity : AppCompatActivity() {
     private var vehicleLoadCapacity = ""
     private var vehicleCapability = ""
     private var profile = ""
+
     private var cargoQty: Int? = null
     private var commonCount = 0
     private val minValue = 0
@@ -108,8 +110,9 @@ class AllTabPayActivity : AppCompatActivity() {
     private var timeDurationTxt: TextView? = null
     private var bookingAmount: TextView? = null
     private var totalAmount: TextView? = null
-    private var dateTxt: TextView? = null
-    private var timeTxt: TextView? = null
+    private var language = ""
+    private var languageId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,14 +127,32 @@ class AllTabPayActivity : AppCompatActivity() {
             showCalenderPopup()
         }
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
         lightTrans = intent.getStringExtra("lightTrans").toString()
         shipmentName = intent.getStringExtra("shipmentName").toString()
         vehicleId = intent.getIntExtra("vehicleId", 0)
-        Log.e("currentLatLng", "vehicleId...   $vehicleId")
+        Log.e("currentLanguage", "language...   $language")
 
         binding.headerTxt.text = shipmentName
 
 
+        if (Objects.equals(language, "ar")) {
+            binding.addBtn.setBackgroundResource(R.drawable.subract_button)
+            binding.calenderConst.setBackgroundResource(R.drawable.add_button)
+            binding.clockConst.setBackgroundResource(R.drawable.add_button)
+            binding.subtractBtn.setBackgroundResource(R.drawable.add_button)
+            binding.backBtn.setImageResource(R.drawable.next)
+            binding.additionalImg.setImageResource(R.drawable.down)
+        } else {
+            binding.addBtn.setBackgroundResource(R.drawable.add_button)
+            binding.subtractBtn.setBackgroundResource(R.drawable.subract_button)
+            binding.calenderConst.setBackgroundResource(R.drawable.subract_button)
+            binding.clockConst.setBackgroundResource(R.drawable.subract_button)
+            binding.backBtn.setImageResource(R.drawable.back)
+        }
 
 
         binding.addBtn.setOnClickListener {
@@ -167,7 +188,7 @@ class AllTabPayActivity : AppCompatActivity() {
                 if (count > minValue) { // Check if count is greater than 0 before subtracting
                     count--
                     commonCount--
-                    binding.cargoQtyTxt.text = "$count"
+                    binding.cargoQtyTxt.text = "Number of vehicle you required"
 
                 }
             }
@@ -338,7 +359,8 @@ class AllTabPayActivity : AppCompatActivity() {
 
     private fun callVehicleType() {
         vehicleTypeViewModel.getVehicleTypeData(
-            progressDialog, this, vehicleId.toString()
+            progressDialog, this, vehicleId.toString(),
+            languageId
         )
     }
 
@@ -694,7 +716,8 @@ class AllTabPayActivity : AppCompatActivity() {
             payment_method = selectedOption,
             additional_service = spinnerTransportId,
             pickup_country = pickupCountry.toString(),
-            drop_country = dropCountry.toString()
+            drop_country = dropCountry.toString(),
+            language = languageId
 
         )
         bookingRideViewModel.otpCheck(bookingBody, this, progressDialog)
@@ -732,7 +755,6 @@ class AllTabPayActivity : AppCompatActivity() {
     }
 
 
-
     private fun checkChargeApi() {
 
         val bookingBody = CheckChargesBody(
@@ -742,7 +764,8 @@ class AllTabPayActivity : AppCompatActivity() {
             pickup_latitude = formattedLatitudeSelect,
             pickup_longitude = formattedLongitudeSelect,
             drop_latitude = formattedLatitudeDropSelect,
-            drop_longitude = formattedLongitudeDropSelect
+            drop_longitude = formattedLongitudeDropSelect,
+            language = languageId
         )
         checkChargeViewModel.otpCheck(bookingBody, this, progressDialog)
     }
@@ -790,7 +813,8 @@ class AllTabPayActivity : AppCompatActivity() {
             pickup_city = cityNamePickUp.toString(),
             drop_city = cityNameDrop.toString(),
             pickup_country = pickupCountry.toString(),
-            drop_country = dropCountry.toString()
+            drop_country = dropCountry.toString(),
+            language = languageId
         )
         cargoViewModel.otpCheck(bookingBody, this)
     }
@@ -843,8 +867,12 @@ class AllTabPayActivity : AppCompatActivity() {
     }
 
     private fun additionalServiceList() {
+        val body = AdditionalServiceBody(
+            language = languageId
+        )
         additionalServiceViewModel.getServicesData(
-            progressDialog, this
+            progressDialog, this,
+            body
         )
     }
 

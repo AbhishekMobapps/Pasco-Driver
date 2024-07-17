@@ -2,6 +2,8 @@ package com.pasco.pascocustomer.Driver.adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.PorterDuff
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,15 +13,20 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityTermsAndConditionsBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class TermsAndConditionsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTermsAndConditionsBinding
     private val progressDialog by lazy { CustomProgressDialog(this) }
+
+    private var language = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTermsAndConditionsBinding.inflate(layoutInflater)
@@ -28,11 +35,38 @@ class TermsAndConditionsActivity : AppCompatActivity() {
         binding.backImageTm.setOnClickListener {
             finish()
         }
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backImageTm.setImageResource(R.drawable.next)
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageTm.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        } else {
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageTm.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            binding.backImageTm.setImageResource(R.drawable.back)
+        }
+
+
         val finalUrl = "http://69.49.235.253:8090/api/termsandconditiondisplay/"
 
         startWebView(finalUrl)
         binding.webView.webChromeClient = ChromeClient()
         binding.webView.settings.setGeolocationDatabasePath(this.filesDir.path)
+
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backImageTm.setImageResource(R.drawable.next)
+        }
+        else
+        {
+            binding.backImageTm.setImageResource(R.drawable.back)
+        }
     }
 
     class ChromeClient : WebChromeClient() {

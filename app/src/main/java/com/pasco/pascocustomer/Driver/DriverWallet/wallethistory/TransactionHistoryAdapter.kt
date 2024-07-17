@@ -4,17 +4,22 @@ import android.annotation.SuppressLint
 import android.app.ActionBar
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustome.Driver.Customer.Fragment.CustomerWallet.GetAmountResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TransactionHistoryAdapter(
@@ -41,6 +46,7 @@ class TransactionHistoryAdapter(
         return ViewHolder(itemView)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // holder.userName.text = orderList[position].user
@@ -54,19 +60,12 @@ class TransactionHistoryAdapter(
 
         holder.tripIdTxt.text = orderList[position].orderid.toString()
         val dateTime = orderList[position].createdAt
-        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
 
-        try {
-            val parsedDate = inputDateFormat.parse(dateTime)
-            outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
-            val formattedDateTime = outputDateFormat.format(parsedDate)
 
-            holder.dateTimeTxt.text = formattedDateTime
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
+        val zonedDateTime = ZonedDateTime.parse(dateTime)
+        val outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a")
+        val formattedDate = zonedDateTime.format(outputFormat)
+        holder.dateTimeTxt.text = formattedDate
 
         holder.itemView.setOnClickListener {
             val statusCheck = orderList[position].paymentStatus
@@ -75,7 +74,8 @@ class TransactionHistoryAdapter(
             } else {
                 showFullAddressDialog(
                     orderList[position].pickupLocation!!,
-                    orderList[position].dropLocation!!
+                    orderList[position].dropLocation!!,
+                    orderList[position].orderid
                 )
             }
 
@@ -90,7 +90,8 @@ class TransactionHistoryAdapter(
 
     private fun showFullAddressDialog(
         pickupLocation: String,
-        dropLocations: String
+        dropLocations: String,
+        orderid: Int?
     ) {
         val dialog = Dialog(required)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -100,11 +101,13 @@ class TransactionHistoryAdapter(
 
         val pickUpLocation = dialog.findViewById<TextView>(R.id.pickUpLocation)
         val dropLocation = dialog.findViewById<TextView>(R.id.dropLocation)
+        val tripId = dialog.findViewById<TextView>(R.id.tripId)
 
 
 
         pickUpLocation.text = pickupLocation
         dropLocation.text = dropLocations
+        tripId.text = orderid.toString()
 
 
         val window = dialog.window

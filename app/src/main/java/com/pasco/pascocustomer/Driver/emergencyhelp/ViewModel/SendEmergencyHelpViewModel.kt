@@ -34,10 +34,11 @@ class SendEmergencyHelpViewModel@Inject constructor(
         id: String,
         driver_id: String,
         current_location: String,
-        reason :String
+        reason :String,
+        language :String
     ) =
         viewModelScope.launch {
-            getNotesReminderDatas(progressDialog,activity,id,driver_id,current_location,reason)
+            getNotesReminderDatas(progressDialog,activity,id,driver_id,current_location,reason,language)
         }
 
     private suspend fun getNotesReminderDatas(
@@ -46,11 +47,12 @@ class SendEmergencyHelpViewModel@Inject constructor(
         id: String,
         driver_id: String,
         current_location: String,
-        reason :String
+        reason :String,
+        language :String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.sendEmergencyHelpRepo(id, driver_id, current_location,reason)
+        repository.sendEmergencyHelpRepo(id, driver_id, current_location,reason,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<SendEmergercyHelpResponse>() {

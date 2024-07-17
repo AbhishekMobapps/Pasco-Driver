@@ -140,28 +140,20 @@
     <string name="pickup_addressnotsame">Pickup address and Delivery address should not be same.</string>
     <string name="pickup_point">PickUp Point</string>
     <string name="search_location">Search Location</string>
-    <string name="customername">Abhishek Tiwari</string>
-    <string name="customeremail">abhi841501@gmail.com</string>
     <string name="saved_addresses">Saved Addresses</string>
     <string name="contact_support">Contact support</string>
     <string name="terms_and_conditionss">Terms and Conditions</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
     <!--  Strings used for fragments for navigation  -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="lorem_ipsum"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a, ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae, molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor bibendum, vel congue leo egestas.\n\n Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel, molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula, in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque est.\n\n Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh. Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc, quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus convallis.\n\n Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper, libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim. </string>
-
     <string name="my_profile">My Profile</string>
     <string name="truck">Truck</string>
     <string name="distance">Distance :</string>
     <string name="time">Time :</string>
     <string name="_0_hours_0_minutes">0 hours 0 minutes</string>
     <string name="select_vehicle">Select Vehicle</string>
-    <string name="_3500truckweight">3500 kg</string>
-    <string name="_3500_kg_14ft_6ft_6ft">3500 kg .14ft * 6ft * 6ft</string>
     <string name="done">Done</string>
     <string name="add_details">Add Details</string>
     <string name="instructions_pick_up_point_instructions">Pick Point(Instructions)</string>
@@ -203,7 +195,7 @@
     <string name="additional_service">Additional Service(Optional)</string>
     <string name="your_information_is_under_review_you_are_not_approved_by_the_admin">Your information is under review. You are not approved by the admin</string>
     <string name="currently_no_bids_are_available">Currently, No orders are available.</string>
-    <string name="commission_price">Commission Price</string>
+    <string name="commission_price">Commission Price :</string>
     <string name="share_subject">Check out this app!</string>
     <string name="share_message">Check out this amazing app: %1$s</string>
     <string name="share_via">Share via</string>
@@ -262,6 +254,7 @@
     <string name="your_delivery_time">Your Delivery Time</string>
     <string name="drop_location">Drop Location</string>
     <string name="show_details">Show Details</string>
+    <string name="hide_details">Hide Details</string>
     <string name="please_rate_the_pasco">Please rate the pasco</string>
     <string name="cancle">Cancel</string>
     <string name="an_accident">An accident</string>
@@ -293,7 +286,7 @@
     <string name="code">Code</string>
     <string name="no_data_has_been_found">No data has been found.</string>
     <string name="download_invoice">Download Invoice</string>
- 
+
     <string name="share">Share</string>
     <string name="download">Download</string>
 
@@ -322,7 +315,7 @@
 
     <string name="add_amount">Add Amount</string>
     <string name="all_transactions">All Transactions</string>
-    <string name="trip_id">Trip ID</string>
+    <string name="trip_id">Trip Id</string>
     <string name="amount">Amount :</string>
     <string name="my_transactions">My Transactions</string>
     <string name="transaction_history">Transaction History</string>
@@ -330,5 +323,49 @@
     <string name="please_select_reason">Please Select reason!</string>
     <string name="select_event">Filter</string>
     <string name="cancellation_reason">Cancellation Reason :</string>
+    <string name="transaction_id">Transaction Id</string>
+    <string name="verify_account">Verify Account</string>
+    <string name="cash">Cash</string>
+    <string name="visa">Visa</string>
+    <string name="type_here">Type here...</string>
+    <string name="update_language">Update Language</string>
+    <string name="order_ids">Order Id :</string>
+    <string name="total_price">Total Price :</string>
+    <string name="support_amp_legal"><![CDATA[Support & Legal]]></string>
+    <string name="verification_code">Verification Code :</string>
+    <string name="estimate_price">Estimate Price :</string>
+    <string name="delivery_price_range">Delivery price range :</string>
+    <string name="order_date">Order Date :</string>
+
+    <string name="terms_amp_conditions"><![CDATA[Terms&Conditions]]></string>
+    <string name="personal_details">Personal Details</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="gallery">Choose from Gallery</string>
+    <string name="select_image">Select Image</string>
+    <string name="driver_training_amp_road_safety_education"><![CDATA[Driver Training & Road Safety Education]]></string>
+    <string name="ongoing_orders">Ongoing Orders</string>
+    <string name="A_bid_has_already_been_placed">A bid has already been placed</string>
+    <string name="basic_price">Basic Price :</string>
+    <string name="training_program">Training Program</string>
+    <string name="driver_availability">Driver Availability</string>
+    <string name="add_availability">Add availability</string>
+    <string name="payment">Payment</string>
+    <string name="distances">Distance</string>
+    <string name="commission_prices">Commission Price</string>
+    <string name="withdraw">Withdraw</string>
+    <string name="user_name">User Name</string>
+    <string name="start_date">Start Date</string>
+    <string name="start_time">Start Time</string>
+    <string name="select_date_and_time">Select Date and Time</string>
+    <string name="upfront_payment">Upfront Payment :</string>
+    <string name="availability_date">Availability Date :</string>
+    <string name="pick_destination_points">Pick Destination Points</string>
+    <string name="clear_all">Clear All</string>
+    <string name="bonus">Bonus</string>
+    <string name="helps">Helps</string>
+    <string name="emergency">Emergency</string>
+    <string name="choose_language">Choose Language</string>
+
+
 
 </resources>

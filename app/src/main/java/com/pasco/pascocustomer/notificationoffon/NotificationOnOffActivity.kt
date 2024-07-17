@@ -1,24 +1,24 @@
 package com.pasco.pascocustomer.notificationoffon
 
-import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityNotificationOnOffBinding
-import com.pasco.pascocustomer.loyalty.adapter.LoyaltyProgramAdapter
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.notificationoffon.model.GetNotificationOnOffModelView
+import com.pasco.pascocustomer.notificationoffon.model.GetOnOffNotificationBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 
 @AndroidEntryPoint
-class NotificationOnOffActivity : AppCompatActivity() {
+class NotificationOnOffActivity : Originator() {
     private lateinit var binding: ActivityNotificationOnOffBinding
     private var updateSwitch: Boolean = false
     private var statusUpdateSwitch: Boolean = false
@@ -29,6 +29,10 @@ class NotificationOnOffActivity : AppCompatActivity() {
 
     private val notificationOnOffViewModel: NotificationOnOffModelView by viewModels()
     private val getNotificationOnOffViewModel: GetNotificationOnOffModelView by viewModels()
+
+    private var language = ""
+    private var languageId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationOnOffBinding.inflate(layoutInflater)
@@ -68,6 +72,15 @@ class NotificationOnOffActivity : AppCompatActivity() {
 
         }
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backBtn.setImageResource(R.drawable.next)
+        }
+
+
         getAllOnOffNotiApi()
         getNotificationOnObserver()
         allTypeNotificationObserver()
@@ -90,7 +103,8 @@ class NotificationOnOffActivity : AppCompatActivity() {
             reminder = false,
             emergencyhelp = emergencySwitch,
             coupon = false,
-            loyaltyprogram = loyaltySwitch
+            loyaltyprogram = loyaltySwitch,
+            language = languageId
 
         )
         notificationOnOffViewModel.allNotificationType(loinBody, this)
@@ -109,7 +123,10 @@ class NotificationOnOffActivity : AppCompatActivity() {
     }
 
     private fun getAllOnOffNotiApi() {
-        getNotificationOnOffViewModel.getNotificationOnOff(this)
+        val body = GetOnOffNotificationBody(
+            language = languageId
+        )
+        getNotificationOnOffViewModel.getNotificationOnOff(this, body)
     }
 
     private fun getNotificationOnObserver() {

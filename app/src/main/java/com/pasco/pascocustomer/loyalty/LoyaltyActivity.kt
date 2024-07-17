@@ -1,6 +1,6 @@
 package com.pasco.pascocustomer.loyalty
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,17 +8,22 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityLoyaltyBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.loyalty.adapter.LoyaltyProgramAdapter
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramModelView
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseModelView
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class LoyaltyActivity : AppCompatActivity(), LoyaltyProgramItemClick {
+class LoyaltyActivity : Originator(), LoyaltyProgramItemClick {
     private lateinit var binding: ActivityLoyaltyBinding
 
     private var loyaltyList: List<LoyaltyProgramResponse.Datum> = ArrayList()
@@ -27,6 +32,9 @@ class LoyaltyActivity : AppCompatActivity(), LoyaltyProgramItemClick {
     private val loyaltyCodeViewModel: LoyaltyCodeUseModelView by viewModels()
 
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private var language = ""
+    private var languageId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoyaltyBinding.inflate(layoutInflater)
@@ -34,15 +42,31 @@ class LoyaltyActivity : AppCompatActivity(), LoyaltyProgramItemClick {
 
 
         binding.backBtn.setOnClickListener { finish() }
+
+
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backBtn.setImageResource(R.drawable.next)
+        } else {
+            binding.backBtn.setImageResource(R.drawable.back)
+        }
         loyaltyApi()
         loyaltyObserver()
         loyaltyCodeObserver()
     }
 
     private fun loyaltyApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         loyaltyViewModel.getReminder(
             this,
-            progressDialog
+            progressDialog,
+            body
         )
     }
 
@@ -84,7 +108,8 @@ class LoyaltyActivity : AppCompatActivity(), LoyaltyProgramItemClick {
     private fun loyaltyCodeApi(id: Int) {
         Log.e("LoyaltyId", "id...$id")
         val loinBody = LoyaltyCodeUseBody(
-            loyalty_program = id.toString()
+            loyalty_program = id.toString(),
+            language = languageId
         )
         loyaltyCodeViewModel.cancelBooking(loinBody, this)
     }

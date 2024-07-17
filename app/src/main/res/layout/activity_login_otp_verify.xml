@@ -43,24 +43,25 @@
 
         <TextView
             android:id="@+id/welcome"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
             android:text="@string/verify_your_account"
             android:textColor="@color/black"
             android:textSize="20dp"
-            app:layout_constraintWidth_percent=".95"
             android:textStyle="bold"
-            android:layout_marginStart="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".95" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/phoneConst"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent=".95"
             app:layout_constraintTop_toBottomOf="@+id/welcome">
 
@@ -68,7 +69,7 @@
                 android:id="@+id/credentialTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="15dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/enter_4_digit_code_send_to"
                 android:textSize="14sp"
@@ -145,7 +146,6 @@
                 app:layout_constraintEnd_toStartOf="@+id/box3"
                 app:layout_constraintStart_toEndOf="@+id/box1"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
                 app:layout_constraintWidth_percent="0.15" />
 
             <EditText
@@ -174,7 +174,6 @@
                 android:maxLength="1"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/box3"
                 app:layout_constraintEnd_toStartOf="@+id/box6"
                 app:layout_constraintTop_toTopOf="parent"
@@ -236,7 +235,7 @@
             android:layout_marginBottom="120dp"
             android:background="@drawable/button_background"
             android:gravity="center"
-            android:text="Verify Account"
+            android:text="@string/verify_account"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.Driver.Fragment.DriverProfile
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -19,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -35,6 +37,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.FragmentDriverProfileBinding
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.io.ByteArrayOutputStream
@@ -47,6 +50,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DriverProfileFragment : Fragment() {
     private lateinit var binding: FragmentDriverProfileBinding
+
     @Inject
     lateinit var activity: Activity
     private val getProfileModelView: GetProfileModelView by viewModels()
@@ -60,6 +64,8 @@ class DriverProfileFragment : Fragment() {
     private val cameraPermissionCode = 101
     private val galleryPermissionCode = 102
     private lateinit var imagePart: MultipartBody.Part
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,10 +75,16 @@ class DriverProfileFragment : Fragment() {
         // Request camera and gallery permissions if not granted
         requestPermission()
 
-   /*     binding.editButtonDriverProfile.setOnClickListener {
-            val intent = Intent(requireActivity(),UpdateVehicleDetialsActivity::class.java)
-            startActivity(intent)
-        }*/
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        /*     binding.editButtonDriverProfile.setOnClickListener {
+                 val intent = Intent(requireActivity(),UpdateVehicleDetialsActivity::class.java)
+                 startActivity(intent)
+             }*/
 
         binding.addImgDProfile.setOnClickListener {
             selectImage()
@@ -91,9 +103,11 @@ class DriverProfileFragment : Fragment() {
 
         return binding.root
     }
+
     private fun profilePutApi() {
-        val Pname = RequestBody.create(MultipartBody.FORM, binding.driverUserNameP.text.toString())
-        val Pemail = RequestBody.create(MultipartBody.FORM, binding.driverEmailP.text.toString())
+        val Pname = binding.driverUserNameP.text.toString().toRequestBody(MultipartBody.FORM)
+        val Pemail = binding.driverEmailP.text.toString().toRequestBody(MultipartBody.FORM)
+        val languageId =languageId.toRequestBody(MultipartBody.FORM)
         if (selectedImageFile != null) {
             imagePart = MultipartBody.Part.createFormData(
                 "image",
@@ -115,11 +129,13 @@ class DriverProfileFragment : Fragment() {
             activity,
             Pname,
             Pemail,
+            languageId,
             imagePart
         )
 
         Log.e("selectedImageFile", "selectedImageFile.." + selectedImageFile)
     }
+
     private fun ObserverPutUserProfile() {
         profiViewModel.progressIndicator.observe(requireActivity(), Observer {
         })
@@ -137,9 +153,13 @@ class DriverProfileFragment : Fragment() {
     }
 
     private fun getProfileApi() {
+        val body = GetProfileBody(
+            language = languageId
+        )
         getProfileModelView.getProfile(
             activity,
-            progressDialog
+            progressDialog,
+            body
 
         )
     }
@@ -187,7 +207,8 @@ class DriverProfileFragment : Fragment() {
 
             Log.e("getDetails", "ObservergetUserProfile: ")
 
-            binding.driverUserNameP.text = Editable.Factory.getInstance().newEditable(users?.fullName)
+            binding.driverUserNameP.text =
+                Editable.Factory.getInstance().newEditable(users?.fullName)
             binding.driverEmailP.text = Editable.Factory.getInstance().newEditable(users?.email)
             binding.driverNoP.text = users?.phoneNumber
             binding.driverAddressP.text = address
@@ -200,7 +221,6 @@ class DriverProfileFragment : Fragment() {
 
         }
     }
-
 
 
     fun selectImage() {

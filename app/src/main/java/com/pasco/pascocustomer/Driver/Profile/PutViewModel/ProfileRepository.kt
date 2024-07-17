@@ -11,6 +11,7 @@ class ProfileRepository @Inject constructor(private val apiService: ApiServices)
     suspend fun putUserProfile(
         full_name: RequestBody,
         email: RequestBody,
+        language: RequestBody,
         identify_document: MultipartBody.Part
 
 
@@ -19,6 +20,7 @@ class ProfileRepository @Inject constructor(private val apiService: ApiServices)
            PascoApp.encryptedPrefs.bearerToken,
             full_name,
             email,
+            language,
             identify_document
         )
     }

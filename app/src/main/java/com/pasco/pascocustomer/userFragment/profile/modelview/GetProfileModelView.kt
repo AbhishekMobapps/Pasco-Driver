@@ -28,11 +28,12 @@ class GetProfileModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun getProfile(activity: Activity, progressDialog: CustomProgressDialog
+    fun getProfile(activity: Activity, progressDialog: CustomProgressDialog,
+                   body: GetProfileBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getProfile().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getProfile(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetProfileResponse>() {
                 override fun onNext(value: GetProfileResponse) {
                     progressIndicator.value = false

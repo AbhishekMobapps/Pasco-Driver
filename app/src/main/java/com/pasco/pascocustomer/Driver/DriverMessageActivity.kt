@@ -1,13 +1,14 @@
 package com.pasco.pascocustomer.Driver
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pasco.pascocustomer.Driver.adapter.SendMessageAdapter
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.databinding.ActivityDriverMessageBinding
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
+
 @AndroidEntryPoint
-class DriverMessageActivity : AppCompatActivity() {
+class DriverMessageActivity : Originator() {
     private lateinit var binding: ActivityDriverMessageBinding
     private var sendMessageData: List<RideRequestResponse> = ArrayList()
 

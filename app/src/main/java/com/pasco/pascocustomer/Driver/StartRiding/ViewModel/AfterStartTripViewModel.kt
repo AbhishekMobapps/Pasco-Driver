@@ -9,6 +9,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,10 +29,10 @@ class AfterStartTripViewModel@Inject constructor(
     var context: Context? = null
 
 
-    fun getAfterTripsData(bookingId: String, activity: Activity) {
+    fun getAfterTripsData(bookingId: String,body:CustomerOrderBody) {
         //progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.afterTripDetails(bookingId).subscribeOn(Schedulers.io())
+        repository.afterTripDetails(bookingId,body).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AfterStartTripResponse>() {
                 override fun onNext(value: AfterStartTripResponse) {

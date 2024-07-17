@@ -39,10 +39,11 @@ class ApprovalRequestViewModel@Inject constructor(
         vehiclenumber: RequestBody,
         identify_document: MultipartBody.Part,
         identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        identify_document2: MultipartBody.Part,
+        language: RequestBody,
     ) =
         viewModelScope.launch {
-            userApproveReq(progressDialog, activity,cargo,vehiclenumber,identify_document,identify_document1,identify_document2)
+            userApproveReq(progressDialog, activity,cargo,vehiclenumber,identify_document,identify_document1,identify_document2,language)
         }
 
     suspend fun userApproveReq(
@@ -52,11 +53,12 @@ class ApprovalRequestViewModel@Inject constructor(
         vehiclenumber: RequestBody,
         identify_document: MultipartBody.Part,
         identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        identify_document2: MultipartBody.Part,
+        language: RequestBody,
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        approvalReqRepsitory.getApprovalReqRepo(cargo,vehiclenumber,identify_document,identify_document1,identify_document2)
+        approvalReqRepsitory.getApprovalReqRepo(cargo,vehiclenumber,identify_document,identify_document1,identify_document2,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ApprovalRequestResponse>() {

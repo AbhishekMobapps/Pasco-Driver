@@ -1,15 +1,17 @@
 package com.pasco.pascocustomer.customer.activity.updatevehdetails
 
+import VehicleTypeResponse
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -19,6 +21,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -31,21 +34,21 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehicletype.GetVehicleTypeBody
 import com.pasco.pascocustomer.databinding.ActivityUpdateVehicleDetailsBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.*
+import java.util.*
 
 @AndroidEntryPoint
-class UpdateVehicleDetailsActivity : AppCompatActivity() {
+class UpdateVehicleDetailsActivity : Originator() {
     private lateinit var binding: ActivityUpdateVehicleDetailsBinding
     private var spinnerTransportId = ""
     private var spinnerVehicleTypeId = ""
@@ -70,16 +73,36 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
     private var VehicleType: List<VehicleTypeResponse.VehicleTypeData>? = null
     private val vehicleTypeStatic: MutableList<String> = mutableListOf()
 
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateVehicleDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+
+            binding.backImageUpdateVeh.setImageResource(R.drawable.next)
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageUpdateVeh.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        } else {
+            binding.backImageUpdateVeh.setImageResource(R.drawable.back)
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImageUpdateVeh.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        }
+
+
+
+
         dAdminApprovedId = PascoApp.encryptedPrefs.driverApprovedId
         if (dAdminApprovedId.equals("0")) {
-          binding.approveStatus.visibility = View.VISIBLE
-        }
-        else if(dAdminApprovedId.equals("1"))
-        {
+            binding.approveStatus.visibility = View.VISIBLE
+        } else if (dAdminApprovedId.equals("1")) {
             binding.approveStatus.visibility = View.GONE
         }
         binding.backImageUpdateVeh.setOnClickListener {
@@ -162,14 +185,19 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
         vehicleTypeViewModel.getVehicleTypeData(
             progressDialog,
             this,
-            spinnerVehicleTypeId
+            spinnerVehicleTypeId,
+            languageId
         )
     }
 
     private fun servicesList() {
+        val getVehicleTypeBody = GetVehicleTypeBody(
+            language = languageId
+        )
         servicesViewModel.getServicesData(
             progressDialog,
-            this
+            this,
+            getVehicleTypeBody
         )
     }
 
@@ -223,7 +251,7 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun vehicleTypeObserver(vehicleName:String) {
+    private fun vehicleTypeObserver(vehicleName: String) {
         vehicleTypeViewModel.mVehicleTypeResponse.observe(this) { response ->
             val content = response.peekContent()
             val message = content.msg ?: return@observe
@@ -264,9 +292,11 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
+
     private fun updateVehDetailsApi() {
-        val vehicleNo = RequestBody.create(MultipartBody.FORM, binding.vehicleNoAddUpdate.text.toString())
-        val spinnerVehType = RequestBody.create(MultipartBody.FORM, spinnerVehicleTypeId)
+        val vehicleNo = binding.vehicleNoAddUpdate.text.toString().toRequestBody(MultipartBody.FORM)
+        val languageId = languageId.toRequestBody(MultipartBody.FORM)
+        val spinnerVehType = spinnerVehicleTypeId.toRequestBody(MultipartBody.FORM)
         val vehiclePhoto = selectedImageFile?.let {
             it.asRequestBody("image/*".toMediaTypeOrNull())
         }?.let {
@@ -301,6 +331,7 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
                         this,
                         spinnerVehType,
                         vehicleNo,
+                        languageId,
                         it,
                         it1,
                         it2
@@ -666,7 +697,7 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, message, Toast.LENGTH_LONG)
                     .show()
                 getVehicleDetails()
-                val intent = Intent(this@UpdateVehicleDetailsActivity,LoginActivity::class.java)
+                val intent = Intent(this@UpdateVehicleDetailsActivity, LoginActivity::class.java)
                 startActivity(intent)
 
 
@@ -675,9 +706,13 @@ class UpdateVehicleDetailsActivity : AppCompatActivity() {
     }
 
     private fun getVehicleDetails() {
+        val body = GetVehicleDetailsBody(
+            language = languageId
+        )
         getVDetailsViewModel.getVDetailsData(
             progressDialog,
-            this
+            this,
+            body
         )
     }
 

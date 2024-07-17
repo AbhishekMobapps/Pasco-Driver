@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.userFragment.history
 
 import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -23,25 +24,24 @@ import com.pasco.pascocustomer.userFragment.history.model.CustBookingCancelViewM
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.order.acceptedadapter.AcceptedAdapter
 import com.pasco.pascocustomer.userFragment.order.acceptedmodel.AcceptedModelView
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 @AndroidEntryPoint
 class HistoryFragment : Fragment() {
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
-    private val logoutViewModel: LogOutModelView by viewModels()
-    private var refresh = ""
     private lateinit var activity: Activity
     private var completeHistoryList: List<CompleteHistoryResponse.Datum> =
         ArrayList()
-    private var refersh = ""
-    private val acceptedModelView: AcceptedModelView by viewModels()
     private val cancelledTripViewModel: CustBookingCancelViewModel by viewModels()
     private val completedTripViewModel: CompleteModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(activity) }
-    private var acceptedList: List<AllBiddsDetailResponse.Datum> = ArrayList()
-    private var acceptedAdapter: AcceptedAdapter? = null
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,26 +52,102 @@ class HistoryFragment : Fragment() {
 
         activity = requireActivity()
 
-        binding.allBiddsConst.setOnClickListener {
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.allBiddsConst.setBackgroundResource(R.drawable.accept_back)
+
+            binding.allBiddsConst.setOnClickListener {
+                binding.allBiddsConst.setBackgroundResource(R.drawable.accept_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.oderRecycler.visibility = View.GONE
+                binding.acceptRecycler.visibility = View.GONE
+                binding.asAcceptConst.setBackgroundResource(0)
+
+                completedApi()
+            }
+
+
+            binding.asAcceptConst.setOnClickListener {
+                binding.asAcceptConst.setBackgroundResource(R.drawable.orders_tab_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.oderRecycler.visibility = View.GONE
+                binding.allBiddsRecycler.visibility = View.GONE
+                binding.allBiddsConst.setBackgroundResource(0)
+                cancelledApi()
+            }
+        } else {
             binding.allBiddsConst.setBackgroundResource(R.drawable.complete_button_back)
-            binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            binding.oderRecycler.visibility = View.GONE
-            binding.acceptRecycler.visibility = View.GONE
-            binding.asAcceptConst.setBackgroundResource(0)
+            binding.allBiddsConst.setOnClickListener {
+                binding.allBiddsConst.setBackgroundResource(R.drawable.complete_button_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.oderRecycler.visibility = View.GONE
+                binding.acceptRecycler.visibility = View.GONE
+                binding.asAcceptConst.setBackgroundResource(0)
 
-            completedApi()
+                completedApi()
+            }
+
+            binding.asAcceptConst.setOnClickListener {
+                binding.asAcceptConst.setBackgroundResource(R.drawable.accept_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.oderRecycler.visibility = View.GONE
+                binding.allBiddsRecycler.visibility = View.GONE
+                binding.allBiddsConst.setBackgroundResource(0)
+                cancelledApi()
+            }
         }
 
-        binding.asAcceptConst.setOnClickListener {
-            binding.asAcceptConst.setBackgroundResource(R.drawable.accept_back)
-            binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            binding.oderRecycler.visibility = View.GONE
-            binding.allBiddsRecycler.visibility = View.GONE
-            binding.allBiddsConst.setBackgroundResource(0)
-            cancelledApi()
-        }
+
 
         completedApi()
         completedObserver()
@@ -80,9 +156,13 @@ class HistoryFragment : Fragment() {
     }
 
     private fun cancelledApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         cancelledTripViewModel.driverTripCancelData(
             progressDialog,
-            requireActivity()
+            requireActivity(),
+            body
         )
     }
 
@@ -113,7 +193,7 @@ class HistoryFragment : Fragment() {
                     CancelledAdapter(
                         requireContext(),
                         completeHistoryList,
-                        activity as AppCompatActivity
+                        activity as AppCompatActivity, language
                     )
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
@@ -126,9 +206,12 @@ class HistoryFragment : Fragment() {
     }
 
     private fun completedApi() {
+        val body = CustomerOrderBody(
+            language = languageId)
         completedTripViewModel.driverTripCancelData(
             progressDialog,
-            requireActivity()
+            requireActivity(),
+            body
         )
     }
 
@@ -157,7 +240,8 @@ class HistoryFragment : Fragment() {
                     CancelledAdapter(
                         requireContext(),
                         completeHistoryList,
-                        activity as AppCompatActivity
+                        activity as AppCompatActivity,
+                        language
                     )
                 // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 

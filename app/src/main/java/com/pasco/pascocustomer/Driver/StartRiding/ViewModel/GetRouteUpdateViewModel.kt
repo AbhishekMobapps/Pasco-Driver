@@ -14,7 +14,9 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
+import retrofit2.http.Body
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -31,21 +33,23 @@ class GetRouteUpdateViewModel@Inject constructor(
 
     fun getDriverStatusData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body : CustomerOrderBody
     ) =
         viewModelScope.launch {
             getDriverStatusDataa( progressDialog,
-                activity)
+                activity,body)
         }
     suspend fun getDriverStatusDataa(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+       body : CustomerOrderBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        getRouteUpdateRepository.getDriverStatusRepo()
+        getRouteUpdateRepository.getDriverStatusRepo(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetRouteUpdateResponse>() {

@@ -3,14 +3,15 @@ package com.pasco.pascocustomer.Driver
 import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityBookingHistoryDetailsBinding
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
+
 @AndroidEntryPoint
-class BookingHistoryDetailsActivity : AppCompatActivity() {
+class BookingHistoryDetailsActivity : Originator() {
     private lateinit var binding:ActivityBookingHistoryDetailsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

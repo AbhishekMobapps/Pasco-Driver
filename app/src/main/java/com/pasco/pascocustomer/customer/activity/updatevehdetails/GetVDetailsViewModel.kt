@@ -33,22 +33,25 @@ class GetVDetailsViewModel@Inject constructor(
 
     fun getVDetailsData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body : GetVehicleDetailsBody
 
     ) =
         viewModelScope.launch {
             getVDetailsDatas( progressDialog,
-                activity)
+                activity,
+                body)
         }
     suspend fun getVDetailsDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body : GetVehicleDetailsBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        getUpdateRepository.getUpdateVDetailRepo()
+        getUpdateRepository.getUpdateVDetailRepo(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetVDetailsResponse>() {
