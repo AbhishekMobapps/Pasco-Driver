@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -40,6 +41,7 @@ import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberBo
 import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberModelView
 import com.pasco.pascocustomer.customer.activity.SignUpCityName
 import com.pasco.pascocustomer.databinding.ActivitySignUpBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +54,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class SignUpActivity : AppCompatActivity(), SignUpCityName {
+class SignUpActivity : Originator(), SignUpCityName {
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var auth: FirebaseAuth
     private var strPhoneNo = ""
@@ -81,11 +83,18 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     private var dialogRecyclerView: RecyclerView? = null
     private var alertDialog: Dialog? = null
     private var selectCityName = ""
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
+
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         loginValue = intent.getStringExtra("loginValue").toString()
 //hello bbb
@@ -145,7 +154,7 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             strUserPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
-            
+
             if (loginValue == "driver") {
                 formattedCountryCode = binding.driverCode.text.toString()
                 strPhoneNo = binding.phoneNumber.text.toString()
@@ -260,7 +269,8 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
         Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
 
         val cityBody = UpdateCityBody(
-            countrycode = formattedCountryCode
+            countrycode = formattedCountryCode,
+            language = languageId
         )
         updateCityViewModel.cityListData(cityBody, this, progressDialog)
     }
@@ -407,7 +417,8 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
     private fun checkNumberApi(strPhoneNo: String) {
         val loinBody = CheckNumberBody(
             phone_number = strPhoneNo,
-            user_type = loginValue
+            user_type = loginValue,
+            language = languageId
         )
         checkNumberModelView.otpCheck(loinBody, this, progressDialog)
     }
@@ -480,7 +491,10 @@ class SignUpActivity : AppCompatActivity(), SignUpCityName {
             val uppercaseQuery = query.uppercase(Locale.ROOT)
             val filterList = ArrayList<UpdateCityResponse.updateCityList>()
             for (i in updateCityList) {
-                if (i.cityname?.lowercase(Locale.ROOT)?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)?.contains(uppercaseQuery) == true) {
+                if (i.cityname?.lowercase(Locale.ROOT)
+                        ?.contains(lowercaseQuery) == true || i.cityname?.uppercase(Locale.ROOT)
+                        ?.contains(uppercaseQuery) == true
+                ) {
                     filterList.add(i)
                 }
             }

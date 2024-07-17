@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVehicleDetailsBody
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,29 +20,33 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class GetApprovalStatusDModel@Inject constructor(
+class GetApprovalStatusDModel @Inject constructor(
     application: Application,
     private val getUpdateRepository: CommonRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val errorResponse = MutableLiveData<Throwable>()
     val mGetVDetails = MutableLiveData<Event<GetVDetailsResponse>>()
     var context: Context? = null
 
     fun getApprovalDModeData(
-        activity: Activity
+        activity: Activity,
+        body: GetVehicleDetailsBody
 
     ) =
         viewModelScope.launch {
             getApprovalDModeDatas(
-                activity)
+                activity, body
+            )
         }
-    suspend fun getApprovalDModeDatas(
-        activity: Activity
-    )
 
-    {
-        getUpdateRepository.getUpdateVDetailRepo()
+    suspend fun getApprovalDModeDatas(
+        activity: Activity,
+        body: GetVehicleDetailsBody
+    ) {
+        getUpdateRepository.getUpdateVDetailRepo(
+            body
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<GetVDetailsResponse>() {

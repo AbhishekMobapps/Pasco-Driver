@@ -11,17 +11,17 @@ import android.provider.Settings
 import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityInvoiceBinding
+import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class InvoiceActivity : AppCompatActivity() {
+class InvoiceActivity : Originator() {
     private var id = ""
     private var userType = ""
     private lateinit var binding: ActivityInvoiceBinding

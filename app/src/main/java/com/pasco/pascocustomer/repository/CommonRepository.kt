@@ -42,7 +42,9 @@ import com.pasco.pascocustomer.commonpage.login.signup.checknumber.CheckNumberRe
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
+import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceBody
 import com.pasco.pascocustomer.customer.activity.hometabactivity.additionalservice.AdditionalServiceResponse
+import com.pasco.pascocustomer.customer.activity.language.LanguageResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.clearnotification.ClearAllNotificationResponse
 import com.pasco.pascocustomer.customer.activity.notificaion.delete.NotificationBody
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountResponse
@@ -51,18 +53,24 @@ import com.pasco.pascocustomer.customer.activity.track.completededuct.CompletedD
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationBody
 import com.pasco.pascocustomer.customer.activity.track.trackmodel.TrackLocationResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVehicleDetailsBody
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
 import com.pasco.pascocustomer.customer.activity.updatevehdetails.PutVDetailsResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehicletype.GetVehicleTypeBody
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
+import com.pasco.pascocustomer.notificationoffon.model.GetOnOffNotificationBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffResponse
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.userFragment.history.complete.CompleteHistoryResponse
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileResponse
+import retrofit2.http.Body
 import javax.inject.Inject
 
 class CommonRepository @Inject constructor(private val apiService: ApiServices) {
@@ -86,12 +94,12 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.userLogin(courseBody)
     }
 
-    fun getServicesRepo(): Observable<ServicesResponse> {
-        return apiService.getServicesList()
+    fun getServicesRepo(body: GetVehicleTypeBody): Observable<ServicesResponse> {
+        return apiService.getServicesList(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getVehicleType(shipment_type: String): Observable<VehicleTypeResponse> {
-        return apiService.getCargoList(PascoApp.encryptedPrefs.bearerToken, shipment_type)
+    fun getVehicleType(shipment_type: String, language: String): Observable<VehicleTypeResponse> {
+        return apiService.getCargoList(PascoApp.encryptedPrefs.bearerToken, shipment_type, language)
     }
 
     fun getApprovalReqRepo(
@@ -99,27 +107,30 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         vehiclenumber: RequestBody,
         identify_document: MultipartBody.Part,
         identify_document1: MultipartBody.Part,
-        identify_document2: MultipartBody.Part
+        identify_document2: MultipartBody.Part,
+        language: RequestBody,
 
-    ): Observable<ApprovalRequestResponse> {
+        ): Observable<ApprovalRequestResponse> {
         return apiService.getApprovalRequest(
             PascoApp.encryptedPrefs.bearerToken,
             cargo,
             vehiclenumber,
             identify_document,
             identify_document1,
-            identify_document2
+            identify_document2,
+            language
         )
     }
 
-    fun getUpdateVDetailRepo(): Observable<GetVDetailsResponse> {
-        return apiService.getUpdateVehDetails(PascoApp.encryptedPrefs.bearerToken)
+    fun getUpdateVDetailRepo(body: GetVehicleDetailsBody): Observable<GetVDetailsResponse> {
+        return apiService.getUpdateVehDetails(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
 
     fun putApprovalReqRepo(
         cargo: RequestBody,
         vehiclenumber: RequestBody,
+        language: RequestBody,
         attachmentP: MultipartBody.Part,
         attachmentD: MultipartBody.Part,
         attachmentDl: MultipartBody.Part
@@ -129,6 +140,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
             PascoApp.encryptedPrefs.bearerToken,
             cargo,
             vehiclenumber,
+            language,
             attachmentP,
             attachmentD,
             attachmentDl
@@ -151,20 +163,23 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.logOut(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
-    fun getOrder(): Observable<OrderResponse> {
-        return apiService.getOrder(PascoApp.encryptedPrefs.bearerToken)
+    fun getOrder(body: CustomerOrderBody): Observable<OrderResponse> {
+        return apiService.getOrder(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getAllBidds(): Observable<OrderResponse> {
-        return apiService.getAllBids(PascoApp.encryptedPrefs.bearerToken)
+    fun getAllBidds(body: CustomerOrderBody): Observable<OrderResponse> {
+        return apiService.getAllBids(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getAllBiddsDetails(Id: String): Observable<AllBiddsDetailResponse> {
-        return apiService.getBiddsDetails(PascoApp.encryptedPrefs.bearerToken, Id)
+    fun getAllBiddsDetails(
+        Id: String,
+        body: CustomerOrderBody
+    ): Observable<AllBiddsDetailResponse> {
+        return apiService.getBiddsDetails(PascoApp.encryptedPrefs.bearerToken, Id, body)
     }
 
-    fun getAcceptedBids(): Observable<AllBiddsDetailResponse> {
-        return apiService.acceptedBids(PascoApp.encryptedPrefs.bearerToken)
+    fun getAcceptedBids(body: CustomerOrderBody): Observable<AllBiddsDetailResponse> {
+        return apiService.acceptedBids(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
 
@@ -172,10 +187,11 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         full_name: RequestBody,
         email: RequestBody,
         current_city: RequestBody,
-        image: MultipartBody.Part
+        image: MultipartBody.Part,
+        language: RequestBody,
     ): Observable<UpdateProfileResponse> {
         return apiService.updateProfile(
-            PascoApp.encryptedPrefs.bearerToken, full_name, email, current_city, image
+            PascoApp.encryptedPrefs.bearerToken, full_name, email, current_city, image, language
         )
     }
 
@@ -189,17 +205,19 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun verifyDeliveryProof(
         bookingid: String,
-        delivery_code: String
+        delivery_code: String,
+        language: String
     ): Observable<DeliveryProofResponse> {
         return apiService.verifyDeliveryCode(
             PascoApp.encryptedPrefs.bearerToken,
             bookingid,
-            delivery_code
+            delivery_code,
+            language
         )
     }
 
-    fun getUserNotification(): Observable<NotificationResponse> {
-        return apiService.getNotification(PascoApp.encryptedPrefs.bearerToken)
+    fun getUserNotification(body: CustomerOrderBody): Observable<NotificationResponse> {
+        return apiService.getNotification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
 
@@ -207,8 +225,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.deleteNotifications(PascoApp.encryptedPrefs.bearerToken, courseBody)
     }
 
-    fun clearAllNotification(): Observable<ClearAllNotificationResponse> {
-        return apiService.getClearAllNotification(PascoApp.encryptedPrefs.bearerToken)
+    fun clearAllNotification(body: CustomerOrderBody): Observable<ClearAllNotificationResponse> {
+        return apiService.getClearAllNotification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
     fun getCountNotifications(): Observable<NotificationCountResponse> {
@@ -217,20 +235,23 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         )
     }
 
-    fun getProfile(): Observable<GetProfileResponse> {
-        return apiService.getUserProfile(PascoApp.encryptedPrefs.bearerToken)
+    fun getProfile(body: GetProfileBody): Observable<GetProfileResponse> {
+        return apiService.getUserProfile(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getAdditionalService(): Observable<AdditionalServiceResponse> {
-        return apiService.additionalService(PascoApp.encryptedPrefs.bearerToken)
+    fun getAdditionalService(body: AdditionalServiceBody): Observable<AdditionalServiceResponse> {
+        return apiService.additionalService(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun driverDetails(Id: String): Observable<DriverDetailsResponse> {
-        return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id)
+    fun driverDetails(Id: String, body: CustomerOrderBody): Observable<DriverDetailsResponse> {
+        return apiService.driverDetails(PascoApp.encryptedPrefs.bearerToken, Id, body)
     }
 
-    fun afterTripDetails(bookingId: String): Observable<AfterStartTripResponse> {
-        return apiService.afterStartTrip(PascoApp.encryptedPrefs.bearerToken, bookingId)
+    fun afterTripDetails(
+        bookingId: String,
+        body: CustomerOrderBody
+    ): Observable<AfterStartTripResponse> {
+        return apiService.afterStartTrip(PascoApp.encryptedPrefs.bearerToken, bookingId, body)
     }
 
 
@@ -240,8 +261,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.acceptOrReject(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
 
-    fun customerDetails(Id: String): Observable<CustomerDetailsResponse> {
-        return apiService.customerDetails(PascoApp.encryptedPrefs.bearerToken, Id)
+    fun customerDetails(Id: String, body: CustomerOrderBody): Observable<CustomerDetailsResponse> {
+        return apiService.customerDetails(PascoApp.encryptedPrefs.bearerToken, Id, body)
     }
 
     fun sliderHome(body: SliderHomeBody): Observable<SliderHomeResponse> {
@@ -257,16 +278,16 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
     }
 
-    fun getDriverCancelledHistory(): Observable<CancelledTripResponse> {
-        return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken)
+    fun getDriverCancelledHistory(body: CustomerOrderBody): Observable<CancelledTripResponse> {
+        return apiService.driverCancelledHistory(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getCustomerCancelledHistory(): Observable<CompleteHistoryResponse> {
-        return apiService.customerCanceldHistory(PascoApp.encryptedPrefs.bearerToken)
+    fun getCustomerCancelledHistory(body: CustomerOrderBody): Observable<CompleteHistoryResponse> {
+        return apiService.customerCanceldHistory(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getCustomerCompletedHistory(): Observable<CompleteHistoryResponse> {
-        return apiService.customerCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
+    fun getCustomerCompletedHistory(body: CustomerOrderBody): Observable<CompleteHistoryResponse> {
+        return apiService.customerCompletedHistory(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
     fun cancelBooking(
@@ -297,8 +318,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.appSurvery(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getLoyalty(): Observable<LoyaltyProgramResponse> {
-        return apiService.getLoyaltyProgram(PascoApp.encryptedPrefs.bearerToken)
+    fun getLoyalty(body: CustomerOrderBody): Observable<LoyaltyProgramResponse> {
+        return apiService.getLoyaltyProgram(PascoApp.encryptedPrefs.bearerToken,body)
     }
 
     fun loyaltyCodeUse(body: LoyaltyCodeUseBody): Observable<AcceptOrRejectResponse> {
@@ -313,13 +334,18 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.allTypeNOtification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getNotificationOnOff(): Observable<NotificationOnOffResponse> {
-        return apiService.getAllTypeNotification(PascoApp.encryptedPrefs.bearerToken)
+    fun getNotificationOnOff(body: GetOnOffNotificationBody): Observable<NotificationOnOffResponse> {
+        return apiService.getAllTypeNotification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
     fun deductAmount(
         courseBody: CompletedDeductAmountBody, id: String
     ): Observable<SendEmergercyHelpResponse> {
         return apiService.deductAmount(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
+    }
+
+
+    fun getLanguage(): Observable<LanguageResponse> {
+        return apiService.languageType()
     }
 }

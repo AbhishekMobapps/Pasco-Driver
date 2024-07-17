@@ -29,7 +29,6 @@
             app:layout_constraintWidth_percent=".5"
             android:gravity="center"
             android:textSize="@dimen/text_size_16"
-            android:background="@drawable/order_bidding_yellow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,33 +1,26 @@
 package com.pasco.pascocustomer.chat
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.chatadapter.ChatAdapter
 import com.pasco.pascocustomer.databinding.ActivityChatBinding
+import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.util.*
 
 @AndroidEntryPoint
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : Originator() {
     private lateinit var binding: ActivityChatBinding
 
     private lateinit var database: DatabaseReference

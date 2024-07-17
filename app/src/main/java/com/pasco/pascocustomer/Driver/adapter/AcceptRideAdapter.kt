@@ -25,7 +25,8 @@ import java.util.TimeZone
 
 class AcceptRideAdapter(
     private val context: Context,
-    private val bookingReqData: List<ShowBookingReqResponse.ShowBookingReqData>
+    private val bookingReqData: List<ShowBookingReqResponse.ShowBookingReqData>,
+    private var language: String
 ) : RecyclerView.Adapter<AcceptRideAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -41,7 +42,8 @@ class AcceptRideAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.recycler_accept_ride_request, parent, false)
+        val view = LayoutInflater.from(context)
+            .inflate(R.layout.recycler_accept_ride_request, parent, false)
         return ViewHolder(view)
     }
 
@@ -69,20 +71,17 @@ class AcceptRideAdapter(
         val baseUrl = "http://69.49.235.253:8090"
         val imagePath = bookingReq?.userImage.orEmpty()
         val bStatus = bookingReq.bidStatus
-        if (!bStatus!!)
-        {
+        if (!bStatus!!) {
             holder.bidsStatus.visibility = View.GONE
-        }
-        else
-        {
+        } else {
             holder.bidsStatus.visibility = View.VISIBLE
-            holder.bidsStatus.text = "A bid has already been placed"
+            holder.bidsStatus.text = context.getString(R.string.A_bid_has_already_been_placed)
         }
 
         val imageUrl = "$baseUrl$imagePath"
         Glide.with(context)
-                .load(imageUrl)
-                .into(holder.imgUserOrderD)
+            .load(imageUrl)
+            .into(holder.imgUserOrderD)
         with(holder) {
             val pickupCity = extractCityName(bookingReq.pickupLocation.toString())
             val dropCity = extractCityName(bookingReq.dropLocation.toString())
@@ -92,8 +91,7 @@ class AcceptRideAdapter(
             userNameBD.text = bookingReq.user
             orderIdDynamicReq.text = truncateBookingNumber(bookingReq.bookingNumber.toString())
 
-            if (!bStatus)
-            {
+            if (!bStatus) {
                 holder.bidsStatus.visibility = View.GONE
                 itemView.setOnClickListener {
                     val id = bookingReq.id.toString()
@@ -106,11 +104,10 @@ class AcceptRideAdapter(
                     intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
                     intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
                     intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
-                    intent.putExtra("one",1)
+                    intent.putExtra("one", 1)
                     context.startActivity(intent)
                 }
-            }
-            else {
+            } else {
                 itemView.setOnClickListener {
                     Toast.makeText(
                         context,
@@ -151,7 +148,6 @@ class AcceptRideAdapter(
     fun extractCityName(location: String): String {
         return location.split(",")[0].trim() // Extracting the city part before comma
     }
-
 
 
 }

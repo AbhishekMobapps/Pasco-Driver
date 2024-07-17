@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,20 +32,22 @@ class CompleteRideViewModel@Inject constructor(
     fun getCompletedRideData(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        id: String
+        id: String,
+        body:GetProfileBody
     ) =
         viewModelScope.launch {
-            getStartTripDatas(progressDialog,activity,id)
+            getStartTripDatas(progressDialog,activity,id,body)
         }
 
     suspend fun getStartTripDatas(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        id: String
+        id: String,
+        body:GetProfileBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        completeRideRepository.getCompleteDriverRide(id)
+        completeRideRepository.getCompleteDriverRide(id,body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<CompleteRideResponse>() {

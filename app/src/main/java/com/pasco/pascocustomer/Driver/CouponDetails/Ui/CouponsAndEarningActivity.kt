@@ -1,26 +1,29 @@
 package com.pasco.pascocustomer.Driver.CouponDetails.Ui
 
 import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponViewModel
 import com.pasco.pascocustomer.Driver.adapter.CouponListAdapter
 import com.pasco.pascocustomer.databinding.ActivityCouponsAndEarningBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
+import dagger.hilt.android.AndroidEntryPoint
 
-import java.util.ArrayList
 @AndroidEntryPoint
-class CouponsAndEarningActivity : AppCompatActivity() {
+class CouponsAndEarningActivity : Originator() {
     private lateinit var binding: ActivityCouponsAndEarningBinding
     private var checkCouponList: List<CouponResponse.CouponDataList> = ArrayList()
-    private lateinit var activity:Activity
+    private lateinit var activity: Activity
     private val couponViewModel: CouponViewModel by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCouponsAndEarningBinding.inflate(layoutInflater)
@@ -30,7 +33,8 @@ class CouponsAndEarningActivity : AppCompatActivity() {
             finish()
         }
         activity = this
-
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         //call api
         couponDetailList()
         //call observer
@@ -38,7 +42,8 @@ class CouponsAndEarningActivity : AppCompatActivity() {
 
         binding.recyclerCouponList.isVerticalScrollBarEnabled = true
         binding.recyclerCouponList.isVerticalFadingEdgeEnabled = true
-        binding.recyclerCouponList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerCouponList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerCouponList.adapter = CouponListAdapter(this, checkCouponList)
     }
 
@@ -47,7 +52,8 @@ class CouponsAndEarningActivity : AppCompatActivity() {
             val message = response.peekContent().msg!!
             checkCouponList = response.peekContent().data ?: emptyList()
             if (checkCouponList?.isEmpty()!!) {
-                Toast.makeText(this@CouponsAndEarningActivity, "No Data Found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CouponsAndEarningActivity, "No Data Found", Toast.LENGTH_SHORT)
+                    .show()
                 binding.recyclerCouponList.isVerticalScrollBarEnabled = true
                 binding.recyclerCouponList.isVerticalFadingEdgeEnabled = true
                 binding.recyclerCouponList.layoutManager =
@@ -70,9 +76,13 @@ class CouponsAndEarningActivity : AppCompatActivity() {
     }
 
     private fun couponDetailList() {
+        val body = GetProfileBody(
+            language = languageId
+        )
         couponViewModel.getCouponListData(
             progressDialog,
-            activity
+            activity,
+            body
         )
     }
 }

@@ -7,5 +7,6 @@ class UpdationLocationBody(
     @SerializedName("current_location") var current_location:String,
     @SerializedName("current_latitude") var latitude: String,
     @SerializedName("current_longitude") var longitude: String,
-    @SerializedName("current_country") var current_country: String
+    @SerializedName("current_country") var current_country: String,
+    @SerializedName("language") var language: String
 )

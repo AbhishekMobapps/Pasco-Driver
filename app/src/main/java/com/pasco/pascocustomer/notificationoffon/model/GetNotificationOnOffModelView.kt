@@ -25,11 +25,11 @@ class GetNotificationOnOffModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun getNotificationOnOff(activity: Activity
+    fun getNotificationOnOff(activity: Activity,body: GetOnOffNotificationBody
     ) {
         //progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getNotificationOnOff().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getNotificationOnOff(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<NotificationOnOffResponse>() {
                 override fun onNext(value: NotificationOnOffResponse) {
                     progressIndicator.value = false

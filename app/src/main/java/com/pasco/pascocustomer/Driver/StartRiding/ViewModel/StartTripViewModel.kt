@@ -32,10 +32,11 @@ class StartTripViewModel@Inject constructor(
         progressDialog: CustomProgressDialog,
         activity: Activity,
         id: String,
-        driver_status:String
+        driver_status:String,
+        language:String
     ) =
         viewModelScope.launch {
-            getStartTripDatas(progressDialog,activity, id,driver_status)
+            getStartTripDatas(progressDialog,activity, id,driver_status,language)
         }
 
     suspend fun getStartTripDatas(
@@ -43,10 +44,11 @@ class StartTripViewModel@Inject constructor(
         activity: Activity,
         id: String,
         driver_status: String,
+        language: String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        startTripRepository.addStartTripRepository(id,driver_status)
+        startTripRepository.addStartTripRepository(id,driver_status,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<StartTripResponse>() {

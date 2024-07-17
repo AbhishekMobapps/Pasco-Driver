@@ -4,5 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 class AddBiddingBody(
     @SerializedName("availability_datetime") var availability_datetime: String,
-    @SerializedName("bid_price") var bid_price: String
+    @SerializedName("bid_price") var bid_price: String,
+    @SerializedName("language") var language: String
 )

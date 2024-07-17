@@ -21,34 +21,38 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class VehicleTypeViewModel@Inject constructor(
+class VehicleTypeViewModel @Inject constructor(
     application: Application,
     private val vehicleTypeRepository: CommonRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mVehicleTypeResponse= MutableLiveData<Event<VehicleTypeResponse>>()
+    val mVehicleTypeResponse = MutableLiveData<Event<VehicleTypeResponse>>()
     var context: Context? = null
 
     fun getVehicleTypeData(
         progressDialog: CustomProgressDialog,
         activity: Activity,
-        shipment_type: String
+        shipment_type: String,
+        language: String
 
     ) =
         viewModelScope.launch {
-            getVehicleTypeDatas( progressDialog,
-                activity,shipment_type)
+            getVehicleTypeDatas(
+                progressDialog,
+                activity, shipment_type, language
+            )
         }
+
     suspend fun getVehicleTypeDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity, shipment_type: String
-    )
-
-    {
+        activity: Activity,
+        shipment_type: String,
+        language: String
+    ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        vehicleTypeRepository.getVehicleType(shipment_type)
+        vehicleTypeRepository.getVehicleType(shipment_type,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<VehicleTypeResponse>() {

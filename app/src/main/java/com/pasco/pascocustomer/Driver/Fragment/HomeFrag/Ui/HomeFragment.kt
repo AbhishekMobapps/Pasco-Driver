@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -20,9 +21,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -31,7 +31,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
-import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.i18n.phonenumbers.PhoneNumberUtil
@@ -50,11 +49,13 @@ import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityResponse
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityViewModel
 import com.pasco.pascocustomer.customer.activity.SignUpCityName
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVehicleDetailsBody
 import com.pasco.pascocustomer.databinding.FragmentHomeDriverBinding
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeBody
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeModelView
 import com.pasco.pascocustomer.userFragment.home.sliderpage.SliderHomeResponse
 import com.pasco.pascocustomer.userFragment.pageradaper.ViewPagerAdapter
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.Dispatchers
@@ -101,12 +102,25 @@ class HomeFragment : Fragment(), SignUpCityName {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeDriverBinding.inflate(inflater, container, false)
         userType = PascoApp.encryptedPrefs.userType
+
+
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
         getProfileApi()
         getUserProfileObserver()
         setupLocationClient()
@@ -157,10 +171,6 @@ class HomeFragment : Fragment(), SignUpCityName {
             val intent = Intent(requireContext(), DriverMessageActivity::class.java)
             startActivity(intent)
         }
-        /*   binding.linearDriHEmergency.setOnClickListener {
-               val intent = Intent(requireContext(), EmergencyMainActivity::class.java)
-               startActivity(intent)
-           }*/
         binding.LinearUpdateServiceLoc.setOnClickListener {
             val intent = Intent(requireContext(), UpdateLocationActivity::class.java)
             startActivity(intent)
@@ -177,10 +187,13 @@ class HomeFragment : Fragment(), SignUpCityName {
 
 
     private fun getProfileApi() {
+        val body = GetProfileBody(
+            language = languageId
+        )
         getProfileModelView.getProfile(
             activity,
-            progressDialog
-
+            progressDialog,
+            body
         )
     }
 
@@ -209,8 +222,12 @@ class HomeFragment : Fragment(), SignUpCityName {
     }
 
     private fun getVehicleDetails() {
+        val body = GetVehicleDetailsBody(
+            language = languageId
+        )
         getVDetailsViewModel.getApprovalDModeData(
-            requireActivity()
+            requireActivity(),
+            body
         )
     }
 
@@ -267,7 +284,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                 if (addresses.isNotEmpty()) {
                     val addressObj = addresses[0]
                     address = addressObj.getAddressLine(0)
-                   // currentCityName = addressObj.locality
+                    // currentCityName = addressObj.locality
                     val countryCode = addressObj.countryCode
                     countryName = addressObj.countryName
 
@@ -308,13 +325,6 @@ class HomeFragment : Fragment(), SignUpCityName {
         //  alertDialog?.window?.setLayout(750, 1200)
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
-        val screenHeight = displayMetrics.heightPixels
-
-        // Calculate the width and height based on screen percentage
-        val dialogWidth = (screenWidth * 0.75).toInt() // 75% of screen width
-        val dialogHeight = (screenHeight * 0.75).toInt() //
-        // Show dialog
 
         val searchCountryName =
             alertDialog?.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchCityNameFilter)
@@ -346,7 +356,8 @@ class HomeFragment : Fragment(), SignUpCityName {
         Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
 
         val cityBody = UpdateCityBody(
-            countrycode = formattedCountryCode
+            countrycode = formattedCountryCode,
+            language = languageId
         )
         updateCityViewModel.cityListData(cityBody, requireActivity(), progressDialog)
     }
@@ -505,7 +516,8 @@ class HomeFragment : Fragment(), SignUpCityName {
     private fun sliderPageApi() {
 
         val bookingBody = SliderHomeBody(
-            user_type = userType
+            user_type = userType,
+            language = languageId
         )
         sliderViewModel.otpCheck(bookingBody, requireActivity())
     }
@@ -548,7 +560,7 @@ class HomeFragment : Fragment(), SignUpCityName {
 
     private fun showRideRequestApi(currentCityNames: String?) {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity, currentCityNames.toString()
+            activity, currentCityNames.toString(), languageId
         )
     }
 
@@ -578,7 +590,7 @@ class HomeFragment : Fragment(), SignUpCityName {
             isVerticalFadingEdgeEnabled = true
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            adapter = AcceptRideAdapter(requireContext(), rideRequestList)
+            adapter = AcceptRideAdapter(requireContext(), rideRequestList, language)
         }
     }
 
@@ -597,7 +609,7 @@ class HomeFragment : Fragment(), SignUpCityName {
 
     private fun showRideRequestStatusApi(selectCityName: String) {
         showBookingReqViewModel.getShowBookingRequestsData(
-            activity, selectCityName
+            activity, selectCityName, languageId
         )
     }
 

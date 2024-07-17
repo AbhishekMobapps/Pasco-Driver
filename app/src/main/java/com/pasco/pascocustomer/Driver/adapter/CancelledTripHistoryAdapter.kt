@@ -41,7 +41,7 @@ class CancelledTripHistoryAdapter(
         val driverTripHis = cancelTripHistory[position]
         val price = "$${driverTripHis.bidPrice}"
         val dBookingStatus = driverTripHis.bookingStatus.toString()
-        val dateTime = driverTripHis.availabilityDatetime.toString()
+        val dateTime = driverTripHis.createdAt.toString()
         holder.consCancellationReason.visibility = View.VISIBLE
         holder.hisArow.visibility = View.GONE
         holder.cancelReasonTextView.text = driverTripHis.cancelreason.toString()
@@ -56,9 +56,13 @@ class CancelledTripHistoryAdapter(
         holder.distance.text = "$formattedTotalDistance km"
 
 
-        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
+        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        inputDateFormat.timeZone = TimeZone.getTimeZone("UTC") // Set input format to UTC
+        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+        outputDateFormat.timeZone = TimeZone.getTimeZone("Asia/Kolkata") // Set output format to IST
+
+
+
 
         Log.e("bookingStatusaa", "bookingStatus.. " + driverTripHis.bookingStatus.toString())
 
@@ -69,7 +73,6 @@ class CancelledTripHistoryAdapter(
 
         try {
             val parsedDate = inputDateFormat.parse(dateTime)
-            outputDateFormat.timeZone = TimeZone.getDefault() // Set to local time zone
             val formattedDateTime = outputDateFormat.format(parsedDate)
             holder.bookingDate.text = formattedDateTime
         } catch (e: ParseException) {
@@ -157,7 +160,7 @@ class CancelledTripHistoryAdapter(
         val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
         val cancelReasonTextView = itemView.findViewById<TextView>(R.id.cancelReasonTextView)
         val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
-        val hisArow = itemView.findViewById<ImageView>(R.id.hisArow)
+        val hisArow = itemView.findViewById<ImageView>(R.id.hisArrow)
         val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
         val consCancellationReason = itemView.findViewById<ConstraintLayout>(R.id.consCancellationReason)
     }

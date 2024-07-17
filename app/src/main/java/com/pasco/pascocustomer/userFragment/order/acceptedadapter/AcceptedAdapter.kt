@@ -19,7 +19,8 @@ import java.util.*
 
 class AcceptedAdapter(
     private val required: Context,
-    private var orderList: List<AllBiddsDetailResponse.Datum>
+    private var orderList: List<AllBiddsDetailResponse.Datum>,
+    private var language: String
 ) :
     RecyclerView.Adapter<AcceptedAdapter.ViewHolder>() {
 
@@ -31,7 +32,6 @@ class AcceptedAdapter(
         val statusTxt: TextView = itemView.findViewById(R.id.statusTxt)
         val verificationTxt: TextView = itemView.findViewById(R.id.verificationTxt)
         val showDetailsBtn: ImageView = itemView.findViewById(R.id.showDetailsBtn)
-
 
 
     }
@@ -51,6 +51,10 @@ class AcceptedAdapter(
         holder.oderIdTxt.text = truncateBookingNumber(orderList[position].bookingNumber.toString())
         holder.oderIdTxt.setOnClickListener {
             showFullAddressDialog(orderList[position].bookingNumber.toString())
+        }
+
+        if (language == "ar") {
+            holder.showDetailsBtn.setImageResource(R.drawable.back)
         }
 
         val price = orderList[position].basicprice
@@ -88,7 +92,7 @@ class AcceptedAdapter(
             intent.putExtra("dropLatitude", dropLatitude.toString())
             intent.putExtra("dropLongitude", dropLongitude.toString())
             intent.putExtra("bookingId", bookingId.toString())
-            intent.putExtra("verificationCode",verificationCode)
+            intent.putExtra("verificationCode", verificationCode)
             required.startActivity(intent)
         }
     }

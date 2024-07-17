@@ -9,6 +9,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.userFragment.order.odermodel.OrderResponse
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,11 +30,14 @@ class AcceptedModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun acceptedBids(activity: Activity, progressDialog: CustomProgressDialog
+    fun acceptedBids(
+        activity: Activity, progressDialog: CustomProgressDialog,
+        body: CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getAcceptedBids().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getAcceptedBids(body).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AllBiddsDetailResponse>() {
                 override fun onNext(value: AllBiddsDetailResponse) {
                     progressIndicator.value = false

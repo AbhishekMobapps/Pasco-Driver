@@ -1,18 +1,17 @@
 package com.pasco.pascocustomer.customer.activity.vehicledetailactivity
 
+import VehicleTypeResponse
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -29,24 +28,27 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesViewModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestViewModel
+import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
+import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
+import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehicletype.GetVehicleTypeBody
+import com.pasco.pascocustomer.databinding.ActivityVehicleDetailsBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import com.pasco.pascocustomer.activity.Driver.AddVehicle.ApprovalRequest.ApprovalRequestViewModel
-import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
-import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.adddetailsmodel.ServicesResponse
-import com.pasco.pascocustomer.databinding.ActivityVehicleDetailsBinding
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
 
 @AndroidEntryPoint
-class VehicleDetailsActivity : AppCompatActivity() {
+class VehicleDetailsActivity : Originator() {
     private lateinit var binding: ActivityVehicleDetailsBinding
-//private
+
+    //private
     private var selectedImageFile: File? = null
     private var selectedImageFileDoc: File? = null
     private var selectedImageFileRc: File? = null
@@ -69,7 +71,9 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private val vehicleTypeViewModel: VehicleTypeViewModel by viewModels()
     private val approvalRequestViewModel: ApprovalRequestViewModel by viewModels()
 
-
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVehicleDetailsBinding.inflate(layoutInflater)
@@ -77,6 +81,11 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
         // Request camera and gallery permissions if not granted
         requestPermission()
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
 
         binding.submitBtnAddVeh.setOnClickListener {
             validation()
@@ -136,9 +145,13 @@ class VehicleDetailsActivity : AppCompatActivity() {
     }
 
     private fun servicesList() {
+        val getVehicleTypeBody = GetVehicleTypeBody(
+            language = languageId
+        )
         servicesViewModel.getServicesData(
             progressDialog,
-            this
+            this,
+            getVehicleTypeBody
         )
     }
 
@@ -190,7 +203,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
         vehicleTypeViewModel.getVehicleTypeData(
             progressDialog,
             this,
-            sId
+            sId,
+            languageId
         )
     }
 
@@ -255,8 +269,9 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
     private fun reqApproval() {
         val vehicleNo =
-            RequestBody.create(MultipartBody.FORM, binding.vehicleNoAdd.text.toString())
-        val vehicleTy = RequestBody.create(MultipartBody.FORM, spinnerVehicleTypeId)
+            binding.vehicleNoAdd.text.toString().toRequestBody(MultipartBody.FORM)
+        val vehicleTy = spinnerVehicleTypeId.toRequestBody(MultipartBody.FORM)
+        val languageId = languageId.toRequestBody(MultipartBody.FORM)
         val vehiclePhoto = selectedImageFile?.let {
             it.asRequestBody("image/*".toMediaTypeOrNull())
         }?.let {
@@ -293,7 +308,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
                         vehicleNo,
                         it,
                         it1,
-                        it2
+                        it2,
+                        languageId
                     )
                 }
             }
@@ -311,7 +327,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
                 // The condition is true, perform actions here
                 Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG)
                     .show()
-                val intent = Intent(this@VehicleDetailsActivity, DriverDashboardActivity::class.java)
+                val intent =
+                    Intent(this@VehicleDetailsActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
 
 
@@ -357,7 +374,8 @@ class VehicleDetailsActivity : AppCompatActivity() {
         }
     }
 
-    class SpinnerAdapter(context: Context, textViewResourceId: Int, smonking: List<String>
+    class SpinnerAdapter(
+        context: Context, textViewResourceId: Int, smonking: List<String>
     ) :
         ArrayAdapter<String>(context, textViewResourceId, smonking) {
 

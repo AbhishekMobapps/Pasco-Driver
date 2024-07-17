@@ -13,5 +13,6 @@ class NotificationOnOffBody(
     @SerializedName("reminder") val reminder: Boolean = false,
     @SerializedName("emergencyhelp") val emergencyhelp: Boolean = false,
     @SerializedName("coupon") val coupon: Boolean = false,
-    @SerializedName("loyaltyprogram") val loyaltyprogram: Boolean = false
+    @SerializedName("loyaltyprogram") val loyaltyprogram: Boolean = false,
+    @SerializedName("language") val language: String
 )

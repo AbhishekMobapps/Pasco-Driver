@@ -9,10 +9,11 @@ class EmergencyHelpDriverRepository @Inject constructor(private val apiService: 
     suspend fun getDriverHelpRepo(
         driver_latitude: String,
         driver_longitude: String,
+        language: String
     ): Observable<EmergencyHelpDriverResponse>
     {
         return apiService.getDriverEHelp(
             PascoApp.encryptedPrefs.bearerToken,
-            driver_latitude,driver_longitude)
+            driver_latitude,driver_longitude,language)
     }
 }

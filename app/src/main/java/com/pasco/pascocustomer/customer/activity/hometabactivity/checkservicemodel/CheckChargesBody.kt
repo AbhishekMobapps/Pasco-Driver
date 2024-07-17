@@ -9,5 +9,6 @@ class CheckChargesBody (
     @SerializedName("pickup_latitude") var pickup_latitude: String,
     @SerializedName("pickup_longitude") var pickup_longitude: String,
     @SerializedName("drop_latitude") var drop_latitude: String,
-    @SerializedName("drop_longitude") var drop_longitude: String
+    @SerializedName("drop_longitude") var drop_longitude: String,
+    @SerializedName("language") var language: String
 )

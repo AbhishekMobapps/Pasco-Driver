@@ -3,7 +3,9 @@ package com.pasco.pascocustomer.userFragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import com.pasco.pascocustomer.Driver.ContactWithUsActivity
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
@@ -21,6 +24,8 @@ import com.pasco.pascocustomer.Driver.adapter.TermsAndConditionsActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.customer.activity.ChooseLanguageActivity
+import com.pasco.pascocustomer.customer.activity.LanguageActivity
 import com.pasco.pascocustomer.databinding.FragmentMoreBinding
 import com.pasco.pascocustomer.loyalty.LoyaltyActivity
 import com.pasco.pascocustomer.notificationoffon.NotificationOnOffActivity
@@ -36,6 +41,8 @@ class MoreFragment : Fragment() {
     private val logoutViewModel: LogOutModelView by viewModels()
     private var refresh = ""
     private lateinit var activity: Activity
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,6 +52,9 @@ class MoreFragment : Fragment() {
         val view = binding.root
 
         activity = requireActivity()
+        sharedPreferencesLanguageName = activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
         binding.consLogout.setOnClickListener { openLogoutPop() }
         binding.consContactAndSupportInside.setOnClickListener {
             val intent = Intent(requireContext(), ContactWithUsActivity::class.java)
@@ -52,6 +62,12 @@ class MoreFragment : Fragment() {
         }
         binding.consMyWalletVehDetails.setOnClickListener {
             val intent = Intent(requireContext(), DriverWalletActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        binding.consUpdateLanguage.setOnClickListener {
+            val intent = Intent(requireContext(), LanguageActivity::class.java)
             startActivity(intent)
         }
 
@@ -109,7 +125,8 @@ class MoreFragment : Fragment() {
 
     private fun logOutApi() {
         val bookingBody = LogoutBody(
-            refresh = refresh
+            refresh = refresh,
+            language = languageId
         )
         logoutViewModel.otpCheck(bookingBody, requireActivity())
     }
@@ -123,7 +140,8 @@ class MoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
-                val intent = Intent(requireActivity(), LoginActivity::class.java)
+
+                val intent = Intent(requireActivity(), ChooseLanguageActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
             }

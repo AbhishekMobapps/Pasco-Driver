@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DeliveryVerifyViewModel@Inject constructor(
+class DeliveryVerifyViewModel @Inject constructor(
     application: Application, private val repository: CommonRepository
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
@@ -27,10 +27,16 @@ class DeliveryVerifyViewModel@Inject constructor(
     var context: Context? = null
 
 
-    fun getDriverDetails(bookingid: String,delivery_code:String, activity: Activity, progressDialog: CustomProgressDialog) {
+    fun getDriverDetails(
+        bookingid: String,
+        delivery_code: String,
+        language: String,
+        activity: Activity,
+        progressDialog: CustomProgressDialog
+    ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.verifyDeliveryProof(bookingid,delivery_code).subscribeOn(Schedulers.io())
+        repository.verifyDeliveryProof(bookingid, delivery_code,language).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<DeliveryProofResponse>() {
                 override fun onNext(value: DeliveryProofResponse) {

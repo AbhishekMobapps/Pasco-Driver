@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,11 +28,14 @@ class LoyaltyProgramModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun getReminder(activity: Activity, progressDialog: CustomProgressDialog
+    fun getReminder(
+        activity: Activity, progressDialog: CustomProgressDialog,
+        body:CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getLoyalty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getLoyalty(body).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<LoyaltyProgramResponse>() {
                 override fun onNext(value: LoyaltyProgramResponse) {
                     progressIndicator.value = false

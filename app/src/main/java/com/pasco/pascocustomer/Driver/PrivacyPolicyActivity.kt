@@ -2,27 +2,46 @@ package com.pasco.pascocustomer.activity.Driver
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.PorterDuff
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.webkit.GeolocationPermissions
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityPrivacyPolicyBinding
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+
 @AndroidEntryPoint
-class PrivacyPolicyActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityPrivacyPolicyBinding
+class PrivacyPolicyActivity : Originator() {
+    private lateinit var binding: ActivityPrivacyPolicyBinding
     private val progressDialog by lazy { CustomProgressDialog(this) }
+
+
+    private var language = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backImagePrivacy.setImageResource(R.drawable.next)
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImagePrivacy.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        } else {
+            val color = ContextCompat.getColor(this, R.color.white)
+            binding.backImagePrivacy.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            binding.backImagePrivacy.setImageResource(R.drawable.back)
+        }
 
         binding.backImagePrivacy.setOnClickListener {
             finish()

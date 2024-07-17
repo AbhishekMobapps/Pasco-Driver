@@ -1,15 +1,14 @@
 package com.pasco.pascocustomer.Driver
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pasco.pascocustomer.Driver.adapter.CouponUsedAdapter
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.databinding.ActivityCouponUsedBinding
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
 
-import java.util.ArrayList
 @AndroidEntryPoint
-class CouponUsedActivity : AppCompatActivity() {
+class CouponUsedActivity : Originator() {
     private lateinit var binding: ActivityCouponUsedBinding
     private var couponUsedByList: List<RideRequestResponse> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {

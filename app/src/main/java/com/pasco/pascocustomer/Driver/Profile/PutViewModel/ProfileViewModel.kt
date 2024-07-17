@@ -36,10 +36,11 @@ class ProfileViewModel @Inject constructor(
         activity: Activity,
         full_name: RequestBody,
         email: RequestBody,
+        language: RequestBody,
         identify_document: MultipartBody.Part
     ) =
         viewModelScope.launch {
-            putProfileM(progressDialog, activity, full_name,email,identify_document)
+            putProfileM(progressDialog, activity, full_name,email,language,identify_document)
         }
 
     suspend fun putProfileM(
@@ -47,11 +48,12 @@ class ProfileViewModel @Inject constructor(
         activity: Activity,
         full_name: RequestBody,
         email: RequestBody,
+        language: RequestBody,
         identify_document: MultipartBody.Part
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        profileRepository.putUserProfile( full_name,email, identify_document)
+        profileRepository.putUserProfile( full_name,email,language, identify_document)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ProfileResponse>() {

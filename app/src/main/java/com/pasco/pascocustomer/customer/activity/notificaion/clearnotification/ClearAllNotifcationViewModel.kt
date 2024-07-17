@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,19 +32,21 @@ class ClearAllNotifcationViewModel @Inject constructor(
 
     fun getClearAllNotifications(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body : CustomerOrderBody
     ) =
         viewModelScope.launch {
-            getDeleteList(progressDialog,activity)
+            getDeleteList(progressDialog,activity,body)
         }
 
     private suspend fun getDeleteList(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body : CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        clearAllRepo.clearAllNotification()
+        clearAllRepo.clearAllNotification(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ClearAllNotificationResponse>() {

@@ -18,5 +18,6 @@ class BookingOrderBody(
     @SerializedName("payment_method") var payment_method: String,
     @SerializedName("additional_service") var additional_service: String,
     @SerializedName("pickup_country") var pickup_country: String,
-    @SerializedName("drop_country") var drop_country: String
+    @SerializedName("drop_country") var drop_country: String,
+    @SerializedName("language") var language: String
 )

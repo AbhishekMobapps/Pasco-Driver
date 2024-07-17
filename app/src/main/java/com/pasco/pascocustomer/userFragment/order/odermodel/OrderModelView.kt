@@ -27,11 +27,14 @@ class OrderModelView @Inject constructor(
     var context: Context? = null
 
 
-    fun otpCheck( activity: Activity, progressDialog: CustomProgressDialog
+    fun otpCheck(
+        activity: Activity, progressDialog: CustomProgressDialog,
+        body: CustomerOrderBody
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getOrder().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        repository.getOrder(body).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<OrderResponse>() {
                 override fun onNext(value: OrderResponse) {
                     progressIndicator.value = false

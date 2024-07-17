@@ -14,15 +14,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DAllOrdersViewModel@Inject constructor(
+class DAllOrdersViewModel @Inject constructor(
     application: Application,
     private val dAllOrderRepository: DAllOrderRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
@@ -31,22 +32,26 @@ class DAllOrdersViewModel@Inject constructor(
 
     fun getAllOrdersData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: CustomerOrderBody
 
     ) =
         viewModelScope.launch {
-            getProfile( progressDialog,
-                activity)
+            getProfile(
+                progressDialog,
+                activity,
+                body
+            )
         }
+
     suspend fun getProfile(
         progressDialog: CustomProgressDialog,
-        activity: Activity
-    )
-
-    {
+        activity: Activity,
+        body: CustomerOrderBody
+    ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        dAllOrderRepository.getAllOrderRepo()
+        dAllOrderRepository.getAllOrderRepo(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<DAllOrderResponse>() {

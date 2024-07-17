@@ -8,8 +8,9 @@ import javax.inject.Inject
 class ShowBookingReqRepository@Inject constructor(private val apiService: ApiServices) {
     suspend fun getShowBookingRequests(
         city: String,
+        language: String
 
     ): Observable<ShowBookingReqResponse> {
-        return apiService.getBookingReq(PascoApp.encryptedPrefs.bearerToken,city)
+        return apiService.getBookingReq(PascoApp.encryptedPrefs.bearerToken,city,language)
     }
 }

@@ -347,8 +347,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                android:text="Delivery price range"
+                                android:text="@string/delivery_price_range"
                                 android:textColor="@color/black"
+                                app:layout_constraintStart_toStartOf="parent"
                                 android:textSize="@dimen/normal_txt_size"
                                 app:layout_constraintWidth_percent="0.5"
                                 tools:ignore="MissingConstraints" />
@@ -363,8 +364,7 @@
                                 android:textColor="@color/grey"
                                 android:textSize="@dimen/normal_txt_size13"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/priceStaticTextView"
-                                app:layout_constraintWidth_percent="0.5"
+                                app:layout_constraintWidth_percent="0.4"
                                 tools:ignore="MissingConstraints" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -390,7 +390,8 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                android:text="Distance"
+                                android:text="@string/distance"
+                                app:layout_constraintStart_toStartOf="parent"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/normal_txt_size"
                                 app:layout_constraintWidth_percent="0.5"
@@ -406,8 +407,7 @@
                                 android:textColor="@color/grey"
                                 android:textSize="@dimen/normal_txt_size13"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/distanceTextView"
-                                app:layout_constraintWidth_percent="0.5"
+                                app:layout_constraintWidth_percent="0.4"
                                 tools:ignore="MissingConstraints" />
 
                             <TextView

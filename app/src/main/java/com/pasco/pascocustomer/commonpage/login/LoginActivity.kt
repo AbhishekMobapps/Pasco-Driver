@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.commonpage.login
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -40,6 +41,7 @@ import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupB
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityLoginBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +53,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : Originator() {
     private lateinit var binding: ActivityLoginBinding
     private var formattedCountryCode = ""
     private var cCodeSignIn = ""
@@ -67,11 +69,19 @@ class LoginActivity : AppCompatActivity() {
     private val otpModel: OtpCheckModelView by viewModels()
     private val loginModel: LoginModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val deviceModel = Build.MODEL
+
+
+            sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+            languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        Log.e("languageIdAA", "languageId..." + languageId)
 
         loginValue = "user"
         auth = FirebaseAuth.getInstance()
@@ -242,7 +252,8 @@ class LoginActivity : AppCompatActivity() {
         val loinBody = CheckOtpBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
-            phone_verify = deviceModel
+            phone_verify = deviceModel,
+            language = languageId
 
         )
         otpModel.otpCheck(loinBody, this, progressDialog)
@@ -273,7 +284,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } else {
                     if (otpStatus == 0) {
-                       // sendVerificationCode("$cCodeSignIn$strPhoneNo")
+                        // sendVerificationCode("$cCodeSignIn$strPhoneNo")
                         val intent = Intent(this@LoginActivity, LoginOtpVerifyActivity::class.java)
                         intent.putExtra("verificationId", verificationId)
                         intent.putExtra("phoneNumber", strPhoneNo)
@@ -300,7 +311,8 @@ class LoginActivity : AppCompatActivity() {
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
-            phone_token = token
+            phone_token = token,
+            language = languageId
         )
         loginModel.otpCheck(loinBody, this, progressDialog)
     }

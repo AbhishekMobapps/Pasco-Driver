@@ -1,34 +1,39 @@
 package com.pasco.pascocustomer.Driver.ApprovalStatus.Ui
 
+
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusResponse
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusViewModel
+import com.pasco.pascocustomer.Driver.adapter.ApprovalStatusAdapter
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.ActivityApprovalStatusBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import dagger.hilt.android.AndroidEntryPoint
-import com.pasco.pascocustomer.Driver.adapter.ApprovalStatusAdapter
 
-
-import java.util.ArrayList
 @AndroidEntryPoint
-class ApprovalStatusActivity : AppCompatActivity() {
+class ApprovalStatusActivity : Originator() {
     private lateinit var binding: ActivityApprovalStatusBinding
     private var approveData: List<ApprovalStatusResponse.ApprovalStatusData> = ArrayList()
     private val approvalStatusViewModel: ApprovalStatusViewModel by viewModels()
     private lateinit var activity: Activity
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityApprovalStatusBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activity = this
-
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         binding.backImageApps.setOnClickListener {
             finish()
         }
@@ -48,8 +53,12 @@ class ApprovalStatusActivity : AppCompatActivity() {
     }
 
         private fun approvedStatus() {
+            val body = CustomerOrderBody(
+                language =languageId
+            )
             approvalStatusViewModel.getCheckApproveBooking(
-                activity
+                activity,
+                body
             )
         }
 

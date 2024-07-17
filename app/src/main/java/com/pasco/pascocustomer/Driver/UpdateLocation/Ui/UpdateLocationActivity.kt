@@ -4,11 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -31,16 +31,17 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityUpdateLocationBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
-import java.util.Locale
+import java.util.*
 
 @AndroidEntryPoint
-class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
+class UpdateLocationActivity : Originator(), OnMapReadyCallback,
     GoogleMap.OnMapClickListener {
     private lateinit var binding: ActivityUpdateLocationBinding
     private var googleMap: GoogleMap? = null
@@ -59,6 +60,9 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
     private var countryName: String? = null
     private lateinit var updateLocationBody: UpdationLocationBody
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUpdateLocationBinding.inflate(layoutInflater)
@@ -67,7 +71,8 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
         userId = PascoApp.encryptedPrefs.userId
         bookingId = intent.getStringExtra("reqId").toString()
 
-
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         //call observer
         updateLocationObserver()
 
@@ -189,7 +194,8 @@ class UpdateLocationActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect,countryName.toString()
+            formattedLongitudeSelect,countryName.toString(),
+            language =languageId
         )
         updateLocationViewModel.updateLocationDriver(
             activity,

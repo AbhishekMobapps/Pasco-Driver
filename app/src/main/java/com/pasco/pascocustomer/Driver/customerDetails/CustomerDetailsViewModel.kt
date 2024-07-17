@@ -9,6 +9,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsResponse
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,10 +29,10 @@ class CustomerDetailsViewModel @Inject constructor(
     var context: Context? = null
 
 
-    fun getDriverDetails(Id: String, activity: Activity, progressDialog: CustomProgressDialog) {
+    fun getDriverDetails(Id: String, activity: Activity, progressDialog: CustomProgressDialog,body:CustomerOrderBody) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        customerdetailrepository.customerDetails(Id).subscribeOn(Schedulers.io())
+        customerdetailrepository.customerDetails(Id,body).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<CustomerDetailsResponse>() {
                 override fun onNext(value: CustomerDetailsResponse) {

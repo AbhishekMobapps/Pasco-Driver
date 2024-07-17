@@ -3,14 +3,15 @@ package com.pasco.pascocustomer.Driver
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityCreateDriverAvailabilityBinding
-import java.util.Calendar
+import com.pasco.pascocustomer.language.Originator
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+
 @AndroidEntryPoint
-class CreateDriverAvailabilityActivity : AppCompatActivity() {
+class CreateDriverAvailabilityActivity : Originator() {
     private lateinit var binding: ActivityCreateDriverAvailabilityBinding
     private var year: Int = 0
     private var month: Int = 0

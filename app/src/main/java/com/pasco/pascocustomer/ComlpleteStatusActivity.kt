@@ -1,7 +1,6 @@
 package com.pasco.pascocustomer
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,15 +9,18 @@ import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.hometabactivity.AllTabPayActivity
 import com.pasco.pascocustomer.databinding.ActivityComlpleteStatusBinding
+import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ComlpleteStatusActivity : AppCompatActivity() {
+class ComlpleteStatusActivity : Originator() {
     private var addWallet = ""
     private var walletC = ""
     private lateinit var binding: ActivityComlpleteStatusBinding
     private var user = ""
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         binding = ActivityComlpleteStatusBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -9,5 +9,6 @@ class CargoAvailableBody (
     @SerializedName("pickup_city") var pickup_city: String,
     @SerializedName("drop_city") var drop_city: String,
     @SerializedName("pickup_country") var pickup_country: String,
-    @SerializedName("drop_country") var drop_country: String
+    @SerializedName("drop_country") var drop_country: String,
+    @SerializedName("language") var language: String
 )

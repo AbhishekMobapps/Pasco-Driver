@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -20,7 +21,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,30 +32,34 @@ import com.google.android.gms.location.LocationServices
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.GetApprovalStatusDModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
+import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
+import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
+import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
+import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.DriverMoreFragment
+import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
+import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
+import com.pasco.pascocustomer.Driver.driverFeedback.DriverFeedbackBody
+import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
+import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
+import com.pasco.pascocustomer.customer.activity.updatevehdetails.GetVehicleDetailsBody
+import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
+import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import com.pasco.pascocustomer.R
-import com.pasco.pascocustomer.Driver.Fragment.DriverOrders.DriverOrdersFragment
-import com.pasco.pascocustomer.Driver.Fragment.MoreFragDriver.DriverMoreFragment
-import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
-import com.pasco.pascocustomer.Driver.Fragment.DriverProfile.DriverProfileFragment
-import com.pasco.pascocustomer.Driver.Fragment.TripHistoryFragment
-import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
-import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
-import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivity
-import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
-import com.pasco.pascocustomer.databinding.ActivityDriverDashboardBinding
-import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
-import com.pasco.pascocustomer.utils.ErrorUtil
 import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.util.Locale
+import java.util.*
 
 @AndroidEntryPoint
-class DriverDashboardActivity : AppCompatActivity() {
+class DriverDashboardActivity : Originator() {
     private lateinit var binding: ActivityDriverDashboardBinding
     private val getVDetailsViewModel: GetApprovalStatusDModel by viewModels()
     private var city: String? = null
@@ -85,6 +89,9 @@ class DriverDashboardActivity : AppCompatActivity() {
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private lateinit var runnable: Runnable
+    private var isCheck = true
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
 
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,15 +99,13 @@ class DriverDashboardActivity : AppCompatActivity() {
         binding = ActivityDriverDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
         getVehicleDetails()
         getVehicleDetailsObserver()
 
-        if (dAdminApprovedStatus != "Approved") {
-            disableAllExceptMore()
-            openPopUp()
-        } else if (dAdminApprovedStatus == "Approved") {
-            enableAll()
-        }
         binding.switchbtn.isChecked = false
 
         getNotificationPermission()
@@ -282,8 +287,12 @@ class DriverDashboardActivity : AppCompatActivity() {
 
 
     private fun getVehicleDetails() {
+        val body = GetVehicleDetailsBody(
+            language = languageId
+        )
         getVDetailsViewModel.getApprovalDModeData(
-            this
+            this,
+            body
         )
     }
 
@@ -294,7 +303,12 @@ class DriverDashboardActivity : AppCompatActivity() {
             val status = data?.approvalStatus
             PascoApp.encryptedPrefs.driverStatuss = status.toString()
             if (data!!.approvalStatus != "Approved") {
-                disableAllExceptMore()
+                if (isCheck) {
+                    disableAllExceptMore()
+                    openPopUp()
+                    isCheck = false
+                }
+
             } else if (data!!.approvalStatus == "Approved") {
                 enableAll()
             }
@@ -322,7 +336,10 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     private fun markOffDuty() {
         // Assuming similar logic for marking off duty
-        val body = MarkDutyBody(mark_status = switchCheck)
+        val body = MarkDutyBody(
+            mark_status = switchCheck,
+            language = languageId
+        )
         markDutyViewModel.putMarkOn(progressDialog, activity, body)
     }
 
@@ -463,7 +480,8 @@ class DriverDashboardActivity : AppCompatActivity() {
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect, countryName.toString()
+            formattedLongitudeSelect, countryName.toString(),
+            language = languageId
         )
         updateLocationViewModel.updateLocationDriver(
             activity,
@@ -478,12 +496,12 @@ class DriverDashboardActivity : AppCompatActivity() {
     }
 
     private fun getProfileApi() {
-        getProfileModelView.getProfile(
-            activity,
-            progressDialog
-
+        val loinBody = GetProfileBody(
+            language = languageId
         )
+        getProfileModelView.getProfile(this, progressDialog, loinBody)
     }
+
 
     private fun getUserProfileObserver() {
         getProfileModelView.progressIndicator.observe(this, Observer {
@@ -535,7 +553,8 @@ class DriverDashboardActivity : AppCompatActivity() {
 
     private fun markOnDuty() {
         val body = MarkDutyBody(
-            mark_status = switchCheck
+            mark_status = switchCheck,
+            language = languageId
         )
         markDutyViewModel.putMarkOn(
             progressDialog, activity, body

@@ -168,7 +168,7 @@ class CompletedTripHistoryAdapter(
         val totalAmount = itemView.findViewById<TextView>(R.id.totalAmount)
         val bookingDate = itemView.findViewById<TextView>(R.id.bookingDate)
         val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
-        val hisArow = itemView.findViewById<ImageView>(R.id.hisArow)
+        val hisArow = itemView.findViewById<ImageView>(R.id.hisArrow)
         val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
         val consCancellationReason = itemView.findViewById<ConstraintLayout>(R.id.consCancellationReason)
 

@@ -7,11 +7,11 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -35,26 +36,28 @@ import com.google.maps.GeoApiContext
 import com.google.maps.model.DirectionsResult
 import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
-import dagger.hilt.android.AndroidEntryPoint
-import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AcceptRideViewModel
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBiddingBody
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.ViewModel.AddBidingViewModel
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityAcceptRideBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
+import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
+class AcceptRideActivity : Originator(), OnMapReadyCallback {
     private lateinit var binding: ActivityAcceptRideBinding
     private lateinit var activity: Activity
     private val acceptRideViewModel: AcceptRideViewModel by viewModels()
@@ -90,16 +93,26 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAcceptRideBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activity = this
 
-       // reqId = intent.getStringExtra("rideReqId").orEmpty()
+        // reqId = intent.getStringExtra("rideReqId").orEmpty()
+
+        sharedPreferencesLanguageName = activity.getSharedPreferences(
+            "PREFERENCE_NAME",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         orderID = PascoApp.encryptedPrefs.requestOrderId
-        Log.e("orderID", "onCreate: "+orderID )
+
 
         one = intent.getIntExtra("one", -1) // Default value set to -1
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
@@ -108,16 +121,24 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         currentLatitudeDrop = intent.getStringExtra("droplatitudea")?.toDoubleOrNull() ?: 0.0
         currentLongitudeDrop = intent.getStringExtra("droplongitudea")?.toDoubleOrNull() ?: 0.0
 
-        Log.d("PickupLocation", "Latitude: $currentLatitudePickup, Longitude: $currentLongitudePickup")
+        Log.d(
+            "PickupLocation",
+            "Latitude: $currentLatitudePickup, Longitude: $currentLongitudePickup"
+        )
         Log.d("DropLocation", "Latitude: $currentLatitudeDrop, Longitude: $currentLongitudeDrop")
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapAcceptRide) as SupportMapFragment
+        val mapFragment =
+            supportFragmentManager.findFragmentById(R.id.mapAcceptRide) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         pickupLocation = LatLng(currentLatitudePickup, currentLongitudePickup)
         dropLocation = LatLng(currentLatitudeDrop, currentLongitudeDrop)
+
+        if (Objects.equals(language, "ar")) {
+            binding.imageBackReqRide.setImageResource(R.drawable.next)
+        }
 
 
         if (!orderID.isNullOrBlank()) {
@@ -398,8 +419,8 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun truncateAddress(address: String): String {
         val words = address.split(" ")
-        return if (words.size > 3) {
-            words.subList(0, 3).joinToString(" ") + "..."
+        return if (words.size > 10) {
+            words.subList(0, 10).joinToString(" ") + "..."
         } else {
             address
         }
@@ -410,7 +431,7 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
             val message = response.peekContent().msg!!
 
             if (response.peekContent().status.equals("False")) {
-               // Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
                 showWalletRequirementPopup()
             } else {
                 Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
@@ -434,14 +455,15 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showWalletRequirementPopup() {
-        val message = "To place a bid, you need to have at least 20% of the bid amount in your wallet. "
+        val message =
+            "To place a bid, you need to have at least 20% of the bid amount in your wallet. "
 
         val builder = AlertDialog.Builder(this@AcceptRideActivity)
         builder.setTitle("Insufficient Wallet Balance")
         builder.setMessage(message)
         builder.setPositiveButton("Add Funds") { dialog, _ ->
             // Navigate to wallet page
-         navigateToWalletPage()
+            navigateToWalletPage()
             dialog.dismiss()
         }
 
@@ -453,16 +475,19 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
         alertDialog.show()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun navigateToWalletPage() {
-      val intent = Intent(this@AcceptRideActivity,DriverWalletActivity::class.java)
-        intent.putExtra("wallet","amount")
+        val intent = Intent(this@AcceptRideActivity, DriverWalletActivity::class.java)
+        intent.putExtra("wallet", "amount")
         startActivity(intent)
     }
 
     private fun addBiding() {
         val pricee = binding.showPriceEditText.text.toString()
         addBiddingBody = AddBiddingBody(
-            dateTimes, pricee
+            availability_datetime =dateTimes,
+            bid_price= pricee,
+            language = languageId
         )
         addBidingViewModel.addBidingData(
             progressDialog,
@@ -488,9 +513,13 @@ class AcceptRideActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getBidDetailsApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         acceptRideViewModel.getAcceptRideData(
             activity,
-            orderID
+            orderID,
+            body
         )
     }
 

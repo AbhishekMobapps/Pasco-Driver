@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -25,12 +24,13 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityLocationsBinding
+import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
 import java.util.*
 
 @AndroidEntryPoint
-class LocationsActivity : AppCompatActivity(), OnMapReadyCallback {
+class LocationsActivity : Originator(), OnMapReadyCallback {
     private lateinit var binding: ActivityLocationsBinding
     private var googleMap: GoogleMap? = null
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
@@ -59,9 +59,9 @@ class LocationsActivity : AppCompatActivity(), OnMapReadyCallback {
         pickYourLocation = intent.getStringExtra("pickYourLocation").toString()
 
         if (pickYourLocation == "pickYourLocation") {
-            binding.locationTxt.text = "Pick Start Points"
+            binding.locationTxt.text = getString(R.string.pick_start_point)
         } else {
-            binding.locationTxt.text = "Pick Destination Points"
+            binding.locationTxt.text = getString(R.string.pick_destination_points)
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 

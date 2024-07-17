@@ -17,10 +17,10 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ShowBookingReqViewModel@Inject constructor(
+class ShowBookingReqViewModel @Inject constructor(
     application: Application,
     private val showBookingReqRepository: ShowBookingReqRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
@@ -28,17 +28,19 @@ class ShowBookingReqViewModel@Inject constructor(
     var context: Context? = null
 
     fun getShowBookingRequestsData(
-        activity: Activity, city:String) =
+        activity: Activity, city: String, language: String
+    ) =
         viewModelScope.launch {
             getShowBookingRequests(
-                activity, city)
+                activity, city, language
+            )
         }
-    suspend fun getShowBookingRequests(
-        activity: Activity,city: String
-    )
 
-    {
-        showBookingReqRepository.getShowBookingRequests(city)
+    suspend fun getShowBookingRequests(
+        activity: Activity, city: String,
+        language: String
+    ) {
+        showBookingReqRepository.getShowBookingRequests(city, language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ShowBookingReqResponse>() {

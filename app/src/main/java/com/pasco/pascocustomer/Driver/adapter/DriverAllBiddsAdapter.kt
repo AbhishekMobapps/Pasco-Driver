@@ -4,13 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -22,12 +21,14 @@ import com.pasco.pascocustomer.Driver.StartRiding.Ui.DriverStartRidingActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.Objects
 import java.util.TimeZone
 
 class DriverAllBiddsAdapter(
     private val context: Context,
-    private val onItemClick:CancelOnClick,
-    private val driverHistory: List<DAllOrderResponse.DAllOrderResponseData>
+    private val onItemClick: CancelOnClick,
+    private val driverHistory: List<DAllOrderResponse.DAllOrderResponseData>,
+    private var language: String
 ) : RecyclerView.Adapter<DriverAllBiddsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -42,6 +43,7 @@ class DriverAllBiddsAdapter(
     override fun onBindViewHolder(holder: DriverAllBiddsAdapter.ViewHolder, position: Int) {
         val driverOrderHis = driverHistory[position]
         val price = "$${driverOrderHis.bidPrice}"
+
         val dateTime = driverOrderHis.pickupDatetime.toString()
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -56,6 +58,10 @@ class DriverAllBiddsAdapter(
             e.printStackTrace()
         }
 
+        if (Objects.equals(language,"ar"))
+        {
+            holder.forwardBtn.setImageResource(R.drawable.back)
+        }
         val baseUrl = "http://69.49.235.253:8090"
         val imagePath = driverOrderHis.userImage.orEmpty()
         val imageUrl = "$baseUrl$imagePath"
@@ -93,7 +99,7 @@ class DriverAllBiddsAdapter(
         }
         val id = driverOrderHis.id!!.toString()
 
-        if (biddingStatus.equals("Pending"))
+        if (biddingStatus == "Pending")
         {
             holder.cancelButtonBid.visibility = View.VISIBLE
             holder.cancelButtonBid.setOnClickListener {
@@ -122,5 +128,6 @@ class DriverAllBiddsAdapter(
         val biddingStatusTextView: TextView = itemView.findViewById(R.id.biddingStatusTextView)
         val linearDriverHis: LinearLayout = itemView.findViewById(R.id.linearDriverHis)
         val cancelButtonBid: TextView = itemView.findViewById(R.id.cancelButtonBid)
+        val forwardBtn: ImageView = itemView.findViewById(R.id.forwardBtn)
     }
 }

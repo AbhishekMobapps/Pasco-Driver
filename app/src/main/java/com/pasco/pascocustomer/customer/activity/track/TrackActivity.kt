@@ -3,13 +3,13 @@ package com.pasco.pascocustomer.customer.activity.track
 import android.Manifest
 import android.app.*
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -47,22 +47,23 @@ import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityTrackBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
-class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
+class TrackActivity : Originator(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private var dropLocation: LatLng? = null// Define your drop location
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: ActivityTrackBinding
-
     private val trackModelView: TrackLocationModelView by viewModels()
     private val trackDetailsModelView: TrackLocationDetailsModelView by viewModels()
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
@@ -72,6 +73,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
+
 
     private var pickupLatitude = ""
     private var pickupLongitude = ""
@@ -87,10 +89,25 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     var mHandler: Handler? = null
     private var cars: Bitmap? = null
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+
+        if (Objects.equals(language, "ar")) {
+            binding.imageBackReqRide.setImageResource(R.drawable.next)
+
+        }
 
         binding.imageBackReqRide.setOnClickListener { finish() }
         //   showFeedbackPopup()
@@ -109,12 +126,12 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.textViewSeeDetails.setOnClickListener {
 
             if (isClick) {
-                binding.textViewSeeDetails.text = "Hide Details"
+                binding.textViewSeeDetails.text = R.string.hide_details.toString()
                 binding.NewConstraintDetails.visibility = View.VISIBLE
                 isClick = false
             } else {
                 binding.NewConstraintDetails.visibility = View.GONE
-                binding.textViewSeeDetails.text = "Show Details"
+                binding.textViewSeeDetails.text = R.string.show_details.toString()
                 isClick = true
             }
         }
@@ -165,7 +182,7 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         override fun run() {
 
             locationLatApi()
-
+            locationLatObserver()
             mHandler?.postDelayed(this, 10000)
         }
     }
@@ -173,7 +190,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun locationDetailsApi() {
 
         val bookingBody = TrackLocationBody(
-            driverbookedid = bookingId
+            driverbookedid = bookingId,
+            language = languageId
         )
         trackDetailsModelView.trackLocation(bookingBody, this)
     }
@@ -183,6 +201,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
         trackDetailsModelView.mDetailsResponse.observe(this) { response ->
 
             val dataGet = response.peekContent().data
+
+
 
             binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
@@ -253,7 +273,8 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun locationLatApi() {
         val bookingBody = TrackLocationBody(
-            driverbookedid = bookingId
+            driverbookedid = bookingId,
+            language = languageId
         )
         trackModelView.trackLocation(bookingBody, this)
     }
@@ -261,6 +282,11 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun locationLatObserver() {
         trackModelView.mRejectResponse.observe(this) { response ->
 
+
+            val status = response.peekContent().status
+            if (status == "True") {
+
+            }
             val driverCurrentLat = response.peekContent().data?.currentLatitude.toString()
             val driverCurrentLong = response.peekContent().data?.currentLongitude.toString()
             val userPickUpLat = response.peekContent().data?.pickupLatitude.toString()
@@ -314,19 +340,25 @@ class TrackActivity : AppCompatActivity(), OnMapReadyCallback {
                         mMap.clear()
                         // Draw the second route from pickup to drop location
 
-                        mMap.addMarker(
-                            MarkerOptions()
-                                .position(driverLatLng)
-                                .icon(driverMarker)
-                                .title("Driver Location")
-                        )
 
-                        mMap.addMarker(
-                            MarkerOptions()
-                                .position(userDropLatLng)
-                                .icon(pickUpMarker)
-                                .title("Drop Location")
-                        )
+
+                        mMarkerOptions =
+                            mMap?.addMarker(
+                                MarkerOptions().position(driverLatLng!!)
+                                    .anchor(0.5f, 0.5f)
+                                    .title("Driver Location").icon(
+                                        BitmapDescriptorFactory.fromBitmap(cars!!)))
+
+
+
+                        mMarkerOptions =
+                            mMap?.addMarker(
+                                MarkerOptions().position(userDropLatLng!!)
+                                    .anchor(0.5f, 0.5f)
+                                    .title("Driver Location").icon(
+                                        BitmapDescriptorFactory.fromBitmap(cars!!)
+                                    )
+                            )
 
                         Log.e("ReachedAAA", "aa......." + response.peekContent().data?.driverStatus)
                         drawRoute(

@@ -9,10 +9,11 @@ class StartTripRepository@Inject constructor(private val apiService: ApiServices
     suspend fun addStartTripRepository(
         id: String,
         driver_status: String,
+        language: String
 
 
     ): Observable<StartTripResponse> {
         return apiService.startTrip(id,
-            PascoApp.encryptedPrefs.bearerToken,driver_status)
+            PascoApp.encryptedPrefs.bearerToken,driver_status,language)
     }
 }

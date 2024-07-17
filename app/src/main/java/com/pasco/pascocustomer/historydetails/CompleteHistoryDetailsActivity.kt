@@ -1,7 +1,7 @@
 package com.pasco.pascocustomer.historydetails
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -13,6 +13,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
@@ -27,6 +28,7 @@ import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackModelView
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityCompleteHistoryDetailsBinding
 import com.pasco.pascocustomer.invoice.InvoiceActivity
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.ParseException
@@ -34,7 +36,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class CompleteHistoryDetailsActivity : AppCompatActivity() {
+class CompleteHistoryDetailsActivity : Originator() {
     private lateinit var binding: ActivityCompleteHistoryDetailsBinding
     private var id = ""
     private var bookingNumber = ""
@@ -58,6 +60,9 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
     private val progressDialog by lazy { CustomProgressDialog(this) }
     var bottomSheetDialog: BottomSheetDialog? = null
     private val feedbackModelView: CustomerFeedbackModelView by viewModels()
+
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCompleteHistoryDetailsBinding.inflate(layoutInflater)
@@ -66,6 +71,16 @@ class CompleteHistoryDetailsActivity : AppCompatActivity() {
         userType = PascoApp.encryptedPrefs.userType
 
         binding.backBtn.setOnClickListener { finish() }
+
+        sharedPreferencesLanguageName = getSharedPreferences(
+            "PREFERENCE_NAME", MODE_PRIVATE
+        )
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+
+        if (Objects.equals(language,"ar"))
+        {
+            binding.backBtn.setImageResource(R.drawable.next)
+        }
 
         id = intent.getStringExtra("id").toString()
         bookingNumber = intent.getStringExtra("bookingNumber").toString()

@@ -19,6 +19,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="15dp"
             android:src="@drawable/back"
+            android:layout_marginRight="10dp"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -101,9 +102,11 @@
                         android:paddingStart="10dp"
                         android:textColorHint="@color/grey"
                         android:textSize="16sp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.85" />
+                        app:layout_constraintWidth_percent="0.8" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -147,11 +150,13 @@
                         android:gravity="center_vertical"
                         android:hint="@string/pick_destination_point"
                         android:paddingStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:textColorHint="@color/grey"
                         android:textSize="16sp"
+                        android:layout_marginRight="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.85" />
+                        app:layout_constraintWidth_percent="0.8" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -270,7 +275,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/number_of_vehicle_you_required"
+                        android:hint="@string/number_of_vehicle_you_required"
                         android:textColorHint="@color/grey"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -300,7 +305,7 @@
                         app:layout_constraintWidth_percent="0.55">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-
+                            android:id="@+id/calenderConst"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/subract_button"
@@ -344,7 +349,7 @@
                         app:layout_constraintWidth_percent="0.4">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-
+                            android:id="@+id/clockConst"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/subract_button"
@@ -446,6 +451,7 @@
                         android:layout_height="30dp"
                         android:layout_marginLeft="10dp"
                         android:src="@drawable/cash_img"
+                        android:layout_marginRight="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -454,7 +460,7 @@
                         android:id="@+id/cash"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cash"
+                        android:text="@string/cash"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -466,7 +472,7 @@
 
                     <RadioButton
                         android:id="@+id/cashRadioButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:buttonTint="@color/earth_yellow"
@@ -505,6 +511,7 @@
                             android:layout_marginLeft="10dp"
                             android:src="@drawable/wallet_t"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginRight="10dp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -513,7 +520,7 @@
                             android:id="@+id/wallet"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Wallet"
+                            android:text="@string/wallet"
                             android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -550,6 +557,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
                             android:src="@drawable/visa"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -559,7 +567,7 @@
                             android:id="@+id/visaTxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Visa"
+                            android:text="@string/visa"
                             android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -620,7 +628,7 @@
                             android:layout_height="match_parent"
                             android:background="@null"
                             android:gravity="top|center_vertical"
-                            android:hint="Type here..."
+                            android:hint="@string/type_here"
                             android:padding="10dp"
                             android:textSize="14sp" />
 

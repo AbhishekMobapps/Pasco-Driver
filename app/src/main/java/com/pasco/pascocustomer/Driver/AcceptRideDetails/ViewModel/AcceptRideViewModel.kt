@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
@@ -27,17 +28,19 @@ class AcceptRideViewModel @Inject constructor(
 
     fun getAcceptRideData(
         activity: Activity,
-        id: String
+        id: String,
+        body:CustomerOrderBody
     ) =
         viewModelScope.launch {
-            getAcceptRideDatas(activity, id)
+            getAcceptRideDatas(activity, id,body)
         }
 
     suspend fun getAcceptRideDatas(
         activity: Activity,
-        id: String
+        id: String,
+        body:CustomerOrderBody
     ) {
-        acceptRideRepository.putMarkRepository(id)
+        acceptRideRepository.putMarkRepository(id,body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AcceptRideResponse>() {

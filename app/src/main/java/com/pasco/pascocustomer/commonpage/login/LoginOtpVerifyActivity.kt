@@ -2,6 +2,7 @@ package com.pasco.pascocustomer.commonpage.login
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -32,11 +33,12 @@ import com.pasco.pascocustomer.commonpage.login.loginmodel.LoginModelView
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityLoginOtpVerifyBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginOtpVerifyActivity : AppCompatActivity() {
+class LoginOtpVerifyActivity : Originator() {
     private lateinit var binding: ActivityLoginOtpVerifyBinding
     private lateinit var mAuth: FirebaseAuth
     private var strPhoneNo = ""
@@ -49,10 +51,14 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     private val loginModel: LoginModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var countDownTimer: CountDownTimer? = null
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginOtpVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         FirebaseApp.initializeApp(this)
         mAuth = FirebaseAuth.getInstance()
@@ -63,7 +69,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
         countryCode = intent.getStringExtra("countryCode").toString()
         binding.phoneNumber.text = "$countryCode $strPhoneNo"
 
-        Log.e("OtpCheckData","loginValue..Otp" +loginValue)
+        Log.e("OtpCheckData", "loginValue..Otp" + loginValue)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -91,9 +97,7 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
             )
             if (otpFields.any { it.isEmpty() }) {
                 Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
-            }
-            else
-            {/*
+            } else {/*
                 val verificationCode = "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
                 val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(verificationId, verificationCode)
@@ -207,13 +211,11 @@ class LoginOtpVerifyActivity : AppCompatActivity() {
     }
 
     private fun loginApi() {
-           val codePhone = strPhoneNo
-
-        Log.e("PhoneNumber", "strPhoneNo..$strPhoneNo   $loginValue")
         val loinBody = LoginBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
-            phone_token = token
+            phone_token = token,
+            language = languageId
         )
         loginModel.otpCheck(loinBody, this, progressDialog)
     }

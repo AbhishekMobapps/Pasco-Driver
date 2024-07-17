@@ -2,9 +2,9 @@ package com.pasco.pascocustomer.Driver.StartRiding.Ui
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -26,13 +26,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -42,13 +36,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.AuthFailureError
-import com.android.volley.NetworkError
-import com.android.volley.NoConnectionError
-import com.android.volley.ParseError
-import com.android.volley.Request
-import com.android.volley.ServerError
-import com.android.volley.TimeoutError
+import com.android.volley.*
 import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -60,11 +48,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.maps.DirectionsApi
 import com.google.maps.GeoApiContext
@@ -73,19 +57,11 @@ import com.google.maps.model.TravelMode
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
-import com.pasco.pascocustomer.Driver.DriverDashboard.ViewModel.MarkDutyBody
-import com.pasco.pascocustomer.Driver.Fragment.HomeFrag.Ui.HomeFragment
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.AfterStartTripViewModel
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.CompleteRideViewModel
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.DriverStatusClickListner
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateResponse
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.GetRouteUpdateViewModel
-import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.StartTripViewModel
+import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.*
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryVerifyViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.MarkerData
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
-import com.pasco.pascocustomer.Driver.adapter.DriverHistoryAdapter
 import com.pasco.pascocustomer.Driver.adapter.PoiInfoAdapter
 import com.pasco.pascocustomer.Driver.adapter.StatusListAdapter
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
@@ -96,6 +72,9 @@ import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.chat.ChatActivity
 import com.pasco.pascocustomer.databinding.ActivityDriverStartRidingBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
@@ -108,7 +87,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.DecimalFormat
-import java.util.Locale
+import java.util.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -116,7 +95,7 @@ import kotlin.math.sqrt
 
 
 @AndroidEntryPoint
-class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
+class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     DriverStatusClickListner {
     private lateinit var binding: ActivityDriverStartRidingBinding
     private val editTextList = mutableListOf<EditText>()
@@ -186,7 +165,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     private var isClick = true
     private lateinit var locationArrayList: ArrayList<LatLng?>
     private lateinit var imagePart: MultipartBody.Part
-
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -201,7 +181,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
         val pickupLoc = intent.getStringExtra("pickupLoc").toString()
         val dropLoc = intent.getStringExtra("dropLoc").toString()
-
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         locationArrayList = ArrayList()
         Bid = intent.getStringExtra("BookId").toString()
 
@@ -233,7 +214,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         requestPermission()
 
         if (driStatusRunning == "null") {
-            binding.SelectstatusTextView.text = "Select Status"
+            binding.SelectstatusTextView.text = getString(R.string.selectStatus)
         } else {
             binding.SelectstatusTextView.text = driStatusRunning
         }
@@ -241,12 +222,12 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
         binding.textViewSeeDetailsSR.setOnClickListener {
 
             if (isClick) {
-                binding.textViewSeeDetailsSR.text = "Hide Details"
+                binding.textViewSeeDetailsSR.text = getString(R.string.hide_details)
                 binding.NewConstraintDetailsRide.visibility = View.VISIBLE
                 isClick = false
             } else {
                 binding.NewConstraintDetailsRide.visibility = View.GONE
-                binding.textViewSeeDetailsSR.text = "Show Details"
+                binding.textViewSeeDetailsSR.text = getString(R.string.show_details)
                 isClick = true
             }
         }
@@ -395,6 +376,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
                 deliveryVerifyViewModel.getDriverDetails(
                     Bid,
                     otpTextView,
+                    languageId,
                     activity,
                     progressDialog
                 )
@@ -551,7 +533,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun afterDetailsApi() {
-        afterStartTripViewModel.getAfterTripsData(Bid, this@DriverStartRidingActivity)
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        afterStartTripViewModel.getAfterTripsData(Bid, body)
     }
 
 
@@ -636,7 +621,8 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
             city.toString(),
             address.toString(),
             formattedLatitudeSelect,
-            formattedLongitudeSelect, countryName.toString()
+            formattedLongitudeSelect, countryName.toString(),
+            languageId
         )
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
@@ -784,7 +770,10 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun completedRideApi() {
-        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid)
+        val body = GetProfileBody(
+            language = languageId
+        )
+        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid, body)
 
     }
 
@@ -991,9 +980,13 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun driverStatusList() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         getRouteUpdateViewModel.getDriverStatusData(
             progressDialog,
-            this
+            this,
+            body
         )
     }
 
@@ -1019,7 +1012,7 @@ class DriverStartRidingActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun startTrip(sId: String) {
         val Iddd = sId
-        startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd)
+        startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd, languageId)
     }
 
 

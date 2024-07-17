@@ -4,9 +4,9 @@ import android.Manifest
 import android.app.ActionBar
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -29,17 +29,19 @@ import com.pasco.pascocustomer.customer.activity.notificaion.NotificationActivit
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.notificaion.notificationcount.NotificationCountViewModel
 import com.pasco.pascocustomer.databinding.ActivityUserDashboardBinding
-import com.pasco.pascocustomer.userFragment.history.HistoryFragment
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.MoreFragment
+import com.pasco.pascocustomer.userFragment.history.HistoryFragment
 import com.pasco.pascocustomer.userFragment.home.UserHomeFragment
 import com.pasco.pascocustomer.userFragment.order.OrderFragment
 import com.pasco.pascocustomer.userFragment.profile.ProfileFragment
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileModelView
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
+class UserDashboardActivity : Originator(), NotificationClickListener {
     private lateinit var binding: ActivityUserDashboardBinding
 
     private val shouldLoadHomeFragOnBackPress = true
@@ -55,6 +57,8 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     private var profileUpdate = ""
     private var notificaion = ""
     private var profile = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +66,9 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
         setContentView(binding.root)
 
         getNotificationPermission()
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
         profile = PascoApp.encryptedPrefs.profileUpdate
@@ -258,7 +265,10 @@ class UserDashboardActivity : AppCompatActivity(), NotificationClickListener {
     }
 
     private fun getProfileApi() {
-        getProfileModelView.getProfile(this, progressDialog)
+        val body = GetProfileBody(
+            language = languageId
+        )
+        getProfileModelView.getProfile(this, progressDialog,body)
     }
 
     private fun getProfileObserver() {

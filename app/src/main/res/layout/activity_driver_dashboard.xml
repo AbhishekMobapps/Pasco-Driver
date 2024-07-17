@@ -90,6 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -173,7 +174,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
-                    android:text="Home"
+                    android:text="@string/home"
                     android:textColor="@color/black"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -229,7 +230,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
-                    android:text="More"
+                    android:text="@string/more"
                     android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -285,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
-                    android:text="Trip History"
+                    android:text="@string/history"
                     android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -316,7 +317,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="3dp"
                     android:gravity="center"
-                    android:text="Profile"
+                    android:text="@string/profile"
                     android:textColor="@color/logo_color"
                     android:textSize="11sp"
                     android:textStyle="bold" />

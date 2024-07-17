@@ -2,8 +2,8 @@ package com.pasco.pascocustomer.commonpage.login.signup
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
@@ -18,7 +18,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.application.PascoApp
@@ -29,11 +28,12 @@ import com.pasco.pascocustomer.commonpage.login.signup.model.DriverSignUpModel
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityOtpVerifyBinding
+import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OtpVerifyActivity : AppCompatActivity() {
+class OtpVerifyActivity : Originator() {
     private val editTextList = mutableListOf<EditText>()
     private lateinit var binding: ActivityOtpVerifyBinding
     private lateinit var mAuth: FirebaseAuth
@@ -54,13 +54,17 @@ class OtpVerifyActivity : AppCompatActivity() {
     private val userViewModel: ClientModelView by viewModels()
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var countDownTimer: CountDownTimer? = null
-
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOtpVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         FirebaseApp.initializeApp(this)
 
         val deviceModel = Build.MODEL
@@ -245,7 +249,8 @@ class OtpVerifyActivity : AppCompatActivity() {
             current_longitude = formattedLongitudeSelect,
             user_type = loginValue,
             phone_verify = deviceModel,
-            phone_token = token
+            phone_token = token,
+            language = languageId
         )
         driverViewModel.driverSignUp(loinBody, this, progressDialog)
     }
@@ -277,7 +282,8 @@ class OtpVerifyActivity : AppCompatActivity() {
             phone_number = strPhoneNo,
             user_type = loginValue,
             phone_verify = deviceModel,
-            phone_token = token
+            phone_token = token,
+            language = languageId
         )
         userViewModel.clientSignUp(loinBody, this, progressDialog)
     }

@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,16 +15,18 @@ import android.util.Base64
 import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.application.PascoApp
-import com.pasco.pascocustomer.commonpage.login.LoginActivity
+import com.pasco.pascocustomer.customer.activity.ChooseLanguageActivity
 import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             val info = packageManager.getPackageInfo(
-                "com.app.food",
+                "com.pasco.pascocustomer",
                 PackageManager.GET_SIGNATURES
             )
             for (signature in info.signatures) {
@@ -82,21 +84,56 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimationStart(animation: Animation?) {}
 
             override fun onAnimationEnd(animation: Animation?) {
+
+                val sharedPreferencesLanguage = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+                if (sharedPreferencesLanguage.getString("language_text", "") == "ar") {
+                    val locale2 = Locale("ar")
+                    Locale.setDefault(locale2)
+                    val config2 = Configuration()
+                    config2.locale = locale2
+                    baseContext.resources.updateConfiguration(
+                        config2,
+                        baseContext.resources.displayMetrics
+                    )
+                    val str_lanuage = "2"
+                    val sharedPreferencesLanguageName =
+                        getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+                    val editors = sharedPreferencesLanguageName.edit()
+                    editors.putString("language_text", "ar")
+                    editors.putString("language_key", "ar")
+                    editors.putString("language_id", str_lanuage)
+                    editors.apply()
+                } else {
+                    val locale2 = Locale("en")
+                    Locale.setDefault(locale2)
+                    val config2 = Configuration()
+                    config2.locale = locale2
+                    baseContext.resources.updateConfiguration(
+                        config2,
+                        baseContext.resources.displayMetrics
+                    )
+                    val str_lanuage = "1"
+                    val sharedPreferencesLanguageName =
+                        getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+                    val editors = sharedPreferencesLanguageName.edit()
+                    editors.putString("language_text", "en")
+                    editors.putString("language_key", "en")
+                    editors.putString("language_id", str_lanuage)
+                    editors.apply()
+                }
                 if (PascoApp.encryptedPrefs.isFirstTime) {
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    startActivity(Intent(this@MainActivity, ChooseLanguageActivity::class.java))
                     finish()
-                    //  splashAnimation.repeatMode = 1
-                    Log.e("FirstTimeLog", "1")
                 } else {
                     val userId = PascoApp.encryptedPrefs.userId
                     val userType = PascoApp.encryptedPrefs.userType
 
-                    Log.e("FirstTimeLog", "2")
 
                     if (PascoApp.encryptedPrefs.isNotification && userId != "") {
                         if (userType == "driver") {
                             Handler(Looper.getMainLooper()).postDelayed({
-                                val intent = Intent(this@MainActivity, DriverDashboardActivity::class.java)
+                                val intent =
+                                    Intent(this@MainActivity, DriverDashboardActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }, 1000)

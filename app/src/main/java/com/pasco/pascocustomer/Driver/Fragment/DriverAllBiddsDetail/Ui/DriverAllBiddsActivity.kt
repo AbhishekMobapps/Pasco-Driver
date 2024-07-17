@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.Ui
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.activity.Driver.adapter.DriverAllBiddDetailAdapter
 import com.pasco.pascocustomer.databinding.ActivityDriverAllBiddsBinding
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -29,12 +31,18 @@ class DriverAllBiddsActivity : AppCompatActivity() {
     private val progressDialog by lazy { CustomProgressDialog(this@DriverAllBiddsActivity) }
     private lateinit var activity: Activity
     private var BookingID = ""
-
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDriverAllBiddsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         activity = this
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
 
         binding.backArrowBiddingDetailsORD.setOnClickListener {
             finish()
@@ -45,10 +53,14 @@ class DriverAllBiddsActivity : AppCompatActivity() {
     }
 
     private fun getDriverDataApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         getDriverBidDetailsDataViewModel.getDriverBidingData(
             progressDialog,
             activity,
-            BookingID
+            BookingID,
+            body
         )
     }
 

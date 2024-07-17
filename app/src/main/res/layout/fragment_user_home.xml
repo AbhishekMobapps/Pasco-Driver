@@ -156,7 +156,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Bouns"
+                                    android:text="@string/bonus"
                                     android:textColor="@color/black"
                                     android:textSize="14sp"
                                     app:layout_constraintBottom_toBottomOf="parent"
@@ -213,7 +213,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Help"
+                                    android:text="@string/helps"
                                     android:textColor="@color/black"
                                     android:textSize="14sp"
                                     app:layout_constraintBottom_toBottomOf="parent"
@@ -269,7 +269,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Emergency"
+                                    android:text="@string/emergency"
                                     android:textColor="@color/black"
                                     android:textSize="14sp"
                                     app:layout_constraintBottom_toBottomOf="parent"

@@ -1,9 +1,9 @@
 package com.pasco.pascocustomer.customer.activity.notificaion
 
 import android.app.AlertDialog
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,12 +21,14 @@ import com.pasco.pascocustomer.customer.activity.notificaion.delete.Notification
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationModelView
 import com.pasco.pascocustomer.customer.activity.notificaion.modelview.NotificationResponse
 import com.pasco.pascocustomer.databinding.ActivityNotificationBinding
+import com.pasco.pascocustomer.language.Originator
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.ArrayList
+import java.util.Objects
 
 @AndroidEntryPoint
-class NotificationActivity : AppCompatActivity(), NotificationClickListener {
+class NotificationActivity : Originator(), NotificationClickListener {
     private val getNotificationViewModel: NotificationModelView by viewModels()
     private var dialog: AlertDialog? = null
     private val clearAllNotifcationViewModel: ClearAllNotifcationViewModel by viewModels()
@@ -35,6 +37,10 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     private lateinit var binding: ActivityNotificationBinding
     private var notificationAdapter: NotificationAdapter? = null
     private val deleteNotificationViewModel: DeleteNotificationViewModel by viewModels()
+
+    private var language = ""
+    private var languageId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationBinding.inflate(layoutInflater)
@@ -44,6 +50,14 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
         getNotification()
         getNotificationObserver()
         deleteNotificationObserver()
+
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        if (Objects.equals(language, "ar")) {
+            binding.backBtn.setImageResource(R.drawable.next)
+        }
 
         binding.clearAllBtn.setOnClickListener {
             clearAllPopUp()
@@ -100,17 +114,25 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
     }
 
     private fun clearAllNotification() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         clearAllNotifcationViewModel.getClearAllNotifications(
             progressDialog,
-            this
+            this,
+            body
 
         )
     }
 
     private fun getNotification() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         getNotificationViewModel.getNotification(
             this,
-            progressDialog
+            progressDialog,
+            body
         )
     }
 
@@ -160,7 +182,8 @@ class NotificationActivity : AppCompatActivity(), NotificationClickListener {
 
     private fun deleteNotificationApi(notiId: String) {
         val body = NotificationBody(
-            id = notiId
+            id = notiId,
+            language = languageId
         )
         deleteNotificationViewModel.getDeleteNotifications(progressDialog, this, body)
 

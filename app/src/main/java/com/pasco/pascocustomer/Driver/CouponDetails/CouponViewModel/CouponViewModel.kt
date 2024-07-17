@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.Event
 import javax.inject.Inject
 
@@ -31,22 +32,26 @@ class CouponViewModel@Inject constructor(
 
     fun getCouponListData(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: GetProfileBody
 
     ) =
         viewModelScope.launch {
             getCouponListDatas( progressDialog,
-                activity)
+                activity,
+                body
+            )
         }
     suspend fun getCouponListDatas(
         progressDialog: CustomProgressDialog,
-        activity: Activity
+        activity: Activity,
+        body: GetProfileBody
     )
 
     {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        couponRepository.getCouponRepo()
+        couponRepository.getCouponRepo(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<CouponResponse>() {

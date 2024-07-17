@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,16 +27,18 @@ class ApprovalStatusViewModel@Inject constructor(
     var context: Context? = null
 
     fun getCheckApproveBooking(
-        activity: Activity
+        activity: Activity,
+        body : CustomerOrderBody
     ) =
         viewModelScope.launch {
-            getCheckApproveBookingg(activity)
+            getCheckApproveBookingg(activity,body)
         }
 
     suspend fun getCheckApproveBookingg(
-        activity: Activity
+        activity: Activity,
+        body: CustomerOrderBody
     ) {
-        approvalStatusRepository.getcheckStatusRepository()
+        approvalStatusRepository.getcheckStatusRepository(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<ApprovalStatusResponse>() {
