@@ -9,6 +9,8 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,10 +29,10 @@ class DeleteReminderModelView  @Inject constructor(
     var context: Context? = null
 
 
-    fun deleteReminder(Id: String, activity: Activity, progressDialog: CustomProgressDialog) {
+    fun deleteReminder(Id: String, activity: Activity, progressDialog: CustomProgressDialog,body: CustomerOrderBody) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getReminderDelete(Id).subscribeOn(Schedulers.io())
+        repository.getReminderDelete(Id,body).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<AcceptOrRejectResponse>() {
                 override fun onNext(value: AcceptOrRejectResponse) {

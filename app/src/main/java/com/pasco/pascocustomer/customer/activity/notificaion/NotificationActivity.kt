@@ -175,7 +175,8 @@ class NotificationActivity : Originator(), NotificationClickListener {
         pickupLatitude: Double?,
         pickupLongitude: Double?,
         verificationCode: String?,
-        upFrontPrice: Double?
+        upFrontPrice: Double?,
+        paymentMethod: String?
     ) {
 
     }

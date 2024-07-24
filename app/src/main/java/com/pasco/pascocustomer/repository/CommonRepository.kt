@@ -95,7 +95,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
     }
 
     fun getServicesRepo(body: GetVehicleTypeBody): Observable<ServicesResponse> {
-        return apiService.getServicesList(PascoApp.encryptedPrefs.bearerToken, body)
+        return apiService.getServicesList(PascoApp.encryptedPrefs.bearerToken,body)
     }
 
     fun getVehicleType(shipment_type: String, language: String): Observable<VehicleTypeResponse> {
@@ -229,10 +229,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.getClearAllNotification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getCountNotifications(): Observable<NotificationCountResponse> {
-        return apiService.getCountNotification(
-            PascoApp.encryptedPrefs.bearerToken
-        )
+    fun getCountNotifications( body: GetProfileBody): Observable<NotificationCountResponse> {
+        return apiService.getCountNotification(PascoApp.encryptedPrefs.bearerToken,body)
     }
 
     fun getProfile(body: GetProfileBody): Observable<GetProfileResponse> {
@@ -274,8 +272,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.trackLocation(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getDriverCHistory(): Observable<CompletedTripHistoryResponse> {
-        return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken)
+    fun getDriverCHistory( body : CustomerOrderBody): Observable<CompletedTripHistoryResponse> {
+        return apiService.driverCompletedHistory(PascoApp.encryptedPrefs.bearerToken,body)
     }
 
     fun getDriverCancelledHistory(body: CustomerOrderBody): Observable<CancelledTripResponse> {
@@ -296,8 +294,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.cancelBooking(PascoApp.encryptedPrefs.bearerToken, id, courseBody)
     }
 
-    fun getReminderAlert(): Observable<ReminderResponse> {
-        return apiService.getReminder(PascoApp.encryptedPrefs.bearerToken)
+    fun getReminderAlert(  body : CustomerOrderBody): Observable<ReminderResponse> {
+        return apiService.getReminder(PascoApp.encryptedPrefs.bearerToken,body)
     }
 
     fun feedback(
@@ -326,8 +324,8 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.loyaltyCodeUse(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getReminderDelete(Id: String): Observable<AcceptOrRejectResponse> {
-        return apiService.reminderDelete(PascoApp.encryptedPrefs.bearerToken, Id)
+    fun getReminderDelete(Id: String,body: CustomerOrderBody): Observable<AcceptOrRejectResponse> {
+        return apiService.reminderDelete(PascoApp.encryptedPrefs.bearerToken, Id,body)
     }
 
     fun notificationOnOff(body: NotificationOnOffBody): Observable<NotificationOnOffResponse> {
@@ -347,5 +345,13 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun getLanguage(): Observable<LanguageResponse> {
         return apiService.languageType()
+    }
+
+    fun receiveAmountPending(Id: String,body: CustomerOrderBody): Observable<AcceptOrRejectResponse> {
+        return apiService.receiveAmount(PascoApp.encryptedPrefs.bearerToken, Id,body)
+    }
+
+    fun updateLanguage(body: CustomerOrderBody): Observable<AcceptOrRejectResponse> {
+        return apiService.updateLanguage(PascoApp.encryptedPrefs.bearerToken,body)
     }
 }

@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.Driver.StartRiding.Ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -60,6 +61,7 @@ import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.Driver.StartRiding.ViewModel.*
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.DeliveryVerifyViewModel
 import com.pasco.pascocustomer.Driver.StartRiding.deliveryproof.MarkerData
+import com.pasco.pascocustomer.Driver.StartRiding.receiveamount.ReceivePendingAmountModelView
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdateLocationViewModel
 import com.pasco.pascocustomer.Driver.UpdateLocation.UpdationLocationBody
 import com.pasco.pascocustomer.Driver.adapter.PoiInfoAdapter
@@ -119,12 +121,9 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     private lateinit var mMap: GoogleMap
     private lateinit var pickupLocation: LatLng
     private lateinit var dropLocation: LatLng
-    private lateinit var poiLocation: LatLng
-    private val markDutyViewModel: MarkDutyViewModel by viewModels()
     private var spinnerDriverSId = ""
     private var isDestinationReached = false
     private var routeType: List<GetRouteUpdateResponse.RouteResponseData> = ArrayList()
-    private val routeTypeStatic: MutableList<String> = mutableListOf()
     private var Bid = ""
     private var driStatus = ""
     private var driStatusRunning = ""
@@ -137,34 +136,21 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     private val updateLocationViewModel: UpdateLocationViewModel by viewModels()
     private val completeRideViewModel: CompleteRideViewModel by viewModels()
     private val driverFeedbackModelView: DriverFeedbackModelView by viewModels()
+    private val receiveAmountModel: ReceivePendingAmountModelView by viewModels()
     private var formattedLatitudeSelect: String = ""
     private var formattedLongitudeSelect: String = ""
     private lateinit var formattedLatitudeLat: LatLng
-    private lateinit var formatteddropLat: LatLng
     private var city: String? = null
     private var address: String? = null
-    private var hasReachedLocation = false
     private var handler: Handler? = null
     private lateinit var runnable: Runnable
     private var selectedImageFile: File? = null
-    private var imageUrl: String? = null
     private val cameraPermissionCode = 101
     private lateinit var savedImggSelectProof: CircleImageView
     var bottomSheetDialog: BottomSheetDialog? = null
-
-    private lateinit var poiName: String
-    private lateinit var poiType: String
-    private lateinit var couponCode: String
-    private lateinit var startDate: String
-    private lateinit var endDate: String
-    private var limit: Int = 0
-    private lateinit var poiAddress: String
-    private lateinit var poiCity: String
-    private lateinit var poiDesc: String
-    private lateinit var poiImage: String
+    var bottomSheetDialogs: BottomSheetDialog? = null
     private var isClick = true
     private lateinit var locationArrayList: ArrayList<LatLng?>
-    private lateinit var imagePart: MultipartBody.Part
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
 
@@ -179,8 +165,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
 
         userId = PascoApp.encryptedPrefs.userId
 
-        val pickupLoc = intent.getStringExtra("pickupLoc").toString()
-        val dropLoc = intent.getStringExtra("dropLoc").toString()
+
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         locationArrayList = ArrayList()
@@ -194,8 +179,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
         Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
         Dlon = intent.getStringExtra("longitudeDrop")?.toDoubleOrNull() ?: 0.0
-        val deliveryTime = intent.getStringExtra("deltime")
-        val image = intent.getStringExtra("image").toString()
+
 
 
 
@@ -251,7 +235,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     if (item == getString(R.string.selectStatus)) {
 
                     } else {
-                        spinnerDriverSId = routeType?.get(i)?.id.toString()
+                        spinnerDriverSId = routeType?.get(i)?.statusUniqueCode.toString()
                         //call vehicleType
 
                     }
@@ -296,7 +280,6 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             // Use else instead of else if for equality check
             showDeliveryPopUp()
 
-            completedRideObserver()
             //showFeedbackPopup()
         }
 
@@ -367,7 +350,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                 box4!!.text.toString()
             )
             if (otpFields.any { it.isEmpty() }) {
-                Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT).show()
             } else {
                 // addDeliveryProofApi()
 
@@ -440,10 +423,21 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             this
         ) {
             val status = it.peekContent().status!!
+            val paymentMethod = it.peekContent().paymentMethod!!
             val message = it.peekContent().msg!!
             if (status == "True") {
+
+                if (paymentMethod == "Cash") {
+                    pendingAmountPopup()
+                }
+                else {
+                    completedRideApi()
+                    completedRideObserver()
+                }
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
-                completedRideApi()
+                bottomSheetDialog?.dismiss()
+
+
             } else {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
             }
@@ -476,7 +470,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     savedImggSelectProof.setImageBitmap(imageBitmap)
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -497,6 +491,13 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
 
         return file
+    }
+
+    private fun afterDetailsApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        afterStartTripViewModel.getAfterTripsData(Bid, body)
     }
 
     private fun afterDetailsObserver() {
@@ -530,13 +531,6 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         afterStartTripViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
         }
-    }
-
-    private fun afterDetailsApi() {
-        val body = CustomerOrderBody(
-            language = languageId
-        )
-        afterStartTripViewModel.getAfterTripsData(Bid, body)
     }
 
 
@@ -618,11 +612,12 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     " Formatted Longitude: $formattedLongitudeSelect"
         )
         updateLocationBody = UpdationLocationBody(
-            city.toString(),
-            address.toString(),
-            formattedLatitudeSelect,
-            formattedLongitudeSelect, countryName.toString(),
-            languageId
+            current_city = city.toString(),
+            current_location = address.toString(),
+            latitude = formattedLatitudeSelect,
+            longitude = formattedLongitudeSelect,
+            current_country = countryName.toString(),
+            language = languageId
         )
         updateLocationViewModel.updateLocationDriver(activity, updateLocationBody)
 
@@ -751,6 +746,14 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
     }
 
+    private fun completedRideApi() {
+        val body = GetProfileBody(
+            language = languageId
+        )
+        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid, body)
+
+    }
+
     private fun completedRideObserver() {
         completeRideViewModel.mCRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -759,22 +762,13 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             } else {
                 //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 showFeedbackPopup()
-
-
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
         }
-        startTripViewModel.errorResponse.observe(this) {
+        completeRideViewModel.errorResponse.observe(this) {
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
         }
-    }
-
-    private fun completedRideApi() {
-        val body = GetProfileBody(
-            language = languageId
-        )
-        completeRideViewModel.getCompletedRideData(progressDialog, activity, Bid, body)
-
     }
 
 
@@ -798,9 +792,9 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         submitBtn?.setOnClickListener {
             val comment = commentTxt?.text.toString()
             if (ratingBars.isEmpty()) {
-                Toast.makeText(this, "Please add a rating", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT).show()
             } else if (comment.isBlank()) {
-                Toast.makeText(this, "Please add a comment", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT).show()
             } else {
                 feedbackApi(comment, ratingBars)
                 feedbackObserver()
@@ -844,7 +838,8 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         val loinBody = DriverFeedbackBody(
             bookingconfirmation = Bid,
             rating = ratingBars,
-            feedback = commentTxt
+            feedback = commentTxt,
+            language = languageId
         )
         driverFeedbackModelView.cancelBooking(loinBody, this, progressDialog)
     }
@@ -927,12 +922,12 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             { error ->
                 PascoApp.instance.getRequestQueue().cancelAll("survey_list")
                 val errorMessage = when (error) {
-                    is NetworkError -> "Cannot connect to Internet...Please check your connection!"
-                    is ServerError -> "The server could not be found. Please try again after some time!!"
-                    is AuthFailureError -> "Cannot connect to Internet...Please check your connection!"
+                    is NetworkError -> getString(R.string.Please_check_your_connection)
+                    is ServerError -> getString(R.string.Please_try_again_after_some_time)
+                    is AuthFailureError -> getString(R.string.Please_check_your_connection)
                     is ParseError -> "Parsing error! Please try again after some time!!"
-                    is NoConnectionError -> "Cannot connect to Internet...Please check your connection!"
-                    is TimeoutError -> "Connection TimeOut! Please check your internet connection."
+                    is NoConnectionError -> getString(R.string.Please_check_your_connection)
+                    is TimeoutError -> getString(R.string.Please_check_your_internet_connection)
                     else -> error.message ?: "An error occurred"
                 }
                 Toast.makeText(this@DriverStartRidingActivity, errorMessage, Toast.LENGTH_SHORT)
@@ -942,6 +937,16 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         PascoApp.instance.addToRequestQueue(jsonObjReqGroup, "survey_list")
     }
 
+    private fun driverStatusList() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        getRouteUpdateViewModel.getDriverStatusData(
+            progressDialog,
+            this,
+            body
+        )
+    }
 
     private fun driverStatusObserver(dialog: BottomSheetDialog) {
         getRouteUpdateViewModel.progressIndicator.observe(this, Observer {
@@ -979,15 +984,9 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
     }
 
-    private fun driverStatusList() {
-        val body = CustomerOrderBody(
-            language = languageId
-        )
-        getRouteUpdateViewModel.getDriverStatusData(
-            progressDialog,
-            this,
-            body
-        )
+    private fun startTrip(sId: String) {
+        val Iddd = sId
+        startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd, languageId)
     }
 
     private fun startTripObserver() {
@@ -1007,12 +1006,6 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             // Handle general errors
             ErrorUtil.handlerGeneralError(this, it)
         }
-    }
-
-
-    private fun startTrip(sId: String) {
-        val Iddd = sId
-        startTripViewModel.getStartTripData(progressDialog, activity, Bid, Iddd, languageId)
     }
 
 
@@ -1320,7 +1313,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
     }
 
-    override fun driverStatusUpdate(position: Int, id: Int, status: String) {
+    override fun driverStatusUpdate(position: Int, id: String, status: String) {
         driStatus = status
         Log.e("derAAA", "driverStatusUpdate: $driStatus")
         spinnerDriverSId = id.toString()
@@ -1340,9 +1333,54 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
     }
 
-    /* override fun onDestroy() {
-         super.onDestroy()
-         // Remove callbacks to prevent memory leaks
-         handler?.removeCallbacks(runnable)
-     }*/
+    private fun pendingAmountPopup() {
+        bottomSheetDialogs = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.receive_left_amount, null)
+        bottomSheetDialogs!!.setContentView(view)
+
+
+        val notBtn = bottomSheetDialogs?.findViewById<ConstraintLayout>(R.id.notBtn)
+        val yestBtn = bottomSheetDialogs?.findViewById<TextView>(R.id.yestBtn)
+
+        yestBtn?.setOnClickListener {
+            receiveAmountApi(Bid)
+            receiveAmountObserver()
+        }
+
+        notBtn?.setOnClickListener {
+            bottomSheetDialogs!!.dismiss()
+        }
+
+
+        bottomSheetDialogs!!.show()
+
+    }
+
+
+    private fun receiveAmountApi(id: String) {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        receiveAmountModel.receivePayment(id, this, progressDialog, body)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun receiveAmountObserver() {
+        receiveAmountModel.progressIndicator.observe(this@DriverStartRidingActivity) {
+        }
+        receiveAmountModel.mRejectResponse.observe(this@DriverStartRidingActivity) {
+            val message = it.peekContent().msg
+            val success = it.peekContent().status
+            if (success == "True") {
+                completedRideApi()
+                completedRideObserver()
+                bottomSheetDialogs?.dismiss()
+            }
+
+        }
+        receiveAmountModel.errorResponse.observe(this@DriverStartRidingActivity) {
+            ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
+            //errorDialogs()
+        }
+    }
 }

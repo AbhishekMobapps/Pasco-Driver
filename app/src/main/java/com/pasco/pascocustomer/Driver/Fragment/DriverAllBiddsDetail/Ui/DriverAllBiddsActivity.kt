@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.Fragment.DriverAllBiddsDetail.ViewModel.GetDriverBidDetailsDataViewModel
 import com.pasco.pascocustomer.Driver.customerDetails.CustomerDetailsActivity
+import com.pasco.pascocustomer.R
 import dagger.hilt.android.AndroidEntryPoint
 import com.pasco.pascocustomer.activity.Driver.adapter.DriverAllBiddDetailAdapter
 import com.pasco.pascocustomer.databinding.ActivityDriverAllBiddsBinding
@@ -146,9 +148,9 @@ class DriverAllBiddsActivity : AppCompatActivity() {
 
     private fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(this@DriverAllBiddsActivity)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()

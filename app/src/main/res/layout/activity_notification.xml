@@ -44,19 +44,19 @@
 
     <TextView
         android:id="@+id/clearAllBtn"
-        android:layout_width="65dp"
-        android:layout_height="30dp"
-        android:text="@string/clear_all"
-        android:textSize="@dimen/normal_txt_size"
-        android:gravity="center"
-        app:layout_goneMarginTop="10dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/white"
-        android:background="@drawable/new_btn_background"
+        android:layout_width="69dp"
+        android:layout_height="27dp"
         android:layout_gravity="right"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/new_btn_background"
+        android:gravity="center"
+        android:text="@string/clear_all"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_txt_size"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerConst"
-        android:layout_marginTop="5dp"/>
+        app:layout_goneMarginTop="10dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"

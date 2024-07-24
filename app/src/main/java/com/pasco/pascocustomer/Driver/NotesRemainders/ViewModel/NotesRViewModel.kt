@@ -33,10 +33,11 @@ class NotesRViewModel @Inject constructor(
         activity: Activity,
         title: String,
         description: String,
-        reminderdate: String
+        reminderdate: String,
+        language: String
     ) =
         viewModelScope.launch {
-            getNotesReminderDatas(progressDialog,activity,title,description,reminderdate)
+            getNotesReminderDatas(progressDialog,activity,title,description,reminderdate,language)
         }
 
     private suspend fun getNotesReminderDatas(
@@ -44,11 +45,12 @@ class NotesRViewModel @Inject constructor(
         activity: Activity,
         title: String,
         description: String,
-        reminderdate: String
+        reminderdate: String,
+        language: String
     ) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        notesRRepository.getNotesReminder(title, description, reminderdate)
+        notesRRepository.getNotesReminder(title, description, reminderdate,language)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<NotesRResponse>() {

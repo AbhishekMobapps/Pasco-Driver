@@ -80,7 +80,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="20dp"
-                                android:text="Vehicle Name"
+                                android:layout_marginRight="10dp"
+                                android:text="@string/vehicle_name"
                                 android:textColor="@color/black"
                                 android:textSize="18sp"
                                 app:layout_constraintStart_toEndOf="@+id/carImgCard"
@@ -91,6 +92,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="20dp"
+                                android:layout_marginRight="10dp"
                                 android:text="Vehicle Name"
                                 android:textColor="@color/grey"
                                 android:textSize="16sp"
@@ -127,7 +129,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Distance"
+                                android:text="@string/distances"
                                 android:textColor="@color/grey_dark"
                                 android:textSize="16sp"
                                 android:textStyle="bold"
@@ -147,7 +149,7 @@
                                 android:id="@+id/kmTxt"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/km"
+                                android:text=""
                                 android:textColor="@color/grey"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
@@ -353,99 +355,7 @@
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
-                       <!-- <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/timeDateConst"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_marginTop="30dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/totalConst"
-                            app:layout_constraintWidth_percent="0.999">
 
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="0dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/all_circle_border"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintWidth_percent="0.55">
-
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:id="@+id/calenderBtn"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/subract_button"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintWidth_percent="0.3">
-
-                                    <ImageView
-
-                                        android:layout_width="25dp"
-                                        android:layout_height="25dp"
-                                        android:src="@drawable/calender"
-                                        app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                                <TextView
-                                    android:id="@+id/dateTxt"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:text="12/05/2024"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintWidth_percent="0.68" />
-
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="0dp"
-                                android:layout_height="50dp"
-                                android:background="@drawable/all_circle_border"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintWidth_percent="0.4">
-
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:id="@+id/timeBtn"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/subract_button"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintWidth_percent="0.3">
-
-                                    <ImageView
-                                        android:layout_width="25dp"
-                                        android:layout_height="25dp"
-                                        android:src="@drawable/time"
-                                        app:layout_constraintBottom_toBottomOf="parent"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                                <TextView
-                                    android:id="@+id/timeTxt"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:text="12:20 AM"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintWidth_percent="0.68" />
-
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.constraintlayout.widget.ConstraintLayout>-->
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </ScrollView>
 
@@ -453,55 +363,60 @@
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/proceedBtn"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/button_background"
-            android:gravity="center"
-            android:text="@string/proceed"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="@dimen/text_size_20"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.097"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainConst"
-            app:layout_constraintWidth_percent="0.4" />
+            app:layout_constraintWidth_percent="0.9">
 
-        <TextView
-            android:id="@+id/cancelBtn"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/button_background"
-            android:gravity="center"
-            android:text="@string/cancel"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:layout_marginBottom="@dimen/text_size_20"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainConst"
-            app:layout_constraintWidth_percent="0.4" />
+            <TextView
+                android:id="@+id/proceedBtn"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:background="@drawable/button_background"
+                android:gravity="center"
+                android:text="@string/proceed"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.4" />
 
-        <TextView
-            android:id="@+id/unName"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:layout_marginBottom="@dimen/text_size_20"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cancelBtn"
-            app:layout_constraintWidth_percent="0.4" />
+            <TextView
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:background="@drawable/button_background"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.4" />
+
+            <TextView
+                android:id="@+id/unName"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginBottom="@dimen/text_size_20"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cancelBtn"
+                app:layout_constraintWidth_percent="0.4" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

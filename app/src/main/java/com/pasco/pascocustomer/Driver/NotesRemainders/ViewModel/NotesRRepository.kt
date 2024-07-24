@@ -10,10 +10,11 @@ class NotesRRepository @Inject constructor(private val apiService: ApiServices) 
         title: String,
         description: String,
         reminderdate: String,
+        language: String
     ): Observable<NotesRResponse>
     {
         return apiService.addNotesReminder(
             PascoApp.encryptedPrefs.bearerToken,
-            title,description,reminderdate)
+            title,description,reminderdate,language)
     }
 }

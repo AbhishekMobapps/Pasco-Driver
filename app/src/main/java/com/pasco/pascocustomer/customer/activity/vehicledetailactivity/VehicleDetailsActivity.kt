@@ -74,6 +74,7 @@ class VehicleDetailsActivity : Originator() {
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var language = ""
     private var languageId = ""
+    private var accessToken = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVehicleDetailsBinding.inflate(layoutInflater)
@@ -86,6 +87,7 @@ class VehicleDetailsActivity : Originator() {
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
+        accessToken = PascoApp.encryptedPrefs.bearerToken
 
         binding.submitBtnAddVeh.setOnClickListener {
             validation()
@@ -145,6 +147,7 @@ class VehicleDetailsActivity : Originator() {
     }
 
     private fun servicesList() {
+        Log.e("LanguageIAAA", "languageId...$languageId $accessToken")
         val getVehicleTypeBody = GetVehicleTypeBody(
             language = languageId
         )
@@ -237,12 +240,10 @@ class VehicleDetailsActivity : Originator() {
                     ) {
                         val item = binding.vehicleTypeSpinner.selectedItem.toString()
                         if (item != getString(R.string.selectVehicleType)) {
-                            spinnerVehicleTypeId = VehicleType!![i].id.toString()
+                            spinnerVehicleTypeId = VehicleType!![i].uniqueCode.toString()
                             vehicleSize = VehicleType!![i].vehiclesize.toString()
-                            vehicleLoadCapacity =
-                                VehicleType!![i].vehicleweight.toString()
-                            vehicleCapability =
-                                VehicleType!![i].capabilityname.toString()
+                            vehicleLoadCapacity = VehicleType!![i].vehicleweight.toString()
+                            //vehicleCapability = VehicleType!![i].capabilityname.toString()
 
 
                         }
@@ -343,28 +344,35 @@ class VehicleDetailsActivity : Originator() {
 
     private fun validation() {
         if (binding.transporterSpinner.selectedItem.toString() == resources.getString(R.string.selectTransType)) {
-            Toast.makeText(this, "Please Select Transporter", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Please_Select_Transporter), Toast.LENGTH_SHORT)
+                .show()
         } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(
                 R.string.selectVehicleType
             )
         ) {
-            Toast.makeText(this, "Please Select Vehicle", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Please_Select_Vehicle), Toast.LENGTH_SHORT)
+                .show()
         } else if (binding.vehicleNoAdd.text.isNullOrBlank()) {
-            Toast.makeText(this, "Please add vehicle no", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Please_add_vehicle_no), Toast.LENGTH_SHORT)
+                .show()
         } else if (selectedImageFile == null) {
             Toast.makeText(
                 applicationContext,
-                "please upload vehicle photo",
+                getString(R.string.please_upload_vehicle_photo),
                 Toast.LENGTH_SHORT
             )
                 .show()
         } else if (selectedImageFileDoc == null) {
-            Toast.makeText(applicationContext, "please upload Doc", Toast.LENGTH_SHORT)
+            Toast.makeText(
+                applicationContext,
+                getString(R.string.please_upload_Doc),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else if (selectedImageFileRc == null) {
             Toast.makeText(
                 applicationContext,
-                "please upload vehicle reg no",
+                getString(R.string.please_upload_vehicle_reg_no),
                 Toast.LENGTH_SHORT
             )
                 .show()
@@ -388,12 +396,16 @@ class VehicleDetailsActivity : Originator() {
 
     private fun openCameraOrGallery(section: String) {
         val options =
-            arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+            arrayOf<CharSequence>(
+                getString(R.string.take_photo),
+                getString(R.string.gallery),
+                getString(R.string.cancel)
+            )
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Image")
+        builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
             when {
-                options[item] == "Take Photo" -> {
+                options[item] == getString(R.string.take_photo) -> {
                     // If section is "vehicleImg", directly open the camera
                     if (section == "vehicleImg") {
                         openCamera()
@@ -407,7 +419,7 @@ class VehicleDetailsActivity : Originator() {
                     }
                 }
 
-                options[item] == "Choose from Gallery" -> {
+                options[item] == getString(R.string.gallery) -> {
                     // If section is "vehicleImg", directly open the gallery
                     if (section == "vehicleImg") {
                         openGallery()
@@ -421,7 +433,7 @@ class VehicleDetailsActivity : Originator() {
                     }
                 }
 
-                options[item] == "Cancel" -> dialog.dismiss()
+                options[item] == getString(R.string.cancel) -> dialog.dismiss()
             }
         }
         builder.show()
@@ -473,7 +485,7 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgRc.setImageBitmap(imageBitmap)
                     //  setUploadedRc()
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -497,7 +509,7 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgDoc.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -648,7 +660,7 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgVI.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }

@@ -22,7 +22,6 @@
             android:id="@+id/ordersConst"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@drawable/orders_tab_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

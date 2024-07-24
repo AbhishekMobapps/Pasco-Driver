@@ -273,7 +273,7 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
                 // Permission granted, show current location
                 showCurrentLocation()
             } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Location_permission_denied), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -308,7 +308,7 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
                 countryName = addresses[0].countryName ?: "City not available"
                 binding?.txtUserAddressUpLoc?.setText(address)
             } else {
-                binding?.txtUserAddressUpLoc?.setText("Address not found")
+                binding?.txtUserAddressUpLoc?.setText(getString(R.string.Address_not_found))
             }
 
         } catch (e: IOException) {

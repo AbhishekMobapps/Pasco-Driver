@@ -103,8 +103,7 @@ class DriverAllBiddsAdapter(
         {
             holder.cancelButtonBid.visibility = View.VISIBLE
             holder.cancelButtonBid.setOnClickListener {
-                onItemClick.cancelOrder(
-                    position,id)
+                onItemClick.cancelOrder(position,id)
                 notifyDataSetChanged()
             }
         }

@@ -169,25 +169,25 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
             if (dateTime.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
-                    "Please add the availability",
+                    getString(R.string.Please_add_the_availability),
                     Toast.LENGTH_SHORT
                 ).show()
             } else if (!priceText.matches(dateTimePattern.toRegex())) {
                 Toast.makeText(
                     this@AcceptRideActivity,
-                    "Please enter both date and time",
+                    getString(R.string.date_and_time),
                     Toast.LENGTH_SHORT
                 ).show()
             } else if (bidPrice.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
-                    "Please enter bid price",
+                    getString(R.string.enter_bid_price),
                     Toast.LENGTH_SHORT
                 ).show()
             } else if (!bidPrice.matches("[0-9]+".toRegex())) {
                 Toast.makeText(
                     this@AcceptRideActivity,
-                    "Please enter a valid bid price",
+                    getString(R.string.enter_valid_bid_price),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -278,7 +278,7 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
         if (distanceToDestination <= thresholdDistance && !isDestinationReached) {
             // Destination reached
             isDestinationReached = true
-            Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
+            //  Toast.makeText(this, "You have reached your destination!", Toast.LENGTH_SHORT).show()
             // Perform any action you want when the destination is reached
         }
     }
@@ -455,19 +455,18 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
     }
 
     private fun showWalletRequirementPopup() {
-        val message =
-            "To place a bid, you need to have at least 20% of the bid amount in your wallet. "
+        val message = getString(R.string.the_bid_amountin_your)
 
         val builder = AlertDialog.Builder(this@AcceptRideActivity)
-        builder.setTitle("Insufficient Wallet Balance")
+        builder.setTitle(getString(R.string.Insufficient_wallet_amount))
         builder.setMessage(message)
-        builder.setPositiveButton("Add Funds") { dialog, _ ->
+        builder.setPositiveButton(getString(R.string.Add_Funds)) { dialog, _ ->
             // Navigate to wallet page
             navigateToWalletPage()
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Skip") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.skip)) { dialog, _ ->
             dialog.dismiss()
         }
 
@@ -485,8 +484,8 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
     private fun addBiding() {
         val pricee = binding.showPriceEditText.text.toString()
         addBiddingBody = AddBiddingBody(
-            availability_datetime =dateTimes,
-            bid_price= pricee,
+            availability_datetime = dateTimes,
+            bid_price = pricee,
             language = languageId
         )
         addBidingViewModel.addBidingData(
@@ -600,7 +599,7 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
             } else if (startDateTxtPop.text.isEmpty() || startTimetxtPop.text.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
-                    "Please select both start date and start time",
+                    getString(R.string.select_both_start_date_and_start_time),
                     Toast.LENGTH_SHORT
                 ).show()
             }

@@ -42,11 +42,11 @@ class PoiInfoAdapter(private val context: Context) : GoogleMap.InfoWindowAdapter
         couponTitle.text = markerData.poiName
         couponType.text = markerData.poiType
         couponCode.text = markerData.couponCode
-        startDate.text = "Start Date: ${markerData.startDate}"
-        endDate.text = "End Date: ${markerData.endDate}"
-        limit.text = "Limit: ${markerData.limit}"
-        poiAddress.text = "Address: ${markerData.poiAddress}"
-        poiCity.text = "City: ${markerData.poiCity}"
+        startDate.text = "${context.getString(R.string.start_date)} ${markerData.startDate}"
+        endDate.text = "${context.getString(R.string.end_date)} ${markerData.endDate}"
+        limit.text = "${context.getString(R.string.limit)} ${markerData.limit}"
+        poiAddress.text = "${context.getString(R.string.point_address)} ${markerData.poiAddress}"
+        poiCity.text = "${context.getString(R.string.city)} ${markerData.poiCity}"
         poiDesc.text = markerData.poiDesc
 
         Glide.with(context).load(markerData.imageUrl).into(couponImage)

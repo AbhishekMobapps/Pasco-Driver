@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusResponse
 import com.pasco.pascocustomer.Driver.ApprovalStatus.ViewModel.ApprovalStatusViewModel
 import com.pasco.pascocustomer.Driver.adapter.ApprovalStatusAdapter
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.VehicleDetailsActivity
 import com.pasco.pascocustomer.databinding.ActivityApprovalStatusBinding
@@ -67,7 +68,7 @@ class ApprovalStatusActivity : Originator() {
             val message = response.peekContent().msg!!
             approveData = response.peekContent().data ?: emptyList()
             if (approveData?.isEmpty()!!) {
-                Toast.makeText(this@ApprovalStatusActivity, "No Data Found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ApprovalStatusActivity, getString(R.string.no_data_found), Toast.LENGTH_SHORT).show()
             }
 
             if (response.peekContent().status.equals("False")) {

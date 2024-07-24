@@ -42,7 +42,7 @@ class DriversListAdapter(
             if (bookingId == null) {
                 Toast.makeText(
                     context,
-                    "You cannot request assistance until you start a trip.",
+                    context.getString(R.string.assistance_until_you_start_trip),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -65,19 +65,19 @@ class DriversListAdapter(
                     var ubconciousness: ConstraintLayout = dialogView.findViewById(R.id.consPrivacyPolicyInsidePop)
 
                     anAccident.setOnClickListener {
-                        addEmergencyReason.setText("Accident")
+                        addEmergencyReason.setText(context.getString(R.string.accident))
                     }
 
                     chestPain.setOnClickListener {
-                        addEmergencyReason.setText("Chest Pain")
+                        addEmergencyReason.setText(context.getString(R.string.Chest_Pain))
                     }
 
                     breathlessness.setOnClickListener {
-                        addEmergencyReason.setText("Breathlessness")
+                        addEmergencyReason.setText(context.getString(R.string.Breathlessness))
                     }
 
                     ubconciousness.setOnClickListener {
-                        addEmergencyReason.setText("Unconsciousness")
+                        addEmergencyReason.setText(context.getString(R.string.Unconsciousness))
                     }
 
                     crossCancelImageView.setOnClickListener {

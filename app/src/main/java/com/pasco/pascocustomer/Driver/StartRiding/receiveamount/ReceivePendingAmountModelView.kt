@@ -1,4 +1,4 @@
-package com.pasco.pascocustomer.reminder
+package com.pasco.pascocustomer.Driver.StartRiding.receiveamount
 
 import android.app.Activity
 import android.app.Application
@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectResponse
 import com.pasco.pascocustomer.repository.CommonRepository
 import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.Event
@@ -19,23 +20,22 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ReminderModelView @Inject constructor(
+class ReceivePendingAmountModelView @Inject constructor(
     application: Application, private val repository: CommonRepository
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mRejectResponse = MutableLiveData<Event<ReminderResponse>>()
+    val mRejectResponse = MutableLiveData<Event<AcceptOrRejectResponse>>()
     var context: Context? = null
 
 
-    fun getReminder(activity: Activity, progressDialog: CustomProgressDialog,
-    body: CustomerOrderBody
-    ) {
+    fun receivePayment(Id: String, activity: Activity, progressDialog: CustomProgressDialog, body: CustomerOrderBody) {
         progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
-        repository.getReminderAlert(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<ReminderResponse>() {
-                override fun onNext(value: ReminderResponse) {
+        repository.receiveAmountPending(Id,body).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableObserver<AcceptOrRejectResponse>() {
+                override fun onNext(value: AcceptOrRejectResponse) {
                     progressIndicator.value = false
                     progressDialog.stop()
                     mRejectResponse.value = Event(value)

@@ -57,6 +57,7 @@ class EmergencyHelpActivity : Originator(), SendHelpClickListner {
     private var driverId = ""
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyHelpBinding.inflate(layoutInflater)
@@ -65,7 +66,7 @@ class EmergencyHelpActivity : Originator(), SendHelpClickListner {
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
-
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         bookingId = intent.getStringExtra("bookingIdH").toString()
         driverId = PascoApp.encryptedPrefs.userId
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -78,6 +79,10 @@ class EmergencyHelpActivity : Originator(), SendHelpClickListner {
 
         binding.backArrowImgEmegencyDriHelp.setOnClickListener {
             finish()
+        }
+
+        if (Objects.equals(language, "ar")) {
+            binding.backArrowImgEmegencyDriHelp.setImageResource(R.drawable.next)
         }
         binding.sReqAllDrivers.setOnClickListener {
             sendHelpAlertPopup()

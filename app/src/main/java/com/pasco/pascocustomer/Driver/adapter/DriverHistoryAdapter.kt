@@ -80,9 +80,9 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
 
     fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(context.getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(context.getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()

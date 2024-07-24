@@ -28,5 +28,10 @@ class GetRouteUpdateResponse : Serializable {
         @SerializedName("status")
         @Expose
         var status: String? = null
+
+        @SerializedName("status_unique_code")
+        @Expose
+        var statusUniqueCode: String? = null
+
     }
 }

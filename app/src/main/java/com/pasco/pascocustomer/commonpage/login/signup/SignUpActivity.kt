@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.Toast
@@ -32,6 +33,7 @@ import com.google.firebase.auth.*
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.UpdateAddressAdapter
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.LoginActivity
 import com.pasco.pascocustomer.commonpage.login.signup.UpdateCity.UpdateCityBody
@@ -86,6 +88,7 @@ class SignUpActivity : Originator(), SignUpCityName {
 
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
@@ -94,10 +97,17 @@ class SignUpActivity : Originator(), SignUpCityName {
 
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         loginValue = intent.getStringExtra("loginValue").toString()
-//hello bbb
+
+        if (Objects.equals(language, "ar")) {
+            // binding.userName.gravity = Gravity.RIGHT
+            binding.userName.gravity = Gravity.RIGHT
+            binding.driverEmail.gravity = Gravity.RIGHT
+            binding.addressTxt.gravity = Gravity.RIGHT
+        }
         if (loginValue == "driver") {
             binding.asDriverSignup.visibility = View.VISIBLE
             binding.asCustomerSignup.visibility = View.GONE
@@ -105,7 +115,7 @@ class SignUpActivity : Originator(), SignUpCityName {
             binding.asCustomerSignup.visibility = View.VISIBLE
             binding.asDriverSignup.visibility = View.GONE
         }
-//kkk
+
 
         Log.e("CountryCodeAA", "code..." + formattedCountryCode)
         binding.signInBtn.setOnClickListener {
@@ -180,11 +190,11 @@ class SignUpActivity : Originator(), SignUpCityName {
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
-        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
+        formattedLatitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplatitude)
+        formattedLongitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplongitude)
 
         GlobalScope.launch(Dispatchers.IO) {
-            val geocoder = Geocoder(this@SignUpActivity, Locale.getDefault())
+            val geocoder = Geocoder(this@SignUpActivity, Locale.ENGLISH)
             try {
                 val addresses: List<Address> = geocoder.getFromLocation(
                     latitude,
@@ -205,7 +215,10 @@ class SignUpActivity : Originator(), SignUpCityName {
                     // Log the country code and country name
                     Log.e("Country Code", countryCode ?: "No country code found")
                     Log.e("Country Name", countryName ?: "No country name found")
-                    Log.e("Phone Country Code", "+$phoneCountryCode")
+                    Log.e(
+                        "PhoneCountryCode",
+                        "+$city $address $formattedLatitudeSelect $formattedLongitudeSelect"
+                    )
 
                     formattedCountryCode = "+$phoneCountryCode"
 
@@ -219,7 +232,6 @@ class SignUpActivity : Originator(), SignUpCityName {
                         }
                     }
 
-
                     // Update the UI with the city name
                     city?.let { updateUI(it) }
                 }
@@ -228,6 +240,7 @@ class SignUpActivity : Originator(), SignUpCityName {
             }
         }
     }
+
 
     private fun showSearchableDialog() {
 
@@ -312,8 +325,7 @@ class SignUpActivity : Originator(), SignUpCityName {
             when {
                 userName.text.isNullOrBlank() -> {
                     Toast.makeText(
-                        applicationContext,
-                        "Please enter name",
+                        applicationContext, getString(R.string.please_name),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -321,7 +333,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 driverEmail.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
-                        "Please enter email",
+                        getString(R.string.Please_enter_email),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -329,7 +341,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 binding.driverCode.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
-                        "Please enter country code",
+                        getString(R.string.enter_country_code),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -337,7 +349,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 !binding.driverCode.text.startsWith("+") -> {
                     Toast.makeText(
                         applicationContext,
-                        "Country code should start with +",
+                        getString(R.string.code_should_start_with),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -345,14 +357,14 @@ class SignUpActivity : Originator(), SignUpCityName {
                 phoneNumber.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
-                        "Please enter phone number",
+                        getString(R.string.enter_phone_number),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
                 phoneNumber.text.length < 8 -> {
                     Toast.makeText(
                         applicationContext,
-                        "Phone number must be at least 9 digits",
+                        getString(R.string.Phone_digits),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -370,7 +382,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 userPhoneNumber.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
-                        "Please enter phone number",
+                        getString(R.string.enter_phone_number),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -378,7 +390,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 userPhoneNumber.text.length < 8 -> {
                     Toast.makeText(
                         applicationContext,
-                        "Phone number must be at least 8 digits",
+                        getString(R.string.Phone_digits),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -386,7 +398,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 clientCountryCode.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
-                        "Please enter country code",
+                        getString(R.string.enter_country_code),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -394,7 +406,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                 !clientCountryCode.text.startsWith("+") -> {
                     Toast.makeText(
                         applicationContext,
-                        "Phone number should include country code prefixed with +",
+                        getString(R.string.Phone_number),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -415,6 +427,7 @@ class SignUpActivity : Originator(), SignUpCityName {
     }
 
     private fun checkNumberApi(strPhoneNo: String) {
+        Log.e("PhoneNumberAA", "languageId......$languageId")
         val loinBody = CheckNumberBody(
             phone_number = strPhoneNo,
             user_type = loginValue,
@@ -432,43 +445,50 @@ class SignUpActivity : Originator(), SignUpCityName {
 
             val existNumber = it.peekContent().exists
             val message = it.peekContent().msg
+            val status = it.peekContent().status
 
             if (existNumber == 1) {
                 Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
             } else {
-                if (loginValue == "driver") {
-                    //sendVerificationCode("$formattedCountryCode$strPhoneNo")
+                if (status == "True") {
+                    if (loginValue == "driver") {
+                        //sendVerificationCode("$formattedCountryCode$strPhoneNo")
 
-                    val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
-                    intent.putExtra("verificationId", verificationId)
-                    intent.putExtra("phoneNumber", strPhoneNo)
-                    intent.putExtra("phoneCountryCode", CountryCode)
-                    intent.putExtra("city", city)
-                    intent.putExtra("email", strEmail)
-                    intent.putExtra("address", address)
-                    intent.putExtra("userName", strUserName)
-                    intent.putExtra("loginValue", loginValue)
-                    intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
-                    intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
-                    intent.putExtra("conName", countryName)
-                    startActivity(intent)
-                    finish()
-                    progressDialog.start("Loading....")
-                    Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
+                        val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
+                        intent.putExtra("verificationId", verificationId)
+                        intent.putExtra("phoneNumber", strPhoneNo)
+                        intent.putExtra("phoneCountryCode", CountryCode)
+                        intent.putExtra("city", city)
+                        intent.putExtra("email", strEmail)
+                        intent.putExtra("address", address)
+                        intent.putExtra("userName", strUserName)
+                        intent.putExtra("loginValue", loginValue)
+                        intent.putExtra("formattedLatitudeSelect", formattedLatitudeSelect)
+                        intent.putExtra("formattedLongitudeSelect", formattedLongitudeSelect)
+                        intent.putExtra("conName", countryName)
+                        startActivity(intent)
+                        finish()
+                        progressDialog.start("Loading....")
+                        Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
+                        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    } else {
+                        strPhoneNo = binding.userPhoneNumber.text.toString()
+
+                        val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
+                        intent.putExtra("verificationId", verificationId)
+                        intent.putExtra("phoneNumber", strUserPhoneNo)
+                        intent.putExtra("phoneCountryCode", CountryCode)
+                        intent.putExtra("loginValue", loginValue)
+                        startActivity(intent)
+                        finish()
+
+                        //sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
+                        Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
+                    }
                 } else {
-                    strPhoneNo = binding.userPhoneNumber.text.toString()
-
-                    val intent = Intent(this@SignUpActivity, OtpVerifyActivity::class.java)
-                    intent.putExtra("verificationId", verificationId)
-                    intent.putExtra("phoneNumber", strUserPhoneNo)
-                    intent.putExtra("phoneCountryCode", CountryCode)
-                    intent.putExtra("loginValue", loginValue)
-                    startActivity(intent)
-                    finish()
-
-                    //sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
-                    Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                 }
+
             }
         }
         checkNumberModelView.errorResponse.observe(this) {

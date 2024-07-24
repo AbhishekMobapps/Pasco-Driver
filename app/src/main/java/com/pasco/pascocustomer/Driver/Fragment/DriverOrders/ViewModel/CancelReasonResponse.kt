@@ -30,6 +30,10 @@ class CancelReasonResponse {
         @SerializedName("reason")
         @Expose
         var reason: String? = null
+
+        @SerializedName("reason_code")
+        @Expose
+        var reasonCode: String? = null
     }
 
 }

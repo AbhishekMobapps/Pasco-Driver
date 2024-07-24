@@ -43,7 +43,7 @@ class GetVDetailsResponse:Serializable{
 
         @SerializedName("cargo")
         @Expose
-        var cargo: Int? = null
+        var cargo: String? = null
 
         @SerializedName("vehiclenumber")
         @Expose

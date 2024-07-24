@@ -116,14 +116,18 @@
                                 app:tint="@color/earth_yellow" />
 
 
+
                             <EditText
                                 android:id="@+id/userName"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:background="@null"
-                                android:hint="Name"
-                                android:paddingLeft="10dp"
+                                android:hint="@string/user_name"
+                                android:inputType="text"
+                                android:layout_marginRight="10dp"
+                                android:paddingLeft="8dp"
                                 android:textSize="16dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/loginPassIcon"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -158,12 +162,13 @@
                             <EditText
                                 android:id="@+id/emailTxtA"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:background="@null"
                                 android:hint="@string/e_mail"
                                 android:inputType="textEmailAddress"
                                 android:paddingLeft="8dp"
                                 android:textSize="16dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/contactUsgmailIcon"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -198,12 +203,13 @@
                             <EditText
                                 android:id="@+id/currentCityTxt"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:background="@null"
                                 android:hint="@string/current_city"
-                                android:inputType="textEmailAddress"
+                                android:inputType="text"
                                 android:paddingLeft="8dp"
                                 android:textSize="16dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/cityImg"
                                 app:layout_constraintTop_toTopOf="parent" />

@@ -41,7 +41,7 @@ class GetAmountResponse : Serializable {
 
         @SerializedName("id")
         @Expose
-        var id: Int? = null
+        var id: String? = null
 
         @SerializedName("amount")
         @Expose
@@ -62,19 +62,6 @@ class GetAmountResponse : Serializable {
         @SerializedName("drop_location")
         @Expose
         var dropLocation: String? = null
-
-        @SerializedName("upfront_amount")
-        @Expose
-        var upfrontAmount: Double? = null
-
-        @SerializedName("upfront_status")
-        @Expose
-        var upfrontStatus: String? = null
-
-        @SerializedName("left_price")
-        @Expose
-        var leftPrice: Any? = null
-
 
         @SerializedName("payment_status")
         @Expose

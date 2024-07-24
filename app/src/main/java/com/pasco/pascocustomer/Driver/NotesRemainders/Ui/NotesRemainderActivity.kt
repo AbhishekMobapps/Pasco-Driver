@@ -24,6 +24,7 @@ import com.pasco.pascocustomer.reminder.ReminderItemClick
 import com.pasco.pascocustomer.reminder.ReminderModelView
 import com.pasco.pascocustomer.reminder.ReminderResponse
 import com.pasco.pascocustomer.reminder.delete.DeleteReminderModelView
+import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -51,7 +52,9 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
     private var reminderList: List<ReminderResponse.Datum>? = ArrayList()
     var dialog: Dialog? = null
     private var language = ""
+    private var languageId = ""
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +72,7 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
 
         if (Objects.equals(language, "ar")) {
             binding.backArrowAddNotes.setImageResource(R.drawable.next)
-        }
-        else
-        {
+        } else {
             binding.backArrowAddNotes.setImageResource(R.drawable.back)
         }
         getReminderApi()
@@ -90,7 +91,8 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
             activity,
             title,
             desp,
-            reminderDate
+            reminderDate,
+            languageId
         )
     }
 
@@ -224,21 +226,21 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
         commentAddNotesReminder: EditText
     ) {
         if (startDateTxtNotes.text.toString().isNullOrBlank()) {
-            Toast.makeText(this@NotesRemainderActivity, "Please select date", Toast.LENGTH_SHORT)
+            Toast.makeText(this@NotesRemainderActivity, getString(R.string.Please_select_date), Toast.LENGTH_SHORT)
                 .show()
         } else if (startTimetxtNotes.text.toString().isNullOrBlank()) {
-            Toast.makeText(this@NotesRemainderActivity, "Please select time", Toast.LENGTH_SHORT)
+            Toast.makeText(this@NotesRemainderActivity, getString(R.string.Please_select_time), Toast.LENGTH_SHORT)
                 .show()
         } else if (addSubjectEdittext.text.toString().isNullOrBlank()) {
             Toast.makeText(
                 this@NotesRemainderActivity,
-                "Please add the subject",
+                getString(R.string.Please_add_the_subject),
                 Toast.LENGTH_SHORT
             ).show()
         } else if (commentAddNotesReminder.text.isNullOrBlank()) {
             Toast.makeText(
                 this@NotesRemainderActivity,
-                "Please add the description",
+                getString(R.string.Please_add_the_description),
                 Toast.LENGTH_SHORT
             ).show()
         } else {
@@ -249,9 +251,11 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
     }
 
     private fun getReminderApi() {
+        val body = CustomerOrderBody(language = languageId)
         reminderModelView.getReminder(
             this,
-            progressDialog
+            progressDialog,
+            body
         )
     }
 
@@ -270,10 +274,10 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
                 if (reminderList!!.isEmpty()) {
                     binding.noDataFoundTxt.visibility = View.VISIBLE
                     binding.constRecycler.visibility = View.GONE
-                    Log.e("NoteReminderA","aaa")
+                    Log.e("NoteReminderA", "aaa")
 
                 } else {
-                    Log.e("NoteReminderA","addNotesRecycler..")
+                    Log.e("NoteReminderA", "addNotesRecycler..")
                     binding.constRecycler.visibility = View.VISIBLE
                     binding.addNotesRecycler.isVerticalScrollBarEnabled = true
                     binding.addNotesRecycler.isVerticalFadingEdgeEnabled = true
@@ -300,7 +304,10 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
     }
 
     private fun deleteReminderApi(id: Int) {
-        deleteReminderModelView.deleteReminder(id.toString(), this, progressDialog)
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        deleteReminderModelView.deleteReminder(id.toString(), this, progressDialog, body)
     }
 
     @SuppressLint("SetTextI18n")

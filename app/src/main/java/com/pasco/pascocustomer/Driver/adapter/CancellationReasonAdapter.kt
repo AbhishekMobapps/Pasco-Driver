@@ -29,9 +29,9 @@ class CancellationReasonAdapter(
     override fun onBindViewHolder(holder: StatusViewHolder, position: Int) {
         val status = cancelList[position]
         holder.driverStatusTextView.text = status.reason.toString()
-        val id = status.reasonid
+        val id = status.reasonCode
         holder.driverStatusTextView.setOnClickListener {
-           onItemClick.cancelList(position,id!!.toInt())
+           onItemClick.cancelList(position,id.toString())
             notifyDataSetChanged()  // Optional: only call this if the dataset has changed
         }
     }

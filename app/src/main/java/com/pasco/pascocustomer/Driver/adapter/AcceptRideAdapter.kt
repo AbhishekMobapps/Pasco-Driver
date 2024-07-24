@@ -111,7 +111,7 @@ class AcceptRideAdapter(
                 itemView.setOnClickListener {
                     Toast.makeText(
                         context,
-                        "You cannot place another bid. If you can, please cancel the current bids before placing new ones",
+                        context.getString(R.string.cancel_the_current_bids_before_placing_new_ones),
                         Toast.LENGTH_SHORT
                     ).show()
 
@@ -136,9 +136,9 @@ class AcceptRideAdapter(
 
     fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(context.getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(context.getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()

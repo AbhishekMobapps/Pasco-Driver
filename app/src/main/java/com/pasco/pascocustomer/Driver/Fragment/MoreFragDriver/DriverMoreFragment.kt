@@ -242,7 +242,8 @@ class DriverMoreFragment : Fragment() {
         //   val codePhone = strPhoneNo
         val body = AppSurveyBody(
             rating = ratingBars,
-            feedback = commentTxt
+            feedback = commentTxt,
+            language = languageId
         )
         appSurveyViewModel.appSurveyData(body, requireActivity(), progressDialog)
     }
@@ -257,7 +258,7 @@ class DriverMoreFragment : Fragment() {
                 "Check out this amazing app: https://play.google.com/store/apps/details?id=$appPackageName"
             )
         }
-        startActivity(Intent.createChooser(shareIntent, "Share via"))
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.Sharevia)))
     }
 
     private fun enableAll() {

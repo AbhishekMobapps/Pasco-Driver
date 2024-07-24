@@ -39,7 +39,7 @@ class TermsAndConditionsActivity : AppCompatActivity() {
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
 
-        if (Objects.equals(language, "ar")) {
+      /*  if (Objects.equals(language, "ar")) {
             binding.backImageTm.setImageResource(R.drawable.next)
             val color = ContextCompat.getColor(this, R.color.white)
             binding.backImageTm.setColorFilter(color, PorterDuff.Mode.SRC_IN)
@@ -47,7 +47,7 @@ class TermsAndConditionsActivity : AppCompatActivity() {
             val color = ContextCompat.getColor(this, R.color.white)
             binding.backImageTm.setColorFilter(color, PorterDuff.Mode.SRC_IN)
             binding.backImageTm.setImageResource(R.drawable.back)
-        }
+        }*/
 
 
         val finalUrl = "http://69.49.235.253:8090/api/termsandconditiondisplay/"

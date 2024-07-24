@@ -197,9 +197,13 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
     }
 
     private fun completedApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
         completedTripHistoryViewModel.driverTripHisData(
             progressDialog,
-            requireActivity()
+            requireActivity(),
+            body
         )
     }
 
@@ -259,7 +263,8 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
         val loinBody = DriverFeedbackBody(
             bookingconfirmation = id.toString(),
             rating = ratingBars,
-            feedback = comment
+            feedback = comment,
+            language = languageId
         )
         driverFeedbackModelView.cancelBooking(loinBody, requireActivity(), progressDialog)
     }

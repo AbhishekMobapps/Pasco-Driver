@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 
 class DeliveryProofResponse {
-
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -13,4 +12,8 @@ class DeliveryProofResponse {
     @SerializedName("msg")
     @Expose
     var msg: String? = null
+
+    @SerializedName("payment_method")
+    @Expose
+    var paymentMethod: String? = null
 }

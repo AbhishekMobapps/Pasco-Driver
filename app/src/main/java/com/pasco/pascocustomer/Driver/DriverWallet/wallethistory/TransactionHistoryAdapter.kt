@@ -51,14 +51,16 @@ class TransactionHistoryAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // holder.userName.text = orderList[position].user
         holder.statusTxt.text = orderList[position].transactionType
-        holder.amountTxtC.text = orderList[position].amount.toString()
+        val amount = orderList[position].amount.toString()
+
+        holder.amountTxtC.text = "$ $amount"
         if (userType == "driver") {
             holder.amountStatus.text = "Total Amount"
         } else {
             holder.amountStatus.text = orderList[position].paymentStatus
         }
 
-        holder.tripIdTxt.text = orderList[position].orderid.toString()
+        holder.tripIdTxt.text = orderList[position].id.toString()
         val dateTime = orderList[position].createdAt
 
 

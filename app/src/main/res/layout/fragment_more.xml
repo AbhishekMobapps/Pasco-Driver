@@ -59,6 +59,7 @@
 
 
                 <ImageView
+                    android:id="@+id/myWalletrightAr"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_margin="10dp"
@@ -305,6 +306,7 @@
 
 
                 <ImageView
+                    android:id="@+id/seeNotificationA"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_margin="10dp"
@@ -484,16 +486,6 @@
                 app:layout_constraintWidth_percent=".95">
 
 
-                <ImageView
-                    android:id="@+id/forwardArrowLogoutC"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:src="@drawable/forward_arrow"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:tint="@color/black" />
 
 
                 <ImageView
@@ -564,15 +556,6 @@
                 app:layout_constraintWidth_percent=".95">
 
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:src="@drawable/forward_arrow"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:tint="@color/black" />
 
 
                 <ImageView
@@ -605,6 +588,7 @@
 
 
                 <ImageView
+                    android:id="@+id/chooseLangA"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_margin="10dp"

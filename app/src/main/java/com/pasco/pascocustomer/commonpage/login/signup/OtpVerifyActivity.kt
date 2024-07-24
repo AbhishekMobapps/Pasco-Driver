@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.messaging.FirebaseMessaging
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientModelView
 import com.pasco.pascocustomer.commonpage.login.signup.clientmodel.ClientSignupBody
@@ -56,6 +57,7 @@ class OtpVerifyActivity : Originator() {
     private var countDownTimer: CountDownTimer? = null
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +85,11 @@ class OtpVerifyActivity : Originator() {
         formattedLatitudeSelect = intent.getStringExtra("formattedLatitudeSelect").toString()
         formattedLongitudeSelect = intent.getStringExtra("formattedLongitudeSelect").toString()
 
+        Log.e(
+            "MainActivityAAAAAAA",
+            "FCM Registration Token: $strPhoneNo $strPhoneCCode $countryName $city $email $address $loginValue $formattedLatitudeSelect $formattedLongitudeSelect"
+        )
+
         binding.phoneNumber.text = "$strPhoneCCode $strPhoneNo"
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -94,7 +101,7 @@ class OtpVerifyActivity : Originator() {
             token = task.result
 
             // Log the token
-            Log.e("MainActivityAA", "FCM Registration Token: $token")
+
 
             // Send token to your server if needed
             // sendTokenToServer(token)
@@ -112,7 +119,7 @@ class OtpVerifyActivity : Originator() {
                 binding.box6.text.toString()
             )
             if (otpFields.any { it.isEmpty() }) {
-                Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT).show()
             } else {
                 val verificationCode =
                     "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
@@ -229,7 +236,7 @@ class OtpVerifyActivity : Originator() {
                 } else {
                     // Sign in failed
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.Please_enter_valid_OTP), Toast.LENGTH_SHORT).show()
                         //   clearOtpFields()
                     }
                 }
@@ -295,17 +302,26 @@ class OtpVerifyActivity : Originator() {
             this
         ) {
             val message = it.peekContent().msg
+            val status = it.peekContent().status
             Log.e("LogValueAA", "loginValueUSER " + loginValue)
 
-            val token = it.peekContent().token
-            PascoApp.encryptedPrefs.token = token?.refresh ?: ""
-            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
-            PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
-            val intent = Intent(this, UserDashboardActivity::class.java)
-            intent.putExtra("profileUpdate", "SigUp")
-            startActivity(intent)
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            finish()
+            if (status =="True")
+            {
+                val token = it.peekContent().token
+                PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+                PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
+                PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
+                val intent = Intent(this, UserDashboardActivity::class.java)
+                intent.putExtra("profileUpdate", "SigUp")
+                startActivity(intent)
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            else
+            {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+
         }
         userViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@OtpVerifyActivity, it)
