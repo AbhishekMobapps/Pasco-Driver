@@ -63,6 +63,7 @@ class CompleteHistoryDetailsActivity : Originator() {
 
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var language = ""
+    private var languageId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCompleteHistoryDetailsBinding.inflate(layoutInflater)
@@ -76,9 +77,9 @@ class CompleteHistoryDetailsActivity : Originator() {
             "PREFERENCE_NAME", MODE_PRIVATE
         )
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
-        if (Objects.equals(language,"ar"))
-        {
+        if (Objects.equals(language, "ar")) {
             binding.backBtn.setImageResource(R.drawable.next)
         }
 
@@ -193,9 +194,9 @@ class CompleteHistoryDetailsActivity : Originator() {
         submitBtn?.setOnClickListener {
             val comment = commentTxt?.text.toString()
             if (ratingBars.isEmpty()) {
-                Toast.makeText(this, "Please add a rating", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT).show()
             } else if (comment.isBlank()) {
-                Toast.makeText(this, "Please add a comment", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT).show()
             } else {
                 feedbackApiDriver(comment, ratingBars)
                 feedbackObserver()
@@ -236,7 +237,8 @@ class CompleteHistoryDetailsActivity : Originator() {
         val loinBody = DriverFeedbackBody(
             bookingconfirmation = id,
             rating = ratingBars,
-            feedback = comment
+            feedback = comment,
+            language = languageId
         )
         driverFeedbackModelView.cancelBooking(loinBody, this, progressDialog)
     }
@@ -274,7 +276,10 @@ class CompleteHistoryDetailsActivity : Originator() {
 
     private fun feedbackApi(commentTxt: String, ratingBars: String, id: Int?) {
         val loinBody = CustomerFeedbackBody(
-            bookingconfirmation = id.toString(), rating = ratingBars, feedback = commentTxt
+            bookingconfirmation = id.toString(),
+            rating = ratingBars,
+            feedback = commentTxt,
+            language = languageId
         )
         feedbackModelView.cancelBooking(loinBody, this)
     }

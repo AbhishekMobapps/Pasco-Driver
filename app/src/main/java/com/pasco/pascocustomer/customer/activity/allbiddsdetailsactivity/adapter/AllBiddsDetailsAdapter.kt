@@ -107,7 +107,8 @@ class AllBiddsDetailsAdapter(
             val verificationCode = orderList[position].deliverycode
             val pickupLatitude = orderList[position].pickupLatitude
             val pickupLongitude = orderList[position].pickupLongitude
-            onItemClick.allBids(position, id!!,pickupLatitude,pickupLongitude,verificationCode,upFrontPrice)
+            val paymentMethod = orderList[position].paymentMethod
+            onItemClick.allBids(position, id!!,pickupLatitude,pickupLongitude,verificationCode,upFrontPrice,paymentMethod)
         }
     }
 
@@ -115,19 +116,13 @@ class AllBiddsDetailsAdapter(
         return orderList.size
     }
 
-    private fun truncateBookingNumber(bookingNumber: String, maxLength: Int = 8): String {
-        return if (bookingNumber.length > maxLength) {
-            "${bookingNumber.substring(0, maxLength)}..."
-        } else {
-            bookingNumber
-        }
-    }
+
 
     fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(required)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(required.getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(required.getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()

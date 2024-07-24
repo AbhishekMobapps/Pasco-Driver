@@ -20,6 +20,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+
 class DriverAllBiddDetailAdapter(
     private val context: Context,
     private val getDriverData: List<GetDriverBidDetailsDataResponse.DriverAllBidData>,
@@ -117,9 +118,9 @@ class DriverAllBiddDetailAdapter(
 
     private fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(context)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(context.getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(context.getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()

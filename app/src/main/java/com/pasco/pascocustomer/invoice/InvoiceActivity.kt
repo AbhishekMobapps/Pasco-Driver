@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityInvoiceBinding
 import com.pasco.pascocustomer.language.Originator
@@ -106,7 +107,7 @@ class InvoiceActivity : Originator() {
 
     private fun showSettingsDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Need Permissions")
+            .setTitle(getString(R.string.Need_Permissions))
             .setMessage("This app needs permission to use this feature. You can grant them in app settings.")
             .setPositiveButton("Go to Settings") { dialog, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -115,7 +116,7 @@ class InvoiceActivity : Originator() {
                 startActivity(intent)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()

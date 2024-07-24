@@ -1,15 +1,20 @@
 package com.pasco.pascocustomer.Driver.emergencyhelp.Ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityEmergencyMainBinding
 import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class EmergencyMainActivity : Originator() {
     private lateinit var binding:ActivityEmergencyMainBinding
     private var bookingId = ""
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language= ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyMainBinding.inflate(layoutInflater)
@@ -17,6 +22,11 @@ class EmergencyMainActivity : Originator() {
 
         binding.closeImage.setOnClickListener {
             finish()
+        }
+
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        if (Objects.equals(language, "ar")) {
+            binding.closeImage.setImageResource(R.drawable.next)
         }
         bookingId = intent.getStringExtra("bookingIdForHelp").toString()
 

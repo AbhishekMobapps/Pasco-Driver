@@ -31,7 +31,7 @@ class PreferenceManager(context: Context) {
 
     private var prefs = EncryptedSharedPreferences.create(
         context,
-        "PromotrEncryptedPrefer",
+        "PromotrEncryptedPref",
         masterKey,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM

@@ -78,8 +78,8 @@ class LoginActivity : Originator() {
         val deviceModel = Build.MODEL
 
 
-            sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
-            languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         Log.e("languageIdAA", "languageId..." + languageId)
 
@@ -89,7 +89,6 @@ class LoginActivity : Originator() {
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.e("MainActivity", "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
             // Get new FCM registration token
@@ -131,29 +130,23 @@ class LoginActivity : Originator() {
             cCodeSignIn = binding.signInCountryCode.text.toString()
 
             if (binding.phoneNumber.text.isEmpty()) {
-                Toast.makeText(this, "Please enter phone number", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.enter_phone_number), Toast.LENGTH_SHORT)
+                    .show()
             } else if (binding.signInCountryCode.text.isNullOrBlank()) {
                 Toast.makeText(
-                    applicationContext,
-                    "Please enter country code",
-                    Toast.LENGTH_SHORT
+                    applicationContext, getString(R.string.enter_country_code), Toast.LENGTH_SHORT
                 ).show()
             } else if (!binding.signInCountryCode.text.startsWith("+")) {
                 Toast.makeText(
-                    applicationContext,
-                    "Phone number should include country code prefixed with +",
-                    Toast.LENGTH_SHORT
+                    applicationContext, getString(R.string.Phone_number), Toast.LENGTH_SHORT
                 ).show()
             } else if (binding.phoneNumber.text.isNullOrBlank()) {
-                Toast.makeText(
-                    applicationContext,
-                    "Please enter phone number",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(applicationContext, getString(R.string.enter_phone_number), Toast.LENGTH_SHORT)
+                    .show()
             } else if (binding.phoneNumber.text.length < 8) {
                 Toast.makeText(
                     applicationContext,
-                    "Phone number must be at least 8 digits",
+                    getString(R.string.Phone_digits),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -427,7 +420,7 @@ class LoginActivity : Originator() {
         }
 
         doubleBackToExitPressedOnce = true
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.Please_again_to_exit), Toast.LENGTH_SHORT).show()
 
         Handler().postDelayed(
             { doubleBackToExitPressedOnce = false },

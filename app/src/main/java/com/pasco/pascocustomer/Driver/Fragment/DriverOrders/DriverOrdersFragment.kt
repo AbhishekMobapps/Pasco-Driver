@@ -67,6 +67,7 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
             "PREFERENCE_NAME", AppCompatActivity.MODE_PRIVATE
         )
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         if (Objects.equals(language, "ar")) {
             binding.allBiddsTextIdD.setBackgroundResource(R.drawable.accept_bidd_background)
@@ -260,8 +261,8 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
         selectStatusPopUp()
     }
 
-    override fun cancelList(position: Int, ids: Int) {
-        val ids = ids.toString()
+    override fun cancelList(position: Int, ids: String) {
+        val ids = ids
         cancelReasonnn(ids)
         driverCancelReasonObserver()
     }

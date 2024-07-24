@@ -70,7 +70,6 @@
         android:layout_marginTop="40dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/all_circle_border"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo"
         app:layout_goneMarginRight="20dp">
@@ -84,7 +83,6 @@
             android:gravity="center"
             android:text="@string/english"
             android:textColor="@color/grey"
-            app:layout_constraintEnd_toStartOf="@+id/see_more_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

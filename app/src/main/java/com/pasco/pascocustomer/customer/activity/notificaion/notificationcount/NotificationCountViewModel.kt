@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pasco.pascocustomer.repository.CommonRepository
+import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,18 +21,19 @@ import javax.inject.Inject
 class NotificationCountViewModel @Inject constructor(
     application: Application,
     private val notificationCountRepository: CommonRepository
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     val errorResponse = MutableLiveData<Throwable>()
-    val mNotiCountResponse= MutableLiveData<Event<NotificationCountResponse>>()
+    val mNotiCountResponse = MutableLiveData<Event<NotificationCountResponse>>()
     var context: Context? = null
 
-    fun getCountNoti() = viewModelScope.launch {
-            getCount()
-        }
-    suspend fun getCount()
-    {
-        notificationCountRepository.getCountNotifications()
+
+    fun getCountNoti(body: GetProfileBody) = viewModelScope.launch {
+        getCount(body)
+    }
+
+    suspend fun getCount(body: GetProfileBody) {
+        notificationCountRepository.getCountNotifications(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<NotificationCountResponse>() {

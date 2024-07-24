@@ -7,6 +7,7 @@ import android.os.Looper
 import com.pasco.pascocustomer.Driver.AcceptRideDetails.Ui.AcceptRideActivity
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.application.PascoApp
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.AllBiddsDetailsActivity
 import com.pasco.pascocustomer.customer.activity.hometabactivity.AllTabPayActivity
 import com.pasco.pascocustomer.databinding.ActivityComlpleteStatusBinding
 import com.pasco.pascocustomer.language.Originator
@@ -33,7 +34,7 @@ class ComlpleteStatusActivity : Originator() {
 
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
-                    val intent = Intent(this, AllTabPayActivity::class.java)
+                    val intent = Intent(this, AllBiddsDetailsActivity::class.java)
                     startActivity(intent)
                 }, 2000) // 2000 milliseconds = 2 seconds
 

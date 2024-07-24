@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_size_20"
             android:layout_marginRight="15dp"
-            android:text="Skip"
+            android:layout_marginLeft="15dp"
+            android:text="@string/skip"
             android:textColor="@color/earth_yellow"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -37,7 +38,7 @@
                 android:id="@+id/thnk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thank you for your order!"
+                android:text="@string/thank_you_for_your_order"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -49,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your ordered has been Deliverd!"
+                android:text="@string/your_ordered_has_been_delivered"
                 android:textColor="@color/dark_white1"
                 android:textSize="14sp"
                 android:layout_marginTop="10dp"
@@ -118,7 +119,7 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:gravity="start"
-                android:hint="Leave a feedback"
+                android:hint="@string/leave_a_feedback"
                 android:padding="10dp" />
 
 
@@ -130,7 +131,7 @@
             android:layout_height="50dp"
             android:background="@drawable/button_background"
             android:gravity="center"
-            android:text="Submit"
+            android:text="@string/submit"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"

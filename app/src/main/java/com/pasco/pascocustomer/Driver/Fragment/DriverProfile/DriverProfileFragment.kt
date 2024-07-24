@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +46,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.util.Objects
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -66,6 +68,7 @@ class DriverProfileFragment : Fragment() {
     private lateinit var imagePart: MultipartBody.Part
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,15 +83,15 @@ class DriverProfileFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
-
-        /*     binding.editButtonDriverProfile.setOnClickListener {
-                 val intent = Intent(requireActivity(),UpdateVehicleDetialsActivity::class.java)
-                 startActivity(intent)
-             }*/
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        if (Objects.equals(language, "ar")) {
+            binding.driverUserNameP.gravity = Gravity.RIGHT
+            binding.driverEmailP.gravity = Gravity.RIGHT
+            binding.driverAddressP.gravity = Gravity.RIGHT
+        }
 
         binding.addImgDProfile.setOnClickListener {
             selectImage()
-            Log.e("profileImage", "image....")
         }
         binding.updateBtndp.setOnClickListener {
             profilePutApi()
@@ -107,7 +110,7 @@ class DriverProfileFragment : Fragment() {
     private fun profilePutApi() {
         val Pname = binding.driverUserNameP.text.toString().toRequestBody(MultipartBody.FORM)
         val Pemail = binding.driverEmailP.text.toString().toRequestBody(MultipartBody.FORM)
-        val languageId =languageId.toRequestBody(MultipartBody.FORM)
+        val languageId = languageId.toRequestBody(MultipartBody.FORM)
         if (selectedImageFile != null) {
             imagePart = MultipartBody.Part.createFormData(
                 "image",
@@ -122,7 +125,6 @@ class DriverProfileFragment : Fragment() {
             )
 
 
-            Log.e("endDate3", "file:  null " + selectedImageFile)
         }
         profiViewModel.putProfile(
             progressDialog,
@@ -133,7 +135,6 @@ class DriverProfileFragment : Fragment() {
             imagePart
         )
 
-        Log.e("selectedImageFile", "selectedImageFile.." + selectedImageFile)
     }
 
     private fun ObserverPutUserProfile() {
@@ -169,11 +170,7 @@ class DriverProfileFragment : Fragment() {
         getProfileModelView.progressIndicator.observe(requireActivity(), Observer {
         })
         getProfileModelView.mRejectResponse.observe(requireActivity()) { response ->
-            val message = response.peekContent().msg!!
             val data = response.peekContent().data
-            val fullname = data?.fullName.toString()
-            val email = data?.email.toString()
-            val phoneNumber = data?.phoneNumber.toString()
             val address = data?.currentCity.toString()
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.image.orEmpty()
@@ -202,11 +199,6 @@ class DriverProfileFragment : Fragment() {
                     "".toRequestBody("image/*".toMediaTypeOrNull())
                 )
             }
-            Log.e("getDetails", "ObservergetUserProfile: ")
-
-
-            Log.e("getDetails", "ObservergetUserProfile: ")
-
             binding.driverUserNameP.text =
                 Editable.Factory.getInstance().newEditable(users?.fullName)
             binding.driverEmailP.text = Editable.Factory.getInstance().newEditable(users?.email)
@@ -223,15 +215,19 @@ class DriverProfileFragment : Fragment() {
     }
 
 
-    fun selectImage() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+    private fun selectImage() {
+        val options = arrayOf<CharSequence>(
+            getString(R.string.take_photo),
+            getString(R.string.gallery),
+            getString(R.string.cancel)
+        )
         val builder = android.app.AlertDialog.Builder(requireActivity())
-        builder.setTitle("Select Image")
+        builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
             when {
-                options[item] == "Take Photo" -> openCamera()
-                options[item] == "Choose from Gallery" -> openGallery()
-                options[item] == "Cancel" -> dialog.dismiss()
+                options[item] == getString(R.string.take_photo) -> openCamera()
+                options[item] == getString(R.string.gallery) -> openGallery()
+                options[item] == getString(R.string.cancel) -> dialog.dismiss()
             }
         }
         builder.show()
@@ -291,15 +287,11 @@ class DriverProfileFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val imageBitmap = result.data?.extras?.get("data") as? Bitmap
                 if (imageBitmap != null) {
-                    // Generate a dynamic filename using a unique identifier
                     val fileName = "image_${System.currentTimeMillis()}.jpg"
-                    // Convert Bitmap to File
                     selectedImageFile = bitmapToFile(imageBitmap, fileName)
-                    Log.e("filePathBack", "selectedImageFile:Front " + selectedImageFile)
-                    //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     binding.cricleImgDp.setImageBitmap(imageBitmap)
                 } else {
-                    Toast.makeText(requireActivity(), "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireActivity(),getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }

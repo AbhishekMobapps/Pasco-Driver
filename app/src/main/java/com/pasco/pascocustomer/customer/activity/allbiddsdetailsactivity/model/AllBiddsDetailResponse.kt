@@ -37,7 +37,7 @@ class AllBiddsDetailResponse {
 
         @SerializedName("user_image")
         @Expose
-        var userImage: Any? = null
+        var userImage: String? = null
 
         @SerializedName("driver_image")
         @Expose
@@ -126,6 +126,14 @@ class AllBiddsDetailResponse {
         @SerializedName("bid_price")
         @Expose
         var bidPrice: Double? = null
+
+        @SerializedName("additionalservice_name")
+        @Expose
+        var additionalserviceName: Any? = null
+
+        @SerializedName("additionalservice_amount")
+        @Expose
+        var additionalserviceAmount: Any? = null
 
         @SerializedName("availabledrop_datetime")
         @Expose

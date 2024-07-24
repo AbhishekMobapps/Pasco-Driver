@@ -80,11 +80,9 @@ class LoyaltyActivity : Originator(), LoyaltyProgramItemClick {
             Log.e("CancelTripAA", "aaaa.." + msg)
 
             if (response.peekContent().status == "False") {
-                binding.loyaltyRecycler.visibility = View.VISIBLE
-                // binding.loyaltyRecycler.text = "You have not cancelled any trips yet."
+               // binding.loyaltyRecycler.text = "You have not cancelled any trips yet."
                 binding.loyaltyRecycler.visibility = View.GONE
             } else {
-                binding.loyaltyRecycler.visibility = View.GONE
                 binding.loyaltyRecycler.visibility = View.VISIBLE
                 binding.loyaltyRecycler.isVerticalScrollBarEnabled = true
                 binding.loyaltyRecycler.isVerticalFadingEdgeEnabled = true

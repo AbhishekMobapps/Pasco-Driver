@@ -32,9 +32,7 @@ class StatusListAdapter(
         val status = statusList[position]
         holder.driverStatusTextView.text = status.status.toString()
         holder.driverStatusTextView.setOnClickListener {
-            onItemClick.driverStatusUpdate(
-                position,
-                status.id!!,status.status.toString())
+            onItemClick.driverStatusUpdate(position, status.statusUniqueCode.toString(),status.status.toString())
             notifyDataSetChanged()
         }
     }

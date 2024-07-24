@@ -89,28 +89,13 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
 
         if (Objects.equals(language, "ar")) {
             binding.ordersConst.setBackgroundResource(R.drawable.accept_back)
-
+            getOrderApi()
 
             binding.ordersConst.setOnClickListener {
                 binding.ordersConst.setBackgroundResource(R.drawable.accept_back)
-                binding.acceptTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.biddsTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.orderTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
+                binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(),R.color.black))
+                binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                 binding.oderRecycler.visibility = View.VISIBLE
                 binding.allBiddsRecycler.visibility = View.GONE
                 binding.acceptRecycler.visibility = View.GONE
@@ -121,24 +106,9 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
 
                 binding.asAcceptConst.setOnClickListener {
                     binding.asAcceptConst.setBackgroundResource(R.drawable.orders_tab_back)
-                    binding.acceptTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                    binding.orderTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.black
-                        )
-                    )
-                    binding.biddsTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.black
-                        )
-                    )
+                    binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                     binding.oderRecycler.visibility = View.GONE
                     binding.allBiddsRecycler.visibility = View.GONE
                     binding.acceptRecycler.visibility = View.VISIBLE
@@ -281,7 +251,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
 
 
     private fun cancelApi() {
-        val  body = CustomerOrderBody(
+        val body = CustomerOrderBody(
             language = languageId
         )
         cReasonViewModel.getCancelReason(
@@ -348,7 +318,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 if (bookMarkList.isEmpty()) {
                     binding.oderRecycler.visibility = View.GONE
                     binding.noDataFoundTxt.visibility = View.VISIBLE
-                    binding.noDataFoundTxt.text = "No Orders"
+                    binding.noDataFoundTxt.text = getString(R.string.no_Orders)
                 } else {
                     binding.oderRecycler.visibility = View.VISIBLE
                     binding.oderRecycler.isVerticalScrollBarEnabled = true
@@ -386,7 +356,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 allBiddsList = it.peekContent().data!!
                 if (allBiddsList.isEmpty()) {
                     binding.noDataFoundTxt.visibility = View.VISIBLE
-                    binding.noDataFoundTxt.text = "No bids"
+                    binding.noDataFoundTxt.text = getString(R.string.no_bids)
                 } else {
                     binding.allBiddsRecycler.visibility = View.VISIBLE
                     binding.allBiddsRecycler.isVerticalScrollBarEnabled = true
@@ -424,7 +394,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 acceptedList = it.peekContent().data!!
                 if (acceptedList.isEmpty()) {
                     binding.noDataFoundTxt.visibility = View.VISIBLE
-                    binding.noDataFoundTxt.text = "No Accepted"
+                    binding.noDataFoundTxt.text = getString(R.string.No_Accepted)
                 } else {
                     binding.acceptRecycler.visibility = View.VISIBLE
                     binding.acceptRecycler.isVerticalScrollBarEnabled = true
@@ -454,7 +424,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
 
     }
 
-    override fun cancelList(position: Int, id: Int) {
+    override fun cancelList(position: Int, id: String) {
         cancelBooking(id)
         cancelBookingObserver()
     }
@@ -486,9 +456,10 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
         dialog?.show()
     }
 
-    private fun cancelBooking(id: Int) {
+    private fun cancelBooking(id: String) {
         val loinBody = CancelBookingBody(
-            reasonid = id.toString()
+            reasonid = id,
+            language = languageId
         )
         cancelBookingModelView.cancelBooking(orderId, loinBody, activity, progressDialog)
     }

@@ -185,7 +185,7 @@ class DriverWalletActivity : Originator() {
         val submit_WithDrawBtn = dialogView.findViewById<Button>(R.id.submit_WithDrawBtn)
         val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
         val addAmStaticTextview = dialogView.findViewById<TextView>(R.id.addAmStaticTextview)
-        addAmStaticTextview.text = "Withdraw Amount"
+        addAmStaticTextview.text = getString(R.string.Withdraw_Amount)
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
         submit_WithDrawBtn.setOnClickListener {
@@ -293,9 +293,9 @@ class DriverWalletActivity : Originator() {
             transactionList = response.peekContent().data?.transactions!!
 
 
-            if (status == "False") {
+            if (transactionList.isEmpty()) {
                 Log.e("WalletAmt", "aaa")
-                val value = "0"
+                val value = "0.0"
                 binding.accountBalanceDri.text = "$value USD"
             } else {
                 amountP = data?.walletAmount.toString()

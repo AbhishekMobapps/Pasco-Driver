@@ -2,6 +2,4 @@ package com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehiclet
 
 import com.google.gson.annotations.SerializedName
 
-class GetVehicleTypeBody(
-    @SerializedName("language") val language: String
-    )
+class GetVehicleTypeBody(@SerializedName("language") val language: String)

@@ -96,7 +96,8 @@ class LoginOtpVerifyActivity : Originator() {
                 binding.box6.text.toString()
             )
             if (otpFields.any { it.isEmpty() }) {
-                Toast.makeText(this, "Please enter OTP", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT)
+                    .show()
             } else {/*
                 val verificationCode = "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
                 val credential: PhoneAuthCredential =
@@ -168,7 +169,7 @@ class LoginOtpVerifyActivity : Originator() {
 
             override fun onFinish() {
                 binding.resendBtn.isEnabled = true
-                binding.timeDuration.text = "You can resend OTP now"
+                binding.timeDuration.text = getString(R.string.You_can_resend_OTP_now)
             }
         }.start()
     }
@@ -197,7 +198,11 @@ class LoginOtpVerifyActivity : Originator() {
             } else {
                 // Sign in failed
                 if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                    Toast.makeText(this, "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Please_enter_valid_OTP),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -228,32 +233,39 @@ class LoginOtpVerifyActivity : Originator() {
 
             val token = it.peekContent().token
             val message = it.peekContent().msg
-            val userId = it.peekContent().userId
-            userType = it.peekContent().userType.toString()
-            val approved = it.peekContent().approved
-            PascoApp.encryptedPrefs.token = token?.refresh ?: ""
-            PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
-            PascoApp.encryptedPrefs.userId = userId.toString()
-            PascoApp.encryptedPrefs.userType = userType
-            PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
-            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
-            PascoApp.encryptedPrefs.isFirstTime = false
+            val status = it.peekContent().status
 
-            if (approved == 2 && userType == "driver") {
-                Log.e("AAAAA", "aaaaaaa....")
-                val intent = Intent(this@LoginOtpVerifyActivity, VehicleDetailsActivity::class.java)
-                startActivity(intent)
-            } else if (loginValue == "driver" && userType == "driver") {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent =
-                    Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else if (loginValue == "user" && userType == "user") {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@LoginOtpVerifyActivity, UserDashboardActivity::class.java)
-                startActivity(intent)
-                finish()
+            if (status == "True") {
+                val userId = it.peekContent().userId
+                userType = it.peekContent().userType.toString()
+                val approved = it.peekContent().approved
+                PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+                PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
+                PascoApp.encryptedPrefs.userId = userId.toString()
+                PascoApp.encryptedPrefs.userType = userType
+                PascoApp.encryptedPrefs.driverApprovedId = approved?.toString()!!
+                PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
+                PascoApp.encryptedPrefs.isFirstTime = false
+
+                if (approved == 2 && userType == "driver") {
+                    Log.e("AAAAA", "aaaaaaa....")
+                    startActivity(intent)
+                } else if (loginValue == "driver" && userType == "driver") {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    val intent =
+                        Intent(this@LoginOtpVerifyActivity, DriverDashboardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else if (loginValue == "user" && userType == "user") {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    val intent =
+                        Intent(this@LoginOtpVerifyActivity, UserDashboardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else
+                {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                }
             }
 
 

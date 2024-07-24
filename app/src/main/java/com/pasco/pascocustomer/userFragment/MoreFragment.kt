@@ -33,6 +33,7 @@ import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class MoreFragment : Fragment() {
@@ -42,6 +43,7 @@ class MoreFragment : Fragment() {
     private var refresh = ""
     private lateinit var activity: Activity
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
     private var languageId = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,8 +54,31 @@ class MoreFragment : Fragment() {
         val view = binding.root
 
         activity = requireActivity()
-        sharedPreferencesLanguageName = activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        sharedPreferencesLanguageName =
+            activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+
+
+
+
+        if (Objects.equals(language, "ar")) {
+            binding.seeNotificationA.setImageResource(R.drawable.back_left)
+            binding.myWalletrightAr.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContactSupport.setImageResource(R.drawable.back_left)
+            binding.forwardArrowTc.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContacUs.setImageResource(R.drawable.back_left)
+            binding.forwardArrowTc.setImageResource(R.drawable.back_left)
+            binding.forwardArrowContacUs.setImageResource(R.drawable.back_left)
+            binding.forwardArrowNotes.setImageResource(R.drawable.back_left)
+            binding.loyaltyImgForward.setImageResource(R.drawable.back_left)
+            binding.forwardArrowShareApp.setImageResource(R.drawable.back_left)
+            binding.chooseLangA.setImageResource(R.drawable.back_left)
+
+        }
+
+
 
         binding.consLogout.setOnClickListener { openLogoutPop() }
         binding.consContactAndSupportInside.setOnClickListener {
@@ -140,6 +165,7 @@ class MoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
+                language = ""
 
                 val intent = Intent(requireActivity(), ChooseLanguageActivity::class.java)
                 startActivity(intent)

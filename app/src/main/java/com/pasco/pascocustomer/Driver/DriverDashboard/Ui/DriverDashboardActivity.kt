@@ -124,8 +124,8 @@ class DriverDashboardActivity : Originator() {
         switchCheck = PascoApp.encryptedPrefs.CheckedType
         runnable = object : Runnable {
             override fun run() {
-                getVehicleDetails()
-                getVehicleDetailsObserver()
+               // getVehicleDetails()
+               // getVehicleDetailsObserver()
                 // Schedule the next execution
                 handler!!.postDelayed(this, 2000) // 2000 milliseconds = 2 seconds
             }
@@ -527,7 +527,7 @@ class DriverDashboardActivity : Originator() {
                 binding.switchbtn.isEnabled = false
                 Toast.makeText(
                     this@DriverDashboardActivity,
-                    " You cannot go on duty for a new ride before completing the current ride.",
+                    getString(R.string.ride_before_completing_the_current_ride),
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -585,7 +585,8 @@ class DriverDashboardActivity : Originator() {
     }
 
     private fun getNotificationCountDApi() {
-        notificationCountViewModel.getCountNoti()
+        val body = GetProfileBody(language = languageId)
+        notificationCountViewModel.getCountNoti(body)
     }
 
     private fun notificationCountDObserver() {
@@ -657,7 +658,7 @@ class DriverDashboardActivity : Originator() {
                         lastBackPressTime = currentTime
                         Toast.makeText(
                             this@DriverDashboardActivity,
-                            "Please click BACK again to exit",
+                            getString(R.string.Please_again_to_exit),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -689,7 +690,7 @@ class DriverDashboardActivity : Originator() {
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
-                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.Permission_Granted), Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     //Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()

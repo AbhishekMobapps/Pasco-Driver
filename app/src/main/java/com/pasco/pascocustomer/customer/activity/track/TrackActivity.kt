@@ -201,9 +201,6 @@ class TrackActivity : Originator(), OnMapReadyCallback {
         trackDetailsModelView.mDetailsResponse.observe(this) { response ->
 
             val dataGet = response.peekContent().data
-
-
-
             binding.pickUpLocBidd.text = response.peekContent().data?.pickupLocation
             binding.dropLocBidd.text = response.peekContent().data?.dropLocation
             binding.orderIdStaticTextView.text = response.peekContent().data?.bidPrice.toString()
@@ -326,12 +323,17 @@ class TrackActivity : Originator(), OnMapReadyCallback {
                     mHandler?.removeCallbacks(mRunnable)
                     binding.onTheWayTxt.text = response.peekContent().data?.bookingStatus
 
-                    if (completeStatus) {
-                        Log.e("ReachedAAS", "Statusss..in")
-                        deductAmountApi(response.peekContent().data!!.leftoverAmount)
-                        deductAmountObserver()
-                        completeStatus = false
+                    if (response.peekContent().data!!.paymentMethod == "Cash") {
+                        showFeedbackPopup()
+                    } else {
+                        if (completeStatus) {
+                            Log.e("ReachedAAS", "Statusss..in")
+                            deductAmountApi(response.peekContent().data!!.leftoverAmount)
+                            deductAmountObserver()
+                            completeStatus = false
+                        }
                     }
+
 
                 } else {
                     binding.onTheWayTxt.text = response.peekContent().data?.driverStatus
@@ -341,13 +343,14 @@ class TrackActivity : Originator(), OnMapReadyCallback {
                         // Draw the second route from pickup to drop location
 
 
-
                         mMarkerOptions =
                             mMap?.addMarker(
                                 MarkerOptions().position(driverLatLng!!)
                                     .anchor(0.5f, 0.5f)
-                                    .title("Driver Location").icon(
-                                        BitmapDescriptorFactory.fromBitmap(cars!!)))
+                                    .title(getString(R.string.Driver_Location)).icon(
+                                        BitmapDescriptorFactory.fromBitmap(cars!!)
+                                    )
+                            )
 
 
 
@@ -355,7 +358,7 @@ class TrackActivity : Originator(), OnMapReadyCallback {
                             mMap?.addMarker(
                                 MarkerOptions().position(userDropLatLng!!)
                                     .anchor(0.5f, 0.5f)
-                                    .title("Driver Location").icon(
+                                    .title(getString(R.string.Driver_Location)).icon(
                                         BitmapDescriptorFactory.fromBitmap(cars!!)
                                     )
                             )
@@ -486,7 +489,10 @@ class TrackActivity : Originator(), OnMapReadyCallback {
     private fun feedbackApi(commentTxt: String, ratingBars: String) {
         //   val codePhone = strPhoneNo
         val loinBody = CustomerFeedbackBody(
-            bookingconfirmation = bookingId, rating = ratingBars, feedback = commentTxt
+            bookingconfirmation = bookingId,
+            rating = ratingBars,
+            feedback = commentTxt,
+            language = languageId
         )
         feedbackModelView.cancelBooking(loinBody, this)
     }
@@ -511,7 +517,7 @@ class TrackActivity : Originator(), OnMapReadyCallback {
 
 
     private fun drawRoute(mOrigin: LatLng, mDestination: LatLng) {
-        val apiKey = "AIzaSyBoVWvb66474EG6SEtITHAhgrKyVC9oLWo" // Replace with your actual API key
+        val apiKey = "AIzaSyA_VxG35IaFz_h_F0G_786p77XvwRKG_WM" // Replace with your actual API key
         val context = GeoApiContext.Builder()
             .apiKey(apiKey)
             .build()
@@ -602,7 +608,8 @@ class TrackActivity : Originator(), OnMapReadyCallback {
     private fun deductAmountApi(leftoverAmount: String?) {
         val loinBody = CompletedDeductAmountBody(
             payment_amount = leftoverAmount!!,
-            payment_type = "wallet"
+            payment_type = "wallet",
+            language = languageId
         )
         completeDeduct.deductAmount(bookingId, loinBody, this@TrackActivity)
     }
@@ -632,12 +639,12 @@ class TrackActivity : Originator(), OnMapReadyCallback {
     }
 
     private fun showWalletRequirementPopup() {
-        val message = "Please add amount in your wallet!"
+        val message =getString(R.string.Please_add_amount_in_your_wallet)
 
         val builder = AlertDialog.Builder(this@TrackActivity)
-        builder.setTitle("Insufficient wallet amount to accept the bid. Your wallet amount should be equal to the bid price")
+        builder.setTitle(getString(R.string.Insufficient_wallet_amount))
         builder.setMessage(message)
-        builder.setPositiveButton("Add Funds") { dialog, _ ->
+        builder.setPositiveButton(getString(R.string.Add_Funds)) { dialog, _ ->
             val intent = Intent(this, DriverWalletActivity::class.java)
             intent.putExtra("addWallet", "wallet")
             startActivity(intent)
@@ -645,7 +652,7 @@ class TrackActivity : Originator(), OnMapReadyCallback {
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Skip") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.skip)) { dialog, _ ->
             dialog.dismiss()
         }
 

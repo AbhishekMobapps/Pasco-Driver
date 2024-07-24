@@ -1,5 +1,6 @@
 package com.pasco.pascocustomer.customer.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -26,7 +27,6 @@ import java.util.*
 @AndroidEntryPoint
 class ChooseLanguageActivity : Originator() {
     private lateinit var binding: ActivityChooseLanguageBinding
-    private val chooseLanguageList = arrayListOf("English", "Arabic")
 
     private var isRestarting = true
     private var languageList: List<LanguageResponse.Datum>? = null
@@ -53,26 +53,6 @@ class ChooseLanguageActivity : Originator() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
-
-        // Spinner Adapter
-        /* val dAdapter = ArrayAdapter(this, R.layout.custom_spinner_two, chooseLanguageList)
-         dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-         binding.englishLanguage.adapter = dAdapter
-         binding.englishLanguage.onItemSelectedListener =
-             object : AdapterView.OnItemSelectedListener {
-                 override fun onItemSelected(
-                     adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
-                 ) {
-                     val selectedLanguage = binding.englishLanguage.selectedItem.toString()
-                     if (selectedLanguage.isNotEmpty()) {
-                         val languageCode = if (selectedLanguage == "English") "en" else "ar"
-                         changeLanguage(languageCode)
-
-                     }
-                 }
-
-                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
-             }*/
 
 
 
@@ -113,6 +93,7 @@ class ChooseLanguageActivity : Originator() {
         editor.putString("languageId", languageId)
         editor.apply()
 
+       // recreate()
         updateLocale(language)
     }
 

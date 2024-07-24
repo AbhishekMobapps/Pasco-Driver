@@ -151,7 +151,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                 ) {
                     val item = binding.vehicleTypeSpinnerUVD.selectedItem.toString()
                     if (item != getString(R.string.selectVehicleType)) {
-                        spinnerVehicleTypeId = VehicleType!![i].id.toString()
+                        spinnerVehicleTypeId = VehicleType!![i].uniqueCode.toString()
 
                     }
                 }
@@ -344,12 +344,12 @@ class UpdateVehicleDetailsActivity : Originator() {
 
     private fun openCameraOrGallery(section: String) {
         val options =
-            arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+            arrayOf<CharSequence>(getString(R.string.take_photo), getString(R.string.gallery), getString(R.string.cancel))
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select Image")
+        builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
             when {
-                options[item] == "Take Photo" -> {
+                options[item] ==getString(R.string.take_photo) -> {
                     // If section is "vehicleImg", directly open the camera
                     if (section == "vehicleImg") {
                         openCamera()
@@ -363,7 +363,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     }
                 }
 
-                options[item] == "Choose from Gallery" -> {
+                options[item] == getString(R.string.gallery) -> {
                     // If section is "vehicleImg", directly open the gallery
                     if (section == "vehicleImg") {
                         openGallery()
@@ -377,7 +377,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     }
                 }
 
-                options[item] == "Cancel" -> dialog.dismiss()
+                options[item] ==  getString(R.string.cancel) -> dialog.dismiss()
             }
         }
         builder.show()
@@ -430,7 +430,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgRcUpdate.setImageBitmap(imageBitmap)
                     //  setUploadedRc()
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this,  getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -454,7 +454,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgDocUpdate.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -604,7 +604,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgVIUpdate.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, "Image capture canceled", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -725,7 +725,7 @@ class UpdateVehicleDetailsActivity : Originator() {
             val data = response.peekContent().data
             shipmentName = data!!.shipmentname.toString()
             vehicleName = data!!.vehiclename.toString()
-            spinnerVehicleTypeId = data!!.id.toString()
+            spinnerVehicleTypeId = data!!.cargo.toString()
 
             val baseUrl = "http://69.49.235.253:8090"
             val imagePath = data?.vehiclePhoto.orEmpty()

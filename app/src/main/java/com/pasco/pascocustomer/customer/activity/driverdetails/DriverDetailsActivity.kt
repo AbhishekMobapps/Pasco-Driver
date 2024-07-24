@@ -7,12 +7,14 @@ import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.driverdetails.modelview.DriverDetailsModelView
 import com.pasco.pascocustomer.databinding.ActivityDriverDetailsBinding
 import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 @AndroidEntryPoint
 class DriverDetailsActivity : Originator() {
@@ -22,6 +24,7 @@ class DriverDetailsActivity : Originator() {
     private var id = ""
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,12 +33,18 @@ class DriverDetailsActivity : Originator() {
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+        language = sharedPreferencesLanguageName.getString("language_text", "en").toString()
 
 
         binding.imageBackReqRide.setOnClickListener { finish() }
         id = intent.getStringExtra("id").toString()
         getDriverDetails()
         driverDetailsObserver()
+        if (Objects.equals(language,"ar"))
+        {
+            binding.imageBackReqRide.setImageResource(R.drawable.next)
+        }
+
     }
 
     private fun getDriverDetails() {

@@ -10,6 +10,7 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponResponse
 import com.pasco.pascocustomer.Driver.CouponDetails.CouponViewModel.CouponViewModel
 import com.pasco.pascocustomer.Driver.adapter.CouponListAdapter
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityCouponsAndEarningBinding
 import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
@@ -52,7 +53,7 @@ class CouponsAndEarningActivity : Originator() {
             val message = response.peekContent().msg!!
             checkCouponList = response.peekContent().data ?: emptyList()
             if (checkCouponList?.isEmpty()!!) {
-                Toast.makeText(this@CouponsAndEarningActivity, "No Data Found", Toast.LENGTH_SHORT)
+                Toast.makeText(this@CouponsAndEarningActivity, getString(R.string.no_data_found), Toast.LENGTH_SHORT)
                     .show()
                 binding.recyclerCouponList.isVerticalScrollBarEnabled = true
                 binding.recyclerCouponList.isVerticalFadingEdgeEnabled = true

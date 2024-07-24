@@ -59,6 +59,7 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
     private var profile = ""
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +73,9 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
 
         profileUpdate = intent.getStringExtra("profileUpdate").toString()
         profile = PascoApp.encryptedPrefs.profileUpdate
-     /*   if (profile == "0") {
-            showCalenderPopup()
-        }*/
+        /*   if (profile == "0") {
+               showCalenderPopup()
+           }*/
 
 
         if (profileUpdate == "update") {
@@ -240,7 +241,8 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
                     return
                 }
                 doubleBackToExitPressedOnce = true
-                Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_again_to_exit), Toast.LENGTH_SHORT)
+                    .show()
                 Handler(Looper.getMainLooper()).postDelayed({
                     // Your Code
                     doubleBackToExitPressedOnce = false
@@ -268,7 +270,7 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
         val body = GetProfileBody(
             language = languageId
         )
-        getProfileModelView.getProfile(this, progressDialog,body)
+        getProfileModelView.getProfile(this, progressDialog, body)
     }
 
     private fun getProfileObserver() {
@@ -294,7 +296,8 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
     }
 
     private fun getNotificationCountApi() {
-        notificationCountViewModel.getCountNoti()
+        val body = GetProfileBody(language = languageId)
+        notificationCountViewModel.getCountNoti(body)
     }
 
     private fun notificationCountObserver() {
@@ -329,11 +332,6 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
     }
 
 
-
-
-
-
-
     override fun deleteNotification(position: Int, id: Int) {
         val reminder = id
     }
@@ -344,7 +342,8 @@ class UserDashboardActivity : Originator(), NotificationClickListener {
         pickupLatitude: Double?,
         pickupLongitude: Double?,
         verificationCode: String?,
-        upFrontPrice: Double?
+        upFrontPrice: Double?,
+        paymentMethod: String?
     ) {
 
     }

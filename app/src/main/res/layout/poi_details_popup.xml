@@ -16,7 +16,7 @@
         android:id="@+id/tv_coupon_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Coupon Title"
+        android:text="@string/coupon_title"
         android:textStyle="bold"
         android:textSize="16sp" />
 
@@ -24,55 +24,55 @@
         android:id="@+id/tv_coupon_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Coupon Type"
+        android:text="@string/coupon_type"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Coupon Code"
+        android:text="@string/coupon_code"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Date"
+        android:text="@string/start_date"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End Date"
+        android:text="@string/end_date"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_coupon_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Limit"
+        android:text="@string/limit"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Poi Address"
+        android:text="@string/point_address"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Poi City"
+        android:text="@string/point_city"
         android:textSize="@dimen/normal_txt_size_12" />
 
     <TextView
         android:id="@+id/tv_poi_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Poi Description"
+        android:text="@string/point_description"
         android:textSize="@dimen/normal_txt_size_12" />
 </LinearLayout>

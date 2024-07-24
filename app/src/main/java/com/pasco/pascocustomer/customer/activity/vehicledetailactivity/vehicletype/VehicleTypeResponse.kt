@@ -27,10 +27,6 @@ class VehicleTypeResponse:Serializable {
         @Expose
         var shipmentname: String? = null
 
-        @SerializedName("capabilityname")
-        @Expose
-        var capabilityname: List<String>? = null
-
         @SerializedName("vehiclename")
         @Expose
         var vehiclename: String? = null
@@ -66,5 +62,10 @@ class VehicleTypeResponse:Serializable {
         @SerializedName("upfront_payment")
         @Expose
         var upfrontPayment: Double? = null
+
+        @SerializedName("unique_code")
+        @Expose
+        var uniqueCode: String? = null
+
     }
 }

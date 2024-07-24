@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -15,6 +16,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +78,7 @@ class ProfileFragment : Fragment() {
                         .show()
                 }
             } else {
-                Toast.makeText(requireActivity(), "Image capture cancelled", Toast.LENGTH_SHORT)
+                Toast.makeText(requireActivity(), getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -107,11 +109,9 @@ class ProfileFragment : Fragment() {
         val view = binding.root
         activity = requireActivity()
 
-        sharedPreferencesLanguageName = activity.getSharedPreferences(
-            "PREFERENCE_NAME",
-            AppCompatActivity.MODE_PRIVATE
-        )
+        sharedPreferencesLanguageName = activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         binding.editProfileBtn.setOnClickListener {
             requestCameraPermission()
@@ -121,14 +121,20 @@ class ProfileFragment : Fragment() {
             val email = binding.emailTxtA.text.toString()
             val isValid = isValidEmail(email)
             if (selectedImageFile == null) {
-                Toast.makeText(requireContext(), "Please upload profile", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), getString(R.string.Please_upload_profile), Toast.LENGTH_SHORT)
                     .show()
             } else if (isValid) {
                 updateProfile()
             } else {
-                Toast.makeText(requireContext(), "Please enter valid email", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), getString(R.string.Please_enter_valid_email), Toast.LENGTH_SHORT)
                     .show()
             }
+        }
+        if (Objects.equals(language,"ar"))
+        {
+         binding.userName.gravity = Gravity.RIGHT
+         binding.emailTxtA.gravity = Gravity.RIGHT
+         binding.currentCityTxt.gravity = Gravity.RIGHT
         }
 
         getProfileApi()
@@ -146,16 +152,6 @@ class ProfileFragment : Fragment() {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
-
-            /*   if (Objects.equals(language, "ar")) {
-                   if (options[item] == getString(R.string.take_photo)) {
-                       openCamera()
-                   } else if (options[item] == getString(R.string.gallery)) {
-                       openGallery()
-                   } else if (options[item] == getString(R.string.cancel)) {
-                       dialog.dismiss()
-                   }
-               }*/
 
             when {
 
@@ -204,19 +200,19 @@ class ProfileFragment : Fragment() {
                             setImageOnImageView(selectedImageFile)
                         } else {
                             // Handle the case where conversion to File failed
-                            showToast("Error converting URI to File")
+                           // showToast("Error converting URI to File")
                         }
                     } else {
                         // Handle the case where the URI is null
-                        showToast("Selected image URI is null")
+                        //showToast("Selected image URI is null")
                     }
                 } else {
                     // Handle the case where data is null
-                    showToast("No data received")
+                    //showToast("No data received")
                 }
             } else {
                 // Handle the case where the result code is not RESULT_OK
-                showToast("Action canceled")
+               // showToast("Action canceled")
             }
         }
 
@@ -236,7 +232,7 @@ class ProfileFragment : Fragment() {
             }
         } catch (e: Exception) {
             // Log the exception for debugging purposes
-            Log.e("ConversionError", "Error converting URI to File: ${e.message}", e)
+
         }
         return null
     }
@@ -338,6 +334,7 @@ class ProfileFragment : Fragment() {
         val currentCity = binding.currentCityTxt.text.toString().toRequestBody(MultipartBody.FORM)
         val languageId = languageId.toRequestBody(MultipartBody.FORM)
 
+        Log.e("languageId", "languageId...$languageId")
 
         var profileImage: MultipartBody.Part? = null
 
@@ -376,11 +373,19 @@ class ProfileFragment : Fragment() {
         ) {
 
             var message = it.peekContent().msg!!
-            PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
-            Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
-            val intent = Intent(context, UserDashboardActivity::class.java)
-            startActivity(intent)
-            getProfileApi()
+            var status = it.peekContent().status!!
+            if (status == "True" )
+            {
+                PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+                val intent = Intent(context, UserDashboardActivity::class.java)
+                startActivity(intent)
+                getProfileApi()
+            }
+            else{
+                Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+            }
+
         }
 
         updateProfileModelView.errorResponse.observe(this) {

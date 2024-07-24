@@ -183,20 +183,24 @@ class LocationsActivity : Originator(), OnMapReadyCallback {
     }
 
     private fun getAddressFromLatLng(latitude: Double, longitude: Double): String {
-        val geocoder = Geocoder(this, Locale.getDefault())
-        try {
+        val geocoder = Geocoder(this, Locale.ENGLISH)
+        return try {
             val addresses = geocoder.getFromLocation(latitude, longitude, 1)
-            if (addresses != null) {
-                if (addresses.isNotEmpty()) {
-                    val address = addresses[0]
-                    return address.getAddressLine(0) ?: "No address found"
-                }
+            if (addresses != null && addresses.isNotEmpty()) {
+                val address = addresses[0]
+                val countryName = address.countryName ?: "No country found"
+                val addressLine = address.getAddressLine(0) ?: "No address found"
+                "$addressLine, $countryName"
+            } else {
+                "No address found"
             }
         } catch (e: IOException) {
             e.printStackTrace()
+            "Error retrieving address"
         }
-        return "Error retrieving address"
     }
+
+
 
 
     private fun getAddressFromLocation(location: LatLng) {

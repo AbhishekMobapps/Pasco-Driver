@@ -12,11 +12,13 @@ import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.adapter.EmergencyAdapter
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCResponse
 import com.pasco.pascocustomer.Driver.emergencyhelp.ViewModel.EmergencyCViewModel
+import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.databinding.ActivityEmergencyCallBinding
 import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 @AndroidEntryPoint
 class EmergencyCallActivity : Originator() {
@@ -27,6 +29,7 @@ class EmergencyCallActivity : Originator() {
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEmergencyCallBinding.inflate(layoutInflater)
@@ -35,8 +38,12 @@ class EmergencyCallActivity : Originator() {
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         binding.backArrowImgEmergency.setOnClickListener {
             finish()
+        }
+        if (Objects.equals(language, "ar")) {
+            binding.backArrowImgEmergency.setImageResource(R.drawable.next)
         }
         // Call API
         getEmergency()

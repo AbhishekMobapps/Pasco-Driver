@@ -32,5 +32,9 @@ class AdditionalServiceResponse {
         @Expose
         var additionalAmount: Double? = null
 
+        @SerializedName("additional_code")
+        @Expose
+        var additionalCode: String? = null
+
     }
 }

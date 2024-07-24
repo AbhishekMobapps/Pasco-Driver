@@ -242,7 +242,7 @@ class HomeFragment : Fragment(), SignUpCityName {
             } else if (data!!.approvalStatus == "Approved") {
                 enableAll()
             }
-            Log.e("status", "getVehicleDetailsObserver: " + PascoApp.encryptedPrefs.driverStatuss)
+
 
         }
     }
@@ -292,10 +292,6 @@ class HomeFragment : Fragment(), SignUpCityName {
                     val phoneUtil = PhoneNumberUtil.getInstance()
                     val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
 
-                    // Log the country code and country name
-                    Log.e("cityName", "$currentCityName: No country code found")
-                    Log.e("Country Name", countryName ?: "No country name found")
-                    Log.e("Phone Country Code", "+$phoneCountryCode")
 
                     formattedCountryCode = "+$phoneCountryCode"
 
@@ -353,8 +349,6 @@ class HomeFragment : Fragment(), SignUpCityName {
     }
 
     private fun getCityList() {
-        Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
-
         val cityBody = UpdateCityBody(
             countrycode = formattedCountryCode,
             language = languageId
@@ -407,7 +401,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                 }
             }
             if (filterList.isEmpty()) {
-                Toast.makeText(requireActivity(), "No Data found", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), getString(R.string.no_data_found), Toast.LENGTH_LONG).show()
             } else {
                 updateAddressAdapter?.setFilteredList(filterList)
             }
@@ -464,7 +458,7 @@ class HomeFragment : Fragment(), SignUpCityName {
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Unable to get current location.",
+                        getString(R.string.Unable_to_get_current_location),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -507,7 +501,7 @@ class HomeFragment : Fragment(), SignUpCityName {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 shareLocation()
             } else {
-                Toast.makeText(requireContext(), "Location permission denied.", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), getString(R.string.Location_permission_denied), Toast.LENGTH_SHORT)
                     .show()
             }
         }

@@ -9,38 +9,6 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/imgLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo_2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/tips_annoucements_or_n_features_go_here_in_carousel"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/imgLogo"
-            app:layout_constraintStart_toStartOf="@+id/imgLogo"
-            app:layout_constraintTop_toBottomOf="@+id/imgLogo" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/firstLayoutCreateAcc"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -49,7 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topLayout"
         tools:ignore="DuplicateIds">
 
         <ScrollView
@@ -77,6 +44,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp"
                         android:gravity="center"
                         android:text="@string/register"
                         android:textColor="@color/black"
@@ -151,7 +119,7 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginLeft="20dp"
@@ -173,7 +141,7 @@
                             <EditText
                                 android:id="@+id/userName"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_weight="6"
                                 android:background="@null"
                                 android:ems="3"
@@ -185,8 +153,13 @@
                                 android:textColor="@color/black"
                                 android:textColorHint="@color/grey_dark"
                                 android:textFontWeight="400"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="0.9" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -225,7 +198,7 @@
                                 android:textSize="14sp" />
                         </LinearLayout>
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginLeft="20dp"
@@ -235,19 +208,11 @@
                             android:orientation="horizontal"
                             android:weightSum="6">
 
-                            <!-- <ImageView
-                                 android:layout_width="25dp"
-                                 android:layout_height="25dp"
-                                 android:layout_gravity="center"
-                                 android:layout_weight="0.6"
-                                 android:src="@drawable/email"
-                                 android:tint="@color/grey"
-                                 tools:ignore="UseAppTint" />-->
 
                             <EditText
                                 android:id="@+id/driverEmail"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_weight="6"
                                 android:background="@null"
                                 android:ems="3"
@@ -259,8 +224,13 @@
                                 android:textColor="@color/black"
                                 android:textColorHint="@color/grey_dark"
                                 android:textFontWeight="400"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="0.9" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -319,7 +289,7 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_marginLeft="20dp"
@@ -329,34 +299,28 @@
                             android:orientation="horizontal"
                             android:weightSum="6">
 
-                            <!-- <ImageView
-                                 android:layout_width="25dp"
-                                 android:layout_height="25dp"
-                                 android:layout_gravity="center"
-                                 android:layout_weight="0.6"
-                                 android:src="@drawable/email"
-                                 android:tint="@color/grey"
-                                 tools:ignore="UseAppTint" />-->
 
                             <TextView
                                 android:id="@+id/addressTxt"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_weight="6"
                                 android:background="@null"
                                 android:drawableEnd="@drawable/baseline_arrow_drop_down_24"
                                 android:ems="3"
                                 android:gravity="center_vertical"
                                 android:hint="Current Address"
-                                android:inputType="text"
-                                android:paddingLeft="15dp"
-                                android:paddingRight="10dp"
                                 android:text=""
                                 android:textColor="@color/black"
                                 android:textColorHint="@color/grey_dark"
                                 android:textFontWeight="400"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_percent="0.95" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -373,34 +337,41 @@
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/signUpCosnt"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="horizontal"
-                        android:weightSum="10">
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:id="@+id/notYet"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="3.6"
-                            android:gravity="right"
                             android:text="@string/already_have_an_account"
                             android:textColor="@color/grey_dark"
-                            android:textSize="12sp" />
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/signInBtn"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="2dp"
-                            android:layout_weight="6.4"
                             android:text="@string/signin"
                             android:textColor="@color/earth_yellow"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </androidx.appcompat.widget.LinearLayoutCompat>
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/notYet"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 </LinearLayout>
 

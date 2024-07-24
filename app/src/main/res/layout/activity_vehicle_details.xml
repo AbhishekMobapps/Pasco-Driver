@@ -96,7 +96,7 @@
                         android:layout_marginTop="20dp"
                         android:layout_marginRight="39dp"
                         android:gravity="center_vertical"
-                        android:text="Add Vehicle Details"
+                        android:text="@string/add_vehicle_details"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -174,7 +174,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Vehicle Image"
+                                            android:text="@string/vehicle_image"
                                             android:textSize="17sp" />
 
                                         <LinearLayout
@@ -210,7 +210,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Driving Doc"
+                                            android:text="@string/driving_doc"
                                             android:textSize="17sp" />
 
                                         <LinearLayout
@@ -250,7 +250,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Vehicle RC"
+                                            android:text="@string/vehicle_rc"
                                             android:textSize="17sp" />
 
                                         <LinearLayout
@@ -301,7 +301,7 @@
                                                 android:layout_width="match_parent"
                                                 android:layout_height="match_parent"
                                                 android:layout_gravity="center"
-                                                android:hint="Vehicle No."
+                                                android:hint="@string/vehicle_no"
                                                 android:paddingLeft="10dp"
                                                 android:background="@null"
                                               />

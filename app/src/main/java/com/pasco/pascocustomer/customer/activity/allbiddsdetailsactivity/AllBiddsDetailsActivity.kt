@@ -162,9 +162,9 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
 
     private fun showFullAddressDialog(fullBookingNumber: String) {
         val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("Order ID")
+        alertDialogBuilder.setTitle(getString(R.string.order_id))
         alertDialogBuilder.setMessage(fullBookingNumber)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+        alertDialogBuilder.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
             dialog.dismiss()
         }
         val alertDialog = alertDialogBuilder.create()
@@ -182,17 +182,18 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
         pickupLatitude: Double?,
         pickupLongitude: Double?,
         verificationCode: String?,
-        upFrontPrice: Double?
+        upFrontPrice: Double?,
+        paymentMethod: String?
     ) {
         bookingId = id.toString()
-        acceptOrRejectApi(bookingId, upFrontPrice)
+        acceptOrRejectApi(bookingId, upFrontPrice, paymentMethod)
         acceptOrRejectObserver(bookingId, pickupLatitude, pickupLongitude, verificationCode)
     }
 
-    private fun acceptOrRejectApi(id: String, upFrontPrice: Double?) {
+    private fun acceptOrRejectApi(id: String, upFrontPrice: Double?, paymentMethod: String?) {
         //   val codePhone = strPhoneNo
 
-        Log.e("upFrontPriceAA", "upFrontPrice..$upFrontPrice")
+        Log.e("upFrontPriceAA", "paymentMethod..$paymentMethod")
         val loinBody = AcceptOrRejectBidBody(
             payment_amount = upFrontPrice.toString(),
             payment_type = "wallet",
@@ -236,12 +237,12 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
     }
 
     private fun showWalletRequirementPopup() {
-        val message = "Please add amount in your wallet!"
+        val message = getString(R.string.Please_add_amount_in_your_wallet)
 
         val builder = AlertDialog.Builder(this@AllBiddsDetailsActivity)
-        builder.setTitle("Insufficient wallet amount to accept the bid. Your wallet amount should be equal to the bid price")
+        builder.setTitle(getString(R.string.Insufficient_wallet_amount))
         builder.setMessage(message)
-        builder.setPositiveButton("Add Funds") { dialog, _ ->
+        builder.setPositiveButton(getString(R.string.Add_Funds)) { dialog, _ ->
             val intent = Intent(this, DriverWalletActivity::class.java)
             intent.putExtra("addWallet", "wallet")
             startActivity(intent)
@@ -249,7 +250,7 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Skip") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.skip)) { dialog, _ ->
             dialog.dismiss()
         }
 
