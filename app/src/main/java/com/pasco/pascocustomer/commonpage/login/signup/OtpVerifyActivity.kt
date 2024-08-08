@@ -119,7 +119,8 @@ class OtpVerifyActivity : Originator() {
                 binding.box6.text.toString()
             )
             if (otpFields.any { it.isEmpty() }) {
-                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 val verificationCode =
                     "${binding.box5.text}${binding.box1.text}${binding.box2.text}${binding.box3.text}${binding.box4.text}${binding.box6.text}"
@@ -236,7 +237,11 @@ class OtpVerifyActivity : Originator() {
                 } else {
                     // Sign in failed
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(this, getString(R.string.Please_enter_valid_OTP), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.Please_enter_valid_OTP),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         //   clearOtpFields()
                     }
                 }
@@ -268,13 +273,24 @@ class OtpVerifyActivity : Originator() {
         driverViewModel.mRejectResponse.observe(
             this
         ) {
-            val token = it.peekContent().token
-            PascoApp.encryptedPrefs.token = token?.refresh ?: ""
-            PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
-            PascoApp.encryptedPrefs.isFirstTime = false
-            val intent = Intent(this, VehicleDetailsActivity::class.java)
-            startActivity(intent)
-            finish()
+
+            val status = it.peekContent().status
+            val message = it.peekContent().msg
+            if (status == "True") {
+                val token = it.peekContent().token
+                PascoApp.encryptedPrefs.userId = it.peekContent().userId.toString()
+                PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+                PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
+                PascoApp.encryptedPrefs.isFirstTime = false
+                PascoApp.encryptedPrefs.approvalStatus =it.peekContent().approvalStatus.toString()
+                PascoApp.encryptedPrefs.userType = it.peekContent().data?.userType.toString()
+                val intent = Intent(this, VehicleDetailsActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+            }
+
 
         }
         driverViewModel.errorResponse.observe(this) {
@@ -305,10 +321,11 @@ class OtpVerifyActivity : Originator() {
             val status = it.peekContent().status
             Log.e("LogValueAA", "loginValueUSER " + loginValue)
 
-            if (status =="True")
-            {
+            if (status == "True") {
                 val token = it.peekContent().token
+                PascoApp.encryptedPrefs.userId = it.peekContent().userId.toString()
                 PascoApp.encryptedPrefs.token = token?.refresh ?: ""
+                PascoApp.encryptedPrefs.userType = it.peekContent().userType.toString()
                 PascoApp.encryptedPrefs.profileUpdate = it.peekContent().profile.toString()
                 PascoApp.encryptedPrefs.bearerToken = "Bearer ${token?.access ?: ""}"
                 val intent = Intent(this, UserDashboardActivity::class.java)
@@ -316,9 +333,7 @@ class OtpVerifyActivity : Originator() {
                 startActivity(intent)
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 finish()
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
 

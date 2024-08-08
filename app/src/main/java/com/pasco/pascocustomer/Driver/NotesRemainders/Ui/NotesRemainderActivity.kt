@@ -69,6 +69,7 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         if (Objects.equals(language, "ar")) {
             binding.backArrowAddNotes.setImageResource(R.drawable.next)
@@ -226,10 +227,18 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
         commentAddNotesReminder: EditText
     ) {
         if (startDateTxtNotes.text.toString().isNullOrBlank()) {
-            Toast.makeText(this@NotesRemainderActivity, getString(R.string.Please_select_date), Toast.LENGTH_SHORT)
+            Toast.makeText(
+                this@NotesRemainderActivity,
+                getString(R.string.Please_select_date),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else if (startTimetxtNotes.text.toString().isNullOrBlank()) {
-            Toast.makeText(this@NotesRemainderActivity, getString(R.string.Please_select_time), Toast.LENGTH_SHORT)
+            Toast.makeText(
+                this@NotesRemainderActivity,
+                getString(R.string.Please_select_time),
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else if (addSubjectEdittext.text.toString().isNullOrBlank()) {
             Toast.makeText(
@@ -251,7 +260,8 @@ class NotesRemainderActivity : Originator(), ReminderItemClick {
     }
 
     private fun getReminderApi() {
-        val body = CustomerOrderBody(language = languageId)
+        val body = CustomerOrderBody(
+            language = languageId)
         reminderModelView.getReminder(
             this,
             progressDialog,

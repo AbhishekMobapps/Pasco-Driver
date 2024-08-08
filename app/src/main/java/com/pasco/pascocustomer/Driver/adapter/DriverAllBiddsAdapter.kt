@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,17 +70,18 @@ class DriverAllBiddsAdapter(
 
         holder.biddingStatusTextView.apply {
             background = when (biddingStatus) {
-                "Confirmed" -> ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
-                "Completed" -> ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
+                context.getString(R.string.confirmed) -> ContextCompat.getDrawable(context, R.drawable.confirm_button_background)
+                context.getString(R.string.completed) -> ContextCompat.getDrawable(context, R.drawable.accept_btn_color)
                 else -> ContextCompat.getDrawable(context, R.drawable.cancel_button_color)
             }
             setTextColor(Color.parseColor("#FFFFFFFF"))
             text = biddingStatus
+            Log.e("biddingStatus", "biddingStatus...$biddingStatus")
         }
 
         holder.linearDriverHis.setOnClickListener {
             val intent = when (biddingStatus) {
-                "Confirmed" -> Intent(context, DriverStartRidingActivity::class.java).apply {
+                context.getString(R.string.confirmed) -> Intent(context, DriverStartRidingActivity::class.java).apply {
                     putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
                     putExtra("dropLoc", driverOrderHis.dropLocation.toString())
                     putExtra("latitudePickUp", driverOrderHis.pickupLatitude.toString())
@@ -99,7 +101,7 @@ class DriverAllBiddsAdapter(
         }
         val id = driverOrderHis.id!!.toString()
 
-        if (biddingStatus == "Pending")
+        if (biddingStatus == context.getString(R.string.pending))
         {
             holder.cancelButtonBid.visibility = View.VISIBLE
             holder.cancelButtonBid.setOnClickListener {

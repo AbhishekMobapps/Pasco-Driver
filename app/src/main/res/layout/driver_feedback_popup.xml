@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_size_20"
             android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/skip"
             android:textColor="@color/earth_yellow"
             android:textSize="17sp"
@@ -92,7 +93,7 @@
                 android:background="@null"
                 android:gravity="start"
                 android:textSize="@dimen/normal_txt_size_12"
-                android:hint="Your feedback here.."
+                android:hint="@string/leave_a_feedback"
                 android:padding="10dp" />
 
 

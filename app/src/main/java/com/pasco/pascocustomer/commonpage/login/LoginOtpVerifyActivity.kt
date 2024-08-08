@@ -12,6 +12,7 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -36,6 +37,7 @@ import com.pasco.pascocustomer.databinding.ActivityLoginOtpVerifyBinding
 import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 @AndroidEntryPoint
 class LoginOtpVerifyActivity : Originator() {
@@ -53,12 +55,14 @@ class LoginOtpVerifyActivity : Originator() {
     private var countDownTimer: CountDownTimer? = null
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginOtpVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+        language = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         FirebaseApp.initializeApp(this)
         mAuth = FirebaseAuth.getInstance()
@@ -70,6 +74,11 @@ class LoginOtpVerifyActivity : Originator() {
         binding.phoneNumber.text = "$countryCode $strPhoneNo"
 
         Log.e("OtpCheckData", "loginValue..Otp" + loginValue)
+
+        if (Objects.equals(language, "ar")) {
+
+        }
+
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -248,7 +257,8 @@ class LoginOtpVerifyActivity : Originator() {
                 PascoApp.encryptedPrefs.isFirstTime = false
 
                 if (approved == 2 && userType == "driver") {
-                    Log.e("AAAAA", "aaaaaaa....")
+
+                    val intent = Intent(this,VehicleDetailsActivity::class.java)
                     startActivity(intent)
                 } else if (loginValue == "driver" && userType == "driver") {
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -262,8 +272,7 @@ class LoginOtpVerifyActivity : Originator() {
                         Intent(this@LoginOtpVerifyActivity, UserDashboardActivity::class.java)
                     startActivity(intent)
                     finish()
-                }else
-                {
+                } else {
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }
             }

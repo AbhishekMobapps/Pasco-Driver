@@ -356,7 +356,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/button_background_color"
                     android:gravity="center"
-                    android:text="Finish Your Ride"
+                    android:text="@string/finish_your_ride"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/normal_txt_size"

@@ -94,33 +94,24 @@
 
             <TextView
                 android:id="@+id/customerId"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/order_ids"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
+                app:layout_constraintWidth_percent="0.24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/colonTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" :"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/customerId"
-                app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
                 android:id="@+id/oderIdTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:gravity="center"
+                android:gravity="start"
+                app:layout_constraintWidth_percent=".76"
                 android:text="PSR45678912"
                 android:textColor="@color/grey_dark"
                 android:textSize="14sp"
@@ -144,11 +135,12 @@
 
             <TextView
                 android:id="@+id/pickUp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup"
+                app:layout_constraintWidth_percent="0.24"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -156,13 +148,13 @@
 
             <TextView
                 android:id="@+id/pickUpLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
+                android:textAlignment="textStart"
                 android:text="Noida Sector 59"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
+                app:layout_constraintWidth_percent="0.76"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pickUp"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -182,11 +174,12 @@
 
             <TextView
                 android:id="@+id/drop"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/drop"
+                android:text="@string/destination"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
+                app:layout_constraintWidth_percent="0.24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -194,13 +187,13 @@
 
             <TextView
                 android:id="@+id/dropLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:gravity="center"
+                android:textAlignment="textStart"
                 android:text="Noida Sector 59"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
+                app:layout_constraintWidth_percent="0.76"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/drop"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -220,11 +213,12 @@
 
             <TextView
                 android:id="@+id/distance"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/destination"
+                android:text="@string/distance"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                app:layout_constraintWidth_percent="0.24"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -232,10 +226,10 @@
 
             <TextView
                 android:id="@+id/distanceTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:gravity="center"
+                android:gravity="start"
+                app:layout_constraintWidth_percent="0.76"
                 android:text="35Km"
                 android:textColor="@color/grey"
                 android:textSize="14sp"

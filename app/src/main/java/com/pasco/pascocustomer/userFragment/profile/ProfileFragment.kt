@@ -109,7 +109,8 @@ class ProfileFragment : Fragment() {
         val view = binding.root
         activity = requireActivity()
 
-        sharedPreferencesLanguageName = activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        sharedPreferencesLanguageName =
+            activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
@@ -120,16 +121,24 @@ class ProfileFragment : Fragment() {
         binding.updateBtn.setOnClickListener {
             val email = binding.emailTxtA.text.toString()
             val isValid = isValidEmail(email)
+
             if (selectedImageFile == null) {
-                Toast.makeText(requireContext(), getString(R.string.Please_upload_profile), Toast.LENGTH_SHORT)
-                    .show()
-            } else if (isValid) {
-                updateProfile()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.Please_upload_profile),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (!isValid) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.Please_enter_valid_email),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.Please_enter_valid_email), Toast.LENGTH_SHORT)
-                    .show()
+                updateProfile()
             }
         }
+
         if (Objects.equals(language,"ar"))
         {
          binding.userName.gravity = Gravity.RIGHT

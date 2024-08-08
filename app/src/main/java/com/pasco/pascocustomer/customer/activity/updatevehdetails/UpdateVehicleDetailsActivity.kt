@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.AddVehicle.ServiceListViewModel.ServicesViewModel
+import com.pasco.pascocustomer.Driver.DriverDashboard.Ui.DriverDashboardActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.activity.Driver.AddVehicle.VehicleType.VehicleTypeViewModel
 import com.pasco.pascocustomer.application.PascoApp
@@ -52,6 +53,7 @@ class UpdateVehicleDetailsActivity : Originator() {
     private lateinit var binding: ActivityUpdateVehicleDetailsBinding
     private var spinnerTransportId = ""
     private var spinnerVehicleTypeId = ""
+    private var shipmentname = ""
     private val progressDialog by lazy { CustomProgressDialog(this) }
     private var imageUrlVp: String? = null
     private var imageUrlVd: String? = null
@@ -152,6 +154,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     val item = binding.vehicleTypeSpinnerUVD.selectedItem.toString()
                     if (item != getString(R.string.selectVehicleType)) {
                         spinnerVehicleTypeId = VehicleType!![i].uniqueCode.toString()
+                        shipmentname = VehicleType!![i].vehiclename.toString()
 
                     }
                 }
@@ -160,6 +163,30 @@ class UpdateVehicleDetailsActivity : Originator() {
                     // Do nothing
                 }
             }
+
+        binding.submitBtnAddVehUpdate.setOnClickListener {
+            Log.e("spinnerTransportId", "spinnerTransportId.....btn $vehicleName $shipmentname")
+            if (vehicleName != shipmentname) {
+                if (selectedImageFile == null) {
+                    Toast.makeText(this, "Please upload vehicle image", Toast.LENGTH_SHORT).show()
+                } else if (selectedImageFileDoc == null) {
+                    Toast.makeText(this, "Please upload Driving doc", Toast.LENGTH_SHORT).show()
+                } else if (selectedImageFileRc == null) {
+                    Toast.makeText(this, "Please upload vehicle RC", Toast.LENGTH_SHORT).show()
+                } else if (binding.vehicleNoAddUpdate.text.isEmpty()) {
+                    Toast.makeText(this, "Please enter  vehicle  number", Toast.LENGTH_SHORT).show()
+                } else {
+                    updateVehDetailsApi()
+                    putUpdateDetailsObserver()
+                }
+            } else {
+                updateVehDetailsApi()
+                putUpdateDetailsObserver()
+            }
+
+
+        }
+
 
         binding.selectVehicleUPV.setOnClickListener {
             openCameraOrGallery("vehicleImg")
@@ -172,12 +199,7 @@ class UpdateVehicleDetailsActivity : Originator() {
         binding.selectVehicleRcUPV.setOnClickListener {
             openCameraOrGallery("vehicleRc")
         }
-        binding.submitBtnAddVehUpdate.setOnClickListener {
-            //call api
-            Log.e("dasdas" + "onCreate: ", "Hellp")
-            updateVehDetailsApi()
-        }
-        putUpdateDetailsObserver()
+
 
     }
 
@@ -293,63 +315,19 @@ class UpdateVehicleDetailsActivity : Originator() {
         }
     }
 
-    private fun updateVehDetailsApi() {
-        val vehicleNo = binding.vehicleNoAddUpdate.text.toString().toRequestBody(MultipartBody.FORM)
-        val languageId = languageId.toRequestBody(MultipartBody.FORM)
-        val spinnerVehType = spinnerVehicleTypeId.toRequestBody(MultipartBody.FORM)
-        val vehiclePhoto = selectedImageFile?.let {
-            it.asRequestBody("image/*".toMediaTypeOrNull())
-        }?.let {
-            MultipartBody.Part.createFormData(
-                "vehicle_photo",
-                selectedImageFile!!.name,
-                it
-            )
-        }
-
-        val document = selectedImageFileDoc?.let {
-            MultipartBody.Part.createFormData(
-                "document",
-                selectedImageFileDoc!!.name,
-                it.asRequestBody("application/*".toMediaTypeOrNull())
-            )
-        }
-
-        val drivingLicense = selectedImageFileRc?.let {
-            MultipartBody.Part.createFormData(
-                "driving_license",
-                selectedImageFileRc!!.name,
-                it.asRequestBody("application/*".toMediaTypeOrNull())
-            )
-        }
-
-        vehiclePhoto?.let {
-            document?.let { it1 ->
-                drivingLicense?.let { it2 ->
-                    putVDetailsViewModel.putUpdateReqApprovaldata(
-                        progressDialog,
-                        this,
-                        spinnerVehType,
-                        vehicleNo,
-                        languageId,
-                        it,
-                        it1,
-                        it2
-                    )
-                }
-            }
-        }
-    }
-
 
     private fun openCameraOrGallery(section: String) {
         val options =
-            arrayOf<CharSequence>(getString(R.string.take_photo), getString(R.string.gallery), getString(R.string.cancel))
+            arrayOf<CharSequence>(
+                getString(R.string.take_photo),
+                getString(R.string.gallery),
+                getString(R.string.cancel)
+            )
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.select_image))
         builder.setItems(options) { dialog, item ->
             when {
-                options[item] ==getString(R.string.take_photo) -> {
+                options[item] == getString(R.string.take_photo) -> {
                     // If section is "vehicleImg", directly open the camera
                     if (section == "vehicleImg") {
                         openCamera()
@@ -377,7 +355,7 @@ class UpdateVehicleDetailsActivity : Originator() {
                     }
                 }
 
-                options[item] ==  getString(R.string.cancel) -> dialog.dismiss()
+                options[item] == getString(R.string.cancel) -> dialog.dismiss()
             }
         }
         builder.show()
@@ -430,7 +408,11 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgRcUpdate.setImageBitmap(imageBitmap)
                     //  setUploadedRc()
                 } else {
-                    Toast.makeText(this,  getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -454,7 +436,11 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgDocUpdate.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -604,7 +590,11 @@ class UpdateVehicleDetailsActivity : Originator() {
                     binding.cameraImgVIUpdate.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -686,6 +676,82 @@ class UpdateVehicleDetailsActivity : Originator() {
         }
     }
 
+    private fun updateVehDetailsApi() {
+
+
+        val vehicleNo = binding.vehicleNoAddUpdate.text.toString().toRequestBody(MultipartBody.FORM)
+        val languageIds = languageId.toRequestBody(MultipartBody.FORM)
+        val spinnerVehType = spinnerVehicleTypeId.toRequestBody(MultipartBody.FORM)
+
+
+        var vehiclePhoto: MultipartBody.Part? = null
+        vehiclePhoto = if (selectedImageFile == null) {
+
+            MultipartBody.Part.createFormData(
+                "", selectedImageFile?.name, "".toRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        } else {
+            MultipartBody.Part.createFormData(
+                "vehicle_photo",
+                selectedImageFile?.name,
+                selectedImageFile!!.asRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        }
+
+        var document: MultipartBody.Part? = null
+        document = if (selectedImageFileDoc == null) {
+            MultipartBody.Part.createFormData(
+                "", selectedImageFileDoc?.name, "".toRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        } else {
+            MultipartBody.Part.createFormData(
+                "document",
+                selectedImageFileDoc?.name,
+                selectedImageFileDoc!!.asRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        }
+
+        var drivingLicense: MultipartBody.Part? = null
+        drivingLicense = if (selectedImageFileRc == null) {
+
+            MultipartBody.Part.createFormData(
+                "", selectedImageFileRc?.name, "".toRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        } else {
+            MultipartBody.Part.createFormData(
+                "driving_license",
+                selectedImageFileRc?.name,
+                selectedImageFileRc!!.asRequestBody("*image/*".toMediaTypeOrNull())
+            )
+
+        }
+        Log.e(
+            "dasdas",
+            "Help Api.. $spinnerVehicleTypeId $selectedImageFileRc $selectedImageFileDoc $selectedImageFile $languageId ${binding.vehicleNoAddUpdate.text}"
+        )
+        vehiclePhoto?.let {
+            document?.let { it1 ->
+                drivingLicense?.let { it2 ->
+                    putVDetailsViewModel.putUpdateReqApprovaldata(
+                        progressDialog,
+                        this,
+                        spinnerVehType,
+                        vehicleNo,
+                        languageIds,
+                        it,
+                        it1,
+                        it2
+                    )
+                }
+            }
+        }
+    }
+
     private fun putUpdateDetailsObserver() {
         putVDetailsViewModel.mPutApprovalResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -694,11 +760,25 @@ class UpdateVehicleDetailsActivity : Originator() {
             } else {
                 // The condition is true, perform actions here
 
-                Toast.makeText(this, message, Toast.LENGTH_LONG)
-                    .show()
-                getVehicleDetails()
-                val intent = Intent(this@UpdateVehicleDetailsActivity, LoginActivity::class.java)
-                startActivity(intent)
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                if (vehicleName != shipmentname) {
+                    PascoApp.encryptedPrefs.driverApprovedId = "0"
+                    val intent =
+                        Intent(
+                            this@UpdateVehicleDetailsActivity,
+                            DriverDashboardActivity::class.java
+                        )
+                    startActivity(intent)
+                    finish()
+                } else {
+                    val intent =
+                        Intent(
+                            this@UpdateVehicleDetailsActivity,
+                            DriverDashboardActivity::class.java
+                        )
+                    startActivity(intent)
+                    finish()
+                }
 
 
             }

@@ -34,6 +34,7 @@ class ChooseLanguageActivity : Originator() {
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
     private val languageModel: LanguageTYpeModelView by viewModels()
+    private var item = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,10 +50,6 @@ class ChooseLanguageActivity : Originator() {
             setAppLanguage()
         }
 
-        binding.continueBtn.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
 
 
 
@@ -61,7 +58,7 @@ class ChooseLanguageActivity : Originator() {
                 override fun onItemSelected(
                     adapterView: AdapterView<*>?, view: View?, i: Int, l: Long
                 ) {
-                    val item = binding.englishLanguage.selectedItem.toString()
+                    item = binding.englishLanguage.selectedItem.toString()
                     if (item != getString(R.string.choose_language)) {
                         languageId = languageList!![i].id.toString()
 
@@ -78,6 +75,19 @@ class ChooseLanguageActivity : Originator() {
                     // Do nothing
                 }
             }
+
+
+        binding.continueBtn.setOnClickListener {
+            if (binding.englishLanguage.selectedItem.toString() == getString(R.string.choose_language)) {
+                Toast.makeText(applicationContext, "Please select language", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+
+
+        }
         languageType()
         languageTypeObserver()
     }
@@ -93,7 +103,7 @@ class ChooseLanguageActivity : Originator() {
         editor.putString("languageId", languageId)
         editor.apply()
 
-       // recreate()
+        // recreate()
         updateLocale(language)
     }
 
@@ -135,7 +145,7 @@ class ChooseLanguageActivity : Originator() {
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 //   binding.linearVehDetails.visibility = View.GONE
-            } else if (response.peekContent().status.equals("True")) {
+            } else if (response.peekContent().status.  equals("True")) {
 
             }
         }

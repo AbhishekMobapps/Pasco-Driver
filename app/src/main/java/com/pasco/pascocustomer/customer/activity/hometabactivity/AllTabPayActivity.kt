@@ -5,15 +5,14 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
+import android.view.*
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -52,7 +51,8 @@ import java.util.*
 @AndroidEntryPoint
 class AllTabPayActivity : Originator() {
     private lateinit var binding: ActivityAllTabPayBinding
-    private var bottomSheetDialog: BottomSheetDialog? = null
+ //   private var bottomSheetDialog: BottomSheetDialog? = null
+    private var bottomSheetDialog: Dialog? = null
     private var lightTrans = ""
     private var selectedOption = ""
     private var count = 0
@@ -78,8 +78,9 @@ class AllTabPayActivity : Originator() {
     private var destinationLatitude = 0.0
     private var destinationLongitude = 0.0
     private var selectedDate = ""
+    private var convertedDate = ""
     private var selectedTime = ""
-    private var convertedTime = ""
+    private var selectedTimes = ""
     private var shipmentName = ""
 
     private var spinnerVehicleTypeId = ""
@@ -194,12 +195,13 @@ class AllTabPayActivity : Originator() {
                 if (count > minValue) { // Check if count is greater than 0 before subtracting
                     count--
                     commonCount--
-
-
-                        binding.cargoQtyTxt.text = getString(R.string.number_of_vehicle_you_required)
-
-
-
+                    if (count == 0) {
+                        binding.cargoQtyTxt.text = ""
+                        binding.cargoQtyTxt.hint =
+                            getString(R.string.number_of_vehicle_you_required)
+                    } else {
+                        binding.cargoQtyTxt.text = count.toString()
+                    }
                 }
             }
 
@@ -221,7 +223,7 @@ class AllTabPayActivity : Originator() {
                         Log.e("LangaugeASD", "selectedDate..Out" + selectedDate)
 
                         if (Objects.equals(language, "ar")) {
-                            val convertedDate = convertDateToArabic(selectedDate, language)
+                             convertedDate = convertDateToArabic(selectedDate, language)
                             binding.dateTxt.text = convertedDate
                             Log.e("LangaugeASD", "selectedDate.." + convertedDate)
                         } else {
@@ -250,13 +252,13 @@ class AllTabPayActivity : Originator() {
                     this, { _, selectedHour, selectedMinute ->
                         // Do something with the selected time
                         val formattedHour = if (selectedHour % 12 == 0) 12 else selectedHour % 12
-                        val amPm = if (selectedHour < 12) getString(R.string.am_pm) else getString(R.string.pm)
-                        val selectedTimes =
-                            String.format("%02d:%02d%s", formattedHour, selectedMinute, amPm)
+                        val amPm =
+                            if (selectedHour < 12) getString(R.string.am_pm) else getString(R.string.pm)
+                         selectedTimes = String.format("%02d:%02d%s", formattedHour, selectedMinute, amPm)
                         binding.timeTxt.text = selectedTimes
                         val english = convertArabicTimeToEnglish(selectedTimes)
                         selectedTime = english
-                        Log.e("CheckStatusTime", "aa...$english  $selectedTime")
+                        Log.e("CheckStatusTime", "aa...  $english     $selectedTimes")
                     }, hour, minute, false // Set to false for 12-hour format with AM/PM
                 )
                 timePickerDialog.show()
@@ -378,7 +380,7 @@ class AllTabPayActivity : Originator() {
         additionalServiceObserver()
     }
 
-    fun convertDateToArabic(dateString: String, language: String): String {
+    private fun convertDateToArabic(dateString: String, language: String): String {
         val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val date: Date = inputFormat.parse(dateString) ?: return dateString
 
@@ -391,56 +393,109 @@ class AllTabPayActivity : Originator() {
         }
     }
 
-    fun convertArabicTimeToEnglish(time: String): String {
+   /* private fun convertArabicTimeToEnglish(time: String): String {
         val englishNumbers = mapOf(
-            '٠' to '0', '١' to '1', '٢' to '2', '٣' to '3', '٤' to '4',
-            '٥' to '5', '٦' to '6', '٧' to '7', '٨' to '8', '٩' to '9'
+            '٠' to '0',
+            '١' to '1',
+            '٢' to '2',
+            '٣' to '3',
+            '٤' to '4',
+            '٥' to '5',
+            '٦' to '6',
+            '٧' to '7',
+            '٨' to '8',
+            '٩' to '9'
         )
 
         val arabicAmPm = mapOf(
-            "ص" to "AM",
-            "م" to "PM",
-            "صباحاً" to "AM",
-            "مساءً" to "PM"
+            "ص" to "AM", "م" to "PM", "صباحاً" to "AM", "مساءً" to "PM",
+            "صباح" to "AM", "مساء" to "PM"
         )
 
         val englishTime = StringBuilder()
         var amPmPart = ""
-        var isAmPmPart = false
 
-        for (char in time) {
+        var i = 0
+        while (i < time.length) {
+            val char = time[i]
+
             if (char in englishNumbers) {
                 englishTime.append(englishNumbers[char])
-            } else if (arabicAmPm.keys.any { it.contains(char) }) {
-                amPmPart = arabicAmPm[arabicAmPm.keys.first { it.contains(char) }] ?: ""
-                isAmPmPart = true
             } else {
-                englishTime.append(char)
+                // Check for AM/PM markers
+                val remainingString = time.substring(i)
+                val matchedAmPm = arabicAmPm.keys.firstOrNull { remainingString.startsWith(it) }
+                if (matchedAmPm != null) {
+                    amPmPart = arabicAmPm[matchedAmPm] ?: ""
+                    break // Exit the loop once AM/PM marker is found
+                } else {
+                    englishTime.append(char)
+                }
             }
+            i++
         }
 
-        val resultTime = englishTime.toString().trim()
+        var resultTime = englishTime.toString().trim()
 
-        // Remove leading zero if it exists
-        val finalTime = if (resultTime.startsWith("0")) {
-            resultTime.removePrefix("0")
-        } else {
-            resultTime
+        if (resultTime.startsWith("0")) {
+            resultTime = resultTime.removePrefix("0")
         }
 
-        // Remove any spaces between time and AM/PM
-        return finalTime + amPmPart
-    }
+        // Return the final time with only the correct AM/PM part
+        return resultTime + amPmPart
+    }*/
+   private fun convertArabicTimeToEnglish(time: String): String {
+       val englishNumbers = mapOf(
+           '٠' to '0', '١' to '1', '٢' to '2', '٣' to '3', '٤' to '4',
+           '٥' to '5', '٦' to '6', '٧' to '7', '٨' to '8', '٩' to '9'
+       )
+
+       val arabicAmPm = mapOf(
+           "ص" to "AM", "م" to "PM", "صباحاً" to "AM", "مساءً" to "PM",
+           "صباح" to "AM", "مساء" to "PM", "أكون" to "AM", "مساء" to "PM"
+       )
+
+       val englishTime = StringBuilder()
+       var amPmPart = ""
+       var i = 0
+
+       while (i < time.length) {
+           val char = time[i]
+
+           // Convert Arabic numerals to English
+           if (char in englishNumbers) {
+               englishTime.append(englishNumbers[char])
+           } else {
+               // Check for AM/PM markers
+               val remainingString = time.substring(i)
+               val matchedAmPm = arabicAmPm.keys.firstOrNull { remainingString.startsWith(it) }
+               if (matchedAmPm != null) {
+                   amPmPart = arabicAmPm[matchedAmPm] ?: ""
+                   break // Stop processing once AM/PM marker is found
+               } else {
+                   englishTime.append(char)
+               }
+           }
+           i++
+       }
+
+       // Remove leading zeros (only if followed by other numbers)
+       var resultTime = englishTime.toString().trim()
+       resultTime = resultTime.replaceFirst("^0+(?!$)".toRegex(), "")
+
+       // Append AM/PM part correctly
+       return resultTime + amPmPart
+   }
+
+
 
     // Test the function
-
 
 
     // Test the function
     private fun callVehicleType() {
         vehicleTypeViewModel.getVehicleTypeData(
-            progressDialog, this, vehicleId.toString(),
-            languageId
+            progressDialog, this, vehicleId.toString(), languageId
         )
     }
 
@@ -510,23 +565,34 @@ class AllTabPayActivity : Originator() {
 
     private fun validation() {
         if (binding.pickStartPoint.text.isNullOrBlank()) {
-            Toast.makeText(this, getString(R.string.Please_select_pick_up_location), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, getString(R.string.Please_select_pick_up_location), Toast.LENGTH_SHORT
+            ).show()
         } else if (binding.pickDestinationPoint.text.isNullOrBlank()) {
-            Toast.makeText(this, getString(R.string.Please_select_destination_location), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, getString(R.string.Please_select_destination_location), Toast.LENGTH_SHORT
+            ).show()
         } else if (binding.vehicleTypeSpinner.selectedItem.toString() == resources.getString(R.string.selectVehicleType)) {
-            Toast.makeText(this, getString(R.string.Please_Select_Vehicle), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Please_Select_Vehicle), Toast.LENGTH_SHORT)
+                .show()
         } else if (binding.cargoQtyTxt.text.isEmpty()) {
-            Toast.makeText(this, getString(R.string.Please_select_number_of_cargo), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, getString(R.string.Please_select_number_of_cargo), Toast.LENGTH_SHORT
+            ).show()
         } else if (binding.dateTxt.text.isNullOrEmpty()) {
             Toast.makeText(this, getString(R.string.Please_select_date), Toast.LENGTH_SHORT).show()
         } else if (binding.timeTxt.text.isNullOrEmpty()) {
             Toast.makeText(this, getString(R.string.Please_select_time), Toast.LENGTH_SHORT).show()
         } else if (!binding.cashRadioButton.isChecked && !binding.walletRadioButton.isChecked && !binding.visaRadioButton.isChecked) {
-            Toast.makeText(this, getString(R.string.Please_select_payment_method), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this, getString(R.string.Please_select_payment_method), Toast.LENGTH_SHORT
+            ).show()
         } else if (binding.yourMsg.text.isEmpty()) {
-            Toast.makeText(this, getString(R.string.Please_drop_your_message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Please_drop_your_message), Toast.LENGTH_SHORT)
+                .show()
         } else {
             bookTripPopup()
+
         }
     }
 
@@ -639,11 +705,10 @@ class AllTabPayActivity : Originator() {
                 destinationLatitude = currentAddress.latitude
                 destinationLongitude = currentAddress.longitude
                 // Format latitude and longitude with 5 decimal places
-                formattedLatitudeDropSelect =
-                    String.format(Locale.ENGLISH, "%.5f", destinationLatitude)
-                formattedLongitudeDropSelect =
-                    String.format(Locale.ENGLISH, "%.5f", destinationLongitude)
-                val address: String = addresses[0].getAddressLine(0) ?: getString(R.string.Address_not_available)
+                formattedLatitudeDropSelect = String.format(Locale.ENGLISH, "%.5f", destinationLatitude)
+                formattedLongitudeDropSelect = String.format(Locale.ENGLISH, "%.5f", destinationLongitude)
+                val address: String =
+                    addresses[0].getAddressLine(0) ?: getString(R.string.Address_not_available)
                 cityNameDrop = currentAddress.locality
                 dropCountry = currentAddress.countryName
                 binding.pickDestinationPoint.text = address
@@ -740,28 +805,31 @@ class AllTabPayActivity : Originator() {
         }
     }
 
+
+
     private fun bookTripPopup() {
+        bottomSheetDialog = Dialog(this)
+        bottomSheetDialog?.setContentView(R.layout.booking_ride_popup) // Ensure this layout exists and is correct
 
-        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
-        val view = LayoutInflater.from(this).inflate(R.layout.booking_ride_popup, null)
-        bottomSheetDialog!!.setContentView(view)
+        // Optional: Set layout size explicitly if needed
+        bottomSheetDialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
-        val bottomSheetBehavior = BottomSheetBehavior.from((view.parent) as View)
+        // Set background drawable to avoid unwanted margins
+        bottomSheetDialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        view.setOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            } else {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-            }
-        }
+        // Set animation for the dialog
+        bottomSheetDialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        bottomSheetDialog?.window?.setGravity(Gravity.BOTTOM)
+        // Ensure the dialog is showing
 
         carImg = bottomSheetDialog?.findViewById<ImageView>(R.id.carImg)
         carName = bottomSheetDialog?.findViewById<TextView>(R.id.carName)
         hourTxt = bottomSheetDialog?.findViewById<TextView>(R.id.hourTxt)
         kmTxt = bottomSheetDialog?.findViewById<TextView>(R.id.kmTxt)
         timeDurationTxt = bottomSheetDialog?.findViewById<TextView>(R.id.timeDurationTxt)
-        //bookingAmount = bottomSheetDialog.findViewById<TextView>(R.id.bookingAmount)
         totalAmount = bottomSheetDialog?.findViewById<TextView>(R.id.totalAmount)
         val cancelBtn = bottomSheetDialog?.findViewById<TextView>(R.id.cancelBtn)
         val proceedBtn = bottomSheetDialog?.findViewById<TextView>(R.id.proceedBtn)
@@ -769,11 +837,68 @@ class AllTabPayActivity : Originator() {
         val timeTxt = bottomSheetDialog?.findViewById<TextView>(R.id.timeTxt)
         val calenderBtn = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.calenderBtn)
         val timeBtn = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.timeBtn)
-        //  dateTxt = bottomSheetDialog.findViewById<TextView>(R.id.dateTxt)
-        // timeTxt = bottomSheetDialog.findViewById<TextView>(R.id.timeTxt)
 
-        dateTxt?.text = selectedDate
-        timeTxt?.text = selectedTime
+        if (Objects.equals(language,"ar"))
+        {
+            dateTxt?.text= convertedDate
+        }
+        else
+        {
+            dateTxt?.text = selectedDate
+        }
+
+        timeTxt?.text = selectedTimes
+
+        if (Objects.equals(language, "ar")) {
+
+            calenderBtn?.setBackgroundResource(R.drawable.add_button)
+            timeBtn?.setBackgroundResource(R.drawable.add_button)
+
+        } else {
+            calenderBtn?.setBackgroundResource(R.drawable.subract_button)
+            timeBtn?.setBackgroundResource(R.drawable.subract_button)
+
+        }
+
+        cancelBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+        checkChargeApi()
+
+        proceedBtn?.setOnClickListener { bookingApi() }
+
+        bottomSheetDialog?.show()
+    }
+
+    /*private fun bookTripPopup() {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+       // val view = LayoutInflater.from(this).inflate(R.layout.booking_ride_popup, null)
+        val view = LayoutInflater.from(this).inflate(R.layout.booking_ride_popup, null)
+        bottomSheetDialog?.setContentView(view)
+
+
+
+        carImg = bottomSheetDialog?.findViewById<ImageView>(R.id.carImg)
+        carName = bottomSheetDialog?.findViewById<TextView>(R.id.carName)
+        hourTxt = bottomSheetDialog?.findViewById<TextView>(R.id.hourTxt)
+        kmTxt = bottomSheetDialog?.findViewById<TextView>(R.id.kmTxt)
+        timeDurationTxt = bottomSheetDialog?.findViewById<TextView>(R.id.timeDurationTxt)
+        totalAmount = bottomSheetDialog?.findViewById<TextView>(R.id.totalAmount)
+        val cancelBtn = bottomSheetDialog?.findViewById<TextView>(R.id.cancelBtn)
+        val proceedBtn = bottomSheetDialog?.findViewById<TextView>(R.id.proceedBtn)
+        val dateTxt = bottomSheetDialog?.findViewById<TextView>(R.id.dateTxt)
+        val timeTxt = bottomSheetDialog?.findViewById<TextView>(R.id.timeTxt)
+        val calenderBtn = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.calenderBtn)
+        val timeBtn = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.timeBtn)
+
+        if (Objects.equals(language,"ar"))
+        {
+            dateTxt?.text= convertedDate
+        }
+        else
+        {
+            dateTxt?.text = selectedDate
+        }
+
+        timeTxt?.text = selectedTimes
 
         if (Objects.equals(language, "ar")) {
 
@@ -791,12 +916,12 @@ class AllTabPayActivity : Originator() {
 
         proceedBtn?.setOnClickListener { bookingApi() }
         bottomSheetDialog?.show()
-    }
+    }*/
 
     private fun bookingApi() {
         val dateTime = "$selectedDate $selectedTime"
 
-        Log.e("dateTimeAA", "dateTime.. $dateTime")
+        Log.e("dateTimeAA", "dateTime.. $dateTime  $cityNamePickUp $cityNameDrop  $pickupCountry $dropCountry")
         val bookingBody = BookingOrderBody(
             cargo = spinnerVehicleTypeId,
             cargo_quantity = binding.cargoQtyTxt.text.toString(),
@@ -972,8 +1097,7 @@ class AllTabPayActivity : Originator() {
             language = languageId
         )
         additionalServiceViewModel.getServicesData(
-            progressDialog, this,
-            body
+            progressDialog, this, body
         )
     }
 

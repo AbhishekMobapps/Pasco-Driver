@@ -23,6 +23,13 @@ class DriverResponse {
     @Expose
     var data: Data? = null
 
+    @SerializedName("user_id")
+    @Expose
+    var userId: Int? = null
+
+    @SerializedName("approval_status")
+    @Expose
+    var approvalStatus: String? = null
     inner class  Data : Serializable
     {
 

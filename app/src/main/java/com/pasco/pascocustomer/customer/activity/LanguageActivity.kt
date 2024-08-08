@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import com.pasco.pascocustomer.MainActivity
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.customer.activity.language.LanguageResponse
@@ -40,14 +41,11 @@ class LanguageActivity : AppCompatActivity() {
 
         binding.backBtn.setOnClickListener { finish() }
 
-
-
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "en").toString()
-        if (Objects.equals(language, "ar"))
-        {
+        if (Objects.equals(language, "ar")) {
             binding.backBtn.setImageResource(R.drawable.next)
-
+            updateLanguageConstraints("ar")
         }
 
         binding.englishLanguage.onItemSelectedListener =
@@ -69,10 +67,6 @@ class LanguageActivity : AppCompatActivity() {
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {}
             }
 
-        if (Objects.equals(language, "ar")) {
-
-        }
-
         languageType()
         languageTypeObserver()
     }
@@ -86,7 +80,7 @@ class LanguageActivity : AppCompatActivity() {
         updateLocale(language)
         updateLanguageType(languageId)
         updateLanguageObserver()
-
+        updateLanguageConstraints(language)
     }
 
     private fun updateLocale(language: String) {
@@ -95,6 +89,25 @@ class LanguageActivity : AppCompatActivity() {
         val config = Configuration()
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+    }
+
+    private fun updateLanguageConstraints(language: String) {
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(binding.languageContainer)
+
+        if (language == "ar") {
+            constraintSet.clear(R.id.english_language, ConstraintSet.START)
+            constraintSet.connect(R.id.english_language, ConstraintSet.END, R.id.language_container, ConstraintSet.END, 0)
+            constraintSet.clear(R.id.see_more_icon, ConstraintSet.END)
+            constraintSet.connect(R.id.see_more_icon, ConstraintSet.START, R.id.language_container, ConstraintSet.START, 0)
+        } else {
+            constraintSet.clear(R.id.english_language, ConstraintSet.END)
+            constraintSet.connect(R.id.english_language, ConstraintSet.START, R.id.language_container, ConstraintSet.START, 0)
+            constraintSet.clear(R.id.see_more_icon, ConstraintSet.START)
+            constraintSet.connect(R.id.see_more_icon, ConstraintSet.END, R.id.language_container, ConstraintSet.END, 0)
+        }
+
+        constraintSet.applyTo(binding.languageContainer)
     }
 
     private fun languageType() {
@@ -128,7 +141,6 @@ class LanguageActivity : AppCompatActivity() {
 
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-                //   binding.linearVehDetails.visibility = View.GONE
             } else if (response.peekContent().status == "True") {
                 // Additional logic if needed
             }
@@ -155,7 +167,6 @@ class LanguageActivity : AppCompatActivity() {
             intents.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intents)
             finish()
-
         }
 
         updateLanguageModel.errorResponse.observe(this) {

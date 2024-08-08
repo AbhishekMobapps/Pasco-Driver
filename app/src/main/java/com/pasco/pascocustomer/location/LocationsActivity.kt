@@ -77,16 +77,9 @@ class LocationsActivity : Originator(), OnMapReadyCallback {
 
         autoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onError(status: Status) {
-                Toast.makeText(
-                    this@LocationsActivity,
-                    "Error: ${status.statusMessage} (${status.statusCode})",
-                    Toast.LENGTH_SHORT
-                ).show()
+              //  Toast.makeText(this@LocationsActivity, "Error: ${status.statusMessage} (${status.statusCode})", Toast.LENGTH_SHORT).show()
 
-                Log.e(
-                    "LocationActivitys",
-                    "Place selection error: ${status.statusMessage} (${status.statusCode})"
-                )
+
             }
 
             override fun onPlaceSelected(place: Place) {
@@ -95,9 +88,7 @@ class LocationsActivity : Originator(), OnMapReadyCallback {
                     binding.setLocationTxt.text = place.address
                     zoomOnMap(latLng)
                 } else {
-                    Toast.makeText(
-                        this@LocationsActivity,
-                        "Error: Unable to get location details",
+                    Toast.makeText(this@LocationsActivity, "Error: Unable to get location details",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

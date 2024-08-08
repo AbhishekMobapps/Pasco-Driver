@@ -21,7 +21,7 @@ class GetNotificationOnOffModelView @Inject constructor(
 ) : AndroidViewModel(application) {
     val progressIndicator = MutableLiveData<Boolean>()
     val errorResponse = MutableLiveData<Throwable>()
-    val mRejectResponse = MutableLiveData<Event<NotificationOnOffResponse>>()
+    val mRejectResponse = MutableLiveData<Event<GetNotificationOFF>>()
     var context: Context? = null
 
 
@@ -30,8 +30,8 @@ class GetNotificationOnOffModelView @Inject constructor(
         //progressDialog.start(activity.getString(R.string.please_wait))
         progressIndicator.value = true
         repository.getNotificationOnOff(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<NotificationOnOffResponse>() {
-                override fun onNext(value: NotificationOnOffResponse) {
+            .subscribe(object : DisposableObserver<GetNotificationOFF>() {
+                override fun onNext(value: GetNotificationOFF) {
                     progressIndicator.value = false
                  //   progressDialog.stop()
                     mRejectResponse.value = Event(value)

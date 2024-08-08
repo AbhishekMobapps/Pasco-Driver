@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -165,7 +166,9 @@ class MoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.bearerToken = ""
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
-                language = ""
+
+                setAppLanguage()
+
 
                 val intent = Intent(requireActivity(), ChooseLanguageActivity::class.java)
                 startActivity(intent)
@@ -190,5 +193,30 @@ class MoreFragment : Fragment() {
             )
         }
         startActivity(Intent.createChooser(shareIntent, "Share via"))
+    }
+
+    private fun setAppLanguage() {
+        val currentLanguage = sharedPreferencesLanguageName.getString("language_text", "en") ?: "en"
+        updateLocale(currentLanguage)
+        language = "en"
+        changeLanguage(language)
+    }
+
+    private fun updateLocale(language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        requireActivity().baseContext.resources.updateConfiguration(config,  requireActivity().baseContext.resources.displayMetrics)
+
+    }
+
+    private fun changeLanguage(language: String) {
+        val editor = sharedPreferencesLanguageName.edit()
+        editor.putString("language_text", language)
+        editor.apply()
+
+        // recreate()
+        updateLocale(language)
     }
 }

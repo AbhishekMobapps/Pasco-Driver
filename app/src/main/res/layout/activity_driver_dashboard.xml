@@ -37,36 +37,46 @@
                 app:layout_constraintWidth_percent=".15"
                 tools:ignore="UseAppTint" />
 
-
-            <TextView
-                android:id="@+id/driverNameDash"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/driverNameDashConst"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/driver_name"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_16"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/userIconDashBoard"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".4" />
-
-            <TextView
-                android:id="@+id/driverGreeting"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:drawableStart="@drawable/small_loc_icon"
-                android:drawablePadding="5dp"
-                android:drawableTint="@color/logo_color"
-                android:foregroundGravity="center"
-                android:text="@string/city"
-                android:textColor="@color/black_dark"
-                android:textSize="@dimen/normal_txt_size13"
                 app:layout_constraintStart_toEndOf="@+id/userIconDashBoard"
-                app:layout_constraintTop_toBottomOf="@+id/driverNameDash"
-                app:layout_constraintWidth_percent=".4" />
+                app:layout_constraintWidth_percent="0.4"
+                >
+
+                <TextView
+                    android:id="@+id/driverNameDash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/driver_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent=".4" />
+
+                <TextView
+                    android:id="@+id/driverGreeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/small_loc_icon"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@color/logo_color"
+                    android:foregroundGravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/city"
+                    android:textColor="@color/black_dark"
+                    android:textSize="@dimen/normal_txt_size13"
+                    app:layout_constraintTop_toBottomOf="@+id/driverNameDash"
+                    app:layout_constraintWidth_percent=".4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <Switch
                 android:id="@+id/switchbtn"
@@ -75,13 +85,11 @@
                 android:layout_centerInParent="true"
                 android:checked="false"
                 android:enabled="true"
-                android:scaleX="2"
-                android:scaleY="2"
-                android:thumb="@drawable/ic_thumb"
+                android:thumb="@drawable/thumb_1"
                 android:track="@drawable/bg_track"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/consNotificationDriver"
-                app:layout_constraintStart_toEndOf="@+id/driverNameDash"
+                app:layout_constraintStart_toEndOf="@+id/driverNameDashConst"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -89,8 +97,8 @@
                 android:id="@+id/consNotificationDriver"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -163,8 +171,8 @@
                     android:id="@+id/home_iconDri"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:scaleType="fitXY"
                     android:layout_gravity="center"
+                    android:scaleType="fitXY"
                     android:src="@drawable/home_1" />
 
                 <TextView
@@ -249,10 +257,10 @@
                     android:id="@+id/tripHis_iconDri"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:scaleType="fitXY"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
-                    android:src="@drawable/hostory_icon"/>
+                    android:scaleType="fitXY"
+                    android:src="@drawable/hostory_icon" />
 
                 <!--  <ImageView
                       android:layout_width="15dp"
@@ -306,8 +314,8 @@
                     android:id="@+id/profile_iconDri"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:scaleType="fitXY"
                     android:layout_gravity="center"
+                    android:scaleType="fitXY"
                     android:src="@drawable/profile" />
 
                 <TextView

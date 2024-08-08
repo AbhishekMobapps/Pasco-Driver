@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/text_size_20"
-            android:text="Add your wallet amount successfully!"
+            android:text="@string/add_your_wallet_amount_successfully"
             android:textColor="@color/earth_yellow"
             android:textSize="18sp"
             android:textStyle="bold"

@@ -5,10 +5,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -43,7 +45,7 @@ import com.pasco.pascocustomer.notificationoffon.NotificationOnOffActivity
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogOutModelView
 import com.pasco.pascocustomer.userFragment.logoutmodel.LogoutBody
 import com.pasco.pascocustomer.utils.ErrorUtil
-import java.util.Objects
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -80,6 +82,7 @@ class DriverMoreFragment : Fragment() {
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
 
+        Log.e("dAdminApprovedId" , "dAdminApprovedId.. " +dAdminApprovedId)
         if (Objects.equals(language, "ar")) {
             binding.seeNotificationA.setImageResource(R.drawable.back_left)
             binding.forwardArrowSAddress.setImageResource(R.drawable.back_left)
@@ -99,10 +102,11 @@ class DriverMoreFragment : Fragment() {
         }
 
         if (dAdminApprovedId == "0") {
+            Log.e("statusAAA", "getVehicleDetailsObserver: Fragment" + PascoApp.encryptedPrefs.driverStatuss)
             disableAllExceptFour()
             openPopUp()
         } else if (dAdminApprovedId == "1") {
-            enableAll()
+
         }
 
         binding.consUpdateVehDetails.setOnClickListener {
@@ -332,6 +336,7 @@ class DriverMoreFragment : Fragment() {
                 PascoApp.encryptedPrefs.userId = ""
                 PascoApp.encryptedPrefs.driverApprovedId = ""
                 PascoApp.encryptedPrefs.isFirstTime = true
+                setAppLanguage()
                 val intent = Intent(requireActivity(), ChooseLanguageActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
@@ -343,6 +348,31 @@ class DriverMoreFragment : Fragment() {
         logoutViewModel.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireContext(), it)
         }
+    }
+
+    private fun setAppLanguage() {
+        val currentLanguage = sharedPreferencesLanguageName.getString("language_text", "en") ?: "en"
+        updateLocale(currentLanguage)
+        language = "en"
+        changeLanguage(language)
+    }
+
+    private fun updateLocale(language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        requireActivity().baseContext.resources.updateConfiguration(config,  requireActivity().baseContext.resources.displayMetrics)
+
+    }
+
+    private fun changeLanguage(language: String) {
+        val editor = sharedPreferencesLanguageName.edit()
+        editor.putString("language_text", language)
+        editor.apply()
+
+        // recreate()
+        updateLocale(language)
     }
 
 }

@@ -24,6 +24,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -80,14 +81,13 @@ import com.pasco.pascocustomer.userFragment.profile.modelview.GetProfileBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import org.json.JSONException
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Runnable
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.atan2
@@ -153,6 +153,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     private lateinit var locationArrayList: ArrayList<LatLng?>
     private lateinit var sharedPreferencesLanguageName: SharedPreferences
     private var languageId = ""
+    private var language = ""
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -167,6 +168,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
 
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
         locationArrayList = ArrayList()
         Bid = intent.getStringExtra("BookId").toString()
@@ -179,6 +181,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         Plon = intent.getStringExtra("longitudePickUp")?.toDoubleOrNull() ?: 0.0
         Dlan = intent.getStringExtra("latitudeDrop")?.toDoubleOrNull() ?: 0.0
         Dlon = intent.getStringExtra("longitudeDrop")?.toDoubleOrNull() ?: 0.0
+
 
 
 
@@ -250,6 +253,10 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             finish()
         }
 
+        if (Objects.equals(language, "ar")) {
+            binding.imageBackReqRide.setImageResource(R.drawable.next)
+        }
+
         afterDetailsObserver()
         //get Api
         if (!Bid.isNullOrBlank()) {
@@ -283,7 +290,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             //showFeedbackPopup()
         }
 
-
+        addDeliveryObserver()
     }
 
 
@@ -325,24 +332,21 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         bottomSheetDialog!!.setContentView(view)
 
 
-        val consUploadDeliveryProof =
-            bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
-        val submitBtnDeliveryProof =
-            bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
+        val consUploadDeliveryProof = bottomSheetDialog?.findViewById<ConstraintLayout>(R.id.consUploadDeliveryProof)
+        val submitBtnDeliveryProof = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtnDeliveryProof)
         box1 = bottomSheetDialog?.findViewById(R.id.box1Pop)!!
         box2 = bottomSheetDialog?.findViewById(R.id.box2Pop)!!
         box3 = bottomSheetDialog?.findViewById(R.id.box3Pop)!!
         box4 = bottomSheetDialog?.findViewById(R.id.box4Pop)!!
 
-        submitBtnDeliveryProof?.setOnClickListener {
-            bottomSheetDialog!!.dismiss()
-        }
+
 
         /* consUploadDeliveryProof!!.setOnClickListener {
              openCamera()
          }*/
 
         submitBtnDeliveryProof!!.setOnClickListener {
+            Log.e("VerifyAAA","ok...........Btn")
             val otpFields = listOf(
                 box1!!.text.toString(),
                 box2!!.text.toString(),
@@ -350,21 +354,13 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                 box4!!.text.toString()
             )
             if (otpFields.any { it.isEmpty() }) {
-                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_enter_OTP), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 // addDeliveryProofApi()
-
                 val otpTextView = otpFields.joinToString("")
+                deliveryVerifyViewModel.getDriverDetails(Bid, otpTextView, languageId, activity, progressDialog)
 
-                deliveryVerifyViewModel.getDriverDetails(
-                    Bid,
-                    otpTextView,
-                    languageId,
-                    activity,
-                    progressDialog
-                )
-
-                addDeliveryObserver()
             }
 
 
@@ -423,23 +419,25 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             this
         ) {
             val status = it.peekContent().status!!
-            val paymentMethod = it.peekContent().paymentMethod!!
+
             val message = it.peekContent().msg!!
             if (status == "True") {
-
+                val paymentMethod = it.peekContent().paymentMethod!!
                 if (paymentMethod == "Cash") {
+                    Log.e("VerifyAAA","ok...........CAsh")
                     pendingAmountPopup()
-                }
-                else {
+                } else {
                     completedRideApi()
                     completedRideObserver()
                 }
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+                Log.e("ANERROR", "aarrrr....addDelivery.. $message")
                 bottomSheetDialog?.dismiss()
 
 
             } else {
                 Toast.makeText(this@DriverStartRidingActivity, message, Toast.LENGTH_SHORT).show()
+                Log.e("ANERROR", "aarrrr....addDelivery.. $message")
             }
 
 
@@ -470,7 +468,11 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     //OMCAApp.encryptedPrefs.frontImagePath = imageFile.toString()
                     savedImggSelectProof.setImageBitmap(imageBitmap)
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -512,17 +514,24 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             val firstName = fullName.split(" ").firstOrNull() ?: fullName
             binding.driverNameStartRideTextView.text = firstName
 
-            // Convert duration to hours and minutes if more than 60 seconds
-            dataGet?.duration?.let { durationInSeconds ->
-                val formattedDuration = if (durationInSeconds < 60) {
-                    durationInSeconds.toString() + " seconds"
+
+            val duration = response?.peekContent()?.data!!.duration.toString()
+            val durationInSeconds = duration.toIntOrNull() ?: 0
+            val formattedDuration = if (durationInSeconds < 60) {
+                "$durationInSeconds sec"
+            } else {
+                val hours = durationInSeconds / 3600
+                val minutes = (durationInSeconds % 3600) / 60
+                val seconds = durationInSeconds % 60
+                if (hours > 0) {
+                    String.format("%d hr %02d min", hours, minutes)
                 } else {
-                    val hours = durationInSeconds / 3600
-                    val minutes = (durationInSeconds % 3600) / 60
-                    String.format("%02d:%02d", hours, minutes)
+                    String.format("%d min ", minutes)
                 }
-                binding.delTimeDynamic.text = formattedDuration
             }
+
+            binding.delTimeDynamic.text = formattedDuration
+
 
             val url = dataGet?.userImage
             Glide.with(this).load(BuildConfig.IMAGE_KEY + url).into(binding.cricleImgUserSR)
@@ -578,8 +587,8 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         val latitude = location.latitude
         val longitude = location.longitude
 
-        formattedLatitudeSelect = String.format("%.4f", latitude)
-        formattedLongitudeSelect = String.format("%.4f", longitude)
+        formattedLatitudeSelect = String.format(Locale.ENGLISH,"%.4f", latitude)
+        formattedLongitudeSelect = String.format(Locale.ENGLISH,"%.4f", longitude)
         formattedLatitudeLat = LatLng(latitude, longitude)
 
 
@@ -628,7 +637,9 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             val message = response.peekContent().msg!!
             if (response.peekContent().status.equals("False")) {
                 Toast.makeText(this@DriverStartRidingActivity, "$message", Toast.LENGTH_LONG).show()
+                Log.e("ANERROR", "aarrrr....updateLocation.. $message")
             } else {
+                Log.e("ANERROR", "aarrrr....updateLocation.. in $message")
                 val data = response.peekContent().data!!
                 for (item in data) {
                     val poiName = item.poiname ?: ""
@@ -643,8 +654,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     val baseUrl = "http://69.49.235.253:8090"
                     val imagePath = item.poiimage.orEmpty()
                     val imageUrl = "$baseUrl$imagePath"
-                    val poiLocation =
-                        LatLng(item.poilatitude!!.toDouble(), item.poilongitude!!.toDouble())
+                    val poiLocation = LatLng(item.poilatitude!!.toDouble(), item.poilongitude!!.toDouble())
 
                     val markerData = MarkerData(
                         poiName = poiName,
@@ -742,7 +752,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     }
                 })
         } else {
-            Log.e("updatePoiLocation", "mMap is not initialized")
+
         }
     }
 
@@ -760,9 +770,8 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             if (response.peekContent().status == "False") {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-                //  Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 showFeedbackPopup()
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
         }
         completeRideViewModel.errorResponse.observe(this) {
@@ -772,34 +781,107 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     }
 
 
+    /* private fun showFeedbackPopup() {
+         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+         val view = LayoutInflater.from(this).inflate(R.layout.driver_feedback_popup, null)
+         bottomSheetDialog!!.setContentView(view)
+
+
+         val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+         val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+         val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+         val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+         var ratingBars = ""
+         ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+             // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
+             ratingBars = rating.toString()
+         }
+
+         submitBtn?.setOnClickListener {
+             val comment = commentTxt?.text.toString()
+             if (ratingBars.isEmpty()) {
+                 Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT)
+                     .show()
+             } else if (comment.isBlank()) {
+                 Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT)
+                     .show()
+             } else {
+                 feedbackApi(comment, ratingBars)
+                 feedbackObserver()
+             }
+         }
+         skipBtn?.setOnClickListener {
+             bottomSheetDialog?.dismiss()
+             val intent = Intent(this@DriverStartRidingActivity, DriverDashboardActivity::class.java)
+             startActivity(intent)
+         }
+
+         val displayMetrics = DisplayMetrics()
+         (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+         val screenHeight = displayMetrics.heightPixels
+         val halfScreenHeight = screenHeight * .58
+         val eightyPercentScreenHeight = screenHeight * .58
+
+         // Set the initial height of the bottom sheet to 50% of the screen height
+         val layoutParams = view.layoutParams
+         layoutParams.height = halfScreenHeight.toInt()
+         view.layoutParams = layoutParams
+
+         var isExpanded = false
+         view.setOnClickListener {
+             // Expand or collapse the bottom sheet when it is touched
+             if (isExpanded) {
+                 layoutParams.height = halfScreenHeight.toInt()
+             } else {
+                 layoutParams.height = eightyPercentScreenHeight.toInt()
+             }
+             view.layoutParams = layoutParams
+             isExpanded = !isExpanded
+         }
+
+         bottomSheetDialog!!.show()
+
+     }*/
+
     private fun showFeedbackPopup() {
+        // Ensure the activity is not finishing or destroyed before showing the dialog
+        if (isFinishing || isDestroyed) return
+
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
         val view = LayoutInflater.from(this).inflate(R.layout.driver_feedback_popup, null)
-        bottomSheetDialog!!.setContentView(view)
-
+        bottomSheetDialog?.setContentView(view)
 
         val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
         val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
         val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
         val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
 
+
+        if (Objects.equals(language,"ar"))
+        {
+            commentTxt?.gravity = Gravity.RIGHT
+        }
         var ratingBars = ""
         ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
-            // Toast.makeText(this, "New Rating: $rating", Toast.LENGTH_SHORT).show()
             ratingBars = rating.toString()
         }
 
         submitBtn?.setOnClickListener {
             val comment = commentTxt?.text.toString()
             if (ratingBars.isEmpty()) {
-                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT)
+                    .show()
             } else if (comment.isBlank()) {
-                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 feedbackApi(comment, ratingBars)
                 feedbackObserver()
+                bottomSheetDialog?.dismiss() // Dismiss the dialog after feedback submission
             }
         }
+
         skipBtn?.setOnClickListener {
             bottomSheetDialog?.dismiss()
             val intent = Intent(this@DriverStartRidingActivity, DriverDashboardActivity::class.java)
@@ -807,19 +889,17 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         }
 
         val displayMetrics = DisplayMetrics()
-        (this as AppCompatActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenHeight = displayMetrics.heightPixels
-        val halfScreenHeight = screenHeight * .58
-        val eightyPercentScreenHeight = screenHeight * .58
+        val halfScreenHeight = screenHeight * 0.58
+        val eightyPercentScreenHeight = screenHeight * 0.58
 
-        // Set the initial height of the bottom sheet to 50% of the screen height
         val layoutParams = view.layoutParams
         layoutParams.height = halfScreenHeight.toInt()
         view.layoutParams = layoutParams
 
         var isExpanded = false
         view.setOnClickListener {
-            // Expand or collapse the bottom sheet when it is touched
             if (isExpanded) {
                 layoutParams.height = halfScreenHeight.toInt()
             } else {
@@ -829,9 +909,12 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             isExpanded = !isExpanded
         }
 
-        bottomSheetDialog!!.show()
-
+        // Show the dialog if it exists and activity is still active
+        if (!isFinishing && !isDestroyed) {
+            bottomSheetDialog?.show()
+        }
     }
+
 
     private fun feedbackApi(commentTxt: String, ratingBars: String) {
         //   val codePhone = strPhoneNo
@@ -928,10 +1011,12 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     is ParseError -> "Parsing error! Please try again after some time!!"
                     is NoConnectionError -> getString(R.string.Please_check_your_connection)
                     is TimeoutError -> getString(R.string.Please_check_your_internet_connection)
-                    else -> error.message ?: "An error occurred"
+                    else -> error.message ?: ""
                 }
                 Toast.makeText(this@DriverStartRidingActivity, errorMessage, Toast.LENGTH_SHORT)
                     .show()
+
+
             }
         )
         PascoApp.instance.addToRequestQueue(jsonObjReqGroup, "survey_list")
@@ -973,7 +1058,6 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                     recycler_StatusList.layoutManager =
                         LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
                     recycler_StatusList.adapter = StatusListAdapter(this, this, routeType)
-                    // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -996,6 +1080,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                 // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                Log.e("ANERROR", "aarrrr....startTrip.. $message")
                 binding.finishTripTextView.visibility = View.GONE
 
 
@@ -1042,6 +1127,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
 
         // Add markers for pickup and drop locations
         if (::formattedLatitudeLat.isInitialized) {
+
             mMap.addMarker(MarkerOptions().position(formattedLatitudeLat).title("Current Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(formattedLatitudeLat, 17f))
             mMap.addMarker(MarkerOptions().position(pickupLocation).title("Pick-up Location"))
@@ -1168,11 +1254,8 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(
-                    this,
-                    "Failed to get location: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ANERROR","aarrrr....addOnFailureListener.. $e.message")
             }
     }
 
@@ -1201,10 +1284,8 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             }
             .addOnFailureListener { e ->
                 Toast.makeText(
-                    this,
-                    "Failed to get location: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    this, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ANERROR","aarrrr....Failed.. $e.message")
             }
     }
 
@@ -1319,7 +1400,7 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
         spinnerDriverSId = id.toString()
 
         if (driStatus.isNullOrEmpty()) {
-            binding.SelectstatusTextView.text = "Select Status"
+            binding.SelectstatusTextView.text = getString(R.string.selectStatus)
         } else {
             binding.SelectstatusTextView.text = driStatus
             dialog.dismiss()
@@ -1334,12 +1415,13 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
     }
 
     private fun pendingAmountPopup() {
+        Log.e("VerifyAAA","ok...........")
         bottomSheetDialogs = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
         val view = LayoutInflater.from(this).inflate(R.layout.receive_left_amount, null)
         bottomSheetDialogs!!.setContentView(view)
 
 
-        val notBtn = bottomSheetDialogs?.findViewById<ConstraintLayout>(R.id.notBtn)
+        val notBtn = bottomSheetDialogs?.findViewById<TextView>(R.id.notBtn)
         val yestBtn = bottomSheetDialogs?.findViewById<TextView>(R.id.yestBtn)
 
         yestBtn?.setOnClickListener {
@@ -1382,5 +1464,34 @@ class DriverStartRidingActivity : Originator(), OnMapReadyCallback,
             ErrorUtil.handlerGeneralError(this@DriverStartRidingActivity, it)
             //errorDialogs()
         }
+    }
+
+    private fun fetchUserData() {
+        // Launch a coroutine on the IO dispatcher for network operation
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Simulate a network call to fetch user data
+                val userName = fetchUserNameFromApi()
+
+                // Switch to the Main dispatcher to update the UI
+                withContext(Dispatchers.Main) {
+                    updateUIs(userName)
+                }
+            } catch (e: Exception) {
+                // Handle any exceptions, e.g., network errors
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private suspend fun fetchUserNameFromApi(): String {
+        // Simulating a network call with delay
+        delay(1000) // Simulate network delay
+        return "John Doe" // This would be replaced by actual API call
+    }
+
+    private fun updateUIs(userName: String) {
+        // Update the TextView with the fetched user name
+        //  userNameTextView.text = userName
     }
 }

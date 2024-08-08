@@ -9,6 +9,7 @@ import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.AllBiddsDetailsActivity
 import com.pasco.pascocustomer.customer.activity.hometabactivity.AllTabPayActivity
+import com.pasco.pascocustomer.customer.activity.track.TrackActivity
 import com.pasco.pascocustomer.databinding.ActivityComlpleteStatusBinding
 import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,14 +37,26 @@ class ComlpleteStatusActivity : Originator() {
                 handler.postDelayed({
                     val intent = Intent(this, AllBiddsDetailsActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }, 2000) // 2000 milliseconds = 2 seconds
 
 
-            } else {
+            }else if(addWallet =="track")
+            {
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    val intent = Intent(this, TrackActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }, 2000) // 2000 milliseconds = 2 seconds
+
+            }
+            else {
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
                     val intent = Intent(this, DriverWalletActivity::class.java)
                     startActivity(intent)
+                    finish()
 
                 }, 2000) // 2000 milliseconds = 2 seconds
             }
@@ -54,6 +67,7 @@ class ComlpleteStatusActivity : Originator() {
                 handler.postDelayed({
                     val intent = Intent(this, AcceptRideActivity::class.java)
                     startActivity(intent)
+                    finish()
 
                 }, 2000) // 2000 milliseconds = 2 seconds
 
@@ -63,6 +77,7 @@ class ComlpleteStatusActivity : Originator() {
                 handler.postDelayed({
                     val intent = Intent(this, DriverWalletActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }, 2000) // 2000 milliseconds = 2 seconds
             }
         }

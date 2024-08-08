@@ -12,13 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.Driver.DriverWallet.DriverWalletActivity
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectBidBody
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.AcceptOrRejectModelView
+import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.acceptreject.RejectViewModel
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.adapter.AllBiddsDetailsAdapter
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.BiddsDtailsModelView
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
 import com.pasco.pascocustomer.customer.activity.track.TrackActivity
+import com.pasco.pascocustomer.dashboard.UserDashboardActivity
 import com.pasco.pascocustomer.databinding.ActivityAllBiddsDetailsBinding
 import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
@@ -35,6 +38,7 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
     private var biddsDetailsList: List<AllBiddsDetailResponse.Datum> = ArrayList()
     private val detailsModel: BiddsDtailsModelView by viewModels()
     private val paymentAccept: AcceptOrRejectModelView by viewModels()
+    private val rejectBids: RejectViewModel by viewModels()
     private var userName = ""
     private var orderId = ""
     private var dateTime = ""
@@ -63,14 +67,25 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
             binding.backBtn.setImageResource(R.drawable.next)
 
         }
-        userName = intent.getStringExtra("userName").toString()
-        orderId = intent.getStringExtra("orderId").toString()
-        dateTime = intent.getStringExtra("dateTime").toString()
-        pickupLocation = intent.getStringExtra("pickupLocation").toString()
-        dropLocation = intent.getStringExtra("dropLocation").toString()
-        distance = intent.getStringExtra("distance").toString()
-        id = intent.getStringExtra("id").toString()
-        totalPrice = intent.getStringExtra("totalPrice").toString()
+        /*  userName = intent.getStringExtra("userName").toString()
+          orderId = intent.getStringExtra("orderId").toString()
+          dateTime = intent.getStringExtra("dateTime").toString()
+          pickupLocation = intent.getStringExtra("pickupLocation").toString()
+          dropLocation = intent.getStringExtra("dropLocation").toString()
+          distance = intent.getStringExtra("distance").toString()
+         // id = intent.getStringExtra("id").toString()
+          totalPrice = intent.getStringExtra("totalPrice").toString()*/
+
+        id = PascoApp.encryptedPrefs.bidId
+        userName = PascoApp.encryptedPrefs.userName
+        orderId = PascoApp.encryptedPrefs.orderId
+        dateTime = PascoApp.encryptedPrefs.dateTime
+        pickupLocation = PascoApp.encryptedPrefs.pickupLocation
+        dropLocation = PascoApp.encryptedPrefs.dropLocation
+        distance = PascoApp.encryptedPrefs.distance
+        totalPrice = PascoApp.encryptedPrefs.totalPrice
+
+
 
         binding.userName.text = userName
         binding.oderIdTxt.text = truncateBookingNumber(orderId)
@@ -78,6 +93,7 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
             showFullAddressDialog(orderId)
         }
 
+        Log.e("idAAAA", "id...$id")
 
         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         inputDateFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -171,11 +187,14 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
         alertDialog.show()
     }
 
+    // Reject Bids....................................
     override fun deleteNotification(position: Int, id: Int) {
-        Log.e("ASDFF", "id" + id)
-
+        Log.e("upFrontPriceAA", "paymentMethod..$id")
+        rejectBidsApi(id.toString())
+        rejectBidsObserver()
     }
 
+    // ACCEPT Bids....................................
     override fun allBids(
         position: Int,
         id: Int,
@@ -188,12 +207,10 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
         bookingId = id.toString()
         acceptOrRejectApi(bookingId, upFrontPrice, paymentMethod)
         acceptOrRejectObserver(bookingId, pickupLatitude, pickupLongitude, verificationCode)
+
     }
 
     private fun acceptOrRejectApi(id: String, upFrontPrice: Double?, paymentMethod: String?) {
-        //   val codePhone = strPhoneNo
-
-        Log.e("upFrontPriceAA", "paymentMethod..$paymentMethod")
         val loinBody = AcceptOrRejectBidBody(
             payment_amount = upFrontPrice.toString(),
             payment_type = "wallet",
@@ -217,12 +234,20 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
 
             if (status == "False") {
                 showWalletRequirementPopup()
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
             } else {
                 val intent = Intent(this, TrackActivity::class.java)
                 intent.putExtra("bookingId", bookingId)
                 intent.putExtra("pickupLatitude", pickupLatitude.toString())
                 intent.putExtra("pickupLongitude", pickupLongitude.toString())
                 intent.putExtra("verificationCode", verificationCode)
+                PascoApp.encryptedPrefs.bidId = ""
+                PascoApp.encryptedPrefs.userName = ""
+                PascoApp.encryptedPrefs.pickupLocation = ""
+                PascoApp.encryptedPrefs.dropLocation = ""
+                PascoApp.encryptedPrefs.totalPrice = ""
+                PascoApp.encryptedPrefs.dateTime = ""
+                PascoApp.encryptedPrefs.distance = ""
                 startActivity(intent)
                 finish()
                 Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
@@ -231,6 +256,39 @@ class AllBiddsDetailsActivity : Originator(), NotificationClickListener {
 
         }
         paymentAccept.errorResponse.observe(this) {
+            ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)
+            // errorDialogs()
+        }
+    }
+
+
+    private fun rejectBidsApi(id: String) {
+        val loinBody = CustomerOrderBody(
+            language = languageId
+        )
+        rejectBids.rejectBids(id, loinBody, this, progressDialog)
+    }
+
+    private fun rejectBidsObserver() {
+        rejectBids.progressIndicator.observe(this) {}
+        rejectBids.mRejectResponse.observe(
+            this
+        ) {
+            val msg = it.peekContent().msg
+            val status = it.peekContent().status
+
+            if (status == "False") {
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, UserDashboardActivity::class.java)
+                startActivity(intent)
+                finish()
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            }
+
+
+        }
+        rejectBids.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this@AllBiddsDetailsActivity, it)
             // errorDialogs()
         }

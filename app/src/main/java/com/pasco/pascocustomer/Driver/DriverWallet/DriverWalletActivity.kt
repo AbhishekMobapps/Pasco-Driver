@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
@@ -69,14 +70,17 @@ class DriverWalletActivity : Originator() {
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+        // Adjust ImageView alignment
 
         if (Objects.equals(language, "ar")) {
             chooseLanguageList.add("ائتمان")
             chooseLanguageList.add("دَين")
+            binding.backArrowImgBhdDetails.setImageResource(R.drawable.next)
         } else {
             chooseLanguageList.add("Credit")
             chooseLanguageList.add("Debit")
         }
+
         binding.backArrowImgBhdDetails.setOnClickListener {
             finish()
         }
@@ -88,6 +92,7 @@ class DriverWalletActivity : Originator() {
             binding.filterDriverConst.visibility = View.VISIBLE
 
             binding.withdrawAmountBtn.setOnClickListener {
+                Log.e("ButtonClick", "Withdraw")
                 addWithPop()
             }
         } else {
@@ -97,6 +102,7 @@ class DriverWalletActivity : Originator() {
         }
 
         binding.addBtn.setOnClickListener {
+            Log.e("ButtonClick", "ADDBtnAm")
             openWithDrawPopUp()
         }
 
@@ -120,7 +126,7 @@ class DriverWalletActivity : Originator() {
         //Spinner Adapter
         val dAdapter = spinnerAdapter(this, R.layout.custom_spinner_two, chooseLanguageList)
         dAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dAdapter.add(getString(R.string.filter))
+        dAdapter.add(getString(R.string.select_event))
         dAdapter.addAll(chooseLanguageList)
 
         binding.spinnerFilter.adapter = dAdapter
@@ -134,8 +140,10 @@ class DriverWalletActivity : Originator() {
                         //Toast.makeText(requireActivity(), "Country Spinner Working **********", Toast.LENGTH_SHORT).show()
                         val itemValue = binding.spinnerFilter1.selectedItem.toString()
                         if (itemValue == getString(R.string.select_event)) {
-                            getTotalAmount("")
+                            Log.e("SpinnerValue", "SpinnerValue..  $itemValue")
+                            // getTotalAmount("")
                         } else {
+                            Log.e("SpinnerValue", "SpinnerValue..  $itemValue")
                             getTotalAmount(itemValue)
                         }
                     }
@@ -221,12 +229,16 @@ class DriverWalletActivity : Originator() {
         val amountWithdrawEditD = dialogView.findViewById<EditText>(R.id.amountWithdrawEditD)
         dialog.show()
         waCrossImage.setOnClickListener { dialog.dismiss() }
+
+
         submit_WithDrawBtn.setOnClickListener {
+            val amount = amountWithdrawEditD.text.toString()
+            Log.e("ButtonClick", "ADDBtnAm  $amount  $languageId")
             //call api()
             addAmountViewModel.getAddAmountData(
                 progressDialog,
                 this,
-                amountWithdrawEditD.text.toString(),
+                amount,
                 languageId
             )
             //observer
@@ -246,7 +258,7 @@ class DriverWalletActivity : Originator() {
 
             }
         }
-        addAmountViewModel.errorResponse.observe(this) {
+        withdrawAmountViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
         }
     }
@@ -264,7 +276,7 @@ class DriverWalletActivity : Originator() {
                 intent.putExtra("addWallet", addWallet)
                 intent.putExtra("walletC", walletC)
                 startActivity(intent)
-
+                finish()
                 dialog.dismiss()
                 getTotalAmount("")
 
@@ -287,17 +299,19 @@ class DriverWalletActivity : Originator() {
 
     private fun getTotalAmountObserver() {
         getAmountViewModel.mGetAmounttt.observe(this) { response ->
-            val message = response.peekContent().msg!!
-            val status = response.peekContent().status!!
+            val message = response.peekContent().msg
+            val status = response.peekContent().status
             val data = response.peekContent().data
-            transactionList = response.peekContent().data?.transactions!!
+            val transactionList = response.peekContent().data?.transactions!!
 
-
-            if (transactionList.isEmpty()) {
-                Log.e("WalletAmt", "aaa")
+            Log.e("WalletAmtA", "aaa.....List" + transactionList.size)
+            if (transactionList.size == 0) {
+                Log.e("WalletAmtA", "aaa.....${transactionList.size}")
                 val value = "0.0"
                 binding.accountBalanceDri.text = "$value USD"
             } else {
+
+                Log.e("WalletAmtA", "aaa.....Recy")
                 amountP = data?.walletAmount.toString()
                 binding.accountBalanceDri.text = "$amountP USD"
 
@@ -311,7 +325,7 @@ class DriverWalletActivity : Originator() {
 
             }
         }
-        addAmountViewModel.errorResponse.observe(this) {
+        getAmountViewModel.errorResponse.observe(this) {
             ErrorUtil.handlerGeneralError(this, it)
         }
 

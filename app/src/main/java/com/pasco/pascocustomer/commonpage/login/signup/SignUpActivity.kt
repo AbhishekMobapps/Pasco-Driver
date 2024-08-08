@@ -11,7 +11,6 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -164,7 +163,7 @@ class SignUpActivity : Originator(), SignUpCityName {
             strUserPhoneNo = binding.userPhoneNumber.text.toString()
             CountryCode = binding.clientCountryCode.text.toString()
             CountryCode = binding.driverCode.text.toString()
-
+            val isValid = isValidEmail(strEmail)
             if (loginValue == "driver") {
                 formattedCountryCode = binding.driverCode.text.toString()
                 strPhoneNo = binding.phoneNumber.text.toString()
@@ -213,12 +212,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                     val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
 
                     // Log the country code and country name
-                    Log.e("Country Code", countryCode ?: "No country code found")
-                    Log.e("Country Name", countryName ?: "No country name found")
-                    Log.e(
-                        "PhoneCountryCode",
-                        "+$city $address $formattedLatitudeSelect $formattedLongitudeSelect"
-                    )
+
 
                     formattedCountryCode = "+$phoneCountryCode"
 
@@ -279,7 +273,6 @@ class SignUpActivity : Originator(), SignUpCityName {
     }
 
     private fun getCityList() {
-        Log.e("formattedCountryCode", "formattedCountryCode..AA" + formattedCountryCode)
 
         val cityBody = UpdateCityBody(
             countrycode = formattedCountryCode,
@@ -338,6 +331,14 @@ class SignUpActivity : Originator(), SignUpCityName {
                     ).show()
                 }
 
+                !isValidEmail(driverEmail.text.toString()) -> {
+                    Toast.makeText(
+                        applicationContext,
+                        getString(R.string.Please_enter_valid_email),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
                 binding.driverCode.text.isNullOrBlank() -> {
                     Toast.makeText(
                         applicationContext,
@@ -361,6 +362,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
                 phoneNumber.text.length < 8 -> {
                     Toast.makeText(
                         applicationContext,
@@ -469,8 +471,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                         startActivity(intent)
                         finish()
                         progressDialog.start("Loading....")
-                        Log.e("PhoneNumberaa", "$formattedCountryCode$strPhoneNo")
-                        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+
                     } else {
                         strPhoneNo = binding.userPhoneNumber.text.toString()
 
@@ -483,7 +484,7 @@ class SignUpActivity : Originator(), SignUpCityName {
                         finish()
 
                         //sendVerificationCode("$formattedCountryCode$strUserPhoneNo")
-                        Log.e("PhoneNumberaa", "$formattedCountryCode$strUserPhoneNo")
+
                     }
                 } else {
                     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
@@ -498,11 +499,11 @@ class SignUpActivity : Originator(), SignUpCityName {
     }
 
     override fun itemCity(id: Int, cityName: String) {
-        selectCityName = cityName
-        binding.addressTxt.text = selectCityName
+        city = cityName
+        binding.addressTxt.text = city
         alertDialog?.dismiss()
 
-        getLatLngFromCityName(selectCityName, applicationContext)
+        getLatLngFromCityName(city!!, applicationContext)
     }
 
     private fun filterList(query: String?) {
@@ -541,11 +542,15 @@ class SignUpActivity : Originator(), SignUpCityName {
                 )
 
             } else {
-                Toast.makeText(context, "No location found for the city", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    getString(R.string.No_location_found_for_the_city),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            Toast.makeText(context, "Geocoding failed: IOException", Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -669,4 +674,8 @@ class SignUpActivity : Originator(), SignUpCityName {
         }
     }
 
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+        return email.matches(Regex(emailRegex))
+    }
 }

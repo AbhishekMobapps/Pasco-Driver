@@ -49,21 +49,22 @@
 
             <TextView
                 android:id="@+id/customerId"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/order_ids"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
+                app:layout_constraintWidth_percent="0.27"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/oderIdTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:gravity="center"
+                android:gravity="start"
+                app:layout_constraintWidth_percent="0.72"
                 android:text="PSR45678912"
                 android:textColor="@color/grey_dark"
                 android:textSize="14sp"
@@ -88,11 +89,12 @@
 
             <TextView
                 android:id="@+id/pickUp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                app:layout_constraintWidth_percent="0.27"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -100,10 +102,10 @@
 
             <TextView
                 android:id="@+id/pickUpLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
                 android:text="Noida Sector 59 "
+                app:layout_constraintWidth_percent="0.72"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -125,11 +127,12 @@
 
             <TextView
                 android:id="@+id/drop"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/destination"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
+                app:layout_constraintWidth_percent="0.27"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -138,13 +141,12 @@
 
             <TextView
                 android:id="@+id/dropLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginRight="15dp"
                 android:text=" Noida Sector 59"
                 android:textColor="@color/black"
                 android:textSize="14sp"
+                app:layout_constraintWidth_percent="0.72"
                 app:layout_constraintBottom_toBottomOf="@+id/drop"
                 app:layout_constraintStart_toEndOf="@+id/drop"
                 app:layout_constraintTop_toTopOf="@+id/drop" />
@@ -164,24 +166,24 @@
 
             <TextView
                 android:id="@+id/distance"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/distance"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.27" />
 
 
             <TextView
                 android:id="@+id/distanceTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
+                android:gravity="start"
                 android:text="35Km"
+                app:layout_constraintWidth_percent="0.72"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -202,21 +204,22 @@
 
             <TextView
                 android:id="@+id/dateId"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/order_date"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
+                app:layout_constraintWidth_percent="0.27"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/dateTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:gravity="center"
+                app:layout_constraintWidth_percent="0.72"
+                android:gravity="start"
                 android:text="2024-06-20"
                 android:textColor="@color/grey_dark"
                 android:textSize="14sp"
@@ -251,18 +254,19 @@
                     android:text="@string/total_price"
                     android:textColor="@color/grey_dark"
                     android:textSize="16sp"
+                    app:layout_constraintWidth_percent="0.23"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/totalPriceTxt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="$708111.00"
                     android:textStyle="bold"
+                    app:layout_constraintWidth_percent="0.76"
                     android:textColor="@color/earth_yellow"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"

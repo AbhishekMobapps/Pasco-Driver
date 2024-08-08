@@ -13,7 +13,7 @@
         android:background="@drawable/logoutpopup"
         android:baselineAligned="false"
         android:padding="10dp"
-        android:text="Select City"
+        android:text="@string/select_city"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size"
         android:textStyle="bold" />
@@ -34,7 +34,7 @@
             android:background="@null"
             app:iconifiedByDefault="false"
             app:queryBackground="@android:color/transparent"
-            app:queryHint="Search"
+            app:queryHint="@string/search"
             app:searchIcon="@null" />
 
     </LinearLayout>

@@ -60,6 +60,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints" />
 
+            <TextView
+                android:id="@+id/reject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/biding_status"
+                android:textAllCaps="false"
+                android:textColor="@color/earth_yellow"
+                android:textSize="@dimen/normal_txt_size_12"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="MissingConstraints" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -73,8 +88,8 @@
             app:layout_constraintWidth_percent=".25">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginStart="5dp"
                 app:cardCornerRadius="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -185,7 +200,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".6">
+                app:layout_constraintWidth_percent=".4">
 
 
                 <!-- First TextView -->
@@ -220,7 +235,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent=".3">
+                app:layout_constraintWidth_percent=".4">
 
                 <TextView
                     android:id="@+id/ToStaticDriver"
@@ -294,14 +309,14 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.3">
+                app:layout_constraintWidth_percent="0.4">
 
                 <TextView
                     android:id="@+id/endPointTextViewReq"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:gravity="right"
                     android:text="Meerut"
                     android:textColor="@color/grey"
@@ -406,7 +421,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="10.00"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
                     android:textSize="@dimen/normal_txt_size_12"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintWidth_percent="0.5"

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class AcceptRideAdapter(
         val biddReqDateTime: TextView = itemView.findViewById(R.id.biddReqDateTime)
         val imgUserOrderD: ImageView = itemView.findViewById(R.id.imgUserOrderD)
         val bidsStatus: TextView = itemView.findViewById(R.id.bidsStatus)
+        val reject: TextView = itemView.findViewById(R.id.reject)
         val constraintNC: ConstraintLayout = itemView.findViewById(R.id.constraintNC)
     }
 
@@ -78,13 +80,26 @@ class AcceptRideAdapter(
             holder.bidsStatus.text = context.getString(R.string.A_bid_has_already_been_placed)
         }
 
+        val rejectBid = bookingReq.rejectStatus
+
+        if (rejectBid == true)
+        {
+            Log.e("AAAAAA","AAAA"  +rejectBid)
+            holder.reject.visibility = View.VISIBLE
+            holder.reject.text = context.getString(R.string.bid_request_cancel)
+        }
+        else
+        {
+            holder.reject.visibility = View.GONE
+        }
+
         val imageUrl = "$baseUrl$imagePath"
         Glide.with(context)
             .load(imageUrl)
             .into(holder.imgUserOrderD)
         with(holder) {
-            val pickupCity = extractCityName(bookingReq.pickupLocation.toString())
-            val dropCity = extractCityName(bookingReq.dropLocation.toString())
+            val pickupCity = bookingReq.pickupLocation.toString()
+            val dropCity = bookingReq.dropLocation.toString()
             startPointTextViewReq.text = pickupCity
             endPointTextViewReq.text = dropCity
             priceDynamicTextViewReq.text = price
@@ -97,13 +112,13 @@ class AcceptRideAdapter(
                     val id = bookingReq.id.toString()
                     val bookingId = bookingReq.bookingNumber.toString()
                     PascoApp.encryptedPrefs.requestOrderId = id
+                    PascoApp.encryptedPrefs.drPickupLatitude = bookingReq.pickupLatitude.toString()
+                    PascoApp.encryptedPrefs.drPickupLongitude =
+                        bookingReq.pickupLongitude.toString()
+                    PascoApp.encryptedPrefs.drDropLatitude = bookingReq.dropLatitude.toString()
+                    PascoApp.encryptedPrefs.drDropLongitude = bookingReq.dropLongitude.toString()
                     val intent = Intent(context, AcceptRideActivity::class.java)
-                    intent.putExtra("rideReqId", id)
                     intent.putExtra("bookingNumb", bookingId)
-                    intent.putExtra("pickuplatitudea", bookingReq.pickupLatitude.toString())
-                    intent.putExtra("pickuplongitudea", bookingReq.pickupLongitude.toString())
-                    intent.putExtra("droplatitudea", bookingReq.dropLatitude.toString())
-                    intent.putExtra("droplongitudea", bookingReq.dropLongitude.toString())
                     intent.putExtra("one", 1)
                     context.startActivity(intent)
                 }

@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.johncodeos.customprogressdialogexample.CustomProgressDialog
 import com.pasco.pascocustomer.BuildConfig
@@ -194,9 +195,11 @@ class CompleteHistoryDetailsActivity : Originator() {
         submitBtn?.setOnClickListener {
             val comment = commentTxt?.text.toString()
             if (ratingBars.isEmpty()) {
-                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_rating), Toast.LENGTH_SHORT)
+                    .show()
             } else if (comment.isBlank()) {
-                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.Please_add_a_comment), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 feedbackApiDriver(comment, ratingBars)
                 feedbackObserver()
@@ -243,7 +246,42 @@ class CompleteHistoryDetailsActivity : Originator() {
         driverFeedbackModelView.cancelBooking(loinBody, this, progressDialog)
     }
 
+
     private fun showFeedbackPopup(id: String) {
+        bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
+        val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
+        bottomSheetDialog!!.setContentView(view)
+
+        val ratingBar = bottomSheetDialog?.findViewById<RatingBar>(R.id.ratingBar)
+        val commentTxt = bottomSheetDialog?.findViewById<EditText>(R.id.commentTxt)
+        val submitBtn = bottomSheetDialog?.findViewById<TextView>(R.id.submitBtn)
+        val skipBtn = bottomSheetDialog?.findViewById<TextView>(R.id.skipBtn)
+
+        var ratingBars = ""
+        ratingBar?.setOnRatingBarChangeListener { _, rating, _ ->
+            ratingBars = rating.toString()
+        }
+
+        submitBtn?.setOnClickListener {
+            feedbackApi(commentTxt?.text.toString(), ratingBars, id.toInt())
+            feedbackObserver()
+        }
+        skipBtn?.setOnClickListener { bottomSheetDialog?.dismiss() }
+
+        // Ensure the dialog is fully expanded
+        val bottomSheetBehavior = BottomSheetBehavior.from(view.parent as View)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        // Set window height to match parent
+        val dialogWindow = bottomSheetDialog?.window
+        val layoutParams = dialogWindow?.attributes
+        layoutParams?.height = WindowManager.LayoutParams.MATCH_PARENT
+        dialogWindow?.attributes = layoutParams
+
+        bottomSheetDialog?.show()
+    }
+
+/*    private fun showFeedbackPopup(id: String) {
         bottomSheetDialog = BottomSheetDialog(this, R.style.TopCircleDialogStyle)
         val view = LayoutInflater.from(this).inflate(R.layout.feedback_popup, null)
         bottomSheetDialog!!.setContentView(view)
@@ -272,7 +310,7 @@ class CompleteHistoryDetailsActivity : Originator() {
         dialogWindow?.attributes = layoutParams
 
         bottomSheetDialog?.show()
-    }
+    }*/
 
     private fun feedbackApi(commentTxt: String, ratingBars: String, id: Int?) {
         val loinBody = CustomerFeedbackBody(

@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.AllBiddsDetailsActivity
 
 import com.pasco.pascocustomer.userFragment.order.odermodel.OrderResponse
@@ -47,8 +48,7 @@ class AllBiddsAdapter(
         val price = orderList[position].basicprice
         holder.totalPriceTxt.text = "$ $price"
 
-        if (language == "ar")
-        {
+        if (language == "ar") {
             holder.showDetailsBtn.setImageResource(R.drawable.back)
         }
 
@@ -76,15 +76,24 @@ class AllBiddsAdapter(
 
         holder.itemView.setOnClickListener {
             val id = orderList[position].id
+            PascoApp.encryptedPrefs.bidId = id.toString()
+            PascoApp.encryptedPrefs.userName = orderList[position].user.toString()
+            PascoApp.encryptedPrefs.orderId = orderList[position].bookingNumber.toString()
+            PascoApp.encryptedPrefs.dateTime = orderList[position].pickupDatetime.toString()
+            PascoApp.encryptedPrefs.pickupLocation = orderList[position].pickupLocation.toString()
+            PascoApp.encryptedPrefs.dropLocation = orderList[position].dropLocation.toString()
+            PascoApp.encryptedPrefs.distance = orderList[position].totalDistance.toString()
+            PascoApp.encryptedPrefs.distance = orderList[position].totalDistance.toString()
+            PascoApp.encryptedPrefs.totalPrice =orderList[position].basicprice.toString()
+
             val intent = Intent(required, AllBiddsDetailsActivity::class.java)
-            intent.putExtra("userName", orderList[position].user)
+         /*   intent.putExtra("userName", orderList[position].user)
             intent.putExtra("orderId", orderList[position].bookingNumber.toString())
             intent.putExtra("dateTime", orderList[position].pickupDatetime)
             intent.putExtra("pickupLocation", orderList[position].pickupLocation.toString())
             intent.putExtra("dropLocation", orderList[position].dropLocation.toString())
             intent.putExtra("distance", orderList[position].totalDistance.toString())
-            intent.putExtra("totalPrice", orderList[position].basicprice.toString())
-            intent.putExtra("id", id.toString())
+            intent.putExtra("totalPrice", orderList[position].basicprice.toString())*/
             required.startActivity(intent)
         }
 

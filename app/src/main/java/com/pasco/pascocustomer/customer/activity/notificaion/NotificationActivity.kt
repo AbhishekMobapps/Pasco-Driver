@@ -47,13 +47,13 @@ class NotificationActivity : Originator(), NotificationClickListener {
         setContentView(binding.root)
         binding.backBtn.setOnClickListener { finish() }
 
-        getNotification()
-        getNotificationObserver()
-        deleteNotificationObserver()
+
 
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
+
+        Log.e("LanguageAA", "aaa.....$languageId")
 
         if (Objects.equals(language, "ar")) {
             binding.backBtn.setImageResource(R.drawable.next)
@@ -64,7 +64,9 @@ class NotificationActivity : Originator(), NotificationClickListener {
             clearAllObserver()
         }
 
-
+        getNotification()
+        getNotificationObserver()
+        deleteNotificationObserver()
     }
 
     private fun clearAllPopUp() {
@@ -147,7 +149,7 @@ class NotificationActivity : Originator(), NotificationClickListener {
             val success = response.peekContent().status
             if (success == "True") {
                 notificationData = response.peekContent().data!!
-                Log.e("NotificationList", "aaa" + notificationData.size)
+                Log.e("NotificationListAA", "aaa" + notificationData.size)
                 binding.notificationRecycler.visibility = View.VISIBLE
                 binding.notificationRecycler.isVerticalScrollBarEnabled = true
                 binding.notificationRecycler.isVerticalFadingEdgeEnabled = true

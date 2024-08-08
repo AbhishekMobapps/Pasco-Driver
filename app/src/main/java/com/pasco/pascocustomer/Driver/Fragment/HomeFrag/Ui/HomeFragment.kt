@@ -234,13 +234,20 @@ class HomeFragment : Fragment(), SignUpCityName {
     private fun getVehicleDetailsObserver() {
 
         getVDetailsViewModel.mGetVDetails.observe(requireActivity()) { response ->
-            val data = response.peekContent().data
-            val status = data?.approvalStatus
-            PascoApp.encryptedPrefs.driverStatuss = status.toString()
-            if (data!!.approvalStatus != "Approved") {
-                disableAll()
-            } else if (data!!.approvalStatus == "Approved") {
-                enableAll()
+
+            val statuss = response.peekContent().status
+            if (statuss == "True") {
+                val data = response.peekContent().data
+                val status = data?.approvalStatus
+                PascoApp.encryptedPrefs.driverStatuss = status.toString()
+                if (data!!.approvalStatus != "Approved") {
+                    disableAll()
+                } else if (data!!.approvalStatus == "Approved") {
+                    enableAll()
+                }
+
+            } else {
+
             }
 
 
@@ -277,40 +284,43 @@ class HomeFragment : Fragment(), SignUpCityName {
     private fun updateLocation(location: Location) {
         val latitude = location.latitude
         val longitude = location.longitude
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            try {
-                val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)!!
-                if (addresses.isNotEmpty()) {
-                    val addressObj = addresses[0]
-                    address = addressObj.getAddressLine(0)
-                    // currentCityName = addressObj.locality
-                    val countryCode = addressObj.countryCode
-                    countryName = addressObj.countryName
 
-                    // Get the phone country code using libphonenumber
-                    val phoneUtil = PhoneNumberUtil.getInstance()
-                    val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
+        // Check if viewLifecycleOwner is available
+        if (view != null) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                val geocoder = Geocoder(requireContext(), Locale.ENGLISH) // Set Locale to ENGLISH
+                try {
+                    val addresses: List<Address> = geocoder.getFromLocation(latitude, longitude, 1)!!
+                    if (addresses.isNotEmpty()) {
+                        val addressObj = addresses[0]
+                        address = addressObj.getAddressLine(0)
+                        // currentCityName = addressObj.locality
+                        val countryCode = addressObj.countryCode
+                        countryName = addressObj.countryName
 
+                        // Get the phone country code using libphonenumber
+                        val phoneUtil = PhoneNumberUtil.getInstance()
+                        val phoneCountryCode = phoneUtil.getCountryCodeForRegion(countryCode)
 
-                    formattedCountryCode = "+$phoneCountryCode"
+                        formattedCountryCode = "+$phoneCountryCode"
 
-                    PascoApp.encryptedPrefs.countryCode = formattedCountryCode
-                    Log.e("hello", "city: $currentCityName")
-                    if (address.isNullOrEmpty()) {
-                        withContext(Dispatchers.Main) {
-                            requestLocationPermission()
+                        // Assuming PascoApp is a global app object with encryptedPrefs
+                        PascoApp.encryptedPrefs.countryCode = formattedCountryCode
+                        Log.e("hello", "city: $currentCityName")
+
+                        if (address.isNullOrEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                requestLocationPermission()
+                            }
                         }
                     }
-
-
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
         }
-
     }
+
 
     private fun openFilterPopUp() {
         alertDialog = Dialog(requireActivity())
@@ -401,7 +411,11 @@ class HomeFragment : Fragment(), SignUpCityName {
                 }
             }
             if (filterList.isEmpty()) {
-                Toast.makeText(requireActivity(), getString(R.string.no_data_found), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireActivity(),
+                    getString(R.string.no_data_found),
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
                 updateAddressAdapter?.setFilteredList(filterList)
             }
@@ -501,7 +515,11 @@ class HomeFragment : Fragment(), SignUpCityName {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 shareLocation()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.Location_permission_denied), Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.Location_permission_denied),
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
@@ -517,7 +535,6 @@ class HomeFragment : Fragment(), SignUpCityName {
     }
 
     private fun sliderPageObserver() {
-
         sliderViewModel.mRejectResponse.observe(requireActivity()) { response ->
             sliderList = response.peekContent().data
             binding.viewPagerDriver.adapter = ViewPagerAdapter(requireContext(), sliderList!!)
@@ -558,6 +575,28 @@ class HomeFragment : Fragment(), SignUpCityName {
         )
     }
 
+
+
+
+    override fun onResume() {
+        super.onResume()
+        //call api
+        getProfileApi()
+    }
+
+    override fun itemCity(id: Int, cityName: String) {
+        selectCityName = cityName
+        showRideRequestStatusApi(selectCityName)
+        alertDialog?.dismiss()
+
+    }
+
+    private fun showRideRequestStatusApi(selectCityName: String) {
+        showBookingReqViewModel.getShowBookingRequestsData(
+            activity, selectCityName, languageId
+        )
+    }
+
     private fun setupObservers() {
         showBookingReqViewModel.mShowBookingReq.observe(viewLifecycleOwner) { response ->
             val message = response.peekContent().msg
@@ -587,25 +626,5 @@ class HomeFragment : Fragment(), SignUpCityName {
             adapter = AcceptRideAdapter(requireContext(), rideRequestList, language)
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        //call api
-        getProfileApi()
-    }
-
-    override fun itemCity(id: Int, cityName: String) {
-        selectCityName = cityName
-        showRideRequestStatusApi(selectCityName)
-        alertDialog?.dismiss()
-
-    }
-
-    private fun showRideRequestStatusApi(selectCityName: String) {
-        showBookingReqViewModel.getShowBookingRequestsData(
-            activity, selectCityName, languageId
-        )
-    }
-
 
 }

@@ -3,10 +3,12 @@ package com.pasco.pascocustomer.Driver.adapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
@@ -17,13 +19,22 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 
 import java.util.Locale
+import java.util.Objects
 import java.util.TimeZone
 
-class DriverHistoryAdapter (private val context: Context, private val driverCurrentStatus:List<DAllOrderResponse.DAllOrderResponseData>)  :
-    RecyclerView.Adapter<DriverHistoryAdapter.ViewHolder>(){
+class DriverHistoryAdapter(
+    private val context: Context,
+    private val driverCurrentStatus: List<DAllOrderResponse.DAllOrderResponseData>,
+    var language: String
+) :
+    RecyclerView.Adapter<DriverHistoryAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DriverHistoryAdapter.ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.recycler_driver_history,parent,false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): DriverHistoryAdapter.ViewHolder {
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.recycler_driver_history, parent, false)
         return ViewHolder(view)
     }
 
@@ -54,7 +65,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
         holder.orderIDDriOrd.setOnClickListener {
             showFullAddressDialog(driverOrderHis.bookingNumber.toString())
         }
-        holder.orderPriceTDriO.setOnClickListener {
+        holder.itemView.setOnClickListener {
             val intent = Intent(context, DriverStartRidingActivity::class.java).apply {
                 putExtra("pickupLoc", driverOrderHis.pickupLocation.toString())
                 putExtra("dropLoc", driverOrderHis.dropLocation.toString())
@@ -69,7 +80,12 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
             }
             context.startActivity(intent)
         }
+        if (Objects.equals(language,"ar"))
+        {
+           holder.showDetailsBtn.setImageResource(R.drawable.back)
+        }
     }
+
     fun truncateBookingNumber(bookingNumber: String, maxLength: Int = 8): String {
         return if (bookingNumber.length > maxLength) {
             "${bookingNumber.substring(0, maxLength)}..."
@@ -99,6 +115,7 @@ class DriverHistoryAdapter (private val context: Context, private val driverCurr
         val orderPriceTDriO = itemView.findViewById<TextView>(R.id.orderPriceTDriO)
         val orderDateTimedO = itemView.findViewById<TextView>(R.id.orderDateTimedO)
         val ordersStatusCurrent = itemView.findViewById<TextView>(R.id.ordersStatusCurrent)
+        val showDetailsBtn = itemView.findViewById<ImageView>(R.id.showDetailsBtn)
 
 
     }

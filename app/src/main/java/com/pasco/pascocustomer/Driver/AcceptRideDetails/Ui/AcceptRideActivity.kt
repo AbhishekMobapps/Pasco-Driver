@@ -13,6 +13,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
@@ -48,6 +50,7 @@ import com.pasco.pascocustomer.language.Originator
 import com.pasco.pascocustomer.userFragment.order.odermodel.CustomerOrderBody
 import com.pasco.pascocustomer.utils.ErrorUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -116,16 +119,12 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
 
         one = intent.getIntExtra("one", -1) // Default value set to -1
         bookingNumber = intent.getStringExtra("bookingNumb").orEmpty()
-        currentLatitudePickup = intent.getStringExtra("pickuplatitudea")?.toDoubleOrNull() ?: 0.0
-        currentLongitudePickup = intent.getStringExtra("pickuplongitudea")?.toDoubleOrNull() ?: 0.0
-        currentLatitudeDrop = intent.getStringExtra("droplatitudea")?.toDoubleOrNull() ?: 0.0
-        currentLongitudeDrop = intent.getStringExtra("droplongitudea")?.toDoubleOrNull() ?: 0.0
 
-        Log.d(
-            "PickupLocation",
-            "Latitude: $currentLatitudePickup, Longitude: $currentLongitudePickup"
-        )
-        Log.d("DropLocation", "Latitude: $currentLatitudeDrop, Longitude: $currentLongitudeDrop")
+
+        currentLatitudePickup = PascoApp.encryptedPrefs.drPickupLatitude.toDoubleOrNull() ?: 0.0
+        currentLongitudePickup = PascoApp.encryptedPrefs.drPickupLongitude.toDoubleOrNull() ?: 0.0
+        currentLatitudeDrop = PascoApp.encryptedPrefs.drDropLatitude.toDoubleOrNull() ?: 0.0
+        currentLongitudeDrop = PascoApp.encryptedPrefs.drDropLongitude.toDoubleOrNull() ?: 0.0
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -140,13 +139,20 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
             binding.imageBackReqRide.setImageResource(R.drawable.next)
         }
 
-
+        val handler = Handler(Looper.getMainLooper())
         if (!orderID.isNullOrBlank()) {
+
             getBidDetailsApi()
+            getBidObserver()
         }
-        getBidObserver()
+
+
         binding.imageBackReqRide.setOnClickListener {
             PascoApp.encryptedPrefs.requestOrderId = ""
+            PascoApp.encryptedPrefs.drPickupLatitude = ""
+            PascoApp.encryptedPrefs.drPickupLongitude = ""
+            PascoApp.encryptedPrefs.drDropLatitude = ""
+            PascoApp.encryptedPrefs.drDropLongitude = ""
             finish()
         }
         /*  pickupLocation = LatLng(28.6076, 77.3683) // New York City
@@ -161,10 +167,11 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
         }
         binding.acceptOrderCButton.setOnClickListener {
             val dateTime = dateTimes
+            Log.e("DateTimesA", "dateTimes...Btn$dateTime")
             val bidPrice = binding.showPriceEditText.text.toString()
             val priceText = binding.showPriceEditTextdasdas.text.toString()
 
-            val dateTimePattern = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}"
+            //   val dateTimePattern = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}"
 
             if (dateTime.isEmpty()) {
                 Toast.makeText(
@@ -172,13 +179,14 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
                     getString(R.string.Please_add_the_availability),
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (!priceText.matches(dateTimePattern.toRegex())) {
+            }
+            /*else if (!priceText.matches(dateTimePattern.toRegex())) {
                 Toast.makeText(
                     this@AcceptRideActivity,
                     getString(R.string.date_and_time),
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (bidPrice.isEmpty()) {
+            } */ else if (bidPrice.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
                     getString(R.string.enter_bid_price),
@@ -353,6 +361,136 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
         return poly
     }
 
+
+
+    fun showFullAddressDialog(address: String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Address")
+        alertDialogBuilder.setMessage(address)
+        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    fun truncateAddress(address: String): String {
+        val words = address.split(" ")
+        return if (words.size > 10) {
+            words.subList(0, 10).joinToString(" ") + "..."
+        } else {
+            address
+        }
+    }
+
+
+    private fun showWalletRequirementPopup() {
+        val message = getString(R.string.the_bid_amountin_your)
+
+        val builder = AlertDialog.Builder(this@AcceptRideActivity)
+        builder.setTitle(getString(R.string.Insufficient_wallet_amount))
+        builder.setMessage(message)
+        builder.setPositiveButton(getString(R.string.Add_Funds)) { dialog, _ ->
+            // Navigate to wallet page
+            navigateToWalletPage()
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton(getString(R.string.skip)) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun navigateToWalletPage() {
+        val intent = Intent(this@AcceptRideActivity, DriverWalletActivity::class.java)
+        intent.putExtra("wallet", "amount")
+        startActivity(intent)
+    }
+
+    private fun addBiding() {
+        val pricee = binding.showPriceEditText.text.toString()
+        Log.e("DateTimesA", "dateTimes...$dateTimes")
+        addBiddingBody = AddBiddingBody(
+            availability_datetime = dateTimes,
+            bid_price = pricee,
+            language = languageId
+        )
+        addBidingViewModel.addBidingData(
+            progressDialog,
+            activity,
+            orderID,
+            addBiddingBody
+        )
+    }
+
+    private fun addBidingObserver() {
+        addBidingViewModel.mAddBiddibgResponse.observe(this) { response ->
+            val message = response.peekContent().msg!!
+            val status = response.peekContent().status!!
+
+            if (response.peekContent().msg == getString(R.string.Recharge_your_wallet)) {
+                // Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+                showWalletRequirementPopup()
+            } else {
+
+                if (status == "True") {
+                    Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+                    val intent =
+                        Intent(this@AcceptRideActivity, DriverDashboardActivity::class.java)
+                    intent.putExtra("bookingID", bookingID)
+                    intent.putExtra("pickUpLocBidd", pickUpLocBid)
+                    intent.putExtra("dropUpLocBid", dropUpLocBid)
+                    intent.putExtra("totalDistanceLoc", totalDistanceLoc)
+                    intent.putExtra("pickUpLocBid", totalTimeLoc)
+                    intent.putExtra("totalPriceLoc", totalPriceLoc)
+                    intent.putExtra("onee", one)
+                    startActivity(intent)
+                    PascoApp.encryptedPrefs.requestOrderId = ""
+                    PascoApp.encryptedPrefs.drPickupLatitude = ""
+                    PascoApp.encryptedPrefs.drPickupLongitude = ""
+                    PascoApp.encryptedPrefs.drDropLatitude = ""
+                    PascoApp.encryptedPrefs.drDropLongitude = ""
+                } else {
+                    Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+        }
+        addBidingViewModel.errorResponse.observe(this) {
+            // Handle general errors
+            //ErrorUtil.handlerGeneralError(this, it)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun formatDateTime(dateTimeString: String?): String {
+        if (dateTimeString.isNullOrEmpty()) return ""
+
+        // Parse the datetime string into a ZonedDateTime object
+        val dateTime = ZonedDateTime.parse(dateTimeString)
+
+        // Define the desired format
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // Format the datetime and return as a string
+        return dateTime.format(formatter)
+    }
+
+    private fun getBidDetailsApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        acceptRideViewModel.getAcceptRideData(
+            activity,
+            orderID,
+            body
+        )
+    }
     private fun getBidObserver() {
         acceptRideViewModel.mAcceptRideResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
@@ -402,131 +540,14 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
 
         acceptRideViewModel.errorResponse.observe(this) {
             // Handle general errors
-            ErrorUtil.handlerGeneralError(this, it)
+         //   ErrorUtil.handlerGeneralError(this, it)
         }
-    }
-
-    fun showFullAddressDialog(address: String) {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("Address")
-        alertDialogBuilder.setMessage(address)
-        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
-            dialog.dismiss()
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    fun truncateAddress(address: String): String {
-        val words = address.split(" ")
-        return if (words.size > 10) {
-            words.subList(0, 10).joinToString(" ") + "..."
-        } else {
-            address
-        }
-    }
-
-    private fun addBidingObserver() {
-        addBidingViewModel.mAddBiddibgResponse.observe(this) { response ->
-            val message = response.peekContent().msg!!
-
-            if (response.peekContent().status.equals("False")) {
-                // Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
-                showWalletRequirementPopup()
-            } else {
-                Toast.makeText(this, "$message", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@AcceptRideActivity, DriverDashboardActivity::class.java)
-                intent.putExtra("bookingID", bookingID)
-                intent.putExtra("pickUpLocBidd", pickUpLocBid)
-                intent.putExtra("dropUpLocBid", dropUpLocBid)
-                intent.putExtra("totalDistanceLoc", totalDistanceLoc)
-                intent.putExtra("pickUpLocBid", totalTimeLoc)
-                intent.putExtra("totalPriceLoc", totalPriceLoc)
-                intent.putExtra("onee", one)
-                startActivity(intent)
-                PascoApp.encryptedPrefs.requestOrderId = ""
-            }
-
-        }
-        addBidingViewModel.errorResponse.observe(this) {
-            // Handle general errors
-            ErrorUtil.handlerGeneralError(this, it)
-        }
-    }
-
-    private fun showWalletRequirementPopup() {
-        val message = getString(R.string.the_bid_amountin_your)
-
-        val builder = AlertDialog.Builder(this@AcceptRideActivity)
-        builder.setTitle(getString(R.string.Insufficient_wallet_amount))
-        builder.setMessage(message)
-        builder.setPositiveButton(getString(R.string.Add_Funds)) { dialog, _ ->
-            // Navigate to wallet page
-            navigateToWalletPage()
-            dialog.dismiss()
-        }
-
-        builder.setNegativeButton(getString(R.string.skip)) { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val alertDialog = builder.create()
-        alertDialog.show()
-    }
-
-    @SuppressLint("SuspiciousIndentation")
-    private fun navigateToWalletPage() {
-        val intent = Intent(this@AcceptRideActivity, DriverWalletActivity::class.java)
-        intent.putExtra("wallet", "amount")
-        startActivity(intent)
-    }
-
-    private fun addBiding() {
-        val pricee = binding.showPriceEditText.text.toString()
-        addBiddingBody = AddBiddingBody(
-            availability_datetime = dateTimes,
-            bid_price = pricee,
-            language = languageId
-        )
-        addBidingViewModel.addBidingData(
-            progressDialog,
-            activity,
-            orderID,
-            addBiddingBody
-        )
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun formatDateTime(dateTimeString: String?): String {
-        if (dateTimeString.isNullOrEmpty()) return ""
-
-        // Parse the datetime string into a ZonedDateTime object
-        val dateTime = ZonedDateTime.parse(dateTimeString)
-
-        // Define the desired format
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-        // Format the datetime and return as a string
-        return dateTime.format(formatter)
-    }
-
-    private fun getBidDetailsApi() {
-        val body = CustomerOrderBody(
-            language = languageId
-        )
-        acceptRideViewModel.getAcceptRideData(
-            activity,
-            orderID,
-            body
-        )
     }
 
     //comment123
     @SuppressLint("MissingInflatedId")
     private fun addAvailabilityPopUp() {
-        val builder =
-            AlertDialog.Builder(this@AcceptRideActivity, R.style.Style_Dialog_Rounded_Corner)
+        val builder = AlertDialog.Builder(this@AcceptRideActivity, R.style.Style_Dialog_Rounded_Corner)
         val dialogView = layoutInflater.inflate(R.layout.add_avilability_popup, null)
         builder.setView(dialogView)
 
@@ -542,7 +563,7 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
             dialog.dismiss()
         }
 
-        startDateTxtPop.setOnClickListener {
+        /*    startDateTxtPop.setOnClickListener {
             val calendar = Calendar.getInstance()
 
             year = calendar.get(Calendar.YEAR)
@@ -565,6 +586,41 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
             datePickerDialog.datePicker.minDate = System.currentTimeMillis()
             datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY)
             datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE)
+        }*/
+
+
+        startDateTxtPop.setOnClickListener {
+            val calendar = Calendar.getInstance()
+
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(
+                this@AcceptRideActivity,
+                DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    val calendar = Calendar.getInstance().apply {
+                        set(Calendar.YEAR, year)
+                        set(Calendar.MONTH, monthOfYear)
+                        set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    }
+
+                    val isArabic = Locale.getDefault().language == "ar"
+                    val dateFormat = if (isArabic) {
+                        SimpleDateFormat("yyyy-MM-dd", Locale("ar"))
+                    } else {
+                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    }
+
+                    val formattedDate = dateFormat.format(calendar.time)
+                    startDateTxtPop.text = formattedDate
+                },
+                year, month, day
+            )
+
+            datePickerDialog.show()
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis()
+            datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY)
         }
 
         startTimetxtPop.setOnClickListener {
@@ -587,30 +643,68 @@ class AcceptRideActivity : Originator(), OnMapReadyCallback {
 
         createSlotsBtnPop.setOnClickListener {
             if (startDateTxtPop.text.isNotEmpty() && startTimetxtPop.text.isNotEmpty()) {
-                val dateCheck = startDateTxtPop.text.toString()
-                val timeCheck = startTimetxtPop.text.toString()
-                val dateTime = "$dateCheck $timeCheck"
-                dateTimes = dateTime
-                if (!dateTimes.isNullOrBlank()) {
-                    binding.showPriceEditTextdasdas.text = dateTimes
+
+
+                if (Objects.equals(language, "ar")) {
+                    val dateCheck = startDateTxtPop.text.toString()
+                    val englishDate = convertArabicToEnglishDate(dateCheck)
+
+                    val timeCheck = startTimetxtPop.text.toString()
+                    val englishTime = convertArabicToEnglishTime(timeCheck)
+
+                    dateTimes = "$englishDate $englishTime"
+                    val dateTimesa = "$dateCheck $timeCheck"
+                    dateTimes = dateTimes
+                    if (!dateTimes.isNullOrBlank()) {
+                        binding.showPriceEditTextdasdas.text = dateTimesa
+                    }
+                } else {
+                    val dateCheck = startDateTxtPop.text.toString()
+                    val timeCheck = startTimetxtPop.text.toString()
+                    val dateTimesa = "$dateCheck $timeCheck"
+                    dateTimes = "$dateCheck $timeCheck"
+                    if (!dateTimes.isNullOrBlank()) {
+                        binding.showPriceEditTextdasdas.text = dateTimes
+                    }
+
                 }
-                Log.d("DateTime", dateTime)
                 dialog.dismiss() // Dismiss the dialog explicitly
-            } else if (startDateTxtPop.text.isEmpty() || startTimetxtPop.text.isEmpty()) {
+            } /*else if (startDateTxtPop.text.isEmpty() || startTimetxtPop.text.isEmpty()) {
                 Toast.makeText(
                     this@AcceptRideActivity,
                     getString(R.string.select_both_start_date_and_start_time),
                     Toast.LENGTH_SHORT
                 ).show()
-            }
+            }*/
         }
 
+    }
+
+    private fun convertArabicToEnglishDate(arabicDate: String): String {
+        val arabicToEnglishDigits = mapOf(
+            '٠' to '0', '١' to '1', '٢' to '2', '٣' to '3', '٤' to '4',
+            '٥' to '5', '٦' to '6', '٧' to '7', '٨' to '8', '٩' to '9'
+        )
+
+        val englishDate = arabicDate.map { arabicToEnglishDigits[it] ?: it }.joinToString("")
+        return englishDate
+    }
+
+    private fun convertArabicToEnglishTime(arabicTime: String): String {
+        val arabicToEnglishDigits = mapOf(
+            '٠' to '0', '١' to '1', '٢' to '2', '٣' to '3', '٤' to '4',
+            '٥' to '5', '٦' to '6', '٧' to '7', '٨' to '8', '٩' to '9'
+        )
+
+        val englishTime = arabicTime.map { arabicToEnglishDigits[it] ?: it }.joinToString("")
+        return englishTime
     }
 
     override fun onResume() {
         super.onResume()
         if (!orderID.isNullOrBlank()) {
             getBidDetailsApi()
+            getBidObserver()
         }
     }
 

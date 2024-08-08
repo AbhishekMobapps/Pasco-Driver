@@ -174,10 +174,10 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
         updateLocationViewModel.mUpdateLocationResponse.observe(this) { response ->
             val message = response.peekContent().msg!!
             if (response.peekContent().status.equals("False")) {
-               Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
             } else {
 
-             //   Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
+                //   Toast.makeText(this@UpdateLocationActivity, "$message", Toast.LENGTH_LONG).show()
                 val intent =
                     Intent(this@UpdateLocationActivity, DriverDashboardActivity::class.java)
                 startActivity(intent)
@@ -190,12 +190,14 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
     }
 
     private fun updateLocationDetails() {
+
         updateLocationBody = UpdationLocationBody(
-            city.toString(),
-            address.toString(),
-            formattedLatitudeSelect,
-            formattedLongitudeSelect,countryName.toString(),
-            language =languageId
+            current_city = city.toString(),
+            current_location = address.toString(),
+            latitude = formattedLatitudeSelect,
+            longitude = formattedLongitudeSelect,
+            current_country = countryName.toString(),
+            language = languageId
         )
         updateLocationViewModel.updateLocationDriver(
             activity,
@@ -273,7 +275,11 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
                 // Permission granted, show current location
                 showCurrentLocation()
             } else {
-                Toast.makeText(this, getString(R.string.Location_permission_denied), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.Location_permission_denied),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -285,15 +291,10 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
-        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
+        formattedLatitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplatitude)
+        formattedLongitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplongitude)
 
-        Log.e(
-            "TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
-                    " formattedLongitudeSelect=$formattedLongitudeSelect"
-        )
-
-        val geocoder = Geocoder(this, Locale.getDefault())
+        val geocoder = Geocoder(this, Locale.ENGLISH)
         try {
             val addresses: List<Address>? = geocoder.getFromLocation(
                 location.latitude,
@@ -303,7 +304,6 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
 
             if (addresses != null && addresses.isNotEmpty()) {
                 address = addresses[0].getAddressLine(0) ?: "Address not available"
-                //  binding.txtUserAddress.text = "Address: $address"
                 city = addresses[0].locality ?: "City not available"
                 countryName = addresses[0].countryName ?: "City not available"
                 binding?.txtUserAddressUpLoc?.setText(address)
@@ -314,9 +314,9 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
         } catch (e: IOException) {
             e.printStackTrace()
             binding?.txtUserAddressUpLoc?.setText("Error getting address")
-
         }
     }
+
 
     private fun getAddressFromLocation1(location: LatLng) {
         val latitude = location.latitude
@@ -324,15 +324,15 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
 
         pickUplatitude = latitude
         pickUplongitude = longitude
-        formattedLatitudeSelect = String.format("%.5f", pickUplatitude)
-        formattedLongitudeSelect = String.format("%.5f", pickUplongitude)
+        formattedLatitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplatitude)
+        formattedLongitudeSelect = String.format(Locale.ENGLISH, "%.5f", pickUplongitude)
 
         Log.e(
             "TAGG", "getAddressFromLocation: formattedLatitudeSelect=$formattedLatitudeSelect," +
                     " formattedLongitudeSelect=$formattedLongitudeSelect"
         )
 
-        val geocoder = Geocoder(this, Locale.getDefault())
+        val geocoder = Geocoder(this, Locale.ENGLISH) // Set Locale to ENGLISH
         try {
             val addresses: List<Address>? = geocoder.getFromLocation(
                 location.latitude,
@@ -342,7 +342,6 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
 
             if (addresses != null && addresses.isNotEmpty()) {
                 address = addresses[0].getAddressLine(0) ?: "Address not available"
-                //  binding.txtUserAddress.text = "Address: $address"
                 city = addresses[0].locality ?: "City not available"
                 countryName = addresses[0].countryName ?: "City not available"
                 binding?.txtUserAddressUpLoc?.setText(address)
@@ -353,9 +352,9 @@ class UpdateLocationActivity : Originator(), OnMapReadyCallback,
         } catch (e: IOException) {
             e.printStackTrace()
             binding?.txtUserAddressUpLoc?.setText("Error getting address")
-
         }
     }
+
 
     companion object {
         var REQUEST_LOCATION_PERMISSION: Int = 1

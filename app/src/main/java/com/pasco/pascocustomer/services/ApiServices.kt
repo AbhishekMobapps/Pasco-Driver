@@ -93,6 +93,7 @@ import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehiclety
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
+import com.pasco.pascocustomer.notificationoffon.model.GetNotificationOFF
 import com.pasco.pascocustomer.notificationoffon.model.GetOnOffNotificationBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffResponse
@@ -643,7 +644,7 @@ interface ApiServices {
         @Body body: CancelBookingBody
     ): Observable<AcceptOrRejectResponse>
 
-    @POST("add-reminder/")
+    @POST("show-reminder/")
     fun getReminder(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body : CustomerOrderBody
@@ -693,7 +694,7 @@ interface ApiServices {
 
 
     @Headers("Accept:application/json")
-    @POST("set-typeof-notification/")
+    @POST("show-settypeof-notification/")
     fun allTypeNOtification(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: NotificationOnOffBody
@@ -703,7 +704,7 @@ interface ApiServices {
     fun getAllTypeNotification(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body: GetOnOffNotificationBody
-    ): Observable<NotificationOnOffResponse>
+    ): Observable<GetNotificationOFF>
 
     @Headers("Accept: application/json")
     @POST("UpdateCompleteClientWallet/{id}/")
@@ -731,5 +732,12 @@ interface ApiServices {
     fun updateLanguage(
         @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
         @Body body : CustomerOrderBody
+    ): Observable<AcceptOrRejectResponse>
+
+    @POST("reject-booking/{id}/")
+    fun rejectBids(
+        @Header("Authorization") token: String = PascoApp.encryptedPrefs.bearerToken,
+        @Path("id") bookingId: String,
+        @Body body: CustomerOrderBody
     ): Observable<AcceptOrRejectResponse>
 }

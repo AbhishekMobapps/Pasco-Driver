@@ -87,6 +87,8 @@ class LoginActivity : Originator() {
         auth = FirebaseAuth.getInstance()
 
 
+
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 return@addOnCompleteListener

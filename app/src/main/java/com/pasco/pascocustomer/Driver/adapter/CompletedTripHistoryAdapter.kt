@@ -4,38 +4,31 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.RatingBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pasco.pascocustomer.BuildConfig
-import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.AddFeedbackOnClickListner
 import com.pasco.pascocustomer.Driver.Fragment.DriverTripHistory.CompletedTripHistoryResponse
 import com.pasco.pascocustomer.R
 import com.pasco.pascocustomer.historydetails.CompleteHistoryDetailsActivity
-import com.pasco.pascocustomer.invoice.InvoiceActivity
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.Objects
 import java.util.TimeZone
 
 class CompletedTripHistoryAdapter(
     private val context: Context,
-    private val driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData>
+    private val driverTripHistory: List<CompletedTripHistoryResponse.DriverTripHistoryData>,
+    private var language: String
 ) :
     RecyclerView.Adapter<CompletedTripHistoryAdapter.ViewHolder>() {
 
@@ -60,7 +53,6 @@ class CompletedTripHistoryAdapter(
 
         holder.bookingId.text = driverTripHistory[position].bookingNumber
         holder.paymentMode.text = driverTripHistory[position].paymentMethod
-
 
 
         val formattedTotalDistance =
@@ -108,7 +100,7 @@ class CompletedTripHistoryAdapter(
 
 
             status.text = dBookingStatus
-            if (dBookingStatus == "Cancelled") {
+            if (dBookingStatus == context.getString(R.string.cancelled)) {
                 status.setTextColor(Color.parseColor("#BC2A0A"))
                 statusConst.setBackgroundResource(R.drawable.cancel_back)
             } else {
@@ -151,7 +143,10 @@ class CompletedTripHistoryAdapter(
             }
         }
 
-
+        if (Objects.equals(language, "ar")) {
+            holder.hisArow.setImageResource(R.drawable.back)
+        }
+        
 
     }
 
@@ -170,7 +165,8 @@ class CompletedTripHistoryAdapter(
         val driverProfile = itemView.findViewById<CircleImageView>(R.id.driverProfile)
         val hisArow = itemView.findViewById<ImageView>(R.id.hisArrow)
         val statusConst = itemView.findViewById<ConstraintLayout>(R.id.statusConst)
-        val consCancellationReason = itemView.findViewById<ConstraintLayout>(R.id.consCancellationReason)
+        val consCancellationReason =
+            itemView.findViewById<ConstraintLayout>(R.id.consCancellationReason)
 
 
     }

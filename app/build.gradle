@@ -86,7 +86,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
 
-
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1" // or the latest version
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1" // or the latest version
     //map
     //for country code
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.41'

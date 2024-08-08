@@ -19,6 +19,7 @@ class NotificationResponse {
     @Expose
     var data: List<Datum>? = null
 
+
     inner class Datum : Serializable {
         @SerializedName("id")
         @Expose

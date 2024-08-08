@@ -60,6 +60,7 @@ import com.pasco.pascocustomer.customer.activity.vehicledetailactivity.vehiclety
 import com.pasco.pascocustomer.customerfeedback.CustomerFeedbackBody
 import com.pasco.pascocustomer.loyalty.model.LoyaltyProgramResponse
 import com.pasco.pascocustomer.loyalty.useloyaltycode.LoyaltyCodeUseBody
+import com.pasco.pascocustomer.notificationoffon.model.GetNotificationOFF
 import com.pasco.pascocustomer.notificationoffon.model.GetOnOffNotificationBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffBody
 import com.pasco.pascocustomer.notificationoffon.model.NotificationOnOffResponse
@@ -332,7 +333,7 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
         return apiService.allTypeNOtification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
-    fun getNotificationOnOff(body: GetOnOffNotificationBody): Observable<NotificationOnOffResponse> {
+    fun getNotificationOnOff(body: GetOnOffNotificationBody): Observable<GetNotificationOFF> {
         return apiService.getAllTypeNotification(PascoApp.encryptedPrefs.bearerToken, body)
     }
 
@@ -353,5 +354,9 @@ class CommonRepository @Inject constructor(private val apiService: ApiServices) 
 
     fun updateLanguage(body: CustomerOrderBody): Observable<AcceptOrRejectResponse> {
         return apiService.updateLanguage(PascoApp.encryptedPrefs.bearerToken,body)
+    }
+
+    fun rejectBids(Id: String,body: CustomerOrderBody): Observable<AcceptOrRejectResponse> {
+        return apiService.rejectBids(PascoApp.encryptedPrefs.bearerToken, Id,body)
     }
 }

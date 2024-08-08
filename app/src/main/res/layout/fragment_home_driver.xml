@@ -177,10 +177,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:padding="5dp"
             android:background="@drawable/button_background"
             app:layout_constraintWidth_percent=".3"
-            app:layout_constraintTop_toBottomOf="@+id/driverHomeLinear"
+            app:layout_constraintTop_toTopOf="@+id/myOrderConst"
+            app:layout_constraintBottom_toBottomOf="@+id/myOrderConst"
             app:layout_constraintEnd_toEndOf="parent">
 
 
@@ -210,6 +212,40 @@
             app:layout_constraintStart_toEndOf="@+id/filterTextView"
             android:src="@drawable/filter"
             app:tint="@color/white" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/myOrderConst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/driverHomeLinear"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            app:layout_constraintWidth_percent="0.2"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/myOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/my_orders"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_16"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                app:layout_constraintWidth_percent="0.99"
+                android:background="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/myOrder"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView

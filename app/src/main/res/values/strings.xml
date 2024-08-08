@@ -51,11 +51,11 @@
     <string name="proceed">Proceed</string>
     <string name="cancel">Cancel</string>
     <string name="all_bidds">All Bids</string>
-    <string name="accept">Accepted</string>
+    <string name="accept">Accept</string>
     <string name="custer_name">Custer Name</string>
     <string name="edit_profile">Edit Profile</string>
-    <string name="pickup">Pickup :</string>
-    <string name="drop">Drop :</string>
+    <string name="pickup">Pickup:</string>
+    <string name="drop">Drop:</string>
     <string name="reject">Reject</string>
     <string name="e_mail">Email</string>
     <string name="history">History</string>
@@ -149,7 +149,7 @@
     <string name="previous">Previous</string>
     <string name="my_profile">My Profile</string>
     <string name="truck">Truck</string>
-    <string name="distance">Distance :</string>
+    <string name="distance">Distance:</string>
     <string name="time">Time :</string>
     <string name="_0_hours_0_minutes">0 hours 0 minutes</string>
     <string name="select_vehicle">Select Vehicle</string>
@@ -265,7 +265,7 @@
     <string name="add">Add</string>
     <string name="feedback">Feedback</string>
     <string name="sendtoalldrivers">SendToAllDrivers</string>
-    <string name="destination">Destination :</string>
+    <string name="destination">Destination:</string>
     <string name="order_id">Order ID</string>
     <string name="add_notes">Add Notes</string>
     <string name="delete">Delete</string>
@@ -319,7 +319,7 @@
     <string name="my_transactions">My Transactions</string>
     <string name="transaction_history">Transaction History</string>
     <string name="withdraw_history">Withdraw History</string>
-    <string name="please_select_reason">Please Select reason!</string>
+    <string name="please_select_reason">Select Reason!</string>
     <string name="select_event">Filter</string>
     <string name="cancellation_reason">Cancellation Reason :</string>
     <string name="transaction_id">Transaction Id</string>
@@ -328,13 +328,13 @@
     <string name="visa">Visa</string>
     <string name="type_here">Type here...</string>
     <string name="update_language">Update Language</string>
-    <string name="order_ids">Order Id :</string>
-    <string name="total_price">Total Price :</string>
+    <string name="order_ids">Order Id:</string>
+    <string name="total_price">Total Price:</string>
     <string name="support_amp_legal"><![CDATA[Support & Legal]]></string>
-    <string name="verification_code">Verification Code :</string>
-    <string name="estimate_price">Estimate Price :</string>
-    <string name="delivery_price_range">Delivery price range :</string>
-    <string name="order_date">Order Date :</string>
+    <string name="verification_code">Verification Code:</string>
+    <string name="estimate_price">Estimate Price:</string>
+    <string name="delivery_price_range">Delivery price range:</string>
+    <string name="order_date">Order Date:</string>
 
     <string name="terms_amp_conditions">Terms and Conditions</string>
     <string name="personal_details">Personal Details</string>
@@ -450,6 +450,22 @@
     <string name="set_location">Set location</string>
     <string name="Please_enter_valid_email">Please enter valid email</string>
     <string name="Please_upload_profile">Please upload profile</string>
+    <string name="Recharge_your_wallet">Recharge your wallet</string>
+    <string name="add_your_wallet_amount_successfully">Add your wallet amount successfully!</string>
+    <string name="finish_your_ride">Finish Your Ride</string>
+    <string name="An_error_occurred">An error occurred</string>
+    <string name="No_location_found_for_the_city">No location found for the city</string>
+    <string name="my_orders">My Orders</string>
+    <string name="Reached_at_PickUp_Location">Reached the Pickup Location</string>
+    <string name="Completed">Completed</string>
+    <string name="Cash">Cash</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="pending">Pending</string>
+    <string name="No_cancellation_data_has_been_found">No cancellation data has been found.</string>
+    <string name="you_have_not_completed_any_trips_yet">You have not completed any trips yet.</string>
+    <string name="select_city">Select City</string>
+    <string name="bid_request_cancel">Bid request rejected by customer!</string>
+    <string name="search">Search</string>
 
 
 

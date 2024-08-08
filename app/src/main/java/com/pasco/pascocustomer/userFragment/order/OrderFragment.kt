@@ -90,7 +90,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
         if (Objects.equals(language, "ar")) {
             binding.ordersConst.setBackgroundResource(R.drawable.accept_back)
             getOrderApi()
-
+            orderObserver()
             binding.ordersConst.setOnClickListener {
                 binding.ordersConst.setBackgroundResource(R.drawable.accept_back)
                 binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
@@ -103,80 +103,23 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 binding.asAcceptConst.setBackgroundResource(0)
                 binding.allBiddsConst.setBackgroundResource(0)
                 getOrderApi()
+                orderObserver()
 
-                binding.asAcceptConst.setOnClickListener {
-                    binding.asAcceptConst.setBackgroundResource(R.drawable.orders_tab_back)
-                    binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    binding.oderRecycler.visibility = View.GONE
-                    binding.allBiddsRecycler.visibility = View.GONE
-                    binding.acceptRecycler.visibility = View.VISIBLE
-                    binding.noDataFoundTxt.visibility = View.GONE
-                    binding.allBiddsConst.setBackgroundResource(0)
-                    binding.ordersConst.setBackgroundResource(0)
-                    getAcceptedApi()
-
-                }
-
-                binding.allBiddsConst.setOnClickListener {
-                    binding.allBiddsConst.setBackgroundResource(R.drawable.all_bidds_back)
-                    binding.acceptTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.black
-                        )
-                    )
-                    binding.orderTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.black
-                        )
-                    )
-                    binding.biddsTxt.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                    binding.oderRecycler.visibility = View.GONE
-                    binding.allBiddsRecycler.visibility = View.VISIBLE
-                    binding.acceptRecycler.visibility = View.GONE
-                    binding.noDataFoundTxt.visibility = View.GONE
-                    binding.asAcceptConst.setBackgroundResource(0)
-                    binding.ordersConst.setBackgroundResource(0)
-                    getAllBiddsApi()
-                }
 
             }
-        } else {
-            binding.ordersConst.setOnClickListener {
-                binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
-                binding.acceptTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.biddsTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.orderTxt.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
-                binding.oderRecycler.visibility = View.VISIBLE
+
+            binding.asAcceptConst.setOnClickListener {
+                binding.asAcceptConst.setBackgroundResource(R.drawable.orders_tab_back)
+                binding.acceptTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                binding.orderTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                binding.biddsTxt.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                binding.oderRecycler.visibility = View.GONE
                 binding.allBiddsRecycler.visibility = View.GONE
-                binding.acceptRecycler.visibility = View.GONE
                 binding.noDataFoundTxt.visibility = View.GONE
-                binding.asAcceptConst.setBackgroundResource(0)
                 binding.allBiddsConst.setBackgroundResource(0)
-                getOrderApi()
+                binding.ordersConst.setBackgroundResource(0)
+                getAcceptedApi()
+                acceptedObserver()
 
             }
 
@@ -207,6 +150,69 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 binding.asAcceptConst.setBackgroundResource(0)
                 binding.ordersConst.setBackgroundResource(0)
                 getAllBiddsApi()
+                allBiddsObserver()
+            }
+        } else {
+            binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
+            getOrderApi()
+            orderObserver()
+            binding.ordersConst.setOnClickListener {
+                binding.ordersConst.setBackgroundResource(R.drawable.orders_tab_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.orderTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.allBiddsRecycler.visibility = View.GONE
+                binding.acceptRecycler.visibility = View.GONE
+                binding.noDataFoundTxt.visibility = View.GONE
+                binding.asAcceptConst.setBackgroundResource(0)
+                binding.allBiddsConst.setBackgroundResource(0)
+                getOrderApi()
+                orderObserver()
+
+            }
+
+            binding.allBiddsConst.setOnClickListener {
+                binding.allBiddsConst.setBackgroundResource(R.drawable.all_bidds_back)
+                binding.acceptTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.orderTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                binding.biddsTxt.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+                binding.oderRecycler.visibility = View.GONE
+                binding.acceptRecycler.visibility = View.GONE
+                binding.noDataFoundTxt.visibility = View.GONE
+                binding.asAcceptConst.setBackgroundResource(0)
+                binding.ordersConst.setBackgroundResource(0)
+                getAllBiddsApi()
+                allBiddsObserver()
             }
 
             binding.asAcceptConst.setOnClickListener {
@@ -231,21 +237,22 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 )
                 binding.oderRecycler.visibility = View.GONE
                 binding.allBiddsRecycler.visibility = View.GONE
-                binding.acceptRecycler.visibility = View.VISIBLE
                 binding.noDataFoundTxt.visibility = View.GONE
                 binding.allBiddsConst.setBackgroundResource(0)
                 binding.ordersConst.setBackgroundResource(0)
                 getAcceptedApi()
+                getAcceptedApi()
+                acceptedObserver()
 
             }
 
         }
 
 
-        getOrderApi()
-        orderObserver()
-        allBiddsObserver()
-        acceptedObserver()
+
+       // orderObserver()
+       // allBiddsObserver()
+       //`` acceptedObserver()
         return view
     }
 
@@ -357,6 +364,7 @@ class OrderFragment : Fragment(), ReminderItemClick, CancelOnClick {
                 if (allBiddsList.isEmpty()) {
                     binding.noDataFoundTxt.visibility = View.VISIBLE
                     binding.noDataFoundTxt.text = getString(R.string.no_bids)
+                    binding.allBiddsRecycler.visibility = View.GONE
                 } else {
                     binding.allBiddsRecycler.visibility = View.VISIBLE
                     binding.allBiddsRecycler.isVerticalScrollBarEnabled = true

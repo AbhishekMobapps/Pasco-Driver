@@ -1,6 +1,7 @@
 package com.pasco.pascocustomer.Driver.Fragment.DriverOrders
 
 import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -42,6 +43,7 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
     private lateinit var binding: FragmentDriverOrdersBinding
     private lateinit var activity: Activity
     private var driverHistory: List<DAllOrderResponse.DAllOrderResponseData> = ArrayList()
+    private var onGoingList: List<DAllOrderResponse.DAllOrderResponseData> = ArrayList()
     private var cancelListA: List<CancelReasonResponse.CancellationList> = ArrayList()
     private val dAllOrdersViewModel: DAllOrdersViewModel by viewModels()
     private val currentOrdersViewModel: CurrentOrdersViewModel by viewModels()
@@ -63,14 +65,15 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
         allOrdersApi()
         allBiddsObserver()
 
-        sharedPreferencesLanguageName = activity.getSharedPreferences(
-            "PREFERENCE_NAME", AppCompatActivity.MODE_PRIVATE
-        )
+        sharedPreferencesLanguageName = activity.getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         if (Objects.equals(language, "ar")) {
+
             binding.allBiddsTextIdD.setBackgroundResource(R.drawable.accept_bidd_background)
+            allOrdersApi()
+            allBiddsObserver()
             binding.allBiddsTextIdD.setOnClickListener {
                 binding.allBiddsTextIdD.background =
                     ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
@@ -92,6 +95,8 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
             }
         } else {
             binding.allBiddsTextIdD.setBackgroundResource(R.drawable.order_bidding_yellow)
+            allOrdersApi()
+            allBiddsObserver()
             binding.allBiddsTextIdD.setOnClickListener {
                 binding.allBiddsTextIdD.background =
                     ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
@@ -158,32 +163,27 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
 
         currentOrdersViewModel.mAllOrderResponse.observe(requireActivity()) { response ->
             val message = response.peekContent().msg!!
-            driverHistory = response.peekContent().data ?: emptyList()
+            onGoingList = response.peekContent().data ?: emptyList()
 
             if (response.peekContent().status == "False") {
                 binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
-                binding.recycerHistoryList.visibility = View.GONE
-                binding.recycerHistoryList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryList.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryList.adapter =
-                    DriverHistoryAdapter(requireContext(), driverHistory)
-                Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
+
             } else {
-                if (driverHistory.isEmpty()) {
+                if (onGoingList.isEmpty()) {
                     //hello
                     binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
                     binding.recycerHistoryList.visibility = View.GONE
+                    binding.ongoingRecycler.visibility = View.GONE
                 } else {
                     binding.bidingStatusNoDataTextView.visibility = View.GONE
-                    binding.recycerHistoryList.visibility = View.VISIBLE
-                    binding.recycerHistoryList.isVerticalScrollBarEnabled = true
-                    binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
-                    binding.recycerHistoryList.layoutManager =
+                    binding.ongoingRecycler.visibility = View.VISIBLE
+                    binding.recycerHistoryList.visibility = View.GONE
+                    binding.ongoingRecycler.isVerticalScrollBarEnabled = true
+                    binding.ongoingRecycler.isVerticalFadingEdgeEnabled = true
+                    binding.ongoingRecycler.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    binding.recycerHistoryList.adapter =
-                        DriverHistoryAdapter(requireContext(), driverHistory)
+                    binding.ongoingRecycler.adapter =
+                        DriverHistoryAdapter(requireContext(), onGoingList, language)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }
@@ -197,6 +197,17 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
     }
 
     //hello
+
+
+    private fun allOrdersApi() {
+        val body = CustomerOrderBody(
+            language = languageId
+        )
+        dAllOrdersViewModel.getAllOrdersData(
+            progressDialog, activity, body
+        )
+    }
+
     private fun allBiddsObserver() {
         dAllOrdersViewModel.progressIndicator.observe(requireActivity(), Observer {
             // Handle progress indicator changes if needed
@@ -207,20 +218,16 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
             driverHistory = response.peekContent().data ?: emptyList()
 
             if (response.peekContent().status == "False") {
-                binding.recycerHistoryList.isVerticalScrollBarEnabled = true
-                binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
-                binding.recycerHistoryList.layoutManager =
-                    LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                binding.recycerHistoryList.adapter =
-                    DriverAllBiddsAdapter(requireContext(), this, driverHistory, language)
                 Toast.makeText(requireActivity(), "$message", Toast.LENGTH_LONG).show()
             } else {
                 if (driverHistory.isEmpty()) {
                     binding.bidingStatusNoDataTextView.visibility = View.VISIBLE
                     binding.recycerHistoryList.visibility = View.GONE
+                    binding.ongoingRecycler.visibility = View.GONE
                 } else {
                     binding.bidingStatusNoDataTextView.visibility = View.GONE
                     binding.recycerHistoryList.visibility = View.VISIBLE
+                    binding.ongoingRecycler.visibility = View.GONE
                     binding.recycerHistoryList.isVerticalScrollBarEnabled = true
                     binding.recycerHistoryList.isVerticalFadingEdgeEnabled = true
                     binding.recycerHistoryList.layoutManager =
@@ -237,15 +244,6 @@ class DriverOrdersFragment : Fragment(), CancelOnClick {
         dAllOrdersViewModel.errorResponse.observe(requireActivity()) {
             ErrorUtil.handlerGeneralError(requireActivity(), it)
         }
-    }
-
-    private fun allOrdersApi() {
-        val body = CustomerOrderBody(
-            language = languageId
-        )
-        dAllOrdersViewModel.getAllOrdersData(
-            progressDialog, activity, body
-        )
     }
 
     override fun onResume() {

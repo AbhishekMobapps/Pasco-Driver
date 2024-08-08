@@ -62,8 +62,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
         refersh = PascoApp.encryptedPrefs.token
 
         activity = requireActivity()
-        completedApi()
-        completedObserver()
+
         feedbackObserver()
 
         sharedPreferencesLanguageName = activity.getSharedPreferences(
@@ -71,9 +70,11 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
             AppCompatActivity.MODE_PRIVATE
         )
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
-        languageId = sharedPreferencesLanguageName.getString("language_text", "").toString()
+        languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         if (Objects.equals(language, "ar")) {
+            completedApi()
+            completedObserver()
             binding.completedHisTextview.background =
                 ContextCompat.getDrawable(requireActivity(), R.drawable.accept_bidd_background)
 
@@ -98,6 +99,8 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
                 cancelledObserver()
             }
         } else {
+            completedApi()
+            completedObserver()
             binding.completedHisTextview.background =
                 ContextCompat.getDrawable(requireActivity(), R.drawable.order_bidding_yellow)
             binding.completedHisTextview.setOnClickListener {
@@ -150,7 +153,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
 
     private fun cancelledApi() {
         val body = CustomerOrderBody(
-            language = language
+            language = languageId
         )
 
         cancelledTripViewModel.driverTripCancelData(
@@ -174,7 +177,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
             } else {
                 if (cancelledTrips.isEmpty()) {
                     binding.staticCTextview.visibility = View.VISIBLE
-                    binding.staticCTextview.text = "No cancellation data has been found."
+                    binding.staticCTextview.text = getString(R.string.No_cancellation_data_has_been_found)
                     binding.recycerHistoryDriverList.visibility = View.GONE
                 } else {
                     binding.staticCTextview.visibility = View.GONE
@@ -222,6 +225,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
                 if (driverTripHistory.isEmpty()) {
                     binding.staticCTextview.visibility = View.VISIBLE
                     binding.recycerHistoryDriverList.visibility = View.GONE
+                    binding.staticCTextview.text = getString(R.string.you_have_not_completed_any_trips_yet)
                 } else {
                     binding.staticCTextview.visibility = View.GONE
                     binding.recycerHistoryDriverList.visibility = View.VISIBLE
@@ -230,7 +234,7 @@ class TripHistoryFragment : Fragment(), AddFeedbackOnClickListner {
                     binding.recycerHistoryDriverList.layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     binding.recycerHistoryDriverList.adapter =
-                        CompletedTripHistoryAdapter(requireContext(), driverTripHistory)
+                        CompletedTripHistoryAdapter(requireContext(), driverTripHistory, language)
                     // Toast.makeText(this@BiddingDetailsActivity, message, Toast.LENGTH_SHORT).show()
 
                 }

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-class ShowBookingReqResponse:Serializable{
+class ShowBookingReqResponse : Serializable {
     @SerializedName("status")
     @Expose
     var status: String? = null
@@ -19,7 +19,7 @@ class ShowBookingReqResponse:Serializable{
     @Expose
     var data: List<ShowBookingReqData>? = null
 
-    inner class ShowBookingReqData:Serializable{
+    inner class ShowBookingReqData : Serializable {
 
 
         @SerializedName("id")
@@ -126,5 +126,8 @@ class ShowBookingReqResponse:Serializable{
         @Expose
         var bidStatus: Boolean? = null
 
+        @SerializedName("reject_status")
+        @Expose
+        var rejectStatus: Boolean? = null
     }
 }

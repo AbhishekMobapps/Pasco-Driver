@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,6 +44,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
+import java.util.*
 
 @AndroidEntryPoint
 class VehicleDetailsActivity : Originator() {
@@ -83,11 +85,22 @@ class VehicleDetailsActivity : Originator() {
         // Request camera and gallery permissions if not granted
         requestPermission()
 
+
+
         sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
         language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         languageId = sharedPreferencesLanguageName.getString("languageId", "").toString()
 
         accessToken = PascoApp.encryptedPrefs.bearerToken
+
+        Log.e("accessTokenAa", "accessToken..$accessToken")
+
+        binding.backImageaddVeh.setOnClickListener { finish() }
+        if (Objects.equals(language, "ar")) {
+            binding.vehicleNoAdd.gravity = Gravity.RIGHT
+            binding.backImageaddVeh.setImageResource(R.drawable.next)
+
+        }
 
         binding.submitBtnAddVeh.setOnClickListener {
             validation()
@@ -324,6 +337,7 @@ class VehicleDetailsActivity : Originator() {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 val data = response.peekContent().data
+                PascoApp.encryptedPrefs.approvalStatus ="True"
                 PascoApp.encryptedPrefs.driverApprovedId = data!!.approved?.toString()!!
                 // The condition is true, perform actions here
                 Toast.makeText(this@VehicleDetailsActivity, message, Toast.LENGTH_LONG)
@@ -485,7 +499,11 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgRc.setImageBitmap(imageBitmap)
                     //  setUploadedRc()
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -509,7 +527,11 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgDoc.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -660,7 +682,11 @@ class VehicleDetailsActivity : Originator() {
                     binding.cameraImgVI.setImageBitmap(imageBitmap)
 
                 } else {
-                    Toast.makeText(this, getString(R.string.Image_capture_canceled), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.Image_capture_canceled),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             }

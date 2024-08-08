@@ -23,12 +23,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TransactionHistoryAdapter(
-    private val required: Context,
-    private var orderList: List<GetAmountResponse.Transaction>
+    private val required: Context, private var orderList: List<GetAmountResponse.Transaction>
 
 
-) :
-    RecyclerView.Adapter<TransactionHistoryAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<TransactionHistoryAdapter.ViewHolder>() {
     private var userType: String = PascoApp.encryptedPrefs.userType
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -55,7 +53,7 @@ class TransactionHistoryAdapter(
 
         holder.amountTxtC.text = "$ $amount"
         if (userType == "driver") {
-            holder.amountStatus.text = "Total Amount"
+            holder.amountStatus.text = orderList[position].paymentStatus
         } else {
             holder.amountStatus.text = orderList[position].paymentStatus
         }
@@ -91,9 +89,7 @@ class TransactionHistoryAdapter(
 
 
     private fun showFullAddressDialog(
-        pickupLocation: String,
-        dropLocations: String,
-        orderid: Int?
+        pickupLocation: String, dropLocations: String, orderid: Int?
     ) {
         val dialog = Dialog(required)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

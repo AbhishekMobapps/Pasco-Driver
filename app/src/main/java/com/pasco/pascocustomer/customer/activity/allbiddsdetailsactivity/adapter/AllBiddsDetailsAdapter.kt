@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pasco.pascocustomer.BuildConfig
 import com.pasco.pascocustomer.R
+import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.customer.activity.allbiddsdetailsactivity.model.AllBiddsDetailResponse
 import com.pasco.pascocustomer.customer.activity.driverdetails.DriverDetailsActivity
 import com.pasco.pascocustomer.customer.activity.notificaion.NotificationClickListener
@@ -41,6 +43,7 @@ class AllBiddsDetailsAdapter(
         val upFrontTxt: TextView = itemView.findViewById(R.id.upFrontTxt)
         val driverProfile: ImageView = itemView.findViewById(R.id.driverProfile)
         val acceptBtn: ConstraintLayout = itemView.findViewById(R.id.acceptBtn)
+        val rejectBtn: ConstraintLayout = itemView.findViewById(R.id.rejectBtn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -93,11 +96,12 @@ class AllBiddsDetailsAdapter(
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-
+        Log.e("upFrontPriceAA", "paymentMethod.." +orderList[position].id)
 
         holder.driverProfile.setOnClickListener {
             val id = orderList[position].id
             val intent = Intent(required, DriverDetailsActivity::class.java)
+
             intent.putExtra("id", id.toString())
             required.startActivity(intent)
         }
@@ -110,7 +114,15 @@ class AllBiddsDetailsAdapter(
             val paymentMethod = orderList[position].paymentMethod
             onItemClick.allBids(position, id!!,pickupLatitude,pickupLongitude,verificationCode,upFrontPrice,paymentMethod)
         }
+
+
+        holder.rejectBtn.setOnClickListener {
+            val id = orderList[position].id
+            onItemClick.deleteNotification(position,id!!)
+        }
     }
+
+
 
     override fun getItemCount(): Int {
         return orderList.size

@@ -52,7 +52,7 @@
     <string name="proceed">تنفيذ </string>
     <string name="cancel">الغاء</string>
     <string name="all_bidds">كل المزايدات  </string>
-    <string name="accept">المؤكدة </string>
+    <string name="accept">يقبل </string>
     <string name="custer_name">اسم العميل </string>
     <string name="edit_profile">تعديل الملف الشخصي </string>
     <string name="pickup">تحميل  :</string>
@@ -129,7 +129,7 @@
     <string name="emergency_number">رقم الطوارئ</string>
     <string name="arabic_language">اللغة العربية </string>
     <string name="english_lag">English</string>
-    <string name="selectStatus">Select Status</string>
+    <string name="selectStatus">حدد الحالة</string>
     <string name="selectCountryType">Select Country\n</string>
     <string name="selectCity">Select City\n</string>
     <string name="pickup_details">موقع التحميل</string>
@@ -311,7 +311,7 @@
     <string name="my_transactions">معاملاتي</string>
     <string name="transaction_history">تاريخ المعاملات</string>
     <string name="withdraw_history">سحب التاريخ</string>
-    <string name="please_select_reason">الرجاء تحديد السبب!</string>
+    <string name="please_select_reason">اختر السبب!</string>
     <string name="select_event">منقي</string>
     <string name="cancellation_reason">سبب الإلغاء :</string>
     <string name="transaction_id">رقم المعاملة</string>
@@ -442,4 +442,20 @@
     <string name="set_location">تحديد المكان</string>
     <string name="Please_enter_valid_email">الرجاء إدخال بريد إلكتروني صحيح</string>
     <string name="Please_upload_profile">يرجى تحميل الملف الشخصي</string>
+    <string name="Recharge_your_wallet">إعادة شحن محفظتك</string>
+    <string name="add_your_wallet_amount_successfully">أضف مبلغ محفظتك بنجاح!</string>
+    <string name="finish_your_ride">أكمل رحلتك</string>
+    <string name="An_error_occurred">حدث خطأ</string>
+    <string name="No_location_found_for_the_city">لم يتم العثور على موقع للمدينة</string>
+    <string name="my_orders">طلباتي</string>
+    <string name="Reached_at_PickUp_Location">تم الوصول إلى موقع الالتقاط</string>
+    <string name="Completed">مكتمل</string>
+    <string name="Cash">نقدي</string>
+    <string name="confirmed">مؤكد</string>
+    <string name="pending">قيد الانتظار</string>
+    <string name="No_cancellation_data_has_been_found">لم يتم العثور على بيانات الإلغاء.</string>
+    <string name="you_have_not_completed_any_trips_yet">لم تكمل أي رحلات بعد.</string>
+    <string name="select_city">اختر مدينة</string>
+    <string name="bid_request_cancel">تم رفض طلب العرض من قبل العميل!</string>
+    <string name="search">يبحث</string>
 </resources>

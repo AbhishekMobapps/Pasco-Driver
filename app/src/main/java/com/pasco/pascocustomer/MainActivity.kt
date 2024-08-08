@@ -67,8 +67,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
         if (checkLocationPermission()) {
             requestLocationUpdates()
         } else {
@@ -85,7 +83,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAnimationEnd(animation: Animation?) {
 
-                val sharedPreferencesLanguage = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+                val sharedPreferencesLanguage =
+                    getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
                 if (sharedPreferencesLanguage.getString("language_text", "") == "ar") {
                     val locale2 = Locale("ar")
                     Locale.setDefault(locale2)
@@ -121,23 +120,42 @@ class MainActivity : AppCompatActivity() {
                     editors.putString("language_id", str_lanuage)
                     editors.apply()
                 }
+                Log.e("SplashData","Outer")
                 if (PascoApp.encryptedPrefs.isFirstTime) {
-                    startActivity(Intent(this@MainActivity, ChooseLanguageActivity::class.java))
+
+                    Log.e("SplashData","isFirstTime")
+                    val intent = Intent(this@MainActivity, ChooseLanguageActivity::class.java)
+                    startActivity(intent)
                     finish()
                 } else {
                     val userId = PascoApp.encryptedPrefs.userId
                     val userType = PascoApp.encryptedPrefs.userType
+                    val approvalStatus = PascoApp.encryptedPrefs.approvalStatus
 
-
+                    Log.e("SplashData","Outer" +userId)
                     if (PascoApp.encryptedPrefs.isNotification && userId != "") {
                         if (userType == "driver") {
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                val intent =
-                                    Intent(this@MainActivity, DriverDashboardActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }, 1000)
+                            Log.e("SplashData","Driver")
+
+                            if (approvalStatus =="False")
+                            {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@MainActivity, ChooseLanguageActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }, 1000)
+                            }
+                            else
+                            {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@MainActivity, DriverDashboardActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }, 1000)
+                            }
+
                         } else {
+                            Log.e("SplashData","user..")
                             Handler(Looper.getMainLooper()).postDelayed({
                                 val intent =
                                     Intent(this@MainActivity, UserDashboardActivity::class.java)

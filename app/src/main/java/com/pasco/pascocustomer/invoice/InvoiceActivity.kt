@@ -3,6 +3,7 @@ package com.pasco.pascocustomer.invoice
 import android.Manifest
 import android.app.DownloadManager
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.pasco.pascocustomer.application.PascoApp
 import com.pasco.pascocustomer.databinding.ActivityInvoiceBinding
 import com.pasco.pascocustomer.language.Originator
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Objects
 
 
 @AndroidEntryPoint
@@ -30,13 +32,21 @@ class InvoiceActivity : Originator() {
     private val progressDialog by lazy { CustomProgressDialog(this) }
 
     private var pendingDownloadUrl: String? = null
-
+    private lateinit var sharedPreferencesLanguageName: SharedPreferences
+    private var language = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInvoiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sharedPreferencesLanguageName = getSharedPreferences("PREFERENCE_NAME", MODE_PRIVATE)
+        language = sharedPreferencesLanguageName.getString("language_text", "").toString()
         binding.backBtn.setOnClickListener { finish() }
+        if (Objects.equals(language,"ar"))
+        {
+            binding.backBtn.setImageResource(R.drawable.next)
+        }
+
         id = intent.getStringExtra("id").toString()
         userType = PascoApp.encryptedPrefs.userType
         if (userType == "driver")
